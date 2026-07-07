@@ -26,18 +26,16 @@ public class Npc_HumanRedWorker extends Entity {
         solidAreaDefaultY = solidArea.y;
         solidArea.width = 32;
         solidArea.height = 32;
-
+        dialogueResetIndex = 5;
         getImage();
         setDialogue();
     }
 
-    public BufferedImage setup(String imagePath, int width, int height) {
 
+    public BufferedImage setup(String imagePath, int width, int height) {
         UtilityTool uTool = new UtilityTool();
         BufferedImage image = null;
-
         try {
-
             image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
             image = uTool.scaleImage(image, width, height);
 
@@ -47,7 +45,7 @@ public class Npc_HumanRedWorker extends Entity {
         return image;
     }
     public void setDialogue() {
-        dialogues[0] = "Hello";
+        dialogues[0] = "Oh, hi there!";
         dialogues[1] = "What can I do for you?";
         dialogues[2] = "Not that I can do anything...";
         dialogues[3] = "Explore as much \nas you want";

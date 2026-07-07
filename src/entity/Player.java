@@ -37,6 +37,8 @@ public class Player extends Entity {
         idleDirection = "down";
         maxLife = 10;
         life = maxLife;
+        attack = 3;
+        defense = 2;
     }
 
     public void getPlayerImage() {
@@ -70,7 +72,7 @@ public class Player extends Entity {
 
     public void update() {
 
-        if (KeyH.upPressed || KeyH.downPressed || KeyH.leftPressed || KeyH.rightPressed) {
+        if (KeyH.upPressed || KeyH.downPressed || KeyH.leftPressed || KeyH.rightPressed || KeyH.enterPressed) {
             double dx = 0;
             double dy = 0;
             if (KeyH.upPressed) {
@@ -124,7 +126,7 @@ public class Player extends Entity {
 
             int objIndex = gp.cChecker.checkObject(this, true);
             pickUpObject(objIndex);
-            int npcIndex = gp.cChecker.checkEntity(this, gp.npc);
+            int npcIndex = gp.cChecker.checkEntityInteraction(this, gp.npc, gp.tileSize/2);
             interactNPC(npcIndex);
             int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
             contactMonster(monsterIndex);
@@ -157,10 +159,22 @@ public class Player extends Entity {
         }
     }
     public void contactMonster(int i) {
-        if( i != 999) {
-            ;
+        if(i != 999) {
+            gp.gameState = gp.combatState;
+            gp.ui.combat.startCombat(gp.monster[i], i);
         }
     }
+
+    @Override
+    public int attackAction(Entity target) {
+        return Math.max(1, this.attack - target.defense);
+    }
+
+    @Override
+    public int abilityAction(Entity target) {
+        return Math.max(1, (this.attack * 2) - target.defense);
+    }
+
     public void draw(Graphics2D g2) {
         BufferedImage image = null;
         boolean up = KeyH.upPressed;
@@ -183,35 +197,17 @@ public class Player extends Entity {
                             : idleDirection != null
                               ? idleDirection
                               : "down";
-            switch (dir) {
-                case "up":
-                    image = spriteNum == 1 ? up1 : up2;
-                    break;
-                case "down":
-                    image = spriteNum == 1 ? down1 : down2;
-                    break;
-                case "left":
-                    image = spriteNum == 1 ? left1 : left2;
-                    break;
-                case "right":
-                    image = spriteNum == 1 ? right1 : right2;
-                    break;
-                case "idle_up":
-                    image = spriteNum == 1 ? upIdle1 : upIdle2;
-                    break;
-                case "idle_down":
-                    image = spriteNum == 1 ? downIdle1 : downIdle2;
-                    break;
-                case "idle_left":
-                    image = spriteNum == 1 ? leftIdle1 : leftIdle2;
-                    break;
-                case "idle_right":
-                    image = spriteNum == 1 ? rightIdle1 : rightIdle2;
-                    break;
-                default:
-                    image = spriteNum == 1 ? downIdle1 : downIdle2;
-                    break;
-            }
+            image = switch (dir) {
+                case "up" -> spriteNum == 1 ? up1 : up2;
+                case "down" -> spriteNum == 1 ? down1 : down2;
+                case "left" -> spriteNum == 1 ? left1 : left2;
+                case "right" -> spriteNum == 1 ? right1 : right2;
+                case "idle_up" -> spriteNum == 1 ? upIdle1 : upIdle2;
+                case "idle_down" -> spriteNum == 1 ? downIdle1 : downIdle2;
+                case "idle_left" -> spriteNum == 1 ? leftIdle1 : leftIdle2;
+                case "idle_right" -> spriteNum == 1 ? rightIdle1 : rightIdle2;
+                default -> spriteNum == 1 ? downIdle1 : downIdle2;
+            };
         }
         g2.drawImage(image, screenX, screenY, null);
     }
