@@ -34,11 +34,13 @@ public class KeyHandler implements KeyListener{
                 if (code == KeyEvent.VK_ENTER) {
                     if (gp.ui.commandNum == 0) {
                         gp.ui.titleScreenState = 1;
-                        gp.ui.commandNum = 0;
                         gp.stopMusic();
                     }
                     if (gp.ui.commandNum == 1) {
-                        //ADD LATER
+                        //ADD LATER LOAD GAME
+                    }
+                    if (gp.ui.commandNum == 1) {
+                        //ADD LATER OPTIONS
                     }
                     if (gp.ui.commandNum == 3) {
                         System.exit(0);
@@ -64,20 +66,17 @@ public class KeyHandler implements KeyListener{
                         gp.player.getPlayerImage();
                         gp.ui.titleScreenState = 2;
                         gp.ui.commandNum = 1;
-                    }
-                    if (gp.ui.commandNum == 1) {
+                    } else if (gp.ui.commandNum == 1) {
                         gp.player.playerClass = "Mage";
                         gp.player.getPlayerImage();
                         gp.ui.titleScreenState = 2;
                         gp.ui.commandNum = 1;
-                    }
-                    if (gp.ui.commandNum == 2) {
+                    } else if (gp.ui.commandNum == 2) {
                         gp.player.playerClass = "Archer";
                         gp.player.getPlayerImage();
                         gp.ui.titleScreenState = 2;
                         gp.ui.commandNum = 1;
-                    }
-                    if (gp.ui.commandNum == 3) {
+                    } else if (gp.ui.commandNum == 3) {
                         gp.ui.titleScreenState = 0;
                         gp.ui.commandNum = 0;
                     }
