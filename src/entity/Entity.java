@@ -24,14 +24,25 @@ public class Entity {
     public Rectangle solidArea = new Rectangle(0, 0, 48, 48);
     public int solidAreaDefaultX, solidAreaDefaultY;
     public boolean collisionOn = false;
+
+    // Stats combattimento
+    public int attack;
+    public int defense;
+    public int level;
+    public int monsterIndex = -1; // indice del monster in gp.monster[], usato in combattimento
+    //Character Status
+    public int maxLife;
+    public int life;
+
     public int actionLockCounter = 0;
     public boolean onPath = false;
     String dialogues[] = new String[100];
     int dialoguesIndex = 0;
+    protected int dialogueResetIndex = 0;
+    public boolean alive = true;
+    public boolean dying = false;
+    public int dyingCounter = 0;
 
-    //Character Status
-    public int maxLife;
-    public int life;
 
     // Campi ex-SuperObject
     public BufferedImage image, image2, image3, image4;
@@ -81,35 +92,31 @@ public class Entity {
     }
 
     public void speak() {
-        // FIX: se non c'è dialogo all'indice corrente, resetta a 0 (non a 5)
         if(dialogues[dialoguesIndex] == null) {
-            dialoguesIndex = 0;
+            dialoguesIndex = dialogueResetIndex;
         }
         gp.ui.currentDialogue = dialogues[dialoguesIndex];
         dialoguesIndex++;
 
         // FIX: dopo aver impostato il dialogo, resetta l'indice se il prossimo è null
         if(dialoguesIndex >= dialogues.length || dialogues[dialoguesIndex] == null) {
-            dialoguesIndex = 0;
+            dialoguesIndex = dialogueResetIndex;
         }
 
         switch(gp.player.direction) {
-            case "up":
-                direction = "down";
-                break;
-            case "down":
-                direction = "up";
-                break;
-            case "left":
-                direction = "right";
-                break;
-            case "right":
-                direction = "left";
-                break;
-            default:
-                direction = "down";
-                break;
+            case "down": direction = "up"; break;
+            case "left": direction = "right"; break;
+            case "right": direction = "left"; break;
+            default: direction = "down"; break;
         }
+    }
+
+    public int attackAction(Entity target) {
+        return Math.max(1, this.attack - target.defense);
+    }
+
+    public int abilityAction(Entity target) {
+        return Math.max(1, (this.attack * 2) - target.defense);
     }
 
     public void update() {
@@ -119,28 +126,18 @@ public class Entity {
         double dy = 0;
 
         switch(direction) {
-            case "up":
-                dy = -1;
-                idleDirection = "idle_up";
-                break;
-            case "down":
-                dy = 1;
-                idleDirection = "idle_down";
-                break;
-            case "left":
-                dx = -1;
-                idleDirection = "idle_left";
-                break;
-            case "right":
-                dx = 1;
-                idleDirection = "idle_right";
-                break;
+            case "up": dy = -1; idleDirection = "idle_up"; break;
+            case "down": dy = 1; idleDirection = "idle_down"; break;
+            case "left": dx = -1; idleDirection = "idle_left"; break;
+            case "right": dx = 1; idleDirection = "idle_right"; break;
         }
 
         collisionOn = false;
         gp.cChecker.checkTile(this);
         gp.cChecker.checkObject(this, false);
         gp.cChecker.checkPlayer(this);
+        gp.cChecker.checkEntity(this, gp.npc);
+        gp.cChecker.checkEntity(this, gp.monster);
 
         boolean isMoving = !collisionOn && (dx != 0 || dy != 0);
 

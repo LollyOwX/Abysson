@@ -49,6 +49,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public Entity obj[] = new Entity[10];
 	public Entity npc[] = new Entity[10];
 	public Entity monster[] = new Entity[20];
+	public int difficulty = 1; // 1 = Easy, 2 = Normal, 3 = Hard
 
 	ArrayList<Entity> entityList = new ArrayList<>();
 	public UI ui = new UI(this);
@@ -66,7 +67,6 @@ public class GamePanel extends JPanel implements Runnable {
 	public void setupGame() {
 		aSetter.setObject();
 		aSetter.setNpc();
-		aSetter.setMonster();
 		playMusic(0);
 		gameState = titleState;
 	}
@@ -121,15 +121,15 @@ public class GamePanel extends JPanel implements Runnable {
 				timer = 0;
 			}
 		}
-	}	
+	}
 	public void update() {
-        if(gameState == playState) {
+		if(gameState == playState) {
 			player.update();
-            for(int i = 0; i < obj.length; i++) {
-                if(npc[i] != null) {
-                    npc[i].update();
-                }
-            }
+			for(int i = 0; i < obj.length; i++) {
+				if(npc[i] != null) {
+					npc[i].update();
+				}
+			}
 			for(int i = 0; i < monster.length; i++) {
 				if(monster[i] != null) {
 					monster[i].update();
@@ -137,6 +137,8 @@ public class GamePanel extends JPanel implements Runnable {
 			}
 		}
 		if(gameState == pauseState) {
+		} if(gameState == combatState) {
+			ui.combat.update();
 		}
 	}
 	public void paintComponent(Graphics g) {
@@ -179,9 +181,7 @@ public class GamePanel extends JPanel implements Runnable {
 				entityList.get(i).draw(g2);
 			}
 			//reset list
-			for(int i = 0; i < entityList.size(); i++) {
-				entityList.remove(i);
-			}
+			entityList.clear();
 
             ui.draw(g2);
         }

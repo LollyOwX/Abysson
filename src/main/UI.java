@@ -23,9 +23,11 @@ public class UI {
 	public boolean gameFinished = false;
     public String currentDialogue = "";
     public int commandNum = 0;
-    public int titleScreenState = 0; // 0: first, 1: second, 2: third , 3:fourth , 4:fifth
+    public int titleScreenState = 0;
+    public CombatState combat;
 	public UI(GamePanel gp) {
 		this.gp = gp;
+        combat = new CombatState(gp, this);
         try {
             InputStream is = getClass().getResourceAsStream("/font/x12y16pxMaruMonica.ttf");
             MaruMonica = Font.createFont(Font.TRUETYPE_FONT, is);
@@ -84,56 +86,43 @@ public class UI {
         if(gp.gameState == gp.dialogueState) {
             drawDialogueScreen();
         }
+        if(gp.gameState == gp.combatState) {
+            combat.draw(g2);
+        }
 	}
     public void drawPlayerLife() {
 
-
         int x = gp.tileSize / 2;
         int y = gp.tileSize / 2;
-
         BufferedImage left = null;
         BufferedImage center = null;
         BufferedImage right = null;
-
         double healthPercent = (double) gp.player.life / gp.player.maxLife * 100;
 
         if(healthPercent > 75) {
-
             left = health_left_full;
             center = health_center_full;
             right = health_right_full;
-
         }
         else if(healthPercent > 50) {
-
             left = health_left_half;
             center = health_center_half;
             right = health_right_half;
-
         }
         else if(healthPercent > 25) {
-
             left = health_left_low;
             center = health_center_low;
             right = health_right_low;
-
         }
         else {
-
             left = health_left_empty;
             center = health_center_empty;
             right = health_right_empty;
-
         }
-
         g2.drawImage(left, x, y, null);
-
         x += gp.tileSize;
-
         g2.drawImage(center, x, y, null);
-
         x += gp.tileSize;
-
         g2.drawImage(right, x, y, null);
     }
     public void drawTitleScreen() {
@@ -210,6 +199,43 @@ public class UI {
                 g2.drawString(">", x - gp.tileSize, y);
             }
             text = "Archer";
+            x = getXforCenteredText(text);
+            y += gp.tileSize;
+            g2.drawString(text, x, y);
+            if(commandNum == 2) {
+                g2.drawString(">", x - gp.tileSize, y);
+            }
+            text = "Back";
+            x = getXforCenteredText(text);
+            y += gp.tileSize*2;
+            g2.drawString(text, x, y);
+            if(commandNum == 3) {
+                g2.drawString(">", x - gp.tileSize, y);
+            }
+        } else if (titleScreenState == 2) {
+            g2.setFont(MaruMonica);
+            g2.setColor(new Color(255, 255, 255));
+            g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 42F));
+            String text = "Select difficulty";
+            int x = getXforCenteredText(text);
+            int y = gp.tileSize * 3;
+            g2.drawString(text, x, y);
+
+            text = "Easy";
+            x = getXforCenteredText(text);
+            y += gp.tileSize;
+            g2.drawString(text, x, y);
+            if(commandNum == 0) {
+                g2.drawString(">", x - gp.tileSize, y);
+            }
+            text = "Normal";
+            x = getXforCenteredText(text);
+            y += gp.tileSize;
+            g2.drawString(text, x, y);
+            if(commandNum == 1) {
+                g2.drawString(">", x - gp.tileSize, y);
+            }
+            text = "Hard";
             x = getXforCenteredText(text);
             y += gp.tileSize;
             g2.drawString(text, x, y);

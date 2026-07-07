@@ -10,10 +10,13 @@ public class MON_Goblin extends Entity {
         super(gp);
 
         name = "Goblin";
+        level = 2 * gp.difficulty;
         speed = 1;
-        maxLife = 3;
-        life = maxLife;
+        maxLife = 2 * level;
+        attack = 1 * level;
+        defense = 1 * level;
 
+        life = maxLife;
         solidArea.x = 8;
         solidArea.y = 16;
         solidArea.width = 30;
@@ -22,6 +25,8 @@ public class MON_Goblin extends Entity {
         solidAreaDefaultY = solidArea.y;
 
         getImage();
+        direction = "down";
+        idleDirection = "idle_down";
     }
 
     public void getImage() {
@@ -66,5 +71,15 @@ public class MON_Goblin extends Entity {
             }
             actionLockCounter = 0;
         }
+    }
+
+    @Override
+    public int attackAction(Entity target) {
+        return Math.max(1, this.attack - target.defense);
+    }
+
+    @Override
+    public int abilityAction(Entity target) {
+        return Math.max(1, (this.attack * 3) - target.defense);
     }
 }
