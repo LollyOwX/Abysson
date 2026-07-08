@@ -15,8 +15,18 @@ public class MON_Goblin extends Entity {
         maxLife = 2 * level;
         attack = 1 * level;
         defense = 1 * level;
-
         life = maxLife;
+        monsterIntelligence = 2;
+
+        unlockedAbilities.add("NormalAttack");
+        unlockedAbilities.add("PowerStrike");
+        unlockedAbilities.add("Thunderbolt");
+
+        abilityWeights.put("NormalAttack", 1);
+        abilityWeights.put("PowerStrike",  3);
+        abilityWeights.put("Thunderbolt",  5);
+
+
         solidArea.x = 8;
         solidArea.y = 16;
         solidArea.width = 30;
@@ -71,15 +81,5 @@ public class MON_Goblin extends Entity {
             }
             actionLockCounter = 0;
         }
-    }
-
-    @Override
-    public int attackAction(Entity target) {
-        return Math.max(1, this.attack - target.defense);
-    }
-
-    @Override
-    public int abilityAction(Entity target) {
-        return Math.max(1, (this.attack * 3) - target.defense);
     }
 }

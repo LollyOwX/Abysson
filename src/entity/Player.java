@@ -39,6 +39,8 @@ public class Player extends Entity {
         life = maxLife;
         attack = 3;
         defense = 2;
+        unlockedAbilities.add("NormalAttack");
+        unlockedAbilities.add("PowerStrike");
     }
 
     public void getPlayerImage() {
@@ -165,15 +167,6 @@ public class Player extends Entity {
         }
     }
 
-    @Override
-    public int attackAction(Entity target) {
-        return Math.max(1, this.attack - target.defense);
-    }
-
-    @Override
-    public int abilityAction(Entity target) {
-        return Math.max(1, (this.attack * 2) - target.defense);
-    }
 
     public void draw(Graphics2D g2) {
         BufferedImage image = null;
