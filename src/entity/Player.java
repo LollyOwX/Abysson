@@ -39,7 +39,6 @@ public class Player extends Entity {
         life = maxLife;
         attack = 3;
         defense = 2;
-        unlockedAbilities.add("NormalAttack");
         unlockedAbilities.add("PowerStrike");
     }
 
