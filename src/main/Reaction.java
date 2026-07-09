@@ -1,4 +1,5 @@
 package main;
+import main.ElementSystem.*;
 
 /**
  * Descrive l'effetto di una reazione tra due elementi.
