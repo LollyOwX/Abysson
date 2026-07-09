@@ -40,6 +40,9 @@ public class Player extends Entity {
         attack = 3;
         defense = 2;
         unlockedAbilities.add("PowerStrike");
+        unlockedAbilities.add("AcquaJet");
+        unlockedAbilities.add("Thunderbolt");
+        unlockedAbilities.add("Earthshock");
     }
 
     public void getPlayerImage() {
