@@ -83,6 +83,14 @@ public class Entity {
     public void changeAlpha(Graphics2D g2, float alphaValue) {
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaValue));
     }
+    public void dyingAnimation_update() {
+        dyingCounter++;
+        int i = 5;
+        if(dyingCounter > i*7) {
+            dying = false;
+            alive = false;
+        }
+    }
 
     public BufferedImage setup(String imagePath) {
         UtilityTool uTool = new UtilityTool();
@@ -187,8 +195,6 @@ public class Entity {
         if(dying) {
             dyingAnimation(g2);
         }
-        g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
-        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
         g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
     }
 }

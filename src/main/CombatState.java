@@ -328,19 +328,14 @@ public class CombatState {
 
     void checkDefeat() {
         turnPhase = COMBAT_OVER;
-        gp.player.life = gp.player.maxLife;
         onDefeat();
     }
 
     void onDefeat() {
         // stub — in futuro: game over screen, penalità
-        combatMessage = "Sei stato sconfitto... Vita ripristinata.";
+        combatMessage = "Sei stato sconfitto...";
         messageTimer  = 90;
     }
-
-    // ─────────────────────────────────────────────
-    //  DRAW
-    // ─────────────────────────────────────────────
 
     public void draw(Graphics2D g2) {
         this.g2 = g2;
