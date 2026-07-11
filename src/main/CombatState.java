@@ -316,7 +316,7 @@ public class CombatState {
 
     void checkVictory() {
         turnPhase = COMBAT_OVER;
-        gp.monster[monsterIndex] = null;
+        gp.monster[monsterIndex].dying = true;
         onVictory();
     }
 

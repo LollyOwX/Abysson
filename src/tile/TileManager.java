@@ -26,10 +26,6 @@ public class TileManager {
         loadMap("/maps/world01.txt");
     }
 
-    // ─────────────────────────────────────────────
-    //  SETUP TILE STATICA
-    // ─────────────────────────────────────────────
-
     public void setup(int index, String imagePath, boolean collision) {
         UtilityTool uTool = new UtilityTool();
         String fullPath = "/tiles/" + imagePath + ".png";
@@ -48,15 +44,6 @@ public class TileManager {
         }
     }
 
-    // ─────────────────────────────────────────────
-    //  SETUP TILE ANIMATA
-    //
-    //  Uso:
-    //    setupAnimated(2, new String[]{"water_1","water_2","water_3"}, true, 20);
-    //
-    //  I file devono stare in /tiles/ come le tile statiche.
-    //  frameSpeed: tick per frame (15 = ~4 fps a 60fps, 8 = ~7fps, 4 = ~15fps)
-    // ─────────────────────────────────────────────
 
     public void setupAnimated(int index, String[] imagePaths, boolean collision, int frameSpeed) {
         UtilityTool uTool = new UtilityTool();
@@ -71,13 +58,12 @@ public class TileManager {
             String fullPath = "/tiles/" + imagePaths[i] + ".png";
             String altPath  = "tiles/"  + imagePaths[i] + ".png";
             try (InputStream is = getClass().getResourceAsStream(fullPath) != null
-                    ? getClass().getResourceAsStream(fullPath)
-                    : Thread.currentThread().getContextClassLoader().getResourceAsStream(altPath)) {
-                if (is == null) throw new IllegalArgumentException("Resource not found: " + fullPath);
-                BufferedImage img = ImageIO.read(is);
-                if (img == null) throw new IOException("ImageIO returned null: " + fullPath);
-                tile[index].frames[i] = uTool.scaleImage(img, gp.tileSize, gp.tileSize);
-            } catch (IOException e) {
+                    ? getClass().getResourceAsStream(fullPath) : Thread.currentThread().getContextClassLoader().getResourceAsStream(altPath)) {
+                        if (is == null) throw new IllegalArgumentException("Resource not found: " + fullPath);
+                        BufferedImage img = ImageIO.read(is);
+                        if (img == null) throw new IOException("ImageIO returned null: " + fullPath);
+                        tile[index].frames[i] = uTool.scaleImage(img, gp.tileSize, gp.tileSize);
+                    } catch (IOException e) {
                 throw new RuntimeException("Failed to load animated tile: " + fullPath, e);
             }
         }

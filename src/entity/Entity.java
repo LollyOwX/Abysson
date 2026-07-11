@@ -1,7 +1,6 @@
 package entity;
 
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import main.*;
@@ -64,6 +63,13 @@ public class Entity {
     public int monsterIntelligence = 5;
 
     public Entity(GamePanel gp) { this.gp = gp; }
+
+    public void dyingAnimation(Graphics g2) {
+        dyingCounter++;
+        if(dyingCounter <= 5) {
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
+        }
+    }
 
     public BufferedImage setup(String imagePath) {
         UtilityTool uTool = new UtilityTool();
@@ -164,6 +170,9 @@ public class Entity {
             case "idle_down":  image = spriteNum == 1 ? downIdle1  : downIdle2;  break;
             case "idle_left":  image = spriteNum == 1 ? leftIdle1  : leftIdle2;  break;
             case "idle_right": image = spriteNum == 1 ? rightIdle1 : rightIdle2; break;
+        }
+        if(dying == true) {
+            dyingAnimation();
         }
         g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
     }
