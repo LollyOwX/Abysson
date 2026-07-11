@@ -29,6 +29,7 @@ public class CombatState {
     public static final int PLAYER_TURN  = 0;
     public static final int MONSTER_TURN = 1;
     public static final int COMBAT_OVER  = 2;
+    public static final int MONSTER_DYING = 3;
     public int turnPhase = PLAYER_TURN;
 
     public String combatMessage = "";
@@ -93,6 +94,16 @@ public class CombatState {
         if (messageTimer > 0) { messageTimer--; return; }
         if (turnPhase == MONSTER_TURN) { monsterTurn(); return; }
         if (turnPhase == COMBAT_OVER)  { endCombat(); }
+        if(turnPhase == MONSTER_DYING) {
+            monster.dyingCounter++;
+            if(monster.dyingCounter > 5*7) {
+                monster.dying = false;
+                monster.alive = false;
+                gp.monster[monsterIndex] = null;
+                turnPhase = COMBAT_OVER;
+            }
+            return;
+        }
     }
 
     // ─────────────────────────────────────────────
@@ -315,7 +326,7 @@ public class CombatState {
     // ─────────────────────────────────────────────
 
     void checkVictory() {
-        turnPhase = COMBAT_OVER;
+        turnPhase = MONSTER_DYING;
         gp.monster[monsterIndex].dying = true;
         onVictory();
     }
@@ -363,6 +374,15 @@ public class CombatState {
         java.awt.image.BufferedImage img = (monster.downIdle1 != null && monster.downIdle2 != null)
                 ? (monsterSpriteNum == 1 ? monster.downIdle1 : monster.downIdle2) : monster.down1;
         if (img != null) g2.drawImage(img, monsterX, monsterY, monsterSize, monsterSize, null);
+        if (img != null) {
+            if (monster.dying) {
+                monster.dyingAnimation(g2, monster.dyingCounter); // ← blink qui
+            } else {
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+            }
+            g2.drawImage(img, monsterX, monsterY, monsterSize, monsterSize, null);
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f)); // reset sempre
+        }
 
         g2.setFont(ui.MaruMonica.deriveFont(Font.PLAIN, 22f));
         g2.setColor(Color.white);

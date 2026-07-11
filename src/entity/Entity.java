@@ -64,17 +64,17 @@ public class Entity {
 
     public Entity(GamePanel gp) { this.gp = gp; }
 
-    public void dyingAnimation(Graphics2D g2) {
-        dyingCounter++;
+    public void dyingAnimation(Graphics2D g2, int dyingCounter) {
+        this.dyingCounter++;
         int i = 5;
-        if(dyingCounter <= i) {changeAlpha(g2, 0f);}
-        if(dyingCounter > i && dyingCounter <= i*2) {changeAlpha(g2, 1f);}
-        if(dyingCounter > i*2 && dyingCounter <= i*3) {changeAlpha(g2, 0f);}
-        if(dyingCounter > i*3 && dyingCounter <= i*4) {changeAlpha(g2, 1f);}
-        if(dyingCounter > i*4 && dyingCounter <= i*5) {changeAlpha(g2, 0f);}
-        if(dyingCounter > i*5 && dyingCounter <= i*6) {changeAlpha(g2, 1f);}
-        if(dyingCounter > i*6 && dyingCounter <= i*7) {changeAlpha(g2, 0f);}
-        if(dyingCounter > i*7) {
+        if(this.dyingCounter <= i) {changeAlpha(g2, 0f);}
+        if(this.dyingCounter > i && this.dyingCounter <= i*2) {changeAlpha(g2, 1f);}
+        if(this.dyingCounter > i*2 && this.dyingCounter <= i*3) {changeAlpha(g2, 0f);}
+        if(this.dyingCounter > i*3 && this.dyingCounter <= i*4) {changeAlpha(g2, 1f);}
+        if(this.dyingCounter > i*4 && this.dyingCounter <= i*5) {changeAlpha(g2, 0f);}
+        if(this.dyingCounter > i*5 && this.dyingCounter <= i*6) {changeAlpha(g2, 1f);}
+        if(this.dyingCounter > i*6 && this.dyingCounter <= i*7) {changeAlpha(g2, 0f);}
+        if(this.dyingCounter > i*7) {
             dying = false;
             alive = false;
         }
@@ -191,9 +191,6 @@ public class Entity {
             case "idle_down":  image = spriteNum == 1 ? downIdle1  : downIdle2;  break;
             case "idle_left":  image = spriteNum == 1 ? leftIdle1  : leftIdle2;  break;
             case "idle_right": image = spriteNum == 1 ? rightIdle1 : rightIdle2; break;
-        }
-        if(dying) {
-            dyingAnimation(g2);
         }
         g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
     }
