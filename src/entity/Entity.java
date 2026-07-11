@@ -184,9 +184,11 @@ public class Entity {
             case "idle_left":  image = spriteNum == 1 ? leftIdle1  : leftIdle2;  break;
             case "idle_right": image = spriteNum == 1 ? rightIdle1 : rightIdle2; break;
         }
-        if(dying == true) {
+        if(dying) {
             dyingAnimation(g2);
         }
+        g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
         g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
     }
 }
