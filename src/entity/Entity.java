@@ -64,6 +64,7 @@ public class Entity {
 
     public Entity(GamePanel gp) { this.gp = gp; }
 
+
     public void dyingAnimation(Graphics2D g2) {
         dyingCounter++;
         int i = 5;
@@ -86,7 +87,7 @@ public class Entity {
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
     }
 
-    public BufferedImage setup(String imagePath) {
+    public BufferedImage setup(String imagePath, int width, int height) {
         UtilityTool uTool = new UtilityTool();
         BufferedImage image = null;
         String path = imagePath;
@@ -97,7 +98,7 @@ public class Entity {
         try {
             image = ImageIO.read(is);
             if (image == null) { System.err.println("ERROR: null image: " + path); return null; }
-            image = uTool.scaleImage(image, gp.tileSize, gp.tileSize);
+            image = uTool.scaleImage(image, width, height);
         } catch (IOException e) {
             System.err.println("ERROR loading: " + path); e.printStackTrace(); return null;
         } finally { try { is.close(); } catch (IOException ignored) {} }

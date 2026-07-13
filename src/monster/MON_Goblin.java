@@ -40,22 +40,22 @@ public class MON_Goblin extends Entity {
     }
 
     public void getImage() {
-        up1 = setup("/monsters/Goblin_up_1");
-        up2 = setup("/monsters/Goblin_up_2");
-        down1 = setup("/monsters/Goblin_down_1");
-        down2 = setup("/monsters/Goblin_down_2");
-        right1 = setup("/monsters/Goblin_right_1");
-        right2 = setup("/monsters/Goblin_right_2");
-        left1 = setup("/monsters/Goblin_left_1");
-        left2 = setup("/monsters/Goblin_left_2");
-        upIdle1 = setup("/monsters/Goblin_upidle_1");
-        upIdle2 = setup("/monsters/Goblin_upidle_2");
-        downIdle1 = setup("/monsters/Goblin_downidle_1");
-        downIdle2 = setup("/monsters/Goblin_downidle_2");
-        rightIdle1 = setup("/monsters/Goblin_rightidle_1");
-        rightIdle2 = setup("/monsters/Goblin_rightidle_2");
-        leftIdle1 = setup("/monsters/Goblin_leftidle_1");
-        leftIdle2 = setup("/monsters/Goblin_leftidle_2");
+        up1 = setup("/monsters/Goblin_up_1", 16, 16);
+        up2 = setup("/monsters/Goblin_up_2", 16, 16);
+        down1 = setup("/monsters/Goblin_down_1", 16, 16);
+        down2 = setup("/monsters/Goblin_down_2", 16, 16);
+        right1 = setup("/monsters/Goblin_right_1", 16, 16);
+        right2 = setup("/monsters/Goblin_right_2", 16, 16);
+        left1 = setup("/monsters/Goblin_left_1", 16, 16);
+        left2 = setup("/monsters/Goblin_left_2", 16, 16);
+        upIdle1 = setup("/monsters/Goblin_upidle_1", 16, 16);
+        upIdle2 = setup("/monsters/Goblin_upidle_2", 16, 16);
+        downIdle1 = setup("/monsters/Goblin_downidle_1", 16, 16);
+        downIdle2 = setup("/monsters/Goblin_downidle_2", 16, 16);
+        rightIdle1 = setup("/monsters/Goblin_rightidle_1", 16, 16);
+        rightIdle2 = setup("/monsters/Goblin_rightidle_2", 16, 16);
+        leftIdle1 = setup("/monsters/Goblin_leftidle_1", 16, 16);
+        leftIdle2 = setup("/monsters/Goblin_leftidle_2", 16, 16);
     }
     public void setAction() {
         actionLockCounter++;

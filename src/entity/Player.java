@@ -19,12 +19,12 @@ public class Player extends Entity {
         screenX = gp.screenWidth / 2 - (gp.tileSize / 2);
         screenY = gp.screenHeight / 2 - (gp.tileSize / 2);
         solidArea = new Rectangle();
-        solidArea.x = 8;
+        solidArea.x = 14;
         solidArea.y = 16;
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
         solidArea.width = 30;
-        solidArea.height = 24;
+        solidArea.height = 28;
         setDefaultValues();
         getPlayerImage();
     }
@@ -46,32 +46,32 @@ public class Player extends Entity {
     }
 
     public void getPlayerImage() {
-        up1 = setup("/player/" + playerClass + "_up_1");
-        up2 = setup("/player/" + playerClass + "_up_2");
-        down1 = setup("/player/" + playerClass + "_down_1");
-        down2 = setup("/player/" + playerClass + "_down_2");
-        left1 = setup("/player/" + playerClass + "_left_1");
-        left2 = setup("/player/" + playerClass + "_left_2");
-        right1 = setup("/player/" + playerClass + "_right_1");
-        right2 = setup("/player/" + playerClass + "_right_2");
+        up1 = setup("/player/" + playerClass + "_up_1", 19*3, 19*3);
+        up2 = setup("/player/" + playerClass + "_up_2", 19*3, 19*3);
+        down1 = setup("/player/" + playerClass + "_down_1", 19*3, 19*3);
+        down2 = setup("/player/" + playerClass + "_down_2", 19*3, 19*3);
+        left1 = setup("/player/" + playerClass + "_left_1", 19*3, 19*3);
+        left2 = setup("/player/" + playerClass + "_left_2", 19*3, 19*3);
+        right1 = setup("/player/" + playerClass + "_right_1", 19*3, 19*3);
+        right2 = setup("/player/" + playerClass + "_right_2", 19*3, 19*3);
         //idle
-        downIdle1 = setup("/player/" + playerClass + "_downidle_1");
-        downIdle2 = setup("/player/" + playerClass + "_downidle_2");
-        upIdle1 = setup("/player/" + playerClass + "_upidle_1");
-        upIdle2 = setup("/player/" + playerClass + "_upidle_2");
-        leftIdle1 = setup("/player/" + playerClass + "_leftidle_1");
-        leftIdle2 = setup("/player/" + playerClass + "_leftidle_2");
-        rightIdle1 = setup("/player/" + playerClass + "_rightidle_1");
-        rightIdle2 = setup("/player/" + playerClass + "_rightidle_2");
+        downIdle1 = setup("/player/" + playerClass + "_downidle_1", 19*3, 19*3);
+        downIdle2 = setup("/player/" + playerClass + "_downidle_2", 19*3, 19*3);
+        upIdle1 = setup("/player/" + playerClass + "_upidle_1", 19*3, 19*3);
+        upIdle2 = setup("/player/" + playerClass + "_upidle_2", 19*3, 19*3);
+        leftIdle1 = setup("/player/" + playerClass + "_leftidle_1", 19*3, 19*3);
+        leftIdle2 = setup("/player/" + playerClass + "_leftidle_2", 19*3, 19*3);
+        rightIdle1 = setup("/player/" + playerClass + "_rightidle_1", 19*3, 19*3);
+        rightIdle2 = setup("/player/" + playerClass + "_rightidle_2", 19*3, 19*3);
         //ortogonal
-        rightUp1 = setup("/player/" + playerClass + "_rightup_1");
-        rightUp2 = setup("/player/" + playerClass + "_rightup_2");
-        rightDown1 = setup("/player/" + playerClass + "_rightdown_1");
-        rightDown2 = setup("/player/" + playerClass + "_rightdown_2");
-        leftUp1 = setup("/player/" + playerClass + "_leftup_1");
-        leftUp2 = setup("/player/" + playerClass + "_leftup_2");
-        leftDown1 = setup("/player/" + playerClass + "_leftdown_1");
-        leftDown2 = setup("/player/" + playerClass + "_leftdown_2");
+        rightUp1 = setup("/player/" + playerClass + "_rightup_1", 19*3, 19*3);
+        rightUp2 = setup("/player/" + playerClass + "_rightup_2", 19*3, 19*3);
+        rightDown1 = setup("/player/" + playerClass + "_rightdown_1", 19*3, 19*3);
+        rightDown2 = setup("/player/" + playerClass + "_rightdown_2", 19*3, 19*3);
+        leftUp1 = setup("/player/" + playerClass + "_leftup_1", 19*3, 19*3);
+        leftUp2 = setup("/player/" + playerClass + "_leftup_2", 19*3, 19*3);
+        leftDown1 = setup("/player/" + playerClass + "_leftdown_1", 19*3, 19*3);
+        leftDown2 = setup("/player/" + playerClass + "_leftdown_2", 19*3, 19*3);
     }
 
     public void update() {
