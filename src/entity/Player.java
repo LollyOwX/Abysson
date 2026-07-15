@@ -109,13 +109,6 @@ public class Player extends Entity {
                 if (collisionOn) worldY -= moveY;
             }
 
-            int objIndex     = gp.cChecker.checkObject(this, true);
-            pickUpObject(objIndex);
-            int npcIndex     = gp.cChecker.checkEntityInteraction(this, gp.npc, gp.tileSize / 2);
-            interactNPC(npcIndex);
-            int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
-            contactMonster(monsterIndex);
-
             gp.eHandler.checkEvent();
             gp.KeyH.enterPressed = false;
             spriteCounter++;
@@ -125,6 +118,12 @@ public class Player extends Entity {
             idleSpriteCounter++;
             if (idleSpriteCounter > 32) { spriteNum = spriteNum == 1 ? 2 : 1; idleSpriteCounter = 0; }
         }
+        int objIndex     = gp.cChecker.checkObject(this, true);
+        pickUpObject(objIndex);
+        int npcIndex     = gp.cChecker.checkEntityInteraction(this, gp.npc, gp.tileSize / 2);
+        interactNPC(npcIndex);
+        int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
+        contactMonster(monsterIndex);
     }
 
     public void interactNPC(int i) {
@@ -164,7 +163,8 @@ public class Player extends Entity {
                 }
                 break;
             case Entity.HOSTILE:
-                // Auto-aggro gestito da checkHostileAggro(), qui non serve
+                gp.gameState = gp.combatState;
+                gp.ui.combat.startCombat(target, i);
                 break;
         }
     }
