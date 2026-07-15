@@ -125,27 +125,6 @@ public class Player extends Entity {
             idleSpriteCounter++;
             if (idleSpriteCounter > 32) { spriteNum = spriteNum == 1 ? 2 : 1; idleSpriteCounter = 0; }
         }
-
-        // Auto-aggro: controlla mostri HOSTILE nel raggio anche senza input
-        checkHostileAggro();
-    }
-
-    /**
-     * Controlla se un mostro HOSTILE è nel raggio di interazione.
-     * Se sì, avvia il combattimento immediatamente senza aspettare input.
-     */
-    void checkHostileAggro() {
-        if (gp.gameState != gp.playState) return;
-        for (int i = 0; i < gp.monster.length; i++) {
-            if (gp.monster[i] == null) continue;
-            if (gp.monster[i].behavior != Entity.HOSTILE) continue;
-            int idx = gp.cChecker.checkEntityInteraction(this, gp.monster, gp.tileSize / 2);
-            if (idx != 999) {
-                gp.gameState = gp.combatState;
-                gp.ui.combat.startCombat(gp.monster[idx], idx);
-                return;
-            }
-        }
     }
 
     public void interactNPC(int i) {
@@ -162,7 +141,6 @@ public class Player extends Entity {
                 gp.ui.openNeutralMenu(target, i, true);
                 break;
             case Entity.HOSTILE:
-                // NPC ostile: attacca direttamente
                 gp.gameState = gp.combatState;
                 gp.ui.combat.startCombat(target, i);
                 break;

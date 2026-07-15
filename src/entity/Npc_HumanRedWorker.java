@@ -18,6 +18,7 @@ public class Npc_HumanRedWorker extends Entity {
 
         direction = "down";
         idleDirection = "idle_down";
+        behavior = FRIENDLY;
         speed = 1;
         solidArea = new Rectangle();
         solidArea.x = 8;
@@ -45,7 +46,7 @@ public class Npc_HumanRedWorker extends Entity {
         return image;
     }
     public void setDialogue() {
-        dialogues[0] = "Oh, hi there!";
+        dialogues[0] = "<red>Oh, hi there!";
         dialogues[1] = "What can I do for you?";
         dialogues[2] = "Not that I can do anything...";
         dialogues[3] = "Explore as much \nas you want";

@@ -2,7 +2,6 @@ package monster;
 
 import entity.Entity;
 import main.GamePanel;
-
 import java.util.Random;
 
 public class MON_Goblin extends Entity {
@@ -17,6 +16,7 @@ public class MON_Goblin extends Entity {
         defense = 1 * level;
         life = maxLife;
         monsterIntelligence = 2;
+        behavior = HOSTILE;
 
         unlockedAbilities.add("NormalAttack");
         unlockedAbilities.add("PowerStrike");
