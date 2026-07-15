@@ -12,6 +12,7 @@ public class Player extends Entity {
     public final int screenX;
     public final int screenY;
     public String playerClass;
+
     public Player(GamePanel gp, KeyHandler KeyH) {
         super(gp);
         this.gp = gp;
@@ -43,171 +44,182 @@ public class Player extends Entity {
         unlockedAbilities.add("AcquaJet");
         unlockedAbilities.add("Thunderbolt");
         unlockedAbilities.add("Earthshock");
+        behavior = FRIENDLY; // il player è sempre "friendly" come entità
     }
 
     public void getPlayerImage() {
-        up1 = setup("/player/" + playerClass + "_up_1", 19*3, 19*3);
-        up2 = setup("/player/" + playerClass + "_up_2", 19*3, 19*3);
-        down1 = setup("/player/" + playerClass + "_down_1", 19*3, 19*3);
-        down2 = setup("/player/" + playerClass + "_down_2", 19*3, 19*3);
-        left1 = setup("/player/" + playerClass + "_left_1", 19*3, 19*3);
-        left2 = setup("/player/" + playerClass + "_left_2", 19*3, 19*3);
-        right1 = setup("/player/" + playerClass + "_right_1", 19*3, 19*3);
-        right2 = setup("/player/" + playerClass + "_right_2", 19*3, 19*3);
-        //idle
-        downIdle1 = setup("/player/" + playerClass + "_downidle_1", 19*3, 19*3);
-        downIdle2 = setup("/player/" + playerClass + "_downidle_2", 19*3, 19*3);
-        upIdle1 = setup("/player/" + playerClass + "_upidle_1", 19*3, 19*3);
-        upIdle2 = setup("/player/" + playerClass + "_upidle_2", 19*3, 19*3);
-        leftIdle1 = setup("/player/" + playerClass + "_leftidle_1", 19*3, 19*3);
-        leftIdle2 = setup("/player/" + playerClass + "_leftidle_2", 19*3, 19*3);
-        rightIdle1 = setup("/player/" + playerClass + "_rightidle_1", 19*3, 19*3);
-        rightIdle2 = setup("/player/" + playerClass + "_rightidle_2", 19*3, 19*3);
-        //ortogonal
-        rightUp1 = setup("/player/" + playerClass + "_rightup_1", 19*3, 19*3);
-        rightUp2 = setup("/player/" + playerClass + "_rightup_2", 19*3, 19*3);
-        rightDown1 = setup("/player/" + playerClass + "_rightdown_1", 19*3, 19*3);
-        rightDown2 = setup("/player/" + playerClass + "_rightdown_2", 19*3, 19*3);
-        leftUp1 = setup("/player/" + playerClass + "_leftup_1", 19*3, 19*3);
-        leftUp2 = setup("/player/" + playerClass + "_leftup_2", 19*3, 19*3);
-        leftDown1 = setup("/player/" + playerClass + "_leftdown_1", 19*3, 19*3);
-        leftDown2 = setup("/player/" + playerClass + "_leftdown_2", 19*3, 19*3);
+        up1       = setup("/player/" + playerClass + "_up_1",        19*3, 19*3);
+        up2       = setup("/player/" + playerClass + "_up_2",        19*3, 19*3);
+        down1     = setup("/player/" + playerClass + "_down_1",      19*3, 19*3);
+        down2     = setup("/player/" + playerClass + "_down_2",      19*3, 19*3);
+        left1     = setup("/player/" + playerClass + "_left_1",      19*3, 19*3);
+        left2     = setup("/player/" + playerClass + "_left_2",      19*3, 19*3);
+        right1    = setup("/player/" + playerClass + "_right_1",     19*3, 19*3);
+        right2    = setup("/player/" + playerClass + "_right_2",     19*3, 19*3);
+        downIdle1 = setup("/player/" + playerClass + "_downidle_1",  19*3, 19*3);
+        downIdle2 = setup("/player/" + playerClass + "_downidle_2",  19*3, 19*3);
+        upIdle1   = setup("/player/" + playerClass + "_upidle_1",    19*3, 19*3);
+        upIdle2   = setup("/player/" + playerClass + "_upidle_2",    19*3, 19*3);
+        leftIdle1 = setup("/player/" + playerClass + "_leftidle_1",  19*3, 19*3);
+        leftIdle2 = setup("/player/" + playerClass + "_leftidle_2",  19*3, 19*3);
+        rightIdle1= setup("/player/" + playerClass + "_rightidle_1", 19*3, 19*3);
+        rightIdle2= setup("/player/" + playerClass + "_rightidle_2", 19*3, 19*3);
+        rightUp1  = setup("/player/" + playerClass + "_rightup_1",   19*3, 19*3);
+        rightUp2  = setup("/player/" + playerClass + "_rightup_2",   19*3, 19*3);
+        rightDown1= setup("/player/" + playerClass + "_rightdown_1", 19*3, 19*3);
+        rightDown2= setup("/player/" + playerClass + "_rightdown_2", 19*3, 19*3);
+        leftUp1   = setup("/player/" + playerClass + "_leftup_1",    19*3, 19*3);
+        leftUp2   = setup("/player/" + playerClass + "_leftup_2",    19*3, 19*3);
+        leftDown1 = setup("/player/" + playerClass + "_leftdown_1",  19*3, 19*3);
+        leftDown2 = setup("/player/" + playerClass + "_leftdown_2",  19*3, 19*3);
     }
 
     public void update() {
+        // Blocca il movimento se il neutral menu è aperto
+        if (gp.ui.neutralMenuOpen) return;
 
         if (KeyH.upPressed || KeyH.downPressed || KeyH.leftPressed || KeyH.rightPressed || KeyH.enterPressed) {
             double dx = 0;
             double dy = 0;
-            if (KeyH.upPressed) {
-                dy -= 1;
-                direction = "up";
-                idleDirection = "idle_up";
-            }
-            if (KeyH.downPressed) {
-                dy += 1;
-                direction = "down";
-                idleDirection = "idle_down";
-            }
-            if (KeyH.leftPressed) {
-                dx -= 1;
-                direction = "left";
-                idleDirection = "idle_left";
-            }
-            if (KeyH.rightPressed) {
-                dx += 1;
-                direction = "right";
-                idleDirection = "idle_right";
-            }
+            if (KeyH.upPressed)    { dy -= 1; direction = "up";    idleDirection = "idle_up";    }
+            if (KeyH.downPressed)  { dy += 1; direction = "down";  idleDirection = "idle_down";  }
+            if (KeyH.leftPressed)  { dx -= 1; direction = "left";  idleDirection = "idle_left";  }
+            if (KeyH.rightPressed) { dx += 1; direction = "right"; idleDirection = "idle_right"; }
 
             if (dx != 0 || dy != 0) {
                 double len = Math.sqrt(dx * dx + dy * dy);
-                dx /= len;
-                dy /= len;
+                dx /= len; dy /= len;
                 int moveX = (int) Math.round(dx * speed);
                 int moveY = (int) Math.round(dy * speed);
+
                 collisionOn = false;
                 worldX += moveX;
-
                 gp.cChecker.checkTile(this);
                 gp.cChecker.checkObject(this, true);
                 gp.cChecker.checkEntity(this, gp.npc);
                 gp.cChecker.checkEntity(this, gp.monster);
+                if (collisionOn) worldX -= moveX;
 
-                if (collisionOn) {
-                    worldX -= moveX;
-                }
                 collisionOn = false;
                 worldY += moveY;
                 gp.cChecker.checkTile(this);
                 gp.cChecker.checkObject(this, true);
                 gp.cChecker.checkEntity(this, gp.npc);
                 gp.cChecker.checkEntity(this, gp.monster);
-                if (collisionOn) {
-                    worldY -= moveY;
-                }
+                if (collisionOn) worldY -= moveY;
             }
 
-            int objIndex = gp.cChecker.checkObject(this, true);
+            int objIndex     = gp.cChecker.checkObject(this, true);
             pickUpObject(objIndex);
-            int npcIndex = gp.cChecker.checkEntityInteraction(this, gp.npc, gp.tileSize/2);
+            int npcIndex     = gp.cChecker.checkEntityInteraction(this, gp.npc, gp.tileSize / 2);
             interactNPC(npcIndex);
             int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
             contactMonster(monsterIndex);
 
-            gp.cChecker.checkEntity(this, gp.monster);
             gp.eHandler.checkEvent();
             gp.KeyH.enterPressed = false;
             spriteCounter++;
-
-            if (spriteCounter > 13) {
-                spriteNum = spriteNum == 1 ? 2 : 1;
-                spriteCounter = 0;
-            }
+            if (spriteCounter > 13) { spriteNum = spriteNum == 1 ? 2 : 1; spriteCounter = 0; }
         } else {
             direction = idleDirection;
             idleSpriteCounter++;
-            if (idleSpriteCounter > 32) {
-                spriteNum = spriteNum == 1 ? 2 : 1;
-                idleSpriteCounter = 0;
+            if (idleSpriteCounter > 32) { spriteNum = spriteNum == 1 ? 2 : 1; idleSpriteCounter = 0; }
+        }
+
+        // Auto-aggro: controlla mostri HOSTILE nel raggio anche senza input
+        checkHostileAggro();
+    }
+
+    /**
+     * Controlla se un mostro HOSTILE è nel raggio di interazione.
+     * Se sì, avvia il combattimento immediatamente senza aspettare input.
+     */
+    void checkHostileAggro() {
+        if (gp.gameState != gp.playState) return;
+        for (int i = 0; i < gp.monster.length; i++) {
+            if (gp.monster[i] == null) continue;
+            if (gp.monster[i].behavior != Entity.HOSTILE) continue;
+            int idx = gp.cChecker.checkEntityInteraction(this, gp.monster, gp.tileSize / 2);
+            if (idx != 999) {
+                gp.gameState = gp.combatState;
+                gp.ui.combat.startCombat(gp.monster[idx], idx);
+                return;
             }
         }
     }
 
     public void interactNPC(int i) {
-        if (i != 999) {
-            if (gp.KeyH.enterPressed) {
+        if (i == 999) return;
+        Entity target = gp.npc[i];
+        if (!gp.KeyH.enterPressed) return;
+
+        switch (target.behavior) {
+            case Entity.FRIENDLY:
                 gp.gameState = gp.dialogueState;
-                gp.npc[i].speak();
-            }
-        }
-    }
-    public void contactMonster(int i) {
-        if(i != 999) {
-            gp.gameState = gp.combatState;
-            gp.ui.combat.startCombat(gp.monster[i], i);
+                target.speak();
+                break;
+            case Entity.NEUTRAL:
+                gp.ui.openNeutralMenu(target, i, true);
+                break;
+            case Entity.HOSTILE:
+                // NPC ostile: attacca direttamente
+                gp.gameState = gp.combatState;
+                gp.ui.combat.startCombat(target, i);
+                break;
         }
     }
 
+    public void contactMonster(int i) {
+        if (i == 999) return;
+        Entity target = gp.monster[i];
+
+        switch (target.behavior) {
+            case Entity.FRIENDLY:
+                if (gp.KeyH.enterPressed) {
+                    gp.gameState = gp.dialogueState;
+                    target.speak();
+                }
+                break;
+            case Entity.NEUTRAL:
+                if (gp.KeyH.enterPressed) {
+                    gp.ui.openNeutralMenu(target, i, false);
+                }
+                break;
+            case Entity.HOSTILE:
+                // Auto-aggro gestito da checkHostileAggro(), qui non serve
+                break;
+        }
+    }
+
+    public void pickUpObject(int i) {
+        if (i != 999) { }
+    }
 
     public void draw(Graphics2D g2) {
         BufferedImage image = null;
-        boolean up = KeyH.upPressed;
-        boolean down = KeyH.downPressed;
-        boolean left = KeyH.leftPressed;
+        boolean up    = KeyH.upPressed;
+        boolean down  = KeyH.downPressed;
+        boolean left  = KeyH.leftPressed;
         boolean right = KeyH.rightPressed;
 
-        if (up && right) {
-            image = spriteNum == 1 ? rightUp1 : rightUp2;
-        } else if (up && left) {
-            image = spriteNum == 1 ? leftUp1 : leftUp2;
-        } else if (down && right) {
-            image = spriteNum == 1 ? rightDown1 : rightDown2;
-        } else if (down && left) {
-            image = spriteNum == 1 ? leftDown1 : leftDown2;
-        } else {
-            String dir =
-                    direction != null
-                            ? direction
-                            : idleDirection != null
-                              ? idleDirection
-                              : "down";
+        if      (up && right) { image = spriteNum == 1 ? rightUp1   : rightUp2;   }
+        else if (up && left)  { image = spriteNum == 1 ? leftUp1    : leftUp2;    }
+        else if (down && right){ image = spriteNum == 1 ? rightDown1 : rightDown2; }
+        else if (down && left) { image = spriteNum == 1 ? leftDown1  : leftDown2;  }
+        else {
+            String dir = direction != null ? direction : (idleDirection != null ? idleDirection : "down");
             image = switch (dir) {
-                case "up" -> spriteNum == 1 ? up1 : up2;
-                case "down" -> spriteNum == 1 ? down1 : down2;
-                case "left" -> spriteNum == 1 ? left1 : left2;
-                case "right" -> spriteNum == 1 ? right1 : right2;
-                case "idle_up" -> spriteNum == 1 ? upIdle1 : upIdle2;
-                case "idle_down" -> spriteNum == 1 ? downIdle1 : downIdle2;
-                case "idle_left" -> spriteNum == 1 ? leftIdle1 : leftIdle2;
+                case "up"         -> spriteNum == 1 ? up1        : up2;
+                case "down"       -> spriteNum == 1 ? down1      : down2;
+                case "left"       -> spriteNum == 1 ? left1      : left2;
+                case "right"      -> spriteNum == 1 ? right1     : right2;
+                case "idle_up"    -> spriteNum == 1 ? upIdle1    : upIdle2;
+                case "idle_down"  -> spriteNum == 1 ? downIdle1  : downIdle2;
+                case "idle_left"  -> spriteNum == 1 ? leftIdle1  : leftIdle2;
                 case "idle_right" -> spriteNum == 1 ? rightIdle1 : rightIdle2;
-                default -> spriteNum == 1 ? downIdle1 : downIdle2;
+                default           -> spriteNum == 1 ? downIdle1  : downIdle2;
             };
         }
         g2.drawImage(image, screenX, screenY, null);
-    }
-    public void pickUpObject(int i) {
-        if (i != 999) {
-        }
     }
 }
