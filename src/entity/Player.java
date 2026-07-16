@@ -124,7 +124,6 @@ public class Player extends Entity {
             }
 
             gp.eHandler.checkEvent();
-            gp.KeyH.enterPressed = false;
             spriteCounter++;
             if (spriteCounter > 13) { spriteNum = spriteNum == 1 ? 2 : 1; spriteCounter = 0; }
         } else {
@@ -138,6 +137,7 @@ public class Player extends Entity {
         interactNPC(npcIndex);
         int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
         contactMonster(monsterIndex);
+        gp.KeyH.enterPressed = false;
     }
 
     public void equip(items.Item item) {

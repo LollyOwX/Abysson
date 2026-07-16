@@ -299,7 +299,6 @@ public class Entity {
                 dx = 1;
                 idleDirection = "idle_right";
                 break;
-
         }
 
         collisionOn = false;

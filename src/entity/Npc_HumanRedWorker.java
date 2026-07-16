@@ -3,16 +3,14 @@ package entity;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Random;
-
 import main.GamePanel;
 import main.UtilityTool;
 
 import javax.imageio.ImageIO;
 
 public class Npc_HumanRedWorker extends Entity {
-
+    private boolean itemGiven = false;
     public Npc_HumanRedWorker(GamePanel gp) {
         super(gp);
 
@@ -46,12 +44,13 @@ public class Npc_HumanRedWorker extends Entity {
         return image;
     }
     public void setDialogue() {
-        dialogues[0] = "<red>Oh, hi there!";
+        dialogues[0] = "<rainbow>Oh, hi there!</rainbow>";
         dialogues[1] = "What can I do for you?";
         dialogues[2] = "Not that I can do anything...";
         dialogues[3] = "Explore as much \nas you want";
         dialogues[4] = "I'll stay here";
-        dialogues[5] = "Good luck";
+        dialogues[5] = "Here, take this sword!";
+        dialogues[6] = "Good luck";
     }
 
     public void getImage() {
@@ -100,6 +99,11 @@ public class Npc_HumanRedWorker extends Entity {
     }
     public void speak() {
         super.speak();
+        if (dialoguesIndex == 2 && !itemGiven) {
+            gp.player.equip(new items.Sword_Basic_Iron());
+            gp.ui.showMessage("Hai ottenuto: Spada!");
+            itemGiven = true;
+        }
     }
 }
 
