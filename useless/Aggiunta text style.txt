@@ -1,0 +1,27 @@
+Aggiunta text style
+È semplicissimo. Dipende da cosa vuoi aggiungere.
+
+
+Nuovo colore (es. <purple>)
+Solo una riga in applyTagStyle() in UI.java:
+javacase "purple": g2.setColor(new Color(180, 80, 255)); break;
+Poi usi <purple>testo</purple> nei dialoghi. Fatto.
+
+Nuova animazione (es. <flash> — testo che lampeggia)
+Un nuovo case in drawSegmentWord(), dentro il blocco switch (tag):
+javacase "flash":
+    // visibile e invisibile ogni 15 frame
+    if ((textAnimTick / 15) % 2 == 0) {
+        g2.setColor(orig);
+    } else {
+        g2.setColor(new Color(0, 0, 0, 0)); // trasparente
+    }
+    break;
+E poi aggiungi "flash" alla condizione dell'if che decide se processare carattere per carattere:
+javaif (tag.equals("shake") || tag.equals("wave") || tag.equals("rainbow") || tag.equals("flash")) {
+
+Regola generale
+
+Colore statico → solo applyTagStyle()
+Animazione o effetto per carattere → drawSegmentWord() + aggiungi il tag nell'if
+Non serve toccare il parser — riconosce automaticamente qualsiasi tag scritto nel formato <nome>testo</nome>

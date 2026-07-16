@@ -301,7 +301,7 @@ public class CombatState {
 
     void onVictory() {
         // stub — in futuro: exp, drop, animazioni
-        combatMessage = "Hai sconfitto " + monster.name + "!";
+        combatMessage = "You defeated " + monster.name + "!";
         messageTimer  = 90;
     }
 

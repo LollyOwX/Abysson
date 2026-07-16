@@ -5,13 +5,23 @@ import java.awt.Rectangle;
 import main.GamePanel;
 import main.KeyHandler;
 import java.awt.image.BufferedImage;
-import java.awt.*;
 
 public class Player extends Entity {
     KeyHandler KeyH;
     public final int screenX;
     public final int screenY;
     public String playerClass;
+    //Base Stats
+    public int baseAttack    = 3;
+    public int baseDefense   = 2;
+    public int baseMaxLife   = 10;
+    public int baseSpeed;    // assegnato in setDefaultValues dopo il calcolo
+    public int basePrecision = 100;
+    public int baseEvasion   = 0;
+    //Items
+    public items.Item equippedMainHand = null;
+    public items.Item equippedChestplate = null;
+    public items.Item equippedOffHand = null;
 
     public Player(GamePanel gp, KeyHandler KeyH) {
         super(gp);
@@ -33,17 +43,21 @@ public class Player extends Entity {
     public void setDefaultValues() {
         worldX = gp.tileSize * 23;
         worldY = gp.tileSize * 21;
-        speed = gp.worldWidth / 600;
+        speed = 4;
         direction = "down";
         idleDirection = "down";
+
         maxLife = 10;
         life = maxLife;
         attack = 3;
         defense = 2;
+        baseSpeed = speed;
+
         unlockedAbilities.add("PowerStrike");
         unlockedAbilities.add("AcquaJet");
         unlockedAbilities.add("Thunderbolt");
         unlockedAbilities.add("Earthshock");
+
         behavior = FRIENDLY; // il player è sempre "friendly" come entità
     }
 
@@ -124,6 +138,66 @@ public class Player extends Entity {
         interactNPC(npcIndex);
         int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
         contactMonster(monsterIndex);
+    }
+
+    public void equip(items.Item item) {
+        if (item.slot == items.Item.ItemSlot.MainHand) {
+            equippedMainHand = item;
+        } else {
+            equippedChestplate = item;
+        }
+        recalculateStats();
+    }
+
+    public void unequip(items.Item.ItemSlot slot) {
+        if (slot == items.Item.ItemSlot.MainHand) {
+            equippedMainHand = null;
+        } else {
+            equippedChestplate = null;
+        }
+        recalculateStats();
+    }
+
+    public void recalculateStats() {
+        attack    = baseAttack;
+        defense   = baseDefense;
+        maxLife   = baseMaxLife;
+        speed     = baseSpeed;
+        precision = basePrecision;
+        evasion   = baseEvasion;
+
+        if (equippedMainHand != null) {
+            attack    += equippedMainHand.attack;
+            defense   += equippedMainHand.defense;
+            maxLife   += equippedMainHand.maxLife;
+            speed     += equippedMainHand.speed;
+            precision += equippedMainHand.precision;
+            evasion   += equippedMainHand.evasion;
+        }
+        if (equippedChestplate != null) {
+            attack    += equippedChestplate.attack;
+            defense   += equippedChestplate.defense;
+            maxLife   += equippedChestplate.maxLife;
+            speed     += equippedChestplate.speed;
+            precision += equippedChestplate.precision;
+            evasion   += equippedChestplate.evasion;
+        }
+        if (equippedOffHand != null) {
+            attack    += equippedOffHand.attack;
+            defense   += equippedOffHand.defense;
+            maxLife   += equippedOffHand.maxLife;
+            speed     += equippedOffHand.speed;
+            precision += equippedOffHand.precision;
+            evasion   += equippedOffHand.evasion;
+        }
+
+        // Clamp: nessuna stat va sotto 0
+        attack    = Math.max(0, attack);
+        defense   = Math.max(0, defense);
+        maxLife   = Math.max(1, maxLife);
+        speed     = Math.max(1, speed);
+        precision = Math.max(0, precision);
+        evasion   = Math.max(0, evasion);
     }
 
     public void interactNPC(int i) {
