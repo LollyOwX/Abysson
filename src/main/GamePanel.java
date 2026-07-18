@@ -4,6 +4,8 @@ import javax.swing.JPanel;
 import entity.Player;
 import tile.TileManager;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -63,6 +65,20 @@ public class GamePanel extends JPanel implements Runnable {
 		this.setDoubleBuffered(true);
 		this.addKeyListener(KeyH);
 		this.setFocusable(true);
+
+		// ── Mouse: hover/click sul menu principale (schermata titolo) ──
+		MouseAdapter titleMouseHandler = new MouseAdapter() {
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				ui.updateMouseHover(e.getX(), e.getY());
+			}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				ui.handleTitleClick(e.getX(), e.getY());
+			}
+		};
+		this.addMouseMotionListener(titleMouseHandler);
+		this.addMouseListener(titleMouseHandler);
 	}
 	public void setupGame() {
 		aSetter.setObject();

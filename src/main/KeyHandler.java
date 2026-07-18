@@ -16,12 +16,13 @@ public class KeyHandler implements KeyListener {
         // ── TITLE STATE ──────────────────────────────────────────
         if (gp.gameState == gp.titleState) {
             if (gp.ui.titleScreenState == 0) {
-                if (code == KeyEvent.VK_W) { gp.ui.commandNum--; if (gp.ui.commandNum <= -1) gp.ui.commandNum = 0; }
-                if (code == KeyEvent.VK_S) { gp.ui.commandNum++; if (gp.ui.commandNum >= 4)  gp.ui.commandNum = 3; }
+                if (!gp.ui.isMenuConfirmPending()) {
+                    if (code == KeyEvent.VK_W) { gp.ui.commandNum--; if (gp.ui.commandNum <= -1) gp.ui.commandNum = 0; }
+                    if (code == KeyEvent.VK_S) { gp.ui.commandNum++; if (gp.ui.commandNum >= 4)  gp.ui.commandNum = 3; }
+                }
                 if (code == KeyEvent.VK_ENTER) {
-                    if (gp.ui.commandNum == 0) { gp.ui.titleScreenState = 1; gp.ui.commandNum = 0; gp.stopMusic(); }
-                    if (gp.ui.commandNum == 1) { /* ADD LATER */ }
-                    if (gp.ui.commandNum == 3) { System.exit(0); }
+                    // Stessa logica di conferma usata anche dal click del mouse sul menu principale
+                    gp.ui.confirmMainMenu();
                 }
             } else if (gp.ui.titleScreenState == 1) {
                 if (code == KeyEvent.VK_W) { gp.ui.commandNum--; if (gp.ui.commandNum <= -1) gp.ui.commandNum = 3; }
