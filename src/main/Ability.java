@@ -20,6 +20,7 @@ public class Ability {
             case "Thunderbolt": return thunderbolt(user, target);
             case "AcquaJet": return acquajet(user, target);
             case "Earthshock": return earthschock(user, target);
+            case "Fireblade": return fireblade(user, target);
             default: System.err.println("Ability non trovata: " + id); return 1;
         }
     }
@@ -31,6 +32,7 @@ public class Ability {
             case "Thunderbolt": return "Thunderbolt";
             case "AcquaJet": return "AcquaJet";
             case "Earthshock": return "Earthshock";
+            case "Fireblade": return "Fireblade";
             default: return id;
         }
     }
@@ -42,6 +44,8 @@ public class Ability {
             case "Thunderbolt": return Element.FULMINE;
             case "AcquaJet": return Element.ACQUA;
             case "Earthshock": return Element.TERRA;
+            case "Fireblade": return Element.FUOCO;
+
             default: return Element.NONE;
         }
     }
@@ -55,4 +59,5 @@ public class Ability {
     private static int thunderbolt(Entity user, Entity target) {return Math.max(1, user.attack * 2) - target.defense;}
     private static int acquajet(Entity user, Entity target) {return Math.max(1, user.attack * 2) -  target.defense;}
     private static int earthschock(Entity user, Entity target) {return Math.max(1, user.attack * 2) - target.defense;}
+    private static int fireblade(Entity user, Entity target) {return Math.max(1, user.attack * 2) - target.defense;}
 }

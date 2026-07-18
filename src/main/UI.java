@@ -71,9 +71,9 @@ public class UI {
     private int titleMenuEnterTick = -1; // tick in cui il menu principale è apparso
     private boolean menuActivePrev = false;
 
-    private static final int   MENU_SLIDE_DURATION = 25;   // frame per lo slide-in di ogni voce
-    private static final int   MENU_STAGGER_DELAY  = 8;    // ritardo extra per indice (stagger)
-    private static final int   MENU_SLIDE_OFFSET   = 220;  // px di partenza (da destra verso sinistra)
+    private static final int   MENU_SLIDE_DURATION = 35;    // frame per lo slide-in di ogni voce
+    private static final int   MENU_STAGGER_DELAY  = 10;    // ritardo extra per indice (stagger)
+    private static final int   MENU_SLIDE_OFFSET   = 220;   // px di partenza (da destra verso sinistra)
     private static final float HOVER_ANIM_SPEED    = 0.15f; // velocità di transizione hover/selezione (lerp/frame)
     private static final float HOVER_SCALE         = 1.15f; // scala testo quando in hover
     private static final int   HOVER_OFFSET_X      = 18;    // offset orizzontale quando in hover
@@ -192,6 +192,7 @@ public class UI {
 
             int elapsed = (titleMenuEnterTick < 0) ? 999999 : textAnimTick - titleMenuEnterTick;
 
+            //EFFETTI
             for (int i = 0; i < items.length; i++) {
                 text = items[i];
                 int itemBaseX = getXforCenteredText(text);
@@ -276,7 +277,7 @@ public class UI {
             String text = "Select your class";
             int x = getXforCenteredText(text), y = gp.tileSize * 3;
             g2.drawString(text, x, y);
-            String[] classes = {"Warrior", "Mage", "Archer", "Back"};
+            String[] classes = {"Warrior", "Wizard", "Archer", "Back"};
             for (int i = 0; i < classes.length; i++) {
                 text = classes[i];
                 x = getXforCenteredText(text);
