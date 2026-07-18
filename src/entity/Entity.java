@@ -26,39 +26,31 @@ public class Entity {
             rightIdle1, rightIdle2,
             downIdle1, downIdle2,
             upIdle1, upIdle2;
-
     public String direction;
     public String idleDirection;
-
     public int spriteCounter = 0;
     public int idleSpriteCounter = 0;
     public int spriteNum = 1;
-
     public Rectangle solidArea = new Rectangle(0, 0, 48, 48);
     public int solidAreaDefaultX;
     public int solidAreaDefaultY;
-
     public boolean collisionOn = false;
-
     public int actionLockCounter = 0;
     public boolean onPath = false;
-
     public String dialogues[] = new String[100];
     int dialoguesIndex = 0;
     protected int dialogueResetIndex = 0;
+    public int[][] palette = null; // null = nessuno swap; coppie {oldARGB, newARGB}
 
     public boolean alive = true;
     public boolean dying = false;
     public int dyingCounter = 0;
-
     public int attack;
     public int defense;
     public int level;
     public int monsterIndex = -1;
-
     public int precision = 100;
     public int evasion = 0;
-
     public int maxLife;
     public int life;
 
@@ -391,18 +383,10 @@ public class Entity {
         }
 
         if (dying) {
-
             dyingAnimation(g2, image, screenX, screenY);
-
         } else {
-
-            g2.drawImage(
-                    image,
-                    screenX,
-                    screenY,
-                    gp.tileSize,
-                    gp.tileSize,
-                    null);
+            if (palette != null) image = PaletteSwap.getOrCreate("e" + hashCode(), image, palette);
+            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
 
         }
     }
