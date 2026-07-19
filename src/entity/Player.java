@@ -12,9 +12,9 @@ public class Player extends Entity {
     public final int screenY;
     public String playerClass;
     //Base Stats
-    public int baseAttack    = 3;
-    public int baseDefense   = 2;
-    public int baseMaxLife   = 10;
+    public int baseAttack    = 30;
+    public int baseDefense   = 20;
+    public int baseMaxLife   = 100;
     public int baseSpeed;    // assegnato in setDefaultValues dopo il calcolo
     public int basePrecision = 100;
     public int baseEvasion   = 0;
@@ -47,10 +47,10 @@ public class Player extends Entity {
         direction = "down";
         idleDirection = "down";
 
-        maxLife = 10;
+        maxLife = 100;
         life = maxLife;
-        attack = 3;
-        defense = 2;
+        attack = 30;
+        defense = 20;
         baseSpeed = speed;
 
         unlockedAbilities.add("PowerStrike");
