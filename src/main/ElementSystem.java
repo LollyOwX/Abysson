@@ -40,21 +40,12 @@ public class ElementSystem {
 
     private static final Random rng = new Random();
 
-    // ═════════════════════════════════════════════
-    //  ENUM: ELEMENT
-    // ═════════════════════════════════════════════
-
     public enum Element {
         NONE, FISICO, LUCE, FUOCO, ACQUA, TERRA, ARIA, FULMINE
     }
 
-    // ═════════════════════════════════════════════
-    //  ENUM: STATUS EFFECT
-    // ═════════════════════════════════════════════
-
     public enum StatusEffect {
         NONE("Nessuno"),
-
         // ── Reazioni pure ──────────────────────────────────────────
         POTENZIAMENTO("Potenziamento"),       // +200% danni subiti questo turno
         ACCECAMENTO("Accecamento"),           // STUB - svantaggio precisione + no armi a distanza
@@ -63,7 +54,6 @@ public class ElementSystem {
         RESISTENZA("Resistenza"),             // Impossibilità di ricevere nuovi effetti positivi
         STORDIMENTO("Stordimento"),           // Svantaggio tiro per colpire 5 turni
         FOLGORE("Folgore"),                   // Sul fallimento → 2d8 danni fulmine
-
         // ── Reazioni articolate ────────────────────────────────────
         ROTTURA("Rottura"),                   // +(10*liv)% danni subiti
         ESPOSIZIONE("Esposizione"),           // +1 durata effetti negativi subiti
@@ -91,13 +81,7 @@ public class ElementSystem {
         StatusEffect(String displayName) { this.displayName = displayName; }
     }
 
-    // ═════════════════════════════════════════════
-    //  CLASS: ACTIVE EFFECT
-    // ═════════════════════════════════════════════
-
     /**
-     * Rappresenta un effetto di stato attivo su un'Entity.
-     * duration: turni rimanenti.
      *   0  = solo questo turno
      *  -1  = permanente fino a fine combattimento
      *  >0  = N turni rimanenti
@@ -112,36 +96,40 @@ public class ElementSystem {
         }
     }
 
-    // ═════════════════════════════════════════════
-    //  VANTAGGI / SVANTAGGI
-    // ═════════════════════════════════════════════
-
-    /**
-     * Moltiplicatore danno in base agli elementi.
-     * 1.5 = vantaggio, 0.75 = svantaggio, 1.0 = neutro.
-     * Cerchio: FUOCO > TERRA > ARIA > FULMINE > ACQUA > FUOCO
-     */
     public static double getMultiplier(Element attacker, Element defender) {
         if (attacker == Element.NONE || defender == Element.NONE) return 1.0;
-        if (attacker == Element.FUOCO   && defender == Element.TERRA)   return 1.5;
-        if (attacker == Element.TERRA   && defender == Element.ARIA)    return 1.5;
-        if (attacker == Element.ARIA    && defender == Element.FULMINE) return 1.5;
-        if (attacker == Element.FULMINE && defender == Element.ACQUA)   return 1.5;
-        if (attacker == Element.ACQUA   && defender == Element.FUOCO)   return 1.5;
-        if (attacker == Element.TERRA   && defender == Element.FUOCO)   return 0.75;
-        if (attacker == Element.ARIA    && defender == Element.TERRA)   return 0.75;
-        if (attacker == Element.FULMINE && defender == Element.ARIA)    return 0.75;
-        if (attacker == Element.ACQUA   && defender == Element.FULMINE) return 0.75;
-        if (attacker == Element.FUOCO   && defender == Element.ACQUA)   return 0.75;
+
+        if (attacker == Element.TERRA && defender == Element.FUOCO) return 1.25;
+        if (attacker == Element.ARIA && defender == Element.FUOCO) return 1.25;
+        if (attacker == Element.ACQUA && defender == Element.FUOCO) return 2;
+        if (attacker == Element.FULMINE && defender == Element.FUOCO) return 0.75;
+        if (attacker == Element.LUCE && defender == Element.FUOCO) return 0.75;
+
+        if (attacker == Element.FUOCO && defender == Element.ACQUA) return 2;
+        if (attacker == Element.FULMINE && defender == Element.ACQUA) return 1.5;
+        if (attacker == Element.LUCE && defender == Element.ACQUA) return 0.5;
+
+        if (attacker == Element.ARIA && defender == Element.TERRA) return 1.25;
+        if (attacker == Element.FULMINE && defender == Element.TERRA) return 0.5;
+
+        if (attacker == Element.LUCE && defender == Element.ARIA) return 1.5;
+        if (attacker == Element.FULMINE && defender == Element.ARIA) return 1.5;
+        if (attacker == Element.TERRA && defender == Element.ARIA) return 0.75;
+
+        if (attacker == Element.TERRA && defender == Element.FULMINE) return 2;
+        if (attacker == Element.FUOCO && defender == Element.FULMINE) return 1.5;
+        if (attacker == Element.ARIA && defender == Element.FULMINE) return 0.75;
+        if (attacker == Element.ACQUA && defender == Element.FULMINE) return 0.75;
+
+        if (attacker == Element.ACQUA && defender == Element.LUCE) return 1.25;
+        if (attacker == Element.TERRA && defender == Element.LUCE) return 1.5;
+        if (attacker == Element.FUOCO && defender == Element.LUCE) return 0.75;
+        if (attacker == Element.FULMINE && defender == Element.LUCE) return 0.75;
+
         return 1.0;
     }
 
-    // ═════════════════════════════════════════════
-    //  TABELLA REAZIONI
-    // ═════════════════════════════════════════════
-
     /**
-     * Ritorna la Reaction tra elemento già applicato (existing) e nuovo (incoming).
      * La tabella è simmetrica: l'ordine non conta.
      */
     public static Reaction getReaction(Element existing, Element incoming, int entityLevel) {
@@ -172,7 +160,7 @@ public class ElementSystem {
         if (ea == Element.FISICO && eb == Element.LUCE)    return mk("Esposizione",      0, Element.NONE,    StatusEffect.ESPOSIZIONE,     0, 1.0);
         if (ea == Element.FISICO && eb == Element.FUOCO)   return mk("Infiammazione",    0, Element.FUOCO,   StatusEffect.INFIAMMAZIONE,   0, 1.0);
         if (ea == Element.FISICO && eb == Element.ACQUA)   return mk("Erosione",         0, Element.NONE,    StatusEffect.EROSIONE,        -1, 1.0);
-        if (ea == Element.FISICO && eb == Element.TERRA)   return mk("Rottura", 0, Element.NONE, StatusEffect.ROTTURA, 0, 1.0 + (0.10 * entityLevel));
+        if (ea == Element.FISICO && eb == Element.TERRA)   return mk("Rottura",          0, Element.NONE,    StatusEffect.ROTTURA,         0, 1.0 + (0.10 * entityLevel));
         if (ea == Element.FISICO && eb == Element.ARIA)    return mk("Turbinio",         0, Element.NONE,    StatusEffect.TURBINIO,        0, 1.0); // STUB
         if (ea == Element.FISICO && eb == Element.FULMINE) return mk("Scossa",           0, Element.NONE,    StatusEffect.SCOSSA,          0, 1.0);
 
@@ -186,12 +174,12 @@ public class ElementSystem {
         // FUOCO con...
         if (ea == Element.FUOCO && eb == Element.ACQUA)   return mk("Vaporizzazione",   0, Element.NONE,    StatusEffect.VAPORIZZAZIONE,  0, 1.0);
         if (ea == Element.FUOCO && eb == Element.TERRA)   return mk("Carbonizzazione",  0, Element.FUOCO,   StatusEffect.CARBONIZZAZIONE, -1, 1.0);
-        if (ea == Element.FUOCO && eb == Element.ARIA)    return mk("Firenado",  rollD6(2), Element.FUOCO,   StatusEffect.FIRENADO,        0, 1.0); // STUB parziale
+        if (ea == Element.FUOCO && eb == Element.ARIA)    return mk("Firenado",     rollD6(2), Element.FUOCO,   StatusEffect.FIRENADO,        0, 1.0); // STUB parziale
         if (ea == Element.FUOCO && eb == Element.FULMINE) return mk("Sovraccarico",     0, Element.NONE,    StatusEffect.SOVRACCARICO,    1, 1.0);
 
         // ACQUA con...
         if (ea == Element.ACQUA && eb == Element.TERRA)   return mk("Infangato",        0, Element.NONE,    StatusEffect.INFANGATO,       0, 1.0);
-        if (ea == Element.ACQUA && eb == Element.ARIA)    return mk("Tempesta",  rollD6(1), Element.FULMINE, StatusEffect.TEMPESTA,        3, 1.0);
+        if (ea == Element.ACQUA && eb == Element.ARIA)    return mk("Tempesta",        rollD6(1), Element.FULMINE, StatusEffect.TEMPESTA,        3, 1.0);
         if (ea == Element.ACQUA && eb == Element.FULMINE) return mk("Elettrizzazione", rollD6(1), Element.FULMINE, StatusEffect.ELETTRIZZAZIONE, 0, 1.0);
 
         // TERRA con...
@@ -326,10 +314,6 @@ public class ElementSystem {
     public static boolean isNegativeEffect(StatusEffect e) {
         return !isPositiveEffect(e) && e != StatusEffect.NONE;
     }
-
-    // ═════════════════════════════════════════════
-    //  UTILITY
-    // ═════════════════════════════════════════════
 
     public static int rollD6(int n) {
         int t = 0; for (int i = 0; i < n; i++) t += rng.nextInt(6) + 1; return t;

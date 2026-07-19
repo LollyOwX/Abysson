@@ -60,19 +60,17 @@ public class UI {
     private static final int   PUNCH_DURATION  = 14;    // frame di durata del punch
     private static final float PUNCH_MAGNITUDE = 0.28f; // scala extra al picco del punch
 
-    // Ritardo tra la conferma di una voce e l'esecuzione vera e propria del comando,
-    // così il punch (e in generale il feedback visivo) fa in tempo a vedersi anche
-    // per voci come "New Game" o "Quit" che altrimenti cambierebbero schermata/uscirebbero
-    // dal programma nello stesso istante del click.
-    private static final int MENU_CONFIRM_DELAY = 60; // ~1s a 60 FPS
+    private static final int MENU_CONFIRM_DELAY = 30; // ~1s a 60 FPS
     private int pendingCommand = -1;     // voce confermata in attesa di esecuzione, -1 = nessuna
     private int pendingExecuteTick = -1; // tick in cui va eseguito il comando in attesa
+    private int pendingScreen = -1;      // titleScreenState in cui è stato dato il comando in attesa
 
-    private int titleMenuEnterTick = -1; // tick in cui il menu principale è apparso
-    private boolean menuActivePrev = false;
+    private int titleMenuEnterTick = -1; // tick in cui lo schermo di titolo corrente è apparso
+    private int lastMenuScreen = -2;     // ultimo titleScreenState visto (-1 = fuori dal titleState);
+                                          // -2 iniziale forza il primo ingresso a contare come "nuovo schermo"
 
-    private static final int   MENU_SLIDE_DURATION = 35;    // frame per lo slide-in di ogni voce
-    private static final int   MENU_STAGGER_DELAY  = 10;    // ritardo extra per indice (stagger)
+    private static final int   MENU_SLIDE_DURATION = 25;    // frame per lo slide-in di ogni voce
+    private static final int   MENU_STAGGER_DELAY  = 5;    // ritardo extra per indice (stagger)
     private static final int   MENU_SLIDE_OFFSET   = 220;   // px di partenza (da destra verso sinistra)
     private static final float HOVER_ANIM_SPEED    = 0.15f; // velocità di transizione hover/selezione (lerp/frame)
     private static final float HOVER_SCALE         = 1.15f; // scala testo quando in hover
@@ -139,12 +137,22 @@ public class UI {
         g2.setColor(Color.white);
         textAnimTick++;
 
-        // Rileva l'ingresso nel menu principale per far ripartire slide-in/stagger
-        boolean menuActiveNow = (gp.gameState == gp.titleState && titleScreenState == 0);
-        if (menuActiveNow && !menuActivePrev) { titleMenuEnterTick = textAnimTick; }
-        menuActivePrev = menuActiveNow;
+        if (gp.gameState == gp.titleState) updatePendingMainMenuCommand();
 
-        if (gp.gameState == gp.titleState)    { updatePendingMainMenuCommand(); drawTitleScreen(); }
+        // Rileva l'ingresso in un nuovo schermo del titolo (0/1/2) per far ripartire
+        // slide-in/stagger, e per evitare che hover/punch di uno schermo restino "sporchi"
+        // passando al successivo (es. Options -> Select class).
+        boolean inTitleMenu = (gp.gameState == gp.titleState);
+        int screenKey = inTitleMenu ? titleScreenState : -1;
+        if (inTitleMenu && screenKey != lastMenuScreen) {
+            titleMenuEnterTick = textAnimTick;
+            hoveredIndex = -1;
+            java.util.Arrays.fill(menuHoverProgress, 0f);
+            java.util.Arrays.fill(punchStartTick, -100000);
+        }
+        lastMenuScreen = screenKey;
+
+        if (gp.gameState == gp.titleState)    { drawTitleScreen(); }
         if (gp.gameState == gp.playState)     { drawPlayerLife(); drawNeutralMenu(); }
         if (gp.gameState == gp.pauseState)    { drawPauseScreen(); drawPlayerLife(); }
         if (gp.gameState == gp.dialogueState) { drawDialogueScreen(); }
@@ -184,130 +192,128 @@ public class UI {
             g2.setColor(new Color(0, 127, 255)); g2.drawString(text, x + 2, y + 2);
             g2.setColor(new Color(0, 255, 200)); g2.drawString(text, x, y);
 
-            g2.setFont(MaruMonica);
-            g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48));
-            FontMetrics fm = g2.getFontMetrics();
             String[] items = {"New Game", "Load Game", "Options", "Quit"};
             int baseY = (int) (y + gp.tileSize * 3.5);
+            int[] itemYs = { baseY, baseY + gp.tileSize, baseY + gp.tileSize * 2, baseY + gp.tileSize * 3 };
+            drawMenuItems(items, itemYs, 48f);
 
-            int elapsed = (titleMenuEnterTick < 0) ? 999999 : textAnimTick - titleMenuEnterTick;
-
-            //EFFETTI
-            for (int i = 0; i < items.length; i++) {
-                text = items[i];
-                int itemBaseX = getXforCenteredText(text);
-                int itemBaseY = baseY + i * gp.tileSize;
-
-                // 1) Sliding-in + 2) stagger per indice: ogni voce parte in ritardo in base al suo indice
-                int itemElapsed = elapsed - i * MENU_STAGGER_DELAY;
-                float slideT = easeOutCubic(clamp01(itemElapsed / (float) MENU_SLIDE_DURATION));
-                int slideOffsetX = (int) ((1 - slideT) * MENU_SLIDE_OFFSET);
-
-                // 3) Float continuo (leggero ondeggiamento verticale, sfasato per indice)
-                float floatPhase = (textAnimTick * 0.05f) + i * 1.3f;
-                int floatOffsetY = (int) (Math.sin(floatPhase) * 3 * slideT);
-
-                // Voce "attiva": il mouse ha la priorità se è sopra una voce, altrimenti conta
-                // la selezione da tastiera (commandNum) — così scale/offset/glow/dimming
-                // funzionano identici sia con mouse che con W/S.
-                int activeIndex = (hoveredIndex != -1) ? hoveredIndex : commandNum;
-                boolean isActive = (activeIndex == i);
-                menuHoverProgress[i] += ((isActive ? 1f : 0f) - menuHoverProgress[i]) * HOVER_ANIM_SPEED;
-                float hp = menuHoverProgress[i];
-
-                // 5) Offsetting della voce attiva
-                int hoverOffsetX = (int) (HOVER_OFFSET_X * hp);
-
-                // Punch: piccolo "pop" di scala quando la voce viene confermata (ENTER o click)
-                int punchElapsed = textAnimTick - punchStartTick[i];
-                float punchScale = 0f;
-                if (punchElapsed >= 0 && punchElapsed < PUNCH_DURATION) {
-                    float punchT = punchElapsed / (float) PUNCH_DURATION;
-                    punchScale = (float) Math.sin(punchT * Math.PI) * PUNCH_MAGNITUDE;
-                }
-
-                int drawX = itemBaseX + slideOffsetX + hoverOffsetX;
-                int drawY = itemBaseY + floatOffsetY;
-
-                // Bounding box per l'hit-test del mouse (posizione "a riposo", senza l'offset di hover,
-                // altrimenti il rettangolo si sposterebbe insieme al testo mentre è già in hover)
-                int boxW = fm.stringWidth(text) + 40;
-                int boxH = fm.getHeight();
-                menuItemBounds[i] = new Rectangle(itemBaseX + slideOffsetX - 20, itemBaseY - boxH + 6, boxW, boxH + 10);
-
-                // 6) Immagine che cresce sotto al testo in hover (~8x64, cresce in altezza da 0 al pieno)
-                if (menuHoverImage != null && hp > 0.01f) {
-                    int imgW  = menuHoverImage.getWidth();
-                    int fullH = menuHoverImage.getHeight();
-                    int curH  = Math.max(1, (int) (fullH * hp));
-                    int imgX  = drawX + fm.stringWidth(text) / 2 - imgW / 2;
-                    int imgY  = drawY + 10;
-                    g2.drawImage(menuHoverImage, imgX, imgY, imgW, curH, null);
-                }
-
-                // 7) Dimming delle voci non attive, solo quando ce n'è una attiva
-                float dimAlpha = 1f;
-                if (!isActive) {
-                    dimAlpha = 1f - (1f - DIM_ALPHA) * menuHoverProgress[activeIndex];
-                }
-                Composite origComposite = g2.getComposite();
-                if (dimAlpha < 1f) {
-                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, dimAlpha));
-                }
-
-                // 4) Scaling della voce attiva + punch al momento della conferma
-                Font baseFont = g2.getFont();
-                float scale = 1f + (HOVER_SCALE - 1f) * hp + punchScale;
-                if (scale != 1f) {
-                    g2.setFont(baseFont.deriveFont(baseFont.getSize2D() * scale));
-                }
-                FontMetrics scaledFm = g2.getFontMetrics();
-                int centeredDrawX = drawX + (fm.stringWidth(text) - scaledFm.stringWidth(text)) / 2;
-
-                g2.setColor(Color.white);
-                g2.drawString(text, centeredDrawX, drawY);
-                if (commandNum == i) g2.drawString(">", centeredDrawX - gp.tileSize, drawY);
-
-                g2.setFont(baseFont);
-                g2.setComposite(origComposite);
-            }
         } else if (titleScreenState == 1) {
             g2.setFont(MaruMonica.deriveFont(Font.PLAIN, 42F));
             g2.setColor(Color.white);
             String text = "Select your class";
-            int x = getXforCenteredText(text), y = gp.tileSize * 3;
-            g2.drawString(text, x, y);
-            String[] classes = {"Warrior", "Wizard", "Archer", "Back"};
-            for (int i = 0; i < classes.length; i++) {
-                text = classes[i];
-                x = getXforCenteredText(text);
-                y += (i == 3) ? gp.tileSize * 2 : gp.tileSize;
-                g2.drawString(text, x, y);
-                if (commandNum == i) g2.drawString(">", x - gp.tileSize, y);
-            }
+            int y0 = gp.tileSize * 3;
+            g2.drawString(text, getXforCenteredText(text), y0);
+
+            String[] items = {"Warrior", "Wizard", "Archer", "Back"};
+            int T = gp.tileSize;
+            int[] itemYs = { y0 + T, y0 + 2 * T, y0 + 3 * T, y0 + 5 * T };
+            drawMenuItems(items, itemYs, 42F);
+
         } else if (titleScreenState == 2) {
             g2.setFont(MaruMonica.deriveFont(Font.PLAIN, 42F));
             g2.setColor(Color.white);
             String text = "Select difficulty";
-            int x = getXforCenteredText(text), y = gp.tileSize * 3;
-            g2.drawString(text, x, y);
-            String[] diffs = {"Easy", "Normal", "Hard", "Back"};
-            for (int i = 0; i < diffs.length; i++) {
-                text = diffs[i];
-                x = getXforCenteredText(text);
-                y += (i == 3) ? gp.tileSize * 2 : gp.tileSize;
-                g2.drawString(text, x, y);
-                if (commandNum == i) g2.drawString(">", x - gp.tileSize, y);
-            }
+            int y0 = gp.tileSize * 3;
+            g2.drawString(text, getXforCenteredText(text), y0);
+
+            String[] items = {"Easy", "Normal", "Hard", "Back"};
+            int T = gp.tileSize;
+            int[] itemYs = { y0 + T, y0 + 2 * T, y0 + 3 * T, y0 + 5 * T };
+            drawMenuItems(items, itemYs, 42F);
         }
     }
 
-    // ═════════════════════════════════════════════
-    //  MENU PRINCIPALE: input mouse (chiamato da GamePanel)
-    // ═════════════════════════════════════════════
+    // Renderizza le 4 voci di un qualunque schermo del titolo (main menu, classe, difficoltà)
+    // con tutti gli effetti: slide-in + stagger, float, scale/offset/dimming/glow in hover
+    // (mouse o tastiera), punch alla conferma. Popola anche menuItemBounds per l'hit-test mouse.
+    private void drawMenuItems(String[] items, int[] itemBaseYs, float fontSize) {
+        g2.setFont(MaruMonica.deriveFont(Font.PLAIN, fontSize));
+        FontMetrics fm = g2.getFontMetrics();
+        int elapsed = (titleMenuEnterTick < 0) ? 999999 : textAnimTick - titleMenuEnterTick;
 
-    public void updateMouseHover(int x, int y) {        mouseX = x; mouseY = y;
-        if (gp.gameState != gp.titleState || titleScreenState != 0) { hoveredIndex = -1; return; }
+        for (int i = 0; i < items.length; i++) {
+            String text = items[i];
+            int itemBaseX = getXforCenteredText(text);
+            int itemBaseY = itemBaseYs[i];
+
+            // 1) Sliding-in + 2) stagger per indice: ogni voce parte in ritardo in base al suo indice
+            int itemElapsed = elapsed - i * MENU_STAGGER_DELAY;
+            float slideT = easeOutCubic(clamp01(itemElapsed / (float) MENU_SLIDE_DURATION));
+            int slideOffsetX = (int) ((1 - slideT) * MENU_SLIDE_OFFSET);
+
+            // 3) Float continuo (leggero ondeggiamento verticale, sfasato per indice)
+            float floatPhase = (textAnimTick * 0.05f) + i * 1.3f;
+            int floatOffsetY = (int) (Math.sin(floatPhase) * 3 * slideT);
+
+            // Voce "attiva": il mouse ha la priorità se è sopra una voce, altrimenti conta
+            // la selezione da tastiera (commandNum) — così scale/offset/glow/dimming
+            // funzionano identici sia con mouse che con W/S, su qualunque schermo.
+            int activeIndex = (hoveredIndex != -1) ? hoveredIndex : commandNum;
+            boolean isActive = (activeIndex == i);
+            menuHoverProgress[i] += ((isActive ? 1f : 0f) - menuHoverProgress[i]) * HOVER_ANIM_SPEED;
+            float hp = menuHoverProgress[i];
+
+            // 5) Offsetting della voce attiva
+            int hoverOffsetX = (int) (HOVER_OFFSET_X * hp);
+
+            // Punch: piccolo "pop" di scala quando la voce viene confermata (ENTER o click)
+            int punchElapsed = textAnimTick - punchStartTick[i];
+            float punchScale = 0f;
+            if (punchElapsed >= 0 && punchElapsed < PUNCH_DURATION) {
+                float punchT = punchElapsed / (float) PUNCH_DURATION;
+                punchScale = (float) Math.sin(punchT * Math.PI) * PUNCH_MAGNITUDE;
+            }
+
+            int drawX = itemBaseX + slideOffsetX + hoverOffsetX;
+            int drawY = itemBaseY + floatOffsetY;
+
+            // Bounding box per l'hit-test del mouse (posizione "a riposo", senza l'offset di hover,
+            // altrimenti il rettangolo si sposterebbe insieme al testo mentre è già in hover)
+            int boxW = fm.stringWidth(text) + 40;
+            int boxH = fm.getHeight();
+            menuItemBounds[i] = new Rectangle(itemBaseX + slideOffsetX - 20, itemBaseY - boxH + 6, boxW, boxH + 10);
+
+            // 6) Immagine che cresce sotto al testo in hover (~8x64, cresce in altezza da 0 al pieno)
+            if (menuHoverImage != null && hp > 0.01f) {
+                int imgW  = menuHoverImage.getWidth();
+                int fullH = menuHoverImage.getHeight();
+                int curH  = Math.max(1, (int) (fullH * hp));
+                int imgX  = drawX + fm.stringWidth(text) / 2 - imgW / 2;
+                int imgY  = drawY + 10;
+                g2.drawImage(menuHoverImage, imgX, imgY, imgW, curH, null);
+            }
+
+            // 7) Dimming delle voci non attive, solo quando ce n'è una attiva
+            float dimAlpha = 1f;
+            if (!isActive) {
+                dimAlpha = 1f - (1f - DIM_ALPHA) * menuHoverProgress[activeIndex];
+            }
+            Composite origComposite = g2.getComposite();
+            if (dimAlpha < 1f) {
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, dimAlpha));
+            }
+
+            // 4) Scaling della voce attiva + punch al momento della conferma
+            Font baseFont = g2.getFont();
+            float scale = 1f + (HOVER_SCALE - 1f) * hp + punchScale;
+            if (scale != 1f) {
+                g2.setFont(baseFont.deriveFont(baseFont.getSize2D() * scale));
+            }
+            FontMetrics scaledFm = g2.getFontMetrics();
+            int centeredDrawX = drawX + (fm.stringWidth(text) - scaledFm.stringWidth(text)) / 2;
+
+            g2.setColor(Color.white);
+            g2.drawString(text, centeredDrawX, drawY);
+            if (commandNum == i) g2.drawString(">", centeredDrawX - gp.tileSize, drawY);
+
+            g2.setFont(baseFont);
+            g2.setComposite(origComposite);
+        }
+    }
+
+    public void updateMouseHover(int x, int y) {
+        mouseX = x; mouseY = y;
+        if (gp.gameState != gp.titleState) { hoveredIndex = -1; return; }
         int idx = -1;
         for (int i = 0; i < menuItemBounds.length; i++) {
             if (menuItemBounds[i] != null && menuItemBounds[i].contains(x, y)) { idx = i; break; }
@@ -316,12 +322,12 @@ public class UI {
     }
 
     public void handleTitleClick(int x, int y) {
-        if (gp.gameState != gp.titleState || titleScreenState != 0) return;
+        if (gp.gameState != gp.titleState) return;
         if (pendingCommand != -1) return; // già in attesa che un comando venga eseguito
         for (int i = 0; i < menuItemBounds.length; i++) {
             if (menuItemBounds[i] != null && menuItemBounds[i].contains(x, y)) {
                 commandNum = i;
-                confirmMainMenu();
+                confirmTitleMenu();
                 return;
             }
         }
@@ -331,26 +337,57 @@ public class UI {
         return pendingCommand != -1;
     }
 
-    // Logica di conferma della voce selezionata nel menu principale (titleScreenState == 0).
-    // Richiamata sia da tastiera (KeyHandler, tasto ENTER) sia da mouse (click su una voce).
+    // Logica di conferma della voce selezionata nella schermata di titolo attiva
+    // (main menu, selezione classe o selezione difficoltà). Richiamata sia da tastiera
+    // (KeyHandler, tasto ENTER) sia da mouse (click su una voce).
     // Non esegue il comando subito: fa partire il punch e programma l'esecuzione vera
-    // e propria dopo MENU_CONFIRM_DELAY frame, così l'effetto si vede sempre.
-    public void confirmMainMenu() {
+    // e propria dopo MENU_CONFIRM_DELAY frame, così l'effetto si vede sempre, su ogni schermo.
+    public void confirmTitleMenu() {
         if (pendingCommand != -1) return; // ignora conferme ripetute mentre si è già in attesa
         punchStartTick[commandNum] = textAnimTick; // "pop" di conferma, identico per tastiera e mouse
         pendingCommand = commandNum;
+        pendingScreen  = titleScreenState;
         pendingExecuteTick = textAnimTick + MENU_CONFIRM_DELAY;
     }
 
-    // Esegue il comando in attesa una volta trascorso il ritardo. Chiamato ad ogni frame
-    // mentre siamo nel menu principale (vedi draw()).
+    // Esegue il comando in attesa una volta trascorso il ritardo, sullo schermo in cui era
+    // stato dato (main menu / classe / difficoltà). Chiamato ad ogni frame in titleState.
     private void updatePendingMainMenuCommand() {
         if (pendingCommand == -1 || textAnimTick < pendingExecuteTick) return;
-        int cmd = pendingCommand;
+        int cmd    = pendingCommand;
+        int screen = pendingScreen;
         pendingCommand = -1;
-        if (cmd == 0) { titleScreenState = 1; commandNum = 0; gp.stopMusic(); }
-        if (cmd == 1) { /* ADD LATER */ }
-        if (cmd == 3) { System.exit(0); }
+
+        if (screen == 0) {
+            if (cmd == 0) { titleScreenState = 1; commandNum = 0; gp.stopMusic(); }
+            if (cmd == 1) { /* ADD LATER */ }
+            if (cmd == 3) { System.exit(0); }
+
+        } else if (screen == 1) {
+            if (cmd == 0) {
+                gp.player.playerClass = "Warrior"; gp.player.getPlayerImage();
+                titleScreenState = 2; commandNum = 1;
+            } else if (cmd == 1) {
+                gp.player.playerClass = "Mage"; gp.player.getPlayerImage();
+                titleScreenState = 2; commandNum = 1;
+            } else if (cmd == 2) {
+                gp.player.playerClass = "Archer"; gp.player.getPlayerImage();
+                titleScreenState = 2; commandNum = 1;
+            } else if (cmd == 3) {
+                titleScreenState = 0; commandNum = 0;
+            }
+
+        } else if (screen == 2) {
+            if (cmd == 0) {
+                gp.difficulty = 1; gp.aSetter.setMonster(); gp.gameState = gp.playState; gp.playMusic(0);
+            } else if (cmd == 1) {
+                gp.difficulty = 2; gp.aSetter.setMonster(); gp.gameState = gp.playState; gp.playMusic(0);
+            } else if (cmd == 2) {
+                gp.difficulty = 3; gp.aSetter.setMonster(); gp.gameState = gp.playState; gp.playMusic(0);
+            } else if (cmd == 3) {
+                titleScreenState = 1; commandNum = 0;
+            }
+        }
     }
 
     // ═════════════════════════════════════════════

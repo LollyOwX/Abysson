@@ -1,22 +1,14 @@
 package main;
 import main.ElementSystem.*;
 
-/**
- * Descrive l'effetto di una reazione tra due elementi.
- *
- * bonusDamage      → danno immediato extra (0 se nessuno)
- * bonusDamageElement → elemento del danno bonus (per triggerare altre reazioni)
- * effect           → effetto di stato persistente applicato
- * effectDuration   → turni di durata (0 = solo questo turno, -1 = fino a fine combattimento)
- * damageMultiplier → moltiplicatore sul danno che ha triggerato la reazione (1.0 = nessuno)
- */
+
 public class Reaction {
     public final String name;
-    public final int bonusDamage;
-    public final Element bonusDamageElement;
-    public final StatusEffect effect;
-    public final int effectDuration;
-    public final double damageMultiplier;
+    public final int bonusDamage; //danno immediato extra (0 se nessuno)
+    public final Element bonusDamageElement; //elemento del danno bonus (per triggerare altre reazioni)
+    public final StatusEffect effect; //effetto di stato persistente applicato
+    public final int effectDuration; //turni di durata (0 = solo questo turno, -1 = fino a fine combattimento)
+    public final double damageMultiplier; //moltiplicatore sul danno che ha triggerato la reazione (1.0 = nessuno)
 
     public Reaction(String name, int bonusDamage, Element bonusDamageElement,
                     StatusEffect effect, int effectDuration, double damageMultiplier) {

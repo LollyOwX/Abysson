@@ -346,6 +346,10 @@ public class CombatState {
         java.awt.image.BufferedImage img = (monster.downIdle1 != null && monster.downIdle2 != null)
                 ? (monsterSpriteNum == 1 ? monster.downIdle1 : monster.downIdle2) : monster.down1;
 
+        if (monster.palette != null) {
+            img = PaletteSwap.getOrCreate("e" + monster.hashCode(), img, monster.palette);
+        }
+
         // No blink during combat — alpha is always 1
         if (img != null) {
             g2.drawImage(img, monsterX, monsterY, monsterSize, monsterSize, null);

@@ -15,46 +15,20 @@ public class KeyHandler implements KeyListener {
 
         // ── TITLE STATE ──────────────────────────────────────────
         if (gp.gameState == gp.titleState) {
-            if (gp.ui.titleScreenState == 0) {
-                if (!gp.ui.isMenuConfirmPending()) {
+            if (!gp.ui.isMenuConfirmPending()) {
+                if (gp.ui.titleScreenState == 0) {
+                    // Il main menu blocca la selezione ai bordi (niente wrap)
                     if (code == KeyEvent.VK_W) { gp.ui.commandNum--; if (gp.ui.commandNum <= -1) gp.ui.commandNum = 0; }
                     if (code == KeyEvent.VK_S) { gp.ui.commandNum++; if (gp.ui.commandNum >= 4)  gp.ui.commandNum = 3; }
+                } else {
+                    // Classe/difficoltà: risalendo da 0 si va in wrap a 3 (comportamento originale)
+                    if (code == KeyEvent.VK_W) { gp.ui.commandNum--; if (gp.ui.commandNum <= -1) gp.ui.commandNum = 3; }
+                    if (code == KeyEvent.VK_S) { gp.ui.commandNum++; if (gp.ui.commandNum >= 4)  gp.ui.commandNum = 3; }
                 }
-                if (code == KeyEvent.VK_ENTER) {
-                    // Stessa logica di conferma usata anche dal click del mouse sul menu principale
-                    gp.ui.confirmMainMenu();
-                }
-            } else if (gp.ui.titleScreenState == 1) {
-                if (code == KeyEvent.VK_W) { gp.ui.commandNum--; if (gp.ui.commandNum <= -1) gp.ui.commandNum = 3; }
-                if (code == KeyEvent.VK_S) { gp.ui.commandNum++; if (gp.ui.commandNum >= 4)  gp.ui.commandNum = 3; }
-                if (code == KeyEvent.VK_ENTER) {
-                    if (gp.ui.commandNum == 0) {
-                        gp.player.playerClass = "Warrior"; gp.player.getPlayerImage();
-                        gp.ui.titleScreenState = 2; gp.ui.commandNum = 1;
-                    } else if (gp.ui.commandNum == 1) {
-                        gp.player.playerClass = "Mage"; gp.player.getPlayerImage();
-                        gp.ui.titleScreenState = 2; gp.ui.commandNum = 1;
-                    } else if (gp.ui.commandNum == 2) {
-                        gp.player.playerClass = "Archer"; gp.player.getPlayerImage();
-                        gp.ui.titleScreenState = 2; gp.ui.commandNum = 1;
-                    } else if (gp.ui.commandNum == 3) {
-                        gp.ui.titleScreenState = 0; gp.ui.commandNum = 0;
-                    }
-                }
-            } else if (gp.ui.titleScreenState == 2) {
-                if (code == KeyEvent.VK_W) { gp.ui.commandNum--; if (gp.ui.commandNum <= -1) gp.ui.commandNum = 3; }
-                if (code == KeyEvent.VK_S) { gp.ui.commandNum++; if (gp.ui.commandNum >= 4)  gp.ui.commandNum = 3; }
-                if (code == KeyEvent.VK_ENTER) {
-                    if (gp.ui.commandNum == 0) {
-                        gp.difficulty = 1; gp.aSetter.setMonster(); gp.gameState = gp.playState; gp.playMusic(0);
-                    } else if (gp.ui.commandNum == 1) {
-                        gp.difficulty = 2; gp.aSetter.setMonster(); gp.gameState = gp.playState; gp.playMusic(0);
-                    } else if (gp.ui.commandNum == 2) {
-                        gp.difficulty = 3; gp.aSetter.setMonster(); gp.gameState = gp.playState; gp.playMusic(0);
-                    } else if (gp.ui.commandNum == 3) {
-                        gp.ui.titleScreenState = 1; gp.ui.commandNum = 0;
-                    }
-                }
+            }
+            if (code == KeyEvent.VK_ENTER) {
+                // Stessa logica di conferma usata anche dal click del mouse, su tutti e 3 gli schermi
+                gp.ui.confirmTitleMenu();
             }
         }
 

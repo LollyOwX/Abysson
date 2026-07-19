@@ -118,6 +118,8 @@ public class Entity {
 
         changeAlpha(g2, alpha);
 
+        if (palette != null) image = PaletteSwap.getOrCreate("e" + hashCode(), image, palette);
+
         g2.drawImage(
                 image,
                 screenX,
@@ -344,7 +346,7 @@ public class Entity {
 
         String dir = direction != null
                 ? direction
-                : (idleDirection != null ? idleDirection : "idle_down");
+                : (idleDirection != null ? idleDirection : "down");
 
         switch (dir) {
 
