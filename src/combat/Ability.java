@@ -1,5 +1,5 @@
-package main;
-import main.ElementSystem.*;
+package combat;
+import combat.ElementSystem.*;
 import entity.Entity;
 
 /**

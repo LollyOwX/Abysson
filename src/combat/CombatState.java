@@ -1,6 +1,10 @@
-package main;
+package combat;
 
 import entity.Entity;
+import main.GamePanel;
+import main.PaletteSwap;
+import main.UI;
+
 import java.awt.*;
 import java.util.List;
 import java.util.Random;

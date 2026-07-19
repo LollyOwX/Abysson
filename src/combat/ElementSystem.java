@@ -1,8 +1,7 @@
-package main;
+package combat;
 
 import entity.Entity;
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Random;
 
 /**

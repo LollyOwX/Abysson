@@ -1,5 +1,6 @@
 package main;
 
+import combat.CombatState;
 import entity.Entity;
 import object.OBJ_Left_Health;
 import object.OBJ_Middle_Health;

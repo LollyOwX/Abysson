@@ -3,6 +3,8 @@ package entity;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+
+import combat.ElementSystem;
 import main.*;
 import java.io.IOException;
 import java.io.InputStream;
