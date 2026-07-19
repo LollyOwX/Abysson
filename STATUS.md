@@ -72,5 +72,5 @@ In `UI.java`:
 - [ ] Verificare che tutti gli altri oggetti statici (Chest, Boots) siano effettivamente istanziati in `AssetSetter` — solo Key e Door sono attivi al momento, ma non funzionanti.
 - [ ] Aggiungere tutti gli effetti delle reazioni
 ---
-
+ 
 *Fine status — prossimo aggiornamento quando accumuliamo un altro blocco di modifiche.*
