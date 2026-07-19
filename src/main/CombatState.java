@@ -44,7 +44,7 @@ public class CombatState {
     }
 
     // ─────────────────────────────────────────────
-    //  AVVIO / FINE
+    //  START / END
     // ─────────────────────────────────────────────
 
     public void startCombat(Entity monster, int monsterIndex) {
@@ -54,7 +54,7 @@ public class CombatState {
         this.turnPhase         = PLAYER_TURN;
         this.inAbilityMenu     = false;
         this.abilityCommandNum = 0;
-        this.combatMessage     = "Un " + monster.name + " selvatico si avvicina!";
+        this.combatMessage     = "A wild " + monster.name + " approaches!";
         this.messageTimer      = 90;
         this.monsterSpriteCounter = 0;
         this.monsterSpriteNum  = 1;
@@ -63,7 +63,7 @@ public class CombatState {
 
     void endCombat() {
         ElementSystem.removeAllEffects(gp.player);
-        // NON rimuovere il mostro qui — lo rimuove GamePanel quando dying finisce
+        // Do NOT remove the monster here — GamePanel removes it once the dying animation finishes
 
         gp.gameState   = gp.playState;
         monster        = null;
@@ -153,7 +153,7 @@ public class CombatState {
                 break;
             case CMD_ABILITY:
                 if (gp.player.unlockedAbilities.isEmpty()) {
-                    combatMessage = "Nessuna abilità disponibile.";
+                    combatMessage = "No abilities available.";
                     messageTimer  = 60;
                 } else {
                     inAbilityMenu = true;
@@ -161,11 +161,11 @@ public class CombatState {
                 }
                 break;
             case CMD_INVENTORY:
-                combatMessage = "Inventario vuoto.";
+                combatMessage = "Inventory is empty.";
                 messageTimer  = 60;
                 break;
             case CMD_MINIMAP:
-                combatMessage = "(Minimappa - da implementare)";
+                combatMessage = "(Minimap - not yet implemented)";
                 messageTimer  = 60;
                 break;
             case CMD_FLEE:
@@ -175,7 +175,7 @@ public class CombatState {
     }
 
     // ─────────────────────────────────────────────
-    //  TURNO PLAYER
+    //  PLAYER TURN
     // ─────────────────────────────────────────────
 
     void playerUseAbility(String abilityId) {
@@ -198,14 +198,14 @@ public class CombatState {
         monster.life       -= tickDmg;
 
         StringBuilder msg = new StringBuilder();
-        msg.append("Usi ").append(Ability.getName(abilityId));
-        if (elemMult > 1.0) msg.append(" [VANTAGGIO]");
-        else if (elemMult < 1.0) msg.append(" [SVANTAGGIO]");
-        msg.append(" → ").append(totalDmg).append(" danni");
+        msg.append("You use ").append(Ability.getName(abilityId));
+        if (elemMult > 1.0) msg.append(" [ADVANTAGE]");
+        else if (elemMult < 1.0) msg.append(" [DISADVANTAGE]");
+        msg.append(" → ").append(totalDmg).append(" damage");
         if (raggioDmg  > 0) msg.append(" + ").append(raggioDmg).append(" (Raggio)");
         if (reactionDmg > 0) msg.append(" + ").append(reactionDmg).append(" (").append(reaction.name).append(")");
-        if (tickDmg    > 0) msg.append(" + ").append(tickDmg).append(" (effetti)");
-        msg.append("  [HP mostro: ").append(Math.max(0, monster.life)).append("/").append(monster.maxLife).append("]");
+        if (tickDmg    > 0) msg.append(" + ").append(tickDmg).append(" (effects)");
+        msg.append("  [Monster HP: ").append(Math.max(0, monster.life)).append("/").append(monster.maxLife).append("]");
         if (reaction != Reaction.NONE) msg.append("  ⚡ ").append(reaction.name).append("!");
         combatMessage = msg.toString();
         messageTimer  = 90;
@@ -215,7 +215,7 @@ public class CombatState {
         } else {
             if (!scossaExtraAttack && ElementSystem.hasEffect(monster, ElementSystem.StatusEffect.SCOSSA)) {
                 scossaExtraAttack = true;
-                combatMessage += "  [SCOSSA: puoi attaccare ancora!]";
+                combatMessage += "  [SCOSSA: you can attack again!]";
             } else {
                 scossaExtraAttack = false;
                 turnPhase = MONSTER_TURN;
@@ -224,13 +224,13 @@ public class CombatState {
     }
 
     void tryFlee() {
-        combatMessage = "Sei fuggito!";
+        combatMessage = "You fled!";
         messageTimer  = 60;
         turnPhase     = COMBAT_OVER;
     }
 
     // ─────────────────────────────────────────────
-    //  TURNO MOSTRO
+    //  MONSTER TURN
     // ─────────────────────────────────────────────
 
     void monsterTurn() {
@@ -250,11 +250,11 @@ public class CombatState {
         if (!hit && ElementSystem.hasEffect(monster, ElementSystem.StatusEffect.FOLGORE)) {
             int folgoreDmg = ElementSystem.rollD8(2);
             monster.life  -= folgoreDmg;
-            combatMessage  = monster.name + " manca e subisce " + folgoreDmg + " danni da Folgore!";
+            combatMessage  = monster.name + " misses and takes " + folgoreDmg + " Folgore damage!";
         } else if (!hit && ElementSystem.hasEffect(monster, ElementSystem.StatusEffect.INFIAMMAZIONE)) {
             int infDmg    = ElementSystem.rollD6(1);
             monster.life -= infDmg;
-            combatMessage = monster.name + " manca e subisce " + infDmg + " danni da Infiammazione!";
+            combatMessage = monster.name + " misses and takes " + infDmg + " Infiammazione damage!";
         } else {
             gp.player.life -= hit ? (totalDmg + raggioDmg) : 0;
             Reaction reaction   = ElementSystem.getReaction(gp.player.lastElementHit, abilityElement, gp.player.level);
@@ -264,17 +264,17 @@ public class CombatState {
             gp.player.life     -= tickDmg;
 
             StringBuilder msg = new StringBuilder();
-            msg.append(monster.name).append(" usa ").append(Ability.getName(chosenId));
-            if (!hit) { msg.append(" → MANCATO!"); }
+            msg.append(monster.name).append(" uses ").append(Ability.getName(chosenId));
+            if (!hit) { msg.append(" → MISSED!"); }
             else {
-                if (elemMult > 1.0) msg.append(" [VANTAGGIO]");
-                else if (elemMult < 1.0) msg.append(" [SVANTAGGIO]");
-                msg.append(" → ").append(totalDmg).append(" danni");
+                if (elemMult > 1.0) msg.append(" [ADVANTAGE]");
+                else if (elemMult < 1.0) msg.append(" [DISADVANTAGE]");
+                msg.append(" → ").append(totalDmg).append(" damage");
                 if (raggioDmg  > 0) msg.append(" + ").append(raggioDmg).append(" (Raggio)");
                 if (reactionDmg > 0) msg.append(" + ").append(reactionDmg).append(" (").append(reaction.name).append(")");
-                if (tickDmg    > 0) msg.append(" + ").append(tickDmg).append(" (effetti)");
+                if (tickDmg    > 0) msg.append(" + ").append(tickDmg).append(" (effects)");
             }
-            msg.append("  [Tuoi HP: ").append(Math.max(0, gp.player.life)).append("/").append(gp.player.maxLife).append("]");
+            msg.append("  [Your HP: ").append(Math.max(0, gp.player.life)).append("/").append(gp.player.maxLife).append("]");
             if (reaction != Reaction.NONE) msg.append("  ⚡ ").append(reaction.name).append("!");
             combatMessage = msg.toString();
         }
@@ -287,7 +287,7 @@ public class CombatState {
     }
 
     // ─────────────────────────────────────────────
-    //  VITTORIA / SCONFITTA
+    //  VICTORY / DEFEAT
     // ─────────────────────────────────────────────
 
     void checkVictory() {
@@ -300,7 +300,7 @@ public class CombatState {
     }
 
     void onVictory() {
-        // stub — in futuro: exp, drop, animazioni
+        // stub — future: exp, drops, animations
         combatMessage = "You defeated " + monster.name + "!";
         messageTimer  = 90;
     }
@@ -311,8 +311,8 @@ public class CombatState {
     }
 
     void onDefeat() {
-        // stub — in futuro: game over screen, penalità
-        combatMessage = "Sei stato sconfitto...";
+        // stub — future: game over screen, penalties
+        combatMessage = "You have been defeated...";
         messageTimer  = 90;
     }
 
@@ -346,7 +346,7 @@ public class CombatState {
         java.awt.image.BufferedImage img = (monster.downIdle1 != null && monster.downIdle2 != null)
                 ? (monsterSpriteNum == 1 ? monster.downIdle1 : monster.downIdle2) : monster.down1;
 
-        // In combattimento niente blink — alpha sempre 1
+        // No blink during combat — alpha is always 1
         if (img != null) {
             g2.drawImage(img, monsterX, monsterY, monsterSize, monsterSize, null);
         }
@@ -354,7 +354,7 @@ public class CombatState {
         g2.setFont(ui.MaruMonica.deriveFont(Font.PLAIN, 22f));
         g2.setColor(Color.white);
         String info = monster.name + "  HP: " + Math.max(0, monster.life) + "/" + monster.maxLife
-                    + "  Lv." + monster.level;
+                + "  Lv." + monster.level;
         if (!monster.activeEffects.isEmpty()) {
             StringBuilder fx = new StringBuilder(" [");
             for (ElementSystem.ActiveEffect ae : monster.activeEffects)
@@ -369,7 +369,7 @@ public class CombatState {
         g2.setFont(ui.MaruMonica.deriveFont(Font.PLAIN, 22f));
         g2.setColor(Color.white);
         String info = "Player  HP: " + gp.player.life + "/" + gp.player.maxLife
-                    + "  ATK: " + gp.player.attack + "  DEF: " + gp.player.defense;
+                + "  ATK: " + gp.player.attack + "  DEF: " + gp.player.defense;
         if (!gp.player.activeEffects.isEmpty()) {
             StringBuilder fx = new StringBuilder(" [");
             for (ElementSystem.ActiveEffect ae : gp.player.activeEffects)
@@ -398,7 +398,7 @@ public class CombatState {
         int x = gp.tileSize / 2, y = gp.screenHeight - gp.tileSize * 4;
         int w = gp.screenWidth - gp.tileSize, h = gp.tileSize * 4 - gp.tileSize / 2;
         ui.drawSubWindwow(x, y, w, h);
-        String[] commands = {"Attacca", "Abilità", "Inventario", "Minimappa", "Fuggi"};
+        String[] commands = {"Attack", "Ability", "Inventory", "Minimap", "Flee"};
         g2.setFont(ui.MaruMonica.deriveFont(Font.PLAIN, 20f));
         g2.setColor(Color.white);
         int textX = x + gp.tileSize, textY = y + 36;
@@ -417,7 +417,7 @@ public class CombatState {
         ui.drawSubWindwow(x, y, w, h);
         g2.setFont(ui.MaruMonica.deriveFont(Font.PLAIN, 20f));
         g2.setColor(new Color(180, 180, 255));
-        g2.drawString("Scegli abilità  [ESC = indietro]", x + gp.tileSize, y + 28);
+        g2.drawString("Choose an ability  [ESC = back]", x + gp.tileSize, y + 28);
         g2.setColor(Color.white);
         int textX = x + gp.tileSize, textY = y + 60;
         int lineH = abilities.isEmpty() ? 0 : (h - 60) / Math.max(abilities.size(), 1);
