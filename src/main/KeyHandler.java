@@ -57,7 +57,7 @@ public class KeyHandler implements KeyListener {
                 gp.ui.commandNum = 0;
             }
             if (code == KeyEvent.VK_I) {
-                gp.playCinematic( "/aseprite_temp/Open_book.gif", false);
+                gp.playCinematic( "/cinematics/Open_book.gif", false);
 
             }
         } else if (gp.gameState == gp.pauseState) {
