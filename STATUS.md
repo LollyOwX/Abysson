@@ -76,6 +76,40 @@ In `UI.java`:
 ### Spostare classi in un nuovo package (come `combat/`)
 Se è **solo** uno spostamento (nessuna modifica di logica): usa IntelliJ **Refactor → Move Class...** sulle classi interessate — aggiorna da solo tutti gli import nel progetto. Non serve chiedere file interi per questo, basta chiedere conferma che non ci siano effetti collaterali (vedi §0).
 
+### Aggiungere un nuovo stile di testo
+Nuovo colore (es. <purple>)
+Solo una riga in applyTagStyle() in UI.java:
+javacase "purple": g2.setColor(new Color(180, 80, 255)); break;
+Poi usi <purple>testo</purple> nei dialoghi.
+
+Nuova animazione (es. <flash> — testo che lampeggia)
+Un nuovo case in drawSegmentWord(), dentro il blocco switch (tag):
+javacase "flash":
+// visibile e invisibile ogni 15 frame
+if ((textAnimTick / 15) % 2 == 0) {
+g2.setColor(orig);
+} else {
+g2.setColor(new Color(0, 0, 0, 0)); // trasparente
+}
+break;
+E poi aggiungi "flash" alla condizione dell'if che decide se processare carattere per carattere:
+javaif (tag.equals("shake") || tag.equals("wave") || tag.equals("rainbow") || tag.equals("flash")) {
+
+Regola generale
+
+Colore statico → solo applyTagStyle()
+Animazione o effetto per carattere → drawSegmentWord() + aggiungi il tag nell'if
+Non serve toccare il parser — riconosce automaticamente qualsiasi tag scritto nel formato <nome>testo</nome>
+
+### Calendar System
+1. Critico (blocca progressione, esposizione di lore/zone essenziali per capire il gioco)
+   → Mai davvero perdibile. O non è gated dal calendario affatto, o — se narrativamente ha senso che sia legato a un momento — ha un fallback diegetico: se il giocatore non si presenta nella finestra, un NPC lo raggiunge dopo, o l'evento si "riprogramma" al ciclo successivo con una spiegazione in-fiction (es. "il rituale è stato rimandato per il maltempo"). Il giocatore non deve mai sapere che ha "fallito una finestra" — il gioco si adatta silenziosamente.
+2. Maggiore (quest sostanziose con lore/estetica/aree importanti ma non bloccanti)
+   → Finestre generose e contenuto ciclico dove possibile. Se è legato a una stagione, fallo accadere ogni volta che quella stagione ricorre (con variazioni minori per non farlo sembrare uguale), non una tantum. Questo trasforma "l'ho perso per sempre" in "lo rivedrò tra una stagione" — elimina l'ansia per costruzione, non per avviso.
+3. Flavor (colore, atmosfera, easter egg, ricompensa per l'esplorazione attenta)
+   → Genuinamente perdibile, senza compromessi. Qui la perdibilità è la caratteristica, non il bug — è quello che rende il mondo vivo e premia chi esplora con attenzione. Nessun rimpianto strutturale perché non è mai stato presentato come "importante".
+   Per il "non rompere la quarta parete": sostituisci ogni avviso UI con segnali diegetici in-mondo — un cantastorie/banditore in piazza che annuncia eventi imminenti, un tabellone degli annunci nel villaggio, dialoghi NPC che cambiano progressivamente man mano che una finestra si avvicina ("si dice che la festa sia vicina..." → "è domani!"), o un diario/taccuino del personaggio che si aggiorna da solo con le voci/rumor che il giocatore ha sentito in giro. Chi esplora e parla con la gente ottiene il promemoria nel mondo; chi non lo fa, semplicemente non lo sa — che è esattamente la meccanica che vuoi (l'esplorazione viene premiata, non è un tutorial forzato).
+
 ---
 
 ## 5. TODO aperti
@@ -84,7 +118,7 @@ Se è **solo** uno spostamento (nessuna modifica di logica): usa IntelliJ **Refa
 - [ ] `commandNum == 1` ("Load Game") nel main menu è ancora uno stub (`/* ADD LATER */`) — nessun salvataggio implementato.
 - [ ] `Options` (main menu) è uno stub — nessuna schermata opzioni.
 - [ ] `Inventory` e `Minimap` in combattimento sono placeholder (mostrano solo un messaggio).
-- [x] ~~Il glow PNG per l'hover del menu va creato/importato~~ — fatto, ma cresceva in altezza invece che larghezza: sistemato il 19/07.
+- [x] ~~Il glow PNG per l'hover del menu va creato/importato~~ — fatto, potrebbe non funzionare
 - [ ] Verificare che tutti gli altri oggetti statici (Chest, Boots) siano effettivamente istanziati in `AssetSetter` — solo Key e Door sono attivi al momento, **ma segnalati come non funzionanti**: da investigare a fondo (il fix della direzione di default dovrebbe averli sbloccati, ma va confermato in gioco).
 - [ ] Aggiungere tutti gli effetti delle reazioni.
 

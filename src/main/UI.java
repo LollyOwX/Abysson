@@ -65,7 +65,7 @@ public class UI {
     // così il punch (e in generale il feedback visivo) fa in tempo a vedersi anche
     // per voci come "New Game" o "Quit" che altrimenti cambierebbero schermata/uscirebbero
     // dal programma nello stesso istante del click.
-    private static final int MENU_CONFIRM_DELAY = 60; // ~1s a 60 FPS
+    private static final int MENU_CONFIRM_DELAY = 30; // ~1s a 60 FPS
     private int pendingCommand = -1;     // voce confermata in attesa di esecuzione, -1 = nessuna
     private int pendingExecuteTick = -1; // tick in cui va eseguito il comando in attesa
     private int pendingScreen = -1;      // titleScreenState in cui è stato dato il comando in attesa
