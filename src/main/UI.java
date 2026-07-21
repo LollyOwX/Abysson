@@ -132,10 +132,6 @@ public class UI {
 
     public void showMessage(String text) { message = text; messageOn = true; }
 
-    // ═════════════════════════════════════════════
-    //  DRAW PRINCIPALE
-    // ═════════════════════════════════════════════
-
     public void draw(Graphics2D g2) {
         this.g2 = g2;
         g2.setFont(MaruMonica);
@@ -163,10 +159,6 @@ public class UI {
         if (gp.gameState == gp.dialogueState) { drawDialogueScreen(); }
         if (gp.gameState == gp.combatState)   { combat.draw(g2); }
     }
-
-    // ═════════════════════════════════════════════
-    //  HUD VITA
-    // ═════════════════════════════════════════════
 
     public void drawPlayerLife() {
         int x = gp.tileSize / 2;

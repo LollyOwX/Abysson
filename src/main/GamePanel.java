@@ -1,6 +1,6 @@
 package main;	
 
-import javax.swing.JPanel;
+import javax.swing.*;
 import entity.Player;
 import tile.TileManager;
 import java.awt.*;
@@ -158,8 +158,12 @@ public class GamePanel extends JPanel implements Runnable {
 			}
 		}
 		if(gameState == pauseState) {
-		} if(gameState == combatState) {
+		}
+		if(gameState == combatState) {
 			ui.combat.update();
+		}
+		if(gameState == cinematicState) {
+
 		}
 	}
 	public void paintComponent(Graphics g) {
@@ -207,6 +211,9 @@ public class GamePanel extends JPanel implements Runnable {
             ui.draw(g2);
         }
 		g2.dispose();
+	}
+	public void playCinematic(String path) {
+
 	}
 	public void playMusic(int i) {
 		music.setFile(i);

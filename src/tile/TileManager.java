@@ -140,10 +140,8 @@ public class TileManager {
                 worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
                 worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
                 worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
-
                 Tile t = tile[tileNum];
                 BufferedImage img;
-
                 if (t.animated && t.frames != null && t.frameCount > 0) {
                     // Sceglie il frame corrente in base al tick globale
                     int frameIndex = (animationTick / t.frameSpeed) % t.frameCount;
@@ -151,10 +149,8 @@ public class TileManager {
                 } else {
                     img = t.image;
                 }
-
                 g2.drawImage(img, (int) screenX, (int) screenY, null);
             }
-
             worldCol++;
             if (worldCol == gp.maxWorldCol) { worldCol = 0; worldRow++; }
         }
