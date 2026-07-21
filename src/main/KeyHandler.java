@@ -56,6 +56,10 @@ public class KeyHandler implements KeyListener {
                 gp.ui.titleScreenState = 0;
                 gp.ui.commandNum = 0;
             }
+            if (code == KeyEvent.VK_I) {
+                gp.playCinematic( "/aseprite_temp/Open_book.gif", false);
+
+            }
         } else if (gp.gameState == gp.pauseState) {
             if (code == KeyEvent.VK_P) gp.gameState = gp.playState;
 
@@ -67,6 +71,9 @@ public class KeyHandler implements KeyListener {
             if (code == KeyEvent.VK_S)      gp.ui.combat.navigateDown();
             if (code == KeyEvent.VK_ENTER)  gp.ui.combat.confirmCommand();
             if (code == KeyEvent.VK_ESCAPE) gp.ui.combat.pressEsc();
+
+        } else if (gp.gameState == gp.cinematicState) {
+            if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_ESCAPE) gp.skipCinematic();
         }
     }
 
