@@ -274,7 +274,7 @@ public class GamePanel extends JPanel implements Runnable {
 	// il bookmark a cui passare non appena l'animazione finisce (vedi update()).
 	public void turnBookPage(int direction) {
 		if(pageTurnActive) return; // non sovrapporre due turn insieme
-		String path = direction < 0 ? "/cinematics/page_turn_left.gif" : "/cinematics/page_turn_right.gif";
+		String path = direction < 0 ? "/cinematics/Turning_pages_left.gif" : "/cinematics/Turning_pages_right.gif";
 		pageTurnPlayer.load(path, false);
 		pageTurnActive = true;
 		pendingBookmark = Math.floorMod(currentBookmark + direction, BOOKMARK_COUNT);
