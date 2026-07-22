@@ -67,9 +67,9 @@ public class GamePanel extends JPanel implements Runnable {
 	java.awt.image.BufferedImage bookImage;
 	GifPlayer pageTurnPlayer = new GifPlayer();
 	boolean pageTurnActive = false;
-	int currentBookmark = 0;   // 0 = Inventario, 1 = Quest, 2 = Calendario (contenuto non ancora implementato)
-	int pendingBookmark = -1;
-	static final int BOOKMARK_COUNT = 3;
+	int pageIndex = 0;   // 0 = Quest, 1 = Inventario, 2 = Statistiche (contenuto non ancora implementato)
+	int pendingPageIndex = -1;
+	static final int PAGE_COUNT = 3;
 
 
 	public GamePanel() {
@@ -199,62 +199,73 @@ public class GamePanel extends JPanel implements Runnable {
 			pageTurnPlayer.update();
 			if(pageTurnPlayer.isFinished()) {
 				pageTurnActive = false;
-				currentBookmark = pendingBookmark;
-				pendingBookmark = -1;
+				pageIndex = pendingPageIndex;
+				pendingPageIndex = -1;
 			}
 		}
 	}
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D)g;
-		if(gameState == titleState) {
+
+		// Lo sfondo da disegnare "sotto" è lo stato a cui la cinematic tornerà (non cinematicState
+		// stesso, che non è un vero schermo) — così i pixel trasparenti del GIF rivelano il mondo
+		// di gioco (o il titolo, o il libro) invece di mostrare solo il nero di base del pannello.
+		int backdropState = (gameState == cinematicState) ? cinematicReturnState : gameState;
+
+		if(backdropState == titleState) {
 			ui.draw(g2);
 		}
-		else if(gameState == cinematicState) {
-			drawCinematic(g2);
-		}
-		else if(gameState == bookState) {
+		else if(backdropState == bookState) {
 			drawBook(g2);
 		}
 		else {
-			tileM.draw(g2);
-			player.draw(g2);
-			//add entites to list
-			entityList.add(player);
-			for(int i = 0; i < npc.length; i++) {
-				if(npc[i] != null) {
-					entityList.add(npc[i]);
-				}
-			}
-			for(int i = 0; i < obj.length; i++) {
-				if(obj[i] != null) {
-					entityList.add(obj[i]);
-				}
-			}
-			for(int i = 0; i < monster.length; i++) {
-				if(monster[i] != null) {
-					entityList.add(monster[i]);
-				}
-			}
-
-			//sort
-			Collections.sort(entityList, new Comparator<Entity>() {
-				public int compare(Entity e1, Entity e2) {
-					int result = Integer.compare((int)e1.worldY, (int)e2.worldY);
-					return result;
-				}
-
-			});
-			//draw
-			for(int i = 0; i < entityList.size(); i++) {
-				entityList.get(i).draw(g2);
-			}
-			//reset list
-			entityList.clear();
-
-			ui.draw(g2);
+			drawWorld(g2);
 		}
+
+		if(gameState == cinematicState) {
+			drawCinematic(g2);
+		}
+
 		g2.dispose();
+	}
+	private void drawWorld(Graphics2D g2) {
+		tileM.draw(g2);
+		player.draw(g2);
+		//add entites to list
+		entityList.add(player);
+		for(int i = 0; i < npc.length; i++) {
+			if(npc[i] != null) {
+				entityList.add(npc[i]);
+			}
+		}
+		for(int i = 0; i < obj.length; i++) {
+			if(obj[i] != null) {
+				entityList.add(obj[i]);
+			}
+		}
+		for(int i = 0; i < monster.length; i++) {
+			if(monster[i] != null) {
+				entityList.add(monster[i]);
+			}
+		}
+
+		//sort
+		Collections.sort(entityList, new Comparator<Entity>() {
+			public int compare(Entity e1, Entity e2) {
+				int result = Integer.compare((int)e1.worldY, (int)e2.worldY);
+				return result;
+			}
+
+		});
+		//draw
+		for(int i = 0; i < entityList.size(); i++) {
+			entityList.get(i).draw(g2);
+		}
+		//reset list
+		entityList.clear();
+
+		ui.draw(g2);
 	}
 	public void playCinematic(String path) {
 		playCinematic(path, false, gameState);
@@ -270,14 +281,18 @@ public class GamePanel extends JPanel implements Runnable {
 	public void skipCinematic() {
 		if(gameState == cinematicState) gameState = cinematicReturnState;
 	}
-	// Avvia l'animazione di cambio pagina (direction: -1 = sinistra, +1 = destra) e prepara
-	// il bookmark a cui passare non appena l'animazione finisce (vedi update()).
+	// Avvia l'animazione di cambio pagina (direction: -1 = sinistra, +1 = destra) e calcola
+	// il pageIndex a cui passare non appena l'animazione finisce (vedi update()).
+	// Ai bordi (prima/ultima pagina) non fa nulla — niente animazione, niente cambio, come
+	// un libro vero: non si gira oltre l'ultima pagina.
 	public void turnBookPage(int direction) {
 		if(pageTurnActive) return; // non sovrapporre due turn insieme
-		String path = direction < 0 ? "/cinematics/Turning_pages_left.gif" : "/cinematics/Turning_pages_right.gif";
+		int newIndex = pageIndex + direction;
+		if(newIndex < 0 || newIndex >= PAGE_COUNT) return;
+		String path = direction < 0 ? "/cinematics/Turning_pages_right.gif" : "/cinematics/Turning_pages_left.gif";
 		pageTurnPlayer.load(path, false);
 		pageTurnActive = true;
-		pendingBookmark = Math.floorMod(currentBookmark + direction, BOOKMARK_COUNT);
+		pendingPageIndex = newIndex;
 	}
 	// Disegna il frame corrente della cinematic a schermo intero, mantenendo le proporzioni.
 	// Nessun fill di sfondo forzato: se il frame ha pixel trasparenti si vede quello che c'è
@@ -293,14 +308,14 @@ public class GamePanel extends JPanel implements Runnable {
 			g2.drawImage(frame, x, y, w, h, null);
 		}
 	}
-	// Disegna il libro (inventario/quest/calendario andranno sopra, in base a currentBookmark —
+	// Disegna il libro (il contenuto della pagina attiva andrà sopra, in base a pageIndex —
 	// non ancora implementati) e, se in corso, l'animazione di cambio pagina sopra a tutto.
 	private void drawBook(Graphics2D g2) {
 		if(bookImage != null) {
 			g2.drawImage(bookImage, 0, 0, screenWidth, screenHeight, null);
 		}
 
-		// TODO: disegnare qui il contenuto del bookmark attivo (currentBookmark: 0=Inventario, 1=Quest, 2=Calendario)
+		// TODO: disegnare qui il contenuto della pagina attiva (pageIndex: 0=Quest, 1=Inventario, 2=Statistiche)
 
 		if(pageTurnActive) {
 			java.awt.image.BufferedImage frame = pageTurnPlayer.getCurrentFrame();
