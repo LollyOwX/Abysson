@@ -36,6 +36,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public final int cinematicState = 4;
 	public final int titleState = 5;
 	public final int combatState = 6;
+	public final int bookState = 7;
 
 	//FPS
 	final int FPS = 60;
@@ -62,6 +63,14 @@ public class GamePanel extends JPanel implements Runnable {
 	GifPlayer cinematicPlayer = new GifPlayer();
 	int cinematicReturnState = playState; // stato a cui tornare quando la cinematic finisce
 
+	// ── Libro (inventario/quest/calendario) ──
+	java.awt.image.BufferedImage bookImage;
+	GifPlayer pageTurnPlayer = new GifPlayer();
+	boolean pageTurnActive = false;
+	int currentBookmark = 0;   // 0 = Inventario, 1 = Quest, 2 = Calendario (contenuto non ancora implementato)
+	int pendingBookmark = -1;
+	static final int BOOKMARK_COUNT = 3;
+
 
 	public GamePanel() {
 		this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -83,6 +92,20 @@ public class GamePanel extends JPanel implements Runnable {
 		};
 		this.addMouseMotionListener(titleMouseHandler);
 		this.addMouseListener(titleMouseHandler);
+
+		loadBookImage();
+	}
+	private void loadBookImage() {
+		java.io.InputStream is = getClass().getResourceAsStream("/ui/book.png");
+		if(is == null) {
+			System.err.println("ERROR: resource not found: /ui/book.png");
+			return;
+		}
+		try {
+			bookImage = javax.imageio.ImageIO.read(is);
+		} catch(java.io.IOException e) {
+			e.printStackTrace();
+		}
 	}
 	public void setupGame() {
 		aSetter.setObject();
@@ -172,6 +195,14 @@ public class GamePanel extends JPanel implements Runnable {
 				gameState = cinematicReturnState;
 			}
 		}
+		if(gameState == bookState && pageTurnActive) {
+			pageTurnPlayer.update();
+			if(pageTurnPlayer.isFinished()) {
+				pageTurnActive = false;
+				currentBookmark = pendingBookmark;
+				pendingBookmark = -1;
+			}
+		}
 	}
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -181,6 +212,9 @@ public class GamePanel extends JPanel implements Runnable {
 		}
 		else if(gameState == cinematicState) {
 			drawCinematic(g2);
+		}
+		else if(gameState == bookState) {
+			drawBook(g2);
 		}
 		else {
 			tileM.draw(g2);
@@ -223,22 +257,32 @@ public class GamePanel extends JPanel implements Runnable {
 		g2.dispose();
 	}
 	public void playCinematic(String path) {
-		playCinematic(path, false);
+		playCinematic(path, false, gameState);
 	}
 	public void playCinematic(String path, boolean loop) {
-		cinematicReturnState = gameState; // ricorda da dove siamo arrivati, per tornarci alla fine
+		playCinematic(path, loop, gameState);
+	}
+	public void playCinematic(String path, boolean loop, int nextState) {
+		cinematicReturnState = nextState; // stato a cui andare quando la cinematic finisce
 		cinematicPlayer.load(path, loop);
 		gameState = cinematicState;
 	}
 	public void skipCinematic() {
 		if(gameState == cinematicState) gameState = cinematicReturnState;
 	}
-	// Disegna il frame corrente della cinematic a schermo intero, mantenendo le proporzioni
-	// (letterbox: barre nere sopra/sotto o ai lati se l'aspect ratio non combacia con lo schermo)
+	// Avvia l'animazione di cambio pagina (direction: -1 = sinistra, +1 = destra) e prepara
+	// il bookmark a cui passare non appena l'animazione finisce (vedi update()).
+	public void turnBookPage(int direction) {
+		if(pageTurnActive) return; // non sovrapporre due turn insieme
+		String path = direction < 0 ? "/cinematics/page_turn_left.gif" : "/cinematics/page_turn_right.gif";
+		pageTurnPlayer.load(path, false);
+		pageTurnActive = true;
+		pendingBookmark = Math.floorMod(currentBookmark + direction, BOOKMARK_COUNT);
+	}
+	// Disegna il frame corrente della cinematic a schermo intero, mantenendo le proporzioni.
+	// Nessun fill di sfondo forzato: se il frame ha pixel trasparenti si vede quello che c'è
+	// già sotto (il pannello è comunque nero di suo, vedi setBackground() nel costruttore).
 	private void drawCinematic(Graphics2D g2) {
-		g2.setColor(Color.black);
-		g2.fillRect(0, 0, screenWidth, screenHeight);
-
 		java.awt.image.BufferedImage frame = cinematicPlayer.getCurrentFrame();
 		if(frame != null) {
 			double scale = Math.min((double) screenWidth / frame.getWidth(), (double) screenHeight / frame.getHeight());
@@ -247,6 +291,20 @@ public class GamePanel extends JPanel implements Runnable {
 			int x = (screenWidth - w) / 2;
 			int y = (screenHeight - h) / 2;
 			g2.drawImage(frame, x, y, w, h, null);
+		}
+	}
+	// Disegna il libro (inventario/quest/calendario andranno sopra, in base a currentBookmark —
+	// non ancora implementati) e, se in corso, l'animazione di cambio pagina sopra a tutto.
+	private void drawBook(Graphics2D g2) {
+		if(bookImage != null) {
+			g2.drawImage(bookImage, 0, 0, screenWidth, screenHeight, null);
+		}
+
+		// TODO: disegnare qui il contenuto del bookmark attivo (currentBookmark: 0=Inventario, 1=Quest, 2=Calendario)
+
+		if(pageTurnActive) {
+			java.awt.image.BufferedImage frame = pageTurnPlayer.getCurrentFrame();
+			if(frame != null) g2.drawImage(frame, 0, 0, screenWidth, screenHeight, null);
 		}
 	}
 	public void playMusic(int i) {

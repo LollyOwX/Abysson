@@ -13,6 +13,7 @@ Questo file va tenuto in `docs/STATUS.md` (o dove preferisci nel repo). Non è g
     - Se la modifica è **logica** (nuovo comportamento, bugfix, refactor che tocca più punti non meccanici) → do i **file completi**, perché lì serve vedere il codice risultante.
     - *Esempio concreto (19/07)*: spostamento di `CombatState`/`ElementSystem`/`Ability`/`Reaction` in un package `combat` — bastava dire "usa Refactor → Move Class in IntelliJ, aggiorna da solo gli import", invece ho rigenerato e incollato 5 file interi consumando risorse inutilmente. Da evitare.
 - Commenti nel codice: minimi, solo di **sezionamento** (cosa fa quella sezione), niente spiegazioni riga-per-riga — quelle restano in chat.
+- **Verificare sempre il file dopo un patch mirato** (sostituzione di poche righe, non il file intero): il 19/07, durante l'aggiunta di `drawBook()`, una sostituzione ha cancellato per errore la riga della firma di `playMusic()` (il testo da sostituire matchava anche quella riga adiacente). Individuato e corretto subito controllando il file dopo l'edit — ma è un promemoria a **ricontrollare il risultato di ogni patch puntuale**, non solo il bilanciamento delle graffe, prima di consegnare.
 
 ## 1. Architettura generale
 
@@ -33,7 +34,8 @@ Questo file va tenuto in `docs/STATUS.md` (o dove preferisci nel repo). Non è g
 | Menu titolo | `main/UI.java` (`drawMenuItems`) | Un solo metodo condiviso usato da tutti e 3 gli schermi (main menu, classe, difficoltà): slide-in+stagger, float, hover scale/offset/dimming/glow (mouse **o** tastiera, unificati), punch al confirm, delay di 1s prima di eseguire il comando. Glow = sottolineatura `res/ui/menu_hover_glow.png` (81×9, larga e sottile) che cresce in **larghezza** da 0 al pieno, centrata sotto la voce — sistemato il 19/07 (cresceva in altezza per errore, quasi invisibile). |
 | Setup entità | `main/AssetSetter.java` | Helper `place(array, index, factory, col, row, paletteDef)` — una riga per entità invece di 3-4 righe separate. |
 | Debug colori sprite | `main/ColorDump.java` | Utility standalone (`main()` con path PNG come argomenti) per stampare i colori ARGB unici di uno sprite — serve per scrivere palette corrette. |
-| Cinematic (GIF) | `main/GifPlayer.java`, `GamePanel.playCinematic()` | Decodifica un GIF con compositing corretto (gestisce i "disposal method" per frame, non solo il caso banale). `playCinematic(path)` carica da classpath (`res/cinematics/...`), ricorda lo stato da cui arrivi e ci torna da solo a fine riproduzione; `playCinematic(path, true)` per il loop. ENTER/ESC durante la cinematic la saltano (`GamePanel.skipCinematic()`). |
+| Cinematic (GIF) | `main/GifPlayer.java`, `GamePanel.playCinematic()` | Decodifica un GIF con compositing corretto (gestisce i "disposal method" per frame, non solo il caso banale). `playCinematic(path)` carica da classpath (`res/cinematics/...`), ricorda lo stato da cui arrivi e ci torna da solo a fine riproduzione; overload `(path, loop)` per il loop, `(path, loop, nextState)` per atterrare su uno stato diverso da quello di partenza (usato per il libro, vedi sotto). ENTER/ESC durante la cinematic la saltano (`GamePanel.skipCinematic()`). Sfondo non forzato: rispetta la vera trasparenza del GIF. |
+| Libro (inventario/quest/calendario) | `GamePanel.bookState`, `drawBook()`, `turnBookPage()` | Tasto **I** in gioco → cinematic `Open_book.gif` → atterra su `bookState`, disegna `res/ui/book.png` a schermo intero. **ESC/I** richiude. **LEFT/RIGHT** chiamano `turnBookPage()`: overlay `page_turn_left/right.gif` (path da verificare, nomi placeholder) + avanzamento di `currentBookmark` (0=Inventario, 1=Quest, 2=Calendario, wrap su 3). **Contenuto per bookmark non ancora implementato** — c'è un TODO in `drawBook()` esattamente dove va aggiunto. |
 
 ## 3. Cose da ricordare (bug pattern ricorrenti + decisioni prese)
 
@@ -127,6 +129,9 @@ Non serve toccare il parser — riconosce automaticamente qualsiasi tag scritto 
 - [x] ~~Il glow PNG per l'hover del menu va creato/importato~~ — fatto, potrebbe non funzionare
 - [ ] Verificare che tutti gli altri oggetti statici (Chest, Boots) siano effettivamente istanziati in `AssetSetter` — solo Key e Door sono attivi al momento, **ma segnalati come non funzionanti**: da investigare a fondo (il fix della direzione di default dovrebbe averli sbloccati, ma va confermato in gioco).
 - [ ] Aggiungere tutti gli effetti delle reazioni.
+- [ ] Creare gli asset `res/cinematics/page_turn_left.gif` e `page_turn_right.gif` (nomi placeholder, non ancora verificati contro asset reali).
+- [ ] Implementare il contenuto vero dei bookmark del libro (Inventario/Quest/Calendario) — TODO segnato direttamente in `GamePanel.drawBook()`.
+- [ ] Verificare dimensione/posizione di `book.png` — al momento disegnato a schermo intero per default, da confermare che sia quello voluto.
 
 ---
 

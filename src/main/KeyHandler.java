@@ -57,8 +57,7 @@ public class KeyHandler implements KeyListener {
                 gp.ui.commandNum = 0;
             }
             if (code == KeyEvent.VK_I) {
-                gp.playCinematic( "/cinematics/Open_book.gif", false);
-
+                gp.playCinematic("/cinematics/Open_book.gif", false, gp.bookState);
             }
         } else if (gp.gameState == gp.pauseState) {
             if (code == KeyEvent.VK_P) gp.gameState = gp.playState;
@@ -74,6 +73,11 @@ public class KeyHandler implements KeyListener {
 
         } else if (gp.gameState == gp.cinematicState) {
             if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_ESCAPE) gp.skipCinematic();
+
+        } else if (gp.gameState == gp.bookState) {
+            if (code == KeyEvent.VK_ESCAPE || code == KeyEvent.VK_I) gp.gameState = gp.playState;
+            if (code == KeyEvent.VK_LEFT)  gp.turnBookPage(-1);
+            if (code == KeyEvent.VK_RIGHT) gp.turnBookPage(1);
         }
     }
 
