@@ -158,6 +158,7 @@ public class UI {
         if (gp.gameState == gp.pauseState)    { drawPauseScreen(); drawPlayerLife(); }
         if (gp.gameState == gp.dialogueState) { drawDialogueScreen(); }
         if (gp.gameState == gp.combatState)   { combat.draw(g2); }
+        if (gp.gameState == gp.bookState)     { drawBookScreen(); }
     }
 
     public void drawPlayerLife() {
@@ -400,6 +401,23 @@ public class UI {
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 83));
         String text = "PAUSED";
         g2.drawString(text, getXforCenteredText(text), gp.screenHeight / 2);
+    }
+
+    // Disegna il libro sopra al mondo (già disegnato da GamePanel prima di chiamare draw()),
+    // esattamente come drawPauseScreen() disegna "PAUSED" sopra al mondo.
+    // Il contenuto della pagina attiva (gp.pageIndex: 0=Quest, 1=Inventario, 2=Statistiche)
+    // va aggiunto qui.
+    public void drawBookScreen() {
+        if (gp.bookImage != null) {
+            g2.drawImage(gp.bookImage, 0, 0, gp.screenWidth, gp.screenHeight, null);
+        }
+
+        // TODO: disegnare qui il contenuto della pagina attiva (gp.pageIndex)
+
+        if (gp.pageTurnActive) {
+            BufferedImage frame = gp.pageTurnPlayer.getCurrentFrame();
+            if (frame != null) g2.drawImage(frame, 0, 0, gp.screenWidth, gp.screenHeight, null);
+        }
     }
 
     // ═════════════════════════════════════════════

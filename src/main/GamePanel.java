@@ -210,14 +210,11 @@ public class GamePanel extends JPanel implements Runnable {
 
 		// Lo sfondo da disegnare "sotto" è lo stato a cui la cinematic tornerà (non cinematicState
 		// stesso, che non è un vero schermo) — così i pixel trasparenti del GIF rivelano il mondo
-		// di gioco (o il titolo, o il libro) invece di mostrare solo il nero di base del pannello.
+		// di gioco (o il titolo) invece di mostrare solo il nero di base del pannello.
 		int backdropState = (gameState == cinematicState) ? cinematicReturnState : gameState;
 
 		if(backdropState == titleState) {
 			ui.draw(g2);
-		}
-		else if(backdropState == bookState) {
-			drawBook(g2);
 		}
 		else {
 			drawWorld(g2);
@@ -306,20 +303,6 @@ public class GamePanel extends JPanel implements Runnable {
 			int x = (screenWidth - w) / 2;
 			int y = (screenHeight - h) / 2;
 			g2.drawImage(frame, x, y, w, h, null);
-		}
-	}
-	// Disegna il libro (il contenuto della pagina attiva andrà sopra, in base a pageIndex —
-	// non ancora implementati) e, se in corso, l'animazione di cambio pagina sopra a tutto.
-	private void drawBook(Graphics2D g2) {
-		if(bookImage != null) {
-			g2.drawImage(bookImage, 0, 0, screenWidth, screenHeight, null);
-		}
-
-		// TODO: disegnare qui il contenuto della pagina attiva (pageIndex: 0=Quest, 1=Inventario, 2=Statistiche)
-
-		if(pageTurnActive) {
-			java.awt.image.BufferedImage frame = pageTurnPlayer.getCurrentFrame();
-			if(frame != null) g2.drawImage(frame, 0, 0, screenWidth, screenHeight, null);
 		}
 	}
 	public void playMusic(int i) {
