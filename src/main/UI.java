@@ -82,6 +82,30 @@ public class UI {
     private static final int   HOVER_OFFSET_X      = 18;    // offset orizzontale quando in hover
     private static final float DIM_ALPHA           = 0.45f; // opacità voci non in hover
 
+    // ═════════════════════════════════════════════
+    //  LIBRO: bookmark (macrozone) e index (sezioni) — hit-test mouse
+    // ═════════════════════════════════════════════
+
+    // Rettangoli dei 6 bookmark nello spazio immagine originale del libro (272x272, prima dello
+    // scaling a schermo). Misurati confrontando i pixel non trasparenti di book.png con ognuna
+    // delle 6 varianti book_X.png: sono la zona (linguetta) che cambia in ciascuna variante.
+    // Indice = GamePanel.ZONE_IMAGES / ZONE_NAMES (0=Quest, 1=Inventario, 2=Mappa, 3=Abilità, 4=Calendario, 5=Bestiario).
+    private static final Rectangle[] BOOKMARK_IMAGE_RECTS = {
+            new Rectangle(157, 73, 17, 82), // 0 Quest
+            new Rectangle(185, 82, 17, 72), // 1 Inventario
+            new Rectangle(64,  82, 17, 73), // 2 Mappa
+            new Rectangle(217, 83, 17, 73), // 3 Abilità
+            new Rectangle(96,  75, 17, 80), // 4 Calendario
+            new Rectangle(36,  83, 17, 73), // 5 Bestiario
+    };
+    private final Rectangle[] bookmarkScreenBounds = new Rectangle[BOOKMARK_IMAGE_RECTS.length];
+    private int hoveredBookmark = -1;
+
+    // Voci dell'index (sezioni) della zona attualmente aperta — solo testo placeholder per ora,
+    // disegnate subito sotto al bookmark attivo. Popolate in drawBookScreen().
+    private final Rectangle[] indexItemBounds = new Rectangle[GamePanel.INDEX_COUNT];
+    private int hoveredIndexItem = -1;
+
     public UI(GamePanel gp) {
         this.gp = gp;
         combat = new CombatState(gp, this);
@@ -220,6 +244,10 @@ public class UI {
             drawMenuItems(items, itemYs, 42F);
         }
     }
+
+    // Renderizza le 4 voci di un qualunque schermo del titolo (main menu, classe, difficoltà)
+    // con tutti gli effetti: slide-in + stagger, float, scale/offset/dimming/glow in hover
+    // (mouse o tastiera), punch alla conferma. Popola anche menuItemBounds per l'hit-test mouse.
     private void drawMenuItems(String[] items, int[] itemBaseYs, float fontSize) {
         g2.setFont(MaruMonica.deriveFont(Font.PLAIN, fontSize));
         FontMetrics fm = g2.getFontMetrics();
@@ -399,32 +427,108 @@ public class UI {
         g2.drawString(text, getXforCenteredText(text), gp.screenHeight / 2);
     }
 
+    // Disegna il libro sopra al mondo (già disegnato da GamePanel prima di chiamare draw()),
+    // esattamente come drawPauseScreen() disegna "PAUSED" sopra al mondo.
+    // Sfondo: book.png se nessuna zona è selezionata, altrimenti book_X.png della zona attiva
+    // (bookmark evidenziato "nel disegno stesso" — vedi GamePanel.getCurrentBookImage()).
+    // TODO: il contenuto placeholder qui sotto (index + "Zona > Sezione > Pagina") va sostituito
+    // dai contenuti veri di ciascuna zona (lista quest, oggetti inventario, ecc.) quando pronti.
     public void drawBookScreen() {
-        if (gp.bookImage != null) {
-            double scale = Math.min((double) gp.screenWidth / gp.bookImage.getWidth(),
-                    (double) gp.screenHeight / gp.bookImage.getHeight());
-            int w = (int) (gp.bookImage.getWidth() * scale);
-            int h = (int) (gp.bookImage.getHeight() * scale);
-            int x = (gp.screenWidth - w) / 2;
-            int y = (gp.screenHeight - h) / 2;
-            g2.drawImage(gp.bookImage, x, y, w, h, null);
+        BufferedImage bg = gp.getCurrentBookImage();
+        if (bg == null) return;
+
+        double scale = Math.min((double) gp.screenWidth / bg.getWidth(), (double) gp.screenHeight / bg.getHeight());
+        int w = (int) (bg.getWidth() * scale);
+        int h = (int) (bg.getHeight() * scale);
+        int ox = (gp.screenWidth - w) / 2;
+        int oy = (gp.screenHeight - h) / 2;
+        g2.drawImage(bg, ox, oy, w, h, null);
+
+        // Bookmark: sempre cliccabili (anche per cambiare zona mentre se ne sta già guardando una).
+        // Le bounding box a schermo si ricalcolano ogni frame perché seguono lo scaling del libro.
+        for (int i = 0; i < BOOKMARK_IMAGE_RECTS.length; i++) {
+            Rectangle r = BOOKMARK_IMAGE_RECTS[i];
+            bookmarkScreenBounds[i] = new Rectangle(
+                    ox + (int) (r.x * scale), oy + (int) (r.y * scale),
+                    (int) (r.width * scale), (int) (r.height * scale));
         }
 
-        // TODO: disegnare qui il contenuto della pagina attiva (gp.pageIndex)
+        java.util.Arrays.fill(indexItemBounds, null);
+        // Index (sezioni) + contenuto placeholder: solo se una zona è aperta e non si sta girando pagina
+        // (durante l'animazione i rettangoli non sono aggiornati, meglio nascondere tutto).
+        if (gp.currentZone != -1 && !gp.pageTurnActive) {
+            Rectangle activeBookmark = bookmarkScreenBounds[gp.currentZone];
+            g2.setFont(MaruMonica.deriveFont(Font.PLAIN, 18f));
+            FontMetrics fm = g2.getFontMetrics();
+            int itemY = activeBookmark.y + activeBookmark.height + 22;
+            for (int i = 0; i < GamePanel.INDEX_COUNT; i++) {
+                String label = "Sezione " + (i + 1);
+                boolean active  = (i == gp.currentIndex);
+                boolean hovered = (i == hoveredIndexItem);
+                g2.setColor(active ? Color.yellow : (hovered ? Color.lightGray : Color.white));
+                int textX = activeBookmark.x + activeBookmark.width / 2 - fm.stringWidth(label) / 2;
+                g2.drawString(label, textX, itemY);
+                indexItemBounds[i] = new Rectangle(textX - 10, itemY - fm.getHeight() + 4,
+                        fm.stringWidth(label) + 20, fm.getHeight() + 6);
+                itemY += fm.getHeight() + 8;
+            }
+
+            g2.setFont(MaruMonica.deriveFont(Font.PLAIN, 22f));
+            String content = GamePanel.ZONE_NAMES[gp.currentZone] + " > Sezione " + (gp.currentIndex + 1)
+                    + " — Pagina " + (gp.currentPage + 1) + "/" + GamePanel.MICRO_PAGE_COUNT;
+            g2.setColor(Color.white);
+            g2.drawString(content, ox + w / 2 - g2.getFontMetrics().stringWidth(content) / 2, oy + h - 30);
+        }
 
         if (gp.pageTurnActive) {
             BufferedImage frame = gp.pageTurnPlayer.getCurrentFrame();
             if (frame != null) {
-                double scale = Math.min((double) gp.screenWidth / frame.getWidth(),
+                double frameScale = Math.min((double) gp.screenWidth / frame.getWidth(),
                         (double) gp.screenHeight / frame.getHeight());
-                int w = (int) (frame.getWidth() * scale);
-                int h = (int) (frame.getHeight() * scale);
-                int x = (gp.screenWidth - w) / 2;
-                int y = (gp.screenHeight - h) / 2;
-                g2.drawImage(frame, x, y, w, h, null);
+                int fw = (int) (frame.getWidth() * frameScale);
+                int fh = (int) (frame.getHeight() * frameScale);
+                int fx = (gp.screenWidth - fw) / 2;
+                int fy = (gp.screenHeight - fh) / 2;
+                g2.drawImage(frame, fx, fy, fw, fh, null);
             }
         }
     }
+
+    // ═════════════════════════════════════════════
+    //  LIBRO: input mouse (chiamato da GamePanel, stesso schema di updateMouseHover/handleTitleClick)
+    // ═════════════════════════════════════════════
+
+    public void updateBookMouseHover(int x, int y) {
+        if (gp.gameState != gp.bookState) { hoveredBookmark = -1; hoveredIndexItem = -1; return; }
+        hoveredBookmark = -1;
+        for (int i = 0; i < bookmarkScreenBounds.length; i++) {
+            if (bookmarkScreenBounds[i] != null && bookmarkScreenBounds[i].contains(x, y)) { hoveredBookmark = i; break; }
+        }
+        hoveredIndexItem = -1;
+        for (int i = 0; i < indexItemBounds.length; i++) {
+            if (indexItemBounds[i] != null && indexItemBounds[i].contains(x, y)) { hoveredIndexItem = i; break; }
+        }
+    }
+
+    public void handleBookClick(int x, int y) {
+        if (gp.gameState != gp.bookState) return;
+        for (int i = 0; i < bookmarkScreenBounds.length; i++) {
+            if (bookmarkScreenBounds[i] != null && bookmarkScreenBounds[i].contains(x, y)) {
+                gp.selectBookZone(i);
+                return;
+            }
+        }
+        for (int i = 0; i < indexItemBounds.length; i++) {
+            if (indexItemBounds[i] != null && indexItemBounds[i].contains(x, y)) {
+                gp.selectBookIndex(i);
+                return;
+            }
+        }
+    }
+
+    // ═════════════════════════════════════════════
+    //  DIALOGO con testo stilizzato tramite tag
+    // ═════════════════════════════════════════════
 
     public void drawDialogueScreen() {
         g2.setFont(MaruMonica.deriveFont(Font.PLAIN, 32));
@@ -444,6 +548,9 @@ public class UI {
         drawNextIndicator(x + width, y + height);
     }
 
+    // ═════════════════════════════════════════════
+    //  BEHAVIOR NEUTRAL: mini-menu Parla/Attacca
+    // ═════════════════════════════════════════════
 
     public void drawNeutralMenu() {
         if (!neutralMenuOpen || neutralTarget == null) return;
@@ -498,6 +605,10 @@ public class UI {
             combat.startCombat(target, idx);
         }
     }
+
+    // ═════════════════════════════════════════════
+    //  TRIANGOLO "NEXT" INDICATOR
+    // ═════════════════════════════════════════════
 
     public void drawNextIndicator(int boxRight, int boxBottom) {
         // Lampeggio: visibile 30 frame, invisibile 30
@@ -588,6 +699,8 @@ public class UI {
         }
     }
 
+    // ── Parser tag ───────────────────────────────────────────────
+
     private static class TextSegment {
         String content, tag;
         TextSegment(String content, String tag) { this.content = content; this.tag = tag; }
@@ -618,6 +731,9 @@ public class UI {
         return segments;
     }
 
+    // ═════════════════════════════════════════════
+    //  UTILITY
+    // ═════════════════════════════════════════════
 
     public void drawSubWindwow(int x, int y, int width, int height) {
         g2.setColor(new Color(255, 255, 255));
