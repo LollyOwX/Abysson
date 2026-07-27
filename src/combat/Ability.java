@@ -1,16 +1,8 @@
 package combat;
+
 import combat.ElementSystem.*;
 import entity.Entity;
 
-/**
- * Raccoglie tutte le abilità del gioco.
- *
- * Per aggiungere una nuova abilità:
- *   1. Aggiungi metodo privato statico con la formula del danno
- *   2. Aggiungi case in use(), getName(), getElement()
- *   3. In Entity (o sottoclasse): unlockedAbilities.add("NomeAbility")
- *   4. Opzionale: abilityWeights.put("NomeAbility", peso)
- */
 public class Ability {
 
     public static int use(String id, Entity user, Entity target) {
@@ -55,12 +47,12 @@ public class Ability {
     // ── Abilità ───────────────────────────────────
 
     private static int normalAttack(Entity user, Entity target) {
-        return Math.max(1, user.attack - target.defense);
+        return Math.max(10, user.attack - target.defense);
     }
-    private static int powerStrike(Entity user, Entity target) {return Math.max(1, (user.attack * 2) - target.defense);}
-    private static int thunderbolt(Entity user, Entity target) {return Math.max(1, user.attack * 2) - target.defense;}
-    private static int acquajet(Entity user, Entity target) {return Math.max(1, user.attack * 2) -  target.defense;}
-    private static int earthschock(Entity user, Entity target) {return Math.max(1, user.attack * 2) - target.defense;}
-    private static int fireblade(Entity user, Entity target) {return Math.max(1, user.attack * 2) - target.defense;}
-    private static int lightray(Entity user, Entity target) {return Math.max(1, target.defense * 2) - user.attack;}
+    private static int powerStrike(Entity user, Entity target) {return Math.max(10, (user.attack * 2) - target.defense);}
+    private static int thunderbolt(Entity user, Entity target) {return Math.max(10, user.attack * 2) - target.defense;}
+    private static int acquajet(Entity user, Entity target) {return Math.max(10, user.attack * 2) -  target.defense;}
+    private static int earthschock(Entity user, Entity target) {return Math.max(10, user.attack * 2) - target.defense;}
+    private static int fireblade(Entity user, Entity target) {return Math.max(10, user.attack * 2) - target.defense;}
+    private static int lightray(Entity user, Entity target) {return Math.max(10, target.defense * 2) - user.attack;}
 }

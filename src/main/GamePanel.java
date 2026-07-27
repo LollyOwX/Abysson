@@ -291,9 +291,6 @@ public class GamePanel extends JPanel implements Runnable {
 		pageTurnActive = true;
 		pendingPageIndex = newIndex;
 	}
-	// Disegna il frame corrente della cinematic a schermo intero, mantenendo le proporzioni.
-	// Nessun fill di sfondo forzato: se il frame ha pixel trasparenti si vede quello che c'è
-	// già sotto (il pannello è comunque nero di suo, vedi setBackground() nel costruttore).
 	private void drawCinematic(Graphics2D g2) {
 		java.awt.image.BufferedImage frame = cinematicPlayer.getCurrentFrame();
 		if(frame != null) {

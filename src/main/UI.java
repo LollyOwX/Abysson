@@ -409,14 +409,28 @@ public class UI {
     // va aggiunto qui.
     public void drawBookScreen() {
         if (gp.bookImage != null) {
-            g2.drawImage(gp.bookImage, 0, 0, gp.screenWidth, gp.screenHeight, null);
+            double scale = Math.min((double) gp.screenWidth / gp.bookImage.getWidth(),
+                    (double) gp.screenHeight / gp.bookImage.getHeight());
+            int w = (int) (gp.bookImage.getWidth() * scale);
+            int h = (int) (gp.bookImage.getHeight() * scale);
+            int x = (gp.screenWidth - w) / 2;
+            int y = (gp.screenHeight - h) / 2;
+            g2.drawImage(gp.bookImage, x, y, w, h, null);
         }
 
         // TODO: disegnare qui il contenuto della pagina attiva (gp.pageIndex)
 
         if (gp.pageTurnActive) {
             BufferedImage frame = gp.pageTurnPlayer.getCurrentFrame();
-            if (frame != null) g2.drawImage(frame, 0, 0, gp.screenWidth, gp.screenHeight, null);
+            if (frame != null) {
+                double scale = Math.min((double) gp.screenWidth / frame.getWidth(),
+                        (double) gp.screenHeight / frame.getHeight());
+                int w = (int) (frame.getWidth() * scale);
+                int h = (int) (frame.getHeight() * scale);
+                int x = (gp.screenWidth - w) / 2;
+                int y = (gp.screenHeight - h) / 2;
+                g2.drawImage(frame, x, y, w, h, null);
+            }
         }
     }
 

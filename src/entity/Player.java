@@ -49,7 +49,7 @@ public class Player extends Entity {
 
         maxLife = 100;
         life = maxLife;
-        attack = 30;
+        attack = 40;
         defense = 20;
         baseSpeed = speed;
 
