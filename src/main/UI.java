@@ -220,10 +220,6 @@ public class UI {
             drawMenuItems(items, itemYs, 42F);
         }
     }
-
-    // Renderizza le 4 voci di un qualunque schermo del titolo (main menu, classe, difficoltà)
-    // con tutti gli effetti: slide-in + stagger, float, scale/offset/dimming/glow in hover
-    // (mouse o tastiera), punch alla conferma. Popola anche menuItemBounds per l'hit-test mouse.
     private void drawMenuItems(String[] items, int[] itemBaseYs, float fontSize) {
         g2.setFont(MaruMonica.deriveFont(Font.PLAIN, fontSize));
         FontMetrics fm = g2.getFontMetrics();
@@ -403,10 +399,6 @@ public class UI {
         g2.drawString(text, getXforCenteredText(text), gp.screenHeight / 2);
     }
 
-    // Disegna il libro sopra al mondo (già disegnato da GamePanel prima di chiamare draw()),
-    // esattamente come drawPauseScreen() disegna "PAUSED" sopra al mondo.
-    // Il contenuto della pagina attiva (gp.pageIndex: 0=Quest, 1=Inventario, 2=Statistiche)
-    // va aggiunto qui.
     public void drawBookScreen() {
         if (gp.bookImage != null) {
             double scale = Math.min((double) gp.screenWidth / gp.bookImage.getWidth(),
@@ -434,10 +426,6 @@ public class UI {
         }
     }
 
-    // ═════════════════════════════════════════════
-    //  DIALOGO con testo stilizzato tramite tag
-    // ═════════════════════════════════════════════
-
     public void drawDialogueScreen() {
         g2.setFont(MaruMonica.deriveFont(Font.PLAIN, 32));
         int x      = gp.tileSize * 2;
@@ -456,9 +444,6 @@ public class UI {
         drawNextIndicator(x + width, y + height);
     }
 
-    // ═════════════════════════════════════════════
-    //  BEHAVIOR NEUTRAL: mini-menu Parla/Attacca
-    // ═════════════════════════════════════════════
 
     public void drawNeutralMenu() {
         if (!neutralMenuOpen || neutralTarget == null) return;
@@ -513,10 +498,6 @@ public class UI {
             combat.startCombat(target, idx);
         }
     }
-
-    // ═════════════════════════════════════════════
-    //  TRIANGOLO "NEXT" INDICATOR
-    // ═════════════════════════════════════════════
 
     public void drawNextIndicator(int boxRight, int boxBottom) {
         // Lampeggio: visibile 30 frame, invisibile 30
@@ -607,8 +588,6 @@ public class UI {
         }
     }
 
-    // ── Parser tag ───────────────────────────────────────────────
-
     private static class TextSegment {
         String content, tag;
         TextSegment(String content, String tag) { this.content = content; this.tag = tag; }
@@ -639,9 +618,6 @@ public class UI {
         return segments;
     }
 
-    // ═════════════════════════════════════════════
-    //  UTILITY
-    // ═════════════════════════════════════════════
 
     public void drawSubWindwow(int x, int y, int width, int height) {
         g2.setColor(new Color(255, 255, 255));
