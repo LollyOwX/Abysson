@@ -63,27 +63,44 @@ public class GamePanel extends JPanel implements Runnable {
     GifPlayer cinematicPlayer = new GifPlayer();
     int cinematicReturnState = playState; // stato a cui tornare quando la cinematic finisce
 
-    // ── Libro: 3 livelli di navigazione ──
-    // Zona (macrozona)   = bookmark cliccato sul dorso del libro (Quest/Inventario/Mappa/Abilità/Calendario/Bestiario)
-    // Index (sezione)    = sotto-voce dentro la zona, elencata sotto al bookmark attivo
-    // Pagina (microzona) = pagina interna alla sezione, girata con LEFT/RIGHT come prima
+    // ── Libro: 3 livelli di navigazione, stessa convenzione di gameState (costanti nominate + variabile) ──
+    // bookindex (macrozona) = bookmark cliccato sul dorso del libro
+    // bookzone  (sezione)   = sotto-voce dentro la macrozona (per ora senza UI, solo dato)
+    // bookpage  (microzona) = pagina interna alla sezione, girata con LEFT/RIGHT come prima
+    public int bookindex; // 0 = nessuna macrozona selezionata (si vede solo book.png con i bookmark)
+    public final int bookindex_bestiary  = 1;
+    public final int bookindex_calendar  = 2;
+    public final int bookindex_inventory = 3;
+    public final int bookindex_map       = 4;
+    public final int bookindex_skills    = 5;
+    public final int bookindex_quests    = 6;
+
+    public int bookzone; // sezione dentro alla macrozona (placeholder, nessuna UI ancora)
+    public int bookpage; // pagina dentro alla sezione (microzona)
+
     static final int ZONE_COUNT = 6;
-    static final String[] ZONE_NAMES  = {"Quest", "Inventario", "Mappa", "Abilità", "Calendario", "Bestiario"};
-    static final String[] ZONE_IMAGES = {"book_quests.png", "book_inventory.png", "book_map.png",
-            "book_skills.png", "book_calendar.png", "book_bestiary.png"};
-    // Placeholder: stesso numero di sezioni/pagine per ogni zona finché i contenuti veri non sono pronti.
-    static final int INDEX_COUNT = 2;
+    // Nomi file immagine: indice = bookindex-1 (stesso ordine delle costanti bookindex_* sopra).
+    static final String[] ZONE_IMAGES = {"book_bestiary.png", "book_calendar.png", "book_inventory.png",
+            "book_map.png", "book_skills.png", "book_quests.png"};
+    // Sprite del singolo bookmark "esteso" (sporge di più), stesso ordine/indice di ZONE_IMAGES.
+    // Sovrapposto al background come "bottone" della macrozona attiva — vedi UI.drawBookScreen().
+    // Ridondante con la linguetta già disegnata dentro ZONE_IMAGES (voluto: più robusto, non dipende
+    // dal fatto che il background sia esattamente allineato).
+    static final String[] EXTENDED_BOOKMARK_IMAGES = {"extended_bookmarks_bestiary.png", "extended_bookmarks_calendar.png",
+            "extended_bookmarks_inventory.png", "extended_bookmarks_map.png", "extended_bookmarks_skills.png",
+            "extended_bookmarks_quests.png"};
+    // Placeholder: stesso numero di sezioni/pagine per ogni macrozona finché i contenuti veri non sono pronti.
+    static final int BOOKZONE_COUNT = 2;
     static final int MICRO_PAGE_COUNT = 2;
 
-    java.awt.image.BufferedImage bookImage; // pagina di base, nessuna zona selezionata
-    java.awt.image.BufferedImage[] bookZoneImages = new java.awt.image.BufferedImage[ZONE_COUNT]; // book_quests.png, ecc.
+    java.awt.image.BufferedImage bookImage; // pagina di base, nessuna macrozona selezionata
+    java.awt.image.BufferedImage[] bookZoneImages = new java.awt.image.BufferedImage[ZONE_COUNT]; // book_bestiary.png, ecc.
+    java.awt.image.BufferedImage[] extendedBookmarkImages = new java.awt.image.BufferedImage[ZONE_COUNT]; // bottone bookmark esteso
     GifPlayer pageTurnPlayer = new GifPlayer();
     boolean pageTurnActive = false;
 
-    int currentZone = -1; // -1 = nessuna zona selezionata (si vede solo book.png con i bookmark)
-    int currentIndex = 0;
-    int currentPage = 0;
-    int pendingZone = -1, pendingIndex = -1, pendingPage = -1; // valori a cui passare a fine animazione
+    // Valori a cui passare (bookindex/bookzone/bookpage) non appena l'animazione turning_pages finisce
+    int pendingBookindex, pendingBookzone, pendingBookpage;
 
 
     public GamePanel() {
@@ -115,6 +132,7 @@ public class GamePanel extends JPanel implements Runnable {
         bookImage = loadImageResource("/ui/book.png");
         for(int i = 0; i < ZONE_COUNT; i++) {
             bookZoneImages[i] = loadImageResource("/ui/" + ZONE_IMAGES[i]);
+            extendedBookmarkImages[i] = loadImageResource("/ui/" + EXTENDED_BOOKMARK_IMAGES[i]);
         }
     }
     private java.awt.image.BufferedImage loadImageResource(String path) {
@@ -130,11 +148,11 @@ public class GamePanel extends JPanel implements Runnable {
             return null;
         }
     }
-    // Immagine di sfondo del libro da disegnare in questo momento: book.png se nessuna zona
-    // è selezionata, altrimenti la variante book_X.png della zona attiva (bookmark evidenziato).
+    // Immagine di sfondo del libro da disegnare in questo momento: book.png se nessuna macrozona
+    // è selezionata, altrimenti la variante book_X.png della macrozona attiva (bookmark evidenziato).
     public java.awt.image.BufferedImage getCurrentBookImage() {
-        if(currentZone == -1) return bookImage;
-        return bookZoneImages[currentZone] != null ? bookZoneImages[currentZone] : bookImage;
+        if(bookindex == 0) return bookImage;
+        return bookZoneImages[bookindex - 1] != null ? bookZoneImages[bookindex - 1] : bookImage;
     }
     public void setupGame() {
         aSetter.setObject();
@@ -228,10 +246,9 @@ public class GamePanel extends JPanel implements Runnable {
             pageTurnPlayer.update();
             if(pageTurnPlayer.isFinished()) {
                 pageTurnActive = false;
-                currentZone = pendingZone;
-                currentIndex = pendingIndex;
-                currentPage = pendingPage;
-                pendingZone = -1; pendingIndex = -1; pendingPage = -1;
+                bookindex = pendingBookindex;
+                bookzone = pendingBookzone;
+                bookpage = pendingBookpage;
             }
         }
     }
@@ -309,44 +326,44 @@ public class GamePanel extends JPanel implements Runnable {
     public void skipCinematic() {
         if(gameState == cinematicState) gameState = cinematicReturnState;
     }
-    // Avvia l'animazione turning_pages verso una nuova combinazione zona/sezione/pagina
-    // (direction: -1 = verso sinistra, +1 = verso destra). Usata da turnBookPage, selectBookZone
-    // e selectBookIndex: ogni cambio di contenuto del libro passa sempre da qui.
-    private void startBookTransition(int newZone, int newIndex, int newPage, int direction) {
+    // Avvia l'animazione turning_pages verso una nuova combinazione bookindex/bookzone/bookpage
+    // (direction: -1 = verso sinistra, +1 = verso destra). Usata da turnBookPage, selectBookIndex
+    // e selectBookZone: ogni cambio di contenuto del libro passa sempre da qui.
+    private void startBookTransition(int newBookindex, int newBookzone, int newBookpage, int direction) {
         if(pageTurnActive) return; // non sovrapporre due turn insieme
         String path = direction < 0 ? "/cinematics/Turning_pages_right.gif" : "/cinematics/Turning_pages_left.gif";
         pageTurnPlayer.load(path, false);
         pageTurnActive = true;
-        pendingZone = newZone;
-        pendingIndex = newIndex;
-        pendingPage = newPage;
+        pendingBookindex = newBookindex;
+        pendingBookzone = newBookzone;
+        pendingBookpage = newBookpage;
     }
     // Frecce LEFT/RIGHT: cambia pagina (microzona) dentro la sezione corrente.
     // Ai bordi (prima/ultima pagina) non fa nulla, come un libro vero.
     public void turnBookPage(int direction) {
-        if(currentZone == -1) return; // nessuna zona aperta, non ci sono pagine da girare
-        int newPage = currentPage + direction;
+        if(bookindex == 0) return; // nessuna macrozona aperta, non ci sono pagine da girare
+        int newPage = bookpage + direction;
         if(newPage < 0 || newPage >= MICRO_PAGE_COUNT) return;
-        startBookTransition(currentZone, currentIndex, newPage, direction);
+        startBookTransition(bookindex, bookzone, newPage, direction);
     }
-    // Click su un bookmark: salta alla macrozona corrispondente, resettando sezione e pagina.
-    public void selectBookZone(int zone) {
-        if(zone < 0 || zone >= ZONE_COUNT || zone == currentZone) return;
-        int direction = (currentZone == -1 || zone > currentZone) ? 1 : -1;
-        startBookTransition(zone, 0, 0, direction);
+    // Click su un bookmark: salta alla macrozona corrispondente (bookindex), resettando sezione e pagina.
+    public void selectBookIndex(int newBookindex) {
+        if(newBookindex < 1 || newBookindex > ZONE_COUNT || newBookindex == bookindex) return;
+        int direction = (bookindex == 0 || newBookindex > bookindex) ? 1 : -1;
+        startBookTransition(newBookindex, 0, 0, direction);
     }
-    // Click su una voce dell'index (sezione) sotto al bookmark attivo: resta nella stessa zona.
-    public void selectBookIndex(int index) {
-        if(currentZone == -1 || index < 0 || index >= INDEX_COUNT || index == currentIndex) return;
-        int direction = (index > currentIndex) ? 1 : -1;
-        startBookTransition(currentZone, index, 0, direction);
+    // Click su una voce della sezione (bookzone) sotto al bookmark attivo: resta nella stessa macrozona.
+    public void selectBookZone(int newBookzone) {
+        if(bookindex == 0 || newBookzone < 0 || newBookzone >= BOOKZONE_COUNT || newBookzone == bookzone) return;
+        int direction = (newBookzone > bookzone) ? 1 : -1;
+        startBookTransition(bookindex, newBookzone, 0, direction);
     }
     // Chiude il libro e resetta la navigazione, così la prossima apertura riparte da zero.
     public void closeBook() {
         gameState = playState;
-        currentZone = -1;
-        currentIndex = 0;
-        currentPage = 0;
+        bookindex = 0;
+        bookzone = 0;
+        bookpage = 0;
         pageTurnActive = false;
     }
     private void drawCinematic(Graphics2D g2) {
