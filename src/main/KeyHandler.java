@@ -81,6 +81,10 @@ public class KeyHandler implements KeyListener {
             if (code == KeyEvent.VK_ESCAPE || code == KeyEvent.VK_I) gp.closeBook();
             if (code == KeyEvent.VK_LEFT)  gp.turnBookPage(-1);
             if (code == KeyEvent.VK_RIGHT) gp.turnBookPage(1);
+            if (code == KeyEvent.VK_A) gp.cycleBookIndex(-1);
+            if (code == KeyEvent.VK_D) gp.cycleBookIndex(1);
+            if (code == KeyEvent.VK_W) gp.cycleBookZone(-1);
+            if (code == KeyEvent.VK_S) gp.cycleBookZone(1);
         }
     }
 
