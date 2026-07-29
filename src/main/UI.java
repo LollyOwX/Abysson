@@ -83,21 +83,21 @@ public class UI {
     private static final float DIM_ALPHA           = 0.45f; // opacità voci non in hover
 
     // ═════════════════════════════════════════════
-    //  LIBRO: bookmark (macrozone) e index (sezioni) — hit-test mouse
+    //  LIBRO: bookmark (aree generali) — hit-test mouse
     // ═════════════════════════════════════════════
 
     // Rettangoli dei 6 bookmark nello spazio immagine originale del libro (272x272, prima dello
     // scaling a schermo). Misurati confrontando i pixel non trasparenti di book.png con ognuna
     // delle 6 varianti book_X.png: sono la zona (linguetta) che cambia in ciascuna variante.
-    // Indice = gp.bookindex - 1 (stesso ordine di GamePanel.ZONE_IMAGES: bestiary, calendar,
-    // inventory, map, skills, quests — cioè bookindex_bestiary=1 ... bookindex_quests=6).
+    // Indice = gp.bookindex - 1 (stesso ordine di GamePanel.ZONE_IMAGES: map, quests, skills,
+    // calendar, bestiary, inventory — cioè bookindex_map=1 ... bookindex_inventory=6).
     private static final Rectangle[] BOOKMARK_IMAGE_RECTS = {
-            new Rectangle(36,  83, 17, 73), // 0 Bestiario  (bookindex 1)
-            new Rectangle(96,  75, 17, 80), // 1 Calendario (bookindex 2)
-            new Rectangle(185, 82, 17, 72), // 2 Inventario (bookindex 3)
-            new Rectangle(64,  82, 17, 73), // 3 Mappa      (bookindex 4)
-            new Rectangle(217, 83, 17, 73), // 4 Abilità    (bookindex 5)
-            new Rectangle(157, 73, 17, 82), // 5 Quest      (bookindex 6)
+            new Rectangle(64,  82, 17, 73), // 0 Mappa      (bookindex 1)
+            new Rectangle(157, 73, 17, 82), // 1 Quest      (bookindex 2)
+            new Rectangle(217, 83, 17, 73), // 2 Abilità    (bookindex 3)
+            new Rectangle(96,  75, 17, 80), // 3 Calendario (bookindex 4)
+            new Rectangle(36,  83, 17, 73), // 4 Bestiario  (bookindex 5)
+            new Rectangle(185, 82, 17, 72), // 5 Inventario (bookindex 6)
     };
     private final Rectangle[] bookmarkScreenBounds = new Rectangle[BOOKMARK_IMAGE_RECTS.length];
     private int hoveredBookmark = -1;
@@ -425,12 +425,10 @@ public class UI {
 
     // Disegna il libro sopra al mondo (già disegnato da GamePanel prima di chiamare draw()),
     // esattamente come drawPauseScreen() disegna "PAUSED" sopra al mondo.
-    // Sfondo: book.png se nessuna macrozona è selezionata, altrimenti book_X.png della macrozona
-    // attiva (bookmark evidenziato "nel disegno stesso" — vedi GamePanel.getCurrentBookImage()),
-    // più lo sprite extended_bookmarks_X sovrapposto come bottone della macrozona attiva
-    // (ridondante col background di proposito, vedi sotto).
+    // Sfondo: book.png se nessuna area generale è selezionata, altrimenti book_X.png dell'area
+    // attiva (bookmark evidenziato già dentro l'immagine — vedi GamePanel.getCurrentBookImage()).
     // TODO: il testo placeholder (vedi getBookContentText()) va sostituito dai contenuti veri di
-    // ciascuna macrozona quando pronti; bookzone (sezione) non ha ancora una UI cliccabile —
+    // ciascuna area generale quando pronti; bookzone (voce) non ha ancora una UI cliccabile —
     // servono asset dedicati, per ora resta solo dato (GamePanel.bookzone/selectBookZone).
     public void drawBookScreen() {
         BufferedImage bg = gp.getCurrentBookImage();
@@ -443,8 +441,10 @@ public class UI {
         int oy = (gp.screenHeight - h) / 2;
         g2.drawImage(bg, ox, oy, w, h, null);
 
-        // Bookmark: sempre cliccabili (anche per cambiare macrozona mentre se ne sta già guardando una).
-        // Le bounding box a schermo si ricalcolano ogni frame perché seguono lo scaling del libro.
+        // Bookmark: sempre cliccabili (anche per cambiare area generale mentre se ne sta già
+        // guardando una). Le bounding box a schermo si ricalcolano ogni frame perché seguono lo
+        // scaling del libro. Niente overlay separato sopra: la linguetta evidenziata è già dentro
+        // book_X.png (background sopra) — disegnarla due volte la stirava e sdoppiava a schermo.
         for (int i = 0; i < BOOKMARK_IMAGE_RECTS.length; i++) {
             Rectangle r = BOOKMARK_IMAGE_RECTS[i];
             bookmarkScreenBounds[i] = new Rectangle(
@@ -452,20 +452,7 @@ public class UI {
                     (int) (r.width * scale), (int) (r.height * scale));
         }
 
-        // Bookmark esteso (bottone): overlay dello sprite extended_bookmarks_X sopra alla macrozona
-        // attiva, nella stessa posizione del suo bookmark — ridondante con la linguetta già
-        // disegnata dentro il background (voluto: più robusto). Il click lo gestisce comunque
-        // il loop sopra su bookmarkScreenBounds, stessa area. Disegnato SOLO se la macrozona è
-        // effettivamente visibile in questo momento (non durante l'animazione turning_pages):
-        // un bookmark esteso non visibile non deve avere alcun effetto.
         if (gp.bookindex != 0 && !gp.pageTurnActive) {
-            BufferedImage extended = gp.extendedBookmarkImages[gp.bookindex - 1];
-            Rectangle activeBookmark = bookmarkScreenBounds[gp.bookindex - 1];
-            if (extended != null && activeBookmark != null) {
-                g2.drawImage(extended, activeBookmark.x, activeBookmark.y,
-                        activeBookmark.width, activeBookmark.height, null);
-            }
-
             String content = getBookContentText();
             g2.setFont(MaruMonica.deriveFont(Font.PLAIN, 22f));
             g2.setColor(Color.white);
@@ -486,46 +473,14 @@ public class UI {
         }
     }
 
-    // Contenuto placeholder della pagina corrente. Stessa idea del pseudocodice richiesto
-    // (if annidati su bookindex -> bookzone -> bookpage), con una differenza voluta: uso
-    // if/else-if invece di if separati, perché bookindex ha sempre un solo valore alla volta —
-    // controllarli tutti in sequenza sarebbe solo lavoro sprecato, e questo codebase ha già
-    // sofferto di bug legati a usare if invece di if-else-if (vedi STATUS.md).
-    // Solo scheletro: da sostituire con i contenuti veri quando pronti.
+    // Contenuto della pagina corrente: prende la voce sbloccata attiva (BookEntry, vedi
+    // GamePanel.getCurrentBookEntry()) e ne legge la pagina. "" se l'area non ha ancora nessuna
+    // voce sbloccata — l'if/else-if a 24 rami di prima è sparito: ora è dato (BookEntry.pages),
+    // non più codice, quindi cresce da solo quando si aggiungono voci reali.
     private String getBookContentText() {
-        String content = "";
-        if (gp.bookindex == gp.bookindex_bestiary) {
-            if (gp.bookzone == 0) {
-                if (gp.bookpage == 0) content = "Bestiario — Pagina 1";
-                else if (gp.bookpage == 1) content = "Bestiario — Pagina 2";
-            }
-        } else if (gp.bookindex == gp.bookindex_calendar) {
-            if (gp.bookzone == 0) {
-                if (gp.bookpage == 0) content = "Calendario — Pagina 1";
-                else if (gp.bookpage == 1) content = "Calendario — Pagina 2";
-            }
-        } else if (gp.bookindex == gp.bookindex_inventory) {
-            if (gp.bookzone == 0) {
-                if (gp.bookpage == 0) content = "Inventario — Pagina 1";
-                else if (gp.bookpage == 1) content = "Inventario — Pagina 2";
-            }
-        } else if (gp.bookindex == gp.bookindex_map) {
-            if (gp.bookzone == 0) {
-                if (gp.bookpage == 0) content = "Mappa — Pagina 1";
-                else if (gp.bookpage == 1) content = "Mappa — Pagina 2";
-            }
-        } else if (gp.bookindex == gp.bookindex_skills) {
-            if (gp.bookzone == 0) {
-                if (gp.bookpage == 0) content = "Abilità — Pagina 1";
-                else if (gp.bookpage == 1) content = "Abilità — Pagina 2";
-            }
-        } else if (gp.bookindex == gp.bookindex_quests) {
-            if (gp.bookzone == 0) {
-                if (gp.bookpage == 0) content = "Quest — Pagina 1";
-                else if (gp.bookpage == 1) content = "Quest — Pagina 2";
-            }
-        }
-        return content;
+        BookEntry entry = gp.getCurrentBookEntry();
+        if (entry == null) return "Niente sbloccato ancora in quest'area";
+        return entry.name + " — Pagina " + (gp.bookpage + 1) + "/" + entry.pages.length + ": " + entry.pages[gp.bookpage];
     }
 
     // ═════════════════════════════════════════════
@@ -542,9 +497,6 @@ public class UI {
 
     public void handleBookClick(int x, int y) {
         if (gp.gameState != gp.bookState) return;
-        // Il bottone "bookmark esteso" della macrozona attiva occupa la stessa area del suo
-        // bookmark normale (vedi drawBookScreen), quindi il click ci arriva già da questo stesso
-        // loop — niente hit-test separato per lui.
         for (int i = 0; i < bookmarkScreenBounds.length; i++) {
             if (bookmarkScreenBounds[i] != null && bookmarkScreenBounds[i].contains(x, y)) {
                 gp.selectBookIndex(i + 1); // array 0-based -> bookindex 1-based
@@ -757,6 +709,10 @@ public class UI {
         if (plain.length() > 0) segments.add(new TextSegment(plain.toString(), ""));
         return segments;
     }
+
+    // ═════════════════════════════════════════════
+    //  UTILITY
+    // ═════════════════════════════════════════════
 
     public void drawSubWindwow(int x, int y, int width, int height) {
         g2.setColor(new Color(255, 255, 255));
