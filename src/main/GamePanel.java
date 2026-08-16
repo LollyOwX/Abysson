@@ -134,13 +134,18 @@ public class GamePanel extends JPanel implements Runnable {
     // arrivano i contenuti veri — vedi STATUS.md.
     private void seedBookDebugEntries() {
         for(int i = 0; i < ZONE_COUNT; i++) unlockedBookZones.add(new ArrayList<>());
-        unlockedBookZones.get(bookindex_map - 1).add(new BookEntry("Zona di partenza", new String[]{"Stub pagina 1"}));
+        unlockedBookZones.get(bookindex_map - 1).add(new BookEntry("Zona di partenza", new String[]{"Stub pagina 1", "Stub pagina 2"}));
+        unlockedBookZones.get(bookindex_map - 1).add(new BookEntry("Villaggio", new String[]{"Stub pagina 1"}));
         unlockedBookZones.get(bookindex_quests - 1).add(new BookEntry("Quest di prova 1", new String[]{"Stub pagina 1", "Stub requisiti"}));
         unlockedBookZones.get(bookindex_quests - 1).add(new BookEntry("Quest di prova 2", new String[]{"Stub pagina 1"}));
-        unlockedBookZones.get(bookindex_skills - 1).add(new BookEntry("Colpo base", new String[]{"Stub pagina 1"}));
-        unlockedBookZones.get(bookindex_calendar - 1).add(new BookEntry("Giorno 1", new String[]{"Stub pagina 1"}));
+        unlockedBookZones.get(bookindex_skills - 1).add(new BookEntry("Colpo base", new String[]{"Stub pagina 1", "Stub pagina 2"}));
+        unlockedBookZones.get(bookindex_skills - 1).add(new BookEntry("Parata", new String[]{"Stub pagina 1"}));
+        unlockedBookZones.get(bookindex_calendar - 1).add(new BookEntry("Giorno 1", new String[]{"Stub pagina 1", "Stub pagina 2"}));
+        unlockedBookZones.get(bookindex_calendar - 1).add(new BookEntry("Giorno 2", new String[]{"Stub pagina 1"}));
         unlockedBookZones.get(bookindex_bestiary - 1).add(new BookEntry("Goblin", new String[]{"Stub pagina 1", "Stub debolezze"}));
-        unlockedBookZones.get(bookindex_inventory - 1).add(new BookEntry("Pozione", new String[]{"Stub pagina 1"}));
+        unlockedBookZones.get(bookindex_bestiary - 1).add(new BookEntry("Slime", new String[]{"Stub pagina 1"}));
+        unlockedBookZones.get(bookindex_inventory - 1).add(new BookEntry("Pozione", new String[]{"Stub pagina 1", "Stub pagina 2"}));
+        unlockedBookZones.get(bookindex_inventory - 1).add(new BookEntry("Antidoto", new String[]{"Stub pagina 1"}));
     }
     private java.awt.image.BufferedImage loadImageResource(String path) {
         java.io.InputStream is = getClass().getResourceAsStream(path);

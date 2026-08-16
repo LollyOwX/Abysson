@@ -102,6 +102,16 @@ public class UI {
     private final Rectangle[] bookmarkScreenBounds = new Rectangle[BOOKMARK_IMAGE_RECTS.length];
     private int hoveredBookmark = -1;
 
+    // Voci (bookzone) dell'area attiva: nessun asset dedicato ancora (vedi TODO in STATUS.md),
+    // quindi bottoni testuali disegnati e dimensionati a schermo in base al testo stesso
+    // (font metrics + un po' di padding) — non c'è un layout fisso da rispettare come per i
+    // bookmark. Lunghezza variabile: quante sono le voci effettivamente sbloccate in quell'area.
+    private final List<Rectangle> bookZoneButtonBounds = new ArrayList<>();
+    private int hoveredBookZoneButton = -1;
+    private static final int ZONE_BUTTON_PAD_X = 14;
+    private static final int ZONE_BUTTON_PAD_Y = 8;
+    private static final int ZONE_BUTTON_GAP   = 6; // spazio verticale tra un bottone e il successivo
+
     public UI(GamePanel gp) {
         this.gp = gp;
         combat = new CombatState(gp, this);
@@ -428,8 +438,7 @@ public class UI {
     // Sfondo: book.png se nessuna area generale è selezionata, altrimenti book_X.png dell'area
     // attiva (bookmark evidenziato già dentro l'immagine — vedi GamePanel.getCurrentBookImage()).
     // TODO: il testo placeholder (vedi getBookContentText()) va sostituito dai contenuti veri di
-    // ciascuna area generale quando pronti; bookzone (voce) non ha ancora una UI cliccabile —
-    // servono asset dedicati, per ora resta solo dato (GamePanel.bookzone/selectBookZone).
+    // ciascuna area generale quando pronti.
     public void drawBookScreen() {
         BufferedImage bg = gp.getCurrentBookImage();
         if (bg == null) return;
@@ -450,6 +459,32 @@ public class UI {
             bookmarkScreenBounds[i] = new Rectangle(
                     ox + (int) (r.x * scale), oy + (int) (r.y * scale),
                     (int) (r.width * scale), (int) (r.height * scale));
+        }
+
+        // Voci (bookzone) dell'area attiva: lista verticale di bottoni testuali nella fascia alta
+        // della pagina, libera perché i bookmark occupano quella centrale (vedi BOOKMARK_IMAGE_RECTS,
+        // partono da y=73 in spazio immagine). Nessun asset dedicato ancora (vedi STATUS.md), quindi
+        // ogni bottone è dimensionato sul proprio testo (font metrics + padding), non su un layout fisso.
+        bookZoneButtonBounds.clear();
+        if (gp.bookindex != 0 && !gp.pageTurnActive) {
+            List<BookEntry> zones = gp.unlockedBookZones.get(gp.bookindex - 1);
+            g2.setFont(MaruMonica.deriveFont(Font.PLAIN, 18f));
+            FontMetrics fm = g2.getFontMetrics();
+            int buttonHeight = fm.getHeight() + ZONE_BUTTON_PAD_Y * 2;
+            int buttonY = oy + 20;
+            for (int i = 0; i < zones.size(); i++) {
+                String label = zones.get(i).name;
+                int buttonWidth = fm.stringWidth(label) + ZONE_BUTTON_PAD_X * 2;
+                Rectangle bounds = new Rectangle(ox + 20, buttonY, buttonWidth, buttonHeight);
+                bookZoneButtonBounds.add(bounds);
+
+                boolean active = (i == gp.bookzone);
+                boolean hovered = (i == hoveredBookZoneButton);
+                g2.setColor(active ? Color.yellow : (hovered ? Color.lightGray : Color.white));
+                g2.drawString(label, bounds.x + ZONE_BUTTON_PAD_X, bounds.y + fm.getAscent() + ZONE_BUTTON_PAD_Y);
+
+                buttonY += buttonHeight + ZONE_BUTTON_GAP;
+            }
         }
 
         if (gp.bookindex != 0 && !gp.pageTurnActive) {
@@ -473,25 +508,22 @@ public class UI {
         }
     }
 
-    // Contenuto della pagina corrente: prende la voce sbloccata attiva (BookEntry, vedi
-    // GamePanel.getCurrentBookEntry()) e ne legge la pagina. "" se l'area non ha ancora nessuna
-    // voce sbloccata — l'if/else-if a 24 rami di prima è sparito: ora è dato (BookEntry.pages),
-    // non più codice, quindi cresce da solo quando si aggiungono voci reali.
     private String getBookContentText() {
         BookEntry entry = gp.getCurrentBookEntry();
         if (entry == null) return "Niente sbloccato ancora in quest'area";
         return entry.name + " — Pagina " + (gp.bookpage + 1) + "/" + entry.pages.length + ": " + entry.pages[gp.bookpage];
     }
 
-    // ═════════════════════════════════════════════
-    //  LIBRO: input mouse (chiamato da GamePanel, stesso schema di updateMouseHover/handleTitleClick)
-    // ═════════════════════════════════════════════
 
     public void updateBookMouseHover(int x, int y) {
-        if (gp.gameState != gp.bookState) { hoveredBookmark = -1; return; }
+        if (gp.gameState != gp.bookState) { hoveredBookmark = -1; hoveredBookZoneButton = -1; return; }
         hoveredBookmark = -1;
         for (int i = 0; i < bookmarkScreenBounds.length; i++) {
             if (bookmarkScreenBounds[i] != null && bookmarkScreenBounds[i].contains(x, y)) { hoveredBookmark = i; break; }
+        }
+        hoveredBookZoneButton = -1;
+        for (int i = 0; i < bookZoneButtonBounds.size(); i++) {
+            if (bookZoneButtonBounds.get(i).contains(x, y)) { hoveredBookZoneButton = i; break; }
         }
     }
 
@@ -500,6 +532,12 @@ public class UI {
         for (int i = 0; i < bookmarkScreenBounds.length; i++) {
             if (bookmarkScreenBounds[i] != null && bookmarkScreenBounds[i].contains(x, y)) {
                 gp.selectBookIndex(i + 1); // array 0-based -> bookindex 1-based
+                return;
+            }
+        }
+        for (int i = 0; i < bookZoneButtonBounds.size(); i++) {
+            if (bookZoneButtonBounds.get(i).contains(x, y)) {
+                gp.selectBookZone(i);
                 return;
             }
         }

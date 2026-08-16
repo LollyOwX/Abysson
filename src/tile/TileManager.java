@@ -15,12 +15,14 @@ public class TileManager {
     public Tile[] tile;
     public int[][] mapTileNum;
 
+    static final int SPECIAL_TILE_BASE = 100;
+
     // Contatore globale per le animazioni — avanza ogni frame di gioco
     private int animationTick = 0;
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
-        tile = new Tile[100];
+        tile = new Tile[300]; // ~26 tile di terreno + margine per gli special (SPECIAL_TILE_BASE=100)
         mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
         getTileImage();
         loadMap("/maps/world01.txt");
@@ -59,11 +61,11 @@ public class TileManager {
             String altPath  = "tiles/"  + imagePaths[i] + ".png";
             try (InputStream is = getClass().getResourceAsStream(fullPath) != null
                     ? getClass().getResourceAsStream(fullPath) : Thread.currentThread().getContextClassLoader().getResourceAsStream(altPath)) {
-                        if (is == null) throw new IllegalArgumentException("Resource not found: " + fullPath);
-                        BufferedImage img = ImageIO.read(is);
-                        if (img == null) throw new IOException("ImageIO returned null: " + fullPath);
-                        tile[index].frames[i] = uTool.scaleImage(img, gp.tileSize, gp.tileSize);
-                    } catch (IOException e) {
+                if (is == null) throw new IllegalArgumentException("Resource not found: " + fullPath);
+                BufferedImage img = ImageIO.read(is);
+                if (img == null) throw new IOException("ImageIO returned null: " + fullPath);
+                tile[index].frames[i] = uTool.scaleImage(img, gp.tileSize, gp.tileSize);
+            } catch (IOException e) {
                 throw new RuntimeException("Failed to load animated tile: " + fullPath, e);
             }
         }
@@ -121,6 +123,29 @@ public class TileManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        loadSpecialTilesUsedInMap();
+    }
+
+    private void loadSpecialTilesUsedInMap() {
+        SpecialTile[] specials = SpecialTile.values();
+        for (int col = 0; col < gp.maxWorldCol; col++) {
+            for (int row = 0; row < gp.maxWorldRow; row++) {
+                int id = mapTileNum[col][row];
+                if (id >= SPECIAL_TILE_BASE && tile[id] == null) {
+                    int ordinal = id - SPECIAL_TILE_BASE;
+                    if (ordinal >= specials.length) {
+                        // ID scritto a mano nella mappa .txt che non corrisponde a nessuna voce
+                        // di SpecialTile — probabile refuso. Meglio un errore chiaro qui che un
+                        // crash generico più giù, o peggio un tile silenziosamente non disegnato.
+                        System.err.println("ERROR: tile speciale " + id + " non esiste in SpecialTile (max valido: "
+                                + (SPECIAL_TILE_BASE + specials.length - 1) + ")");
+                        continue;
+                    }
+                    SpecialTile special = specials[ordinal];
+                    setup(id, special.name(), special.collision);
+                }
+            }
+        }
     }
 
     public void draw(Graphics2D g2) {
@@ -137,9 +162,9 @@ public class TileManager {
 
             // Frustum culling — disegna solo le tile visibili
             if (worldX + gp.tileSize > gp.player.worldX - gp.player.screenX &&
-                worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
-                worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
-                worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
+                    worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
+                    worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
+                    worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
                 Tile t = tile[tileNum];
                 BufferedImage img;
                 if (t.animated && t.frames != null && t.frameCount > 0) {
