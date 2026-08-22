@@ -109,7 +109,6 @@ public class GamePanel extends JPanel implements Runnable {
             @Override
             public void mouseMoved(MouseEvent e) {
                 ui.updateMouseHover(e.getX(), e.getY());
-                ui.updateBookMouseHover(e.getX(), e.getY());
             }
             @Override
             public void mouseClicked(MouseEvent e) {
