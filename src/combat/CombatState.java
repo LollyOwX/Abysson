@@ -91,17 +91,13 @@ public class CombatState {
             monsterSpriteNum = monsterSpriteNum == 1 ? 2 : 1;
             monsterSpriteCounter = 0;
         }
-
-        if (messageTimer > 0) { messageTimer--; return; }
+        if (messageTimer > 0) { messageTimer--; return;}
         if (turnPhase == MONSTER_TURN) { monsterTurn(); return; }
 
         if (turnPhase == COMBAT_OVER) {
-            // Message is done - save monsterIndex before endCombat clears it
             int savedMonsterIndex = monsterIndex;
             boolean wasVictory = combatVictory;
-            // End combat (return to playState, dark overlay removed)
             endCombat();
-            // Only set dying animation if player won
             if (wasVictory && savedMonsterIndex >= 0 && savedMonsterIndex < gp.monster.length) {
                 gp.monster[savedMonsterIndex].dying = true;
                 gp.monster[savedMonsterIndex].dyingCounter = 0;
@@ -295,27 +291,22 @@ public class CombatState {
     // ─────────────────────────────────────────────
 
     void checkVictory() {
-        // Show victory message in COMBAT_OVER state
         combatVictory = true;
         onVictory();
-        // Set turnPhase to COMBAT_OVER so update() waits for messageTimer
-        // The dying animation will start AFTER returning to playState
         turnPhase = COMBAT_OVER;
     }
-
-    void onVictory() {
-        // stub — future: exp, drops, animations
-        combatMessage = "You defeated " + monster.name + "!";
-        messageTimer  = 90;
-    }
-
     void checkDefeat() {
         onDefeat();
         turnPhase = COMBAT_OVER;
     }
 
+    void onVictory() {
+        //TODO premi
+        combatMessage = "You defeated " + monster.name + "!";
+        messageTimer  = 90;
+    }
     void onDefeat() {
-        // stub — future: game over screen, penalties
+        //TODO penalità
         combatMessage = "You have been defeated...";
         messageTimer  = 90;
     }

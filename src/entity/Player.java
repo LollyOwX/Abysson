@@ -47,7 +47,7 @@ public class Player extends Entity {
         direction = "down";
         idleDirection = "down";
 
-        maxLife = 100;
+        maxLife = 1000;
         life = maxLife;
         attack = 40;
         defense = 20;

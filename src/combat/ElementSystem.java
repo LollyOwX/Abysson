@@ -25,15 +25,15 @@ import java.util.Random;
  *   2. Aggiungi la logica in processTurnEffects() se ha tick per turno
  *   3. Aggiungi in isPositiveEffect() se è positivo
  *
- * ── Tabella reazioni (simmetrica) ───────────────────────────────────
- *           FIS    LUC    FUO    ACQ    TER    ARI    FUL
- *   FIS  [  POT    ESP    INF    ERO    ROT    TUR    SCO ]
- *   LUC  [  ESP    ACC    ABR    PUR    NAT    ILL    RAG ]
- *   FUO  [  INF    ABR    ESP    VAP    CAR    FIR    SOV ]
- *   ACQ  [  ERO    PUR    VAP    INO    INF    TEM    ELT ]
- *   TER  [  ROT    NAT    CAR    INF    RES    POL    DEV ]
- *   ARI  [  TUR    ILL    FIR    TEM    POL    STO    RAM ]
- *   FUL  [  SCO    RAG    SOV    ELT    DEV    RAM    FOL ]
+ * <p> ── Tabella reazioni (simmetrica) ───────────────────────────────────
+ * <p>          FIS    LUC    FUO    ACQ    TER    ARI    FUL
+ * <p>  FIS  [  POT    ESP    INF    ERO    ROT    TUR    SCO ]
+ * <p>  LUC  [  ESP    ACC    ABR    PUR    NAT    ILL    RAG ]
+ * <p>  FUO  [  INF    ABR    ESP    VAP    CAR    FIR    SOV ]
+ * <p>  ACQ  [  ERO    PUR    VAP    INO    INF    TEM    ELT ]
+ * <p>  TER  [  ROT    NAT    CAR    INF    RES    POL    DEV ]
+ * <p>  ARI  [  TUR    ILL    FIR    TEM    POL    STO    RAM ]
+ * <p>  FUL  [  SCO    RAG    SOV    ELT    DEV    RAM    FOL ]
  */
 public class ElementSystem {
 
@@ -58,7 +58,7 @@ public class ElementSystem {
         ESPOSIZIONE("Esposizione"),           // +1 durata effetti negativi subiti
         INFIAMMAZIONE("Infiammazione"),       // Sul fallimento → 1d6 danni fuoco
         EROSIONE("Erosione"),                 // Ogni turno rimuove RNG un effetto (pos o neg)
-        TURBINIO("Turbinio"),                 // STUB - applica elemento a alleati vicini
+        TURBINIO("Turbinio"),                 // STUB - applica elemento a tutti le entità vicine
         SCOSSA("Scossa"),                     // Chi attacca può farlo 2 volte
         ABRASIONE("Abrasione"),               // Abilità Fuoco hanno vantaggio
         PURIFICAZIONE("Purificazione"),       // Rimuove tutti gli effetti positivi
@@ -323,8 +323,7 @@ public class ElementSystem {
     }
 
     /** Factory shortcut per creare Reaction inline */
-    private static Reaction mk(String name, int bonus, Element bonusEl,
-                                StatusEffect effect, int duration, double mult) {
+    private static Reaction mk(String name, int bonus, Element bonusEl, StatusEffect effect, int duration, double mult) {
         return new Reaction(name, bonus, bonusEl, effect, duration, mult);
     }
 }

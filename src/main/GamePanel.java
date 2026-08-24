@@ -9,7 +9,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 import entity.Entity;
 
@@ -76,17 +75,19 @@ public class GamePanel extends JPanel implements Runnable {
     public final int bookindex_bestiary  = 5;
     public final int bookindex_inventory = 6;
 
-    public int bookzone; // indice della voce sbloccata dentro all'area generale (dentro unlockedBookZones)
-    public int bookpage; // pagina di dettaglio dentro alla voce (dentro BookEntry.pages)
+    public int bookzone; // indice del sottoargomento selezionato dentro all'area generale
+    public int bookpage; // pagina di dettaglio dentro al sottoargomento
 
     static final int ZONE_COUNT = 6;
     // Nomi file immagine: indice = bookindex-1 (stesso ordine delle costanti bookindex_* sopra).
     static final String[] ZONE_IMAGES = {"book_map.png", "book_quests.png", "book_skills.png",
             "book_calendar.png", "book_bestiary.png", "book_inventory.png"};
-    // Voci sbloccate per area (indice = bookindex-1, stesso ordine di ZONE_IMAGES sopra). Stesso
-    // pattern di Entity.unlockedAbilities: una voce esiste per il giocatore solo se è in questa
-    // lista — niente booleano "locked" da controllare altrove. Vuota finché non sbloccata.
-    List<List<BookEntry>> unlockedBookZones = new ArrayList<>();
+    // Quanti sottoargomenti/pagine esistono per ciascuna area — indice = bookindex-1, stesso
+    // ordine di ZONE_IMAGES sopra. Numero libero per area (deve però combaciare con quanti
+    // Rectangle metti in UI.SUBTOPIC_IMAGE_RECTS per quell'area, altrimenti da tastiera (W/S)
+    // si potrebbe arrivare a un pulsante che in UI non esiste, o viceversa non arrivarci).
+    static final int[] BOOKZONE_COUNT = {2, 2, 2, 2, 2, 2};
+    static final int[] MICRO_PAGE_COUNT = {2, 2, 2, 2, 2, 2};
 
     java.awt.image.BufferedImage bookImage; // pagina di base, nessuna area generale selezionata
     java.awt.image.BufferedImage[] bookZoneImages = new java.awt.image.BufferedImage[ZONE_COUNT]; // book_map.png, ecc.
@@ -120,31 +121,12 @@ public class GamePanel extends JPanel implements Runnable {
         this.addMouseListener(titleMouseHandler);
 
         loadBookImage();
-        seedBookDebugEntries();
     }
     private void loadBookImage() {
         bookImage = loadImageResource("/ui/book.png");
         for(int i = 0; i < ZONE_COUNT; i++) {
             bookZoneImages[i] = loadImageResource("/ui/" + ZONE_IMAGES[i]);
         }
-    }
-    // Voci di debug per provare la navigazione del libro finché i veri punti di sblocco (quest
-    // accettata, mostro incontrato, area scoperta...) non sono collegati. Da rimuovere quando
-    // arrivano i contenuti veri — vedi STATUS.md.
-    private void seedBookDebugEntries() {
-        for(int i = 0; i < ZONE_COUNT; i++) unlockedBookZones.add(new ArrayList<>());
-        unlockedBookZones.get(bookindex_map - 1).add(new BookEntry("Zona di partenza", new String[]{"Stub pagina 1", "Stub pagina 2"}));
-        unlockedBookZones.get(bookindex_map - 1).add(new BookEntry("Villaggio", new String[]{"Stub pagina 1"}));
-        unlockedBookZones.get(bookindex_quests - 1).add(new BookEntry("Quest di prova 1", new String[]{"Stub pagina 1", "Stub requisiti"}));
-        unlockedBookZones.get(bookindex_quests - 1).add(new BookEntry("Quest di prova 2", new String[]{"Stub pagina 1"}));
-        unlockedBookZones.get(bookindex_skills - 1).add(new BookEntry("Colpo base", new String[]{"Stub pagina 1", "Stub pagina 2"}));
-        unlockedBookZones.get(bookindex_skills - 1).add(new BookEntry("Parata", new String[]{"Stub pagina 1"}));
-        unlockedBookZones.get(bookindex_calendar - 1).add(new BookEntry("Giorno 1", new String[]{"Stub pagina 1", "Stub pagina 2"}));
-        unlockedBookZones.get(bookindex_calendar - 1).add(new BookEntry("Giorno 2", new String[]{"Stub pagina 1"}));
-        unlockedBookZones.get(bookindex_bestiary - 1).add(new BookEntry("Goblin", new String[]{"Stub pagina 1", "Stub debolezze"}));
-        unlockedBookZones.get(bookindex_bestiary - 1).add(new BookEntry("Slime", new String[]{"Stub pagina 1"}));
-        unlockedBookZones.get(bookindex_inventory - 1).add(new BookEntry("Pozione", new String[]{"Stub pagina 1", "Stub pagina 2"}));
-        unlockedBookZones.get(bookindex_inventory - 1).add(new BookEntry("Antidoto", new String[]{"Stub pagina 1"}));
     }
     private java.awt.image.BufferedImage loadImageResource(String path) {
         java.io.InputStream is = getClass().getResourceAsStream(path);
@@ -349,22 +331,12 @@ public class GamePanel extends JPanel implements Runnable {
         pendingBookzone = newBookzone;
         pendingBookpage = newBookpage;
     }
-    // Voce (BookEntry) attualmente aperta, o null se l'area non ha ancora nessuna voce sbloccata
-    // (lista vuota) o se bookzone punta fuori dai limiti. La UI mostra "niente sbloccato" in quel caso.
-    public BookEntry getCurrentBookEntry() {
-        if(bookindex == 0) return null;
-        List<BookEntry> zones = unlockedBookZones.get(bookindex - 1);
-        if(bookzone < 0 || bookzone >= zones.size()) return null;
-        return zones.get(bookzone);
-    }
-    // Frecce LEFT/RIGHT: cambia pagina di dettaglio dentro alla voce corrente.
-    // Ai bordi (prima/ultima pagina) non fa nulla, come un libro vero. Il numero di pagine è
-    // quello della voce stessa (BookEntry.pages), non più una costante fissa uguale per tutte.
+    // Frecce LEFT/RIGHT: cambia pagina di dettaglio dentro al sottoargomento corrente.
+    // Ai bordi (prima/ultima pagina) non fa nulla, come un libro vero.
     public void turnBookPage(int direction) {
-        BookEntry entry = getCurrentBookEntry();
-        if(entry == null) return; // nessuna area aperta, o nessuna voce sbloccata: niente pagine da girare
+        if(bookindex == 0) return; // nessuna area aperta, non ci sono pagine da girare
         int newPage = bookpage + direction;
-        if(newPage < 0 || newPage >= entry.pages.length) return;
+        if(newPage < 0 || newPage >= MICRO_PAGE_COUNT[bookindex - 1]) return;
         startBookTransition(bookindex, bookzone, newPage, direction);
     }
     // Click su un bookmark: salta all'area generale corrispondente (bookindex), resettando voce e pagina.
@@ -373,13 +345,9 @@ public class GamePanel extends JPanel implements Runnable {
         int direction = (bookindex == 0 || newBookindex > bookindex) ? 1 : -1;
         startBookTransition(newBookindex, 0, 0, direction);
     }
-    // Click su una voce (bookzone) dentro all'area generale attiva: resta nella stessa area generale.
-    // Il numero di voci è quello effettivamente sbloccato finora (unlockedBookZones), non una
-    // costante fissa: una voce non sbloccata semplicemente non è nella lista, niente da selezionare.
+    // Click su un sottoargomento (bookzone) dentro all'area generale attiva: resta nella stessa area.
     public void selectBookZone(int newBookzone) {
-        if(bookindex == 0) return;
-        int zoneCount = unlockedBookZones.get(bookindex - 1).size();
-        if(newBookzone < 0 || newBookzone >= zoneCount || newBookzone == bookzone) return;
+        if(bookindex == 0 || newBookzone < 0 || newBookzone >= BOOKZONE_COUNT[bookindex - 1] || newBookzone == bookzone) return;
         int direction = (newBookzone > bookzone) ? 1 : -1;
         startBookTransition(bookindex, newBookzone, 0, direction);
     }
@@ -390,12 +358,12 @@ public class GamePanel extends JPanel implements Runnable {
         if(target < 1 || target > ZONE_COUNT) return;
         selectBookIndex(target);
     }
-    // Tasti W/S in bookState: voce precedente/successiva dentro all'area generale corrente.
-    // Senza effetto se nessuna area generale è aperta (niente voci da cambiare).
+    // Tasti W/S in bookState: sottoargomento precedente/successivo dentro all'area generale corrente.
+    // Senza effetto se nessuna area generale è aperta (niente sottoargomenti da cambiare).
     public void cycleBookZone(int direction) {
         if(bookindex == 0) return;
         int target = bookzone + direction;
-        if(target < 0 || target >= unlockedBookZones.get(bookindex - 1).size()) return;
+        if(target < 0 || target >= BOOKZONE_COUNT[bookindex - 1]) return;
         selectBookZone(target);
     }
     // Chiude il libro e resetta la navigazione, così la prossima apertura riparte da zero.

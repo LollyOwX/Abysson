@@ -101,6 +101,16 @@ public class UI {
     };
     private final Button[] bookmarkButtons = new Button[BOOKMARK_IMAGE_RECTS.length];
 
+    private static final Rectangle[][] SUBTOPIC_IMAGE_RECTS = {
+            { new Rectangle(27, 16, 10, 18), new Rectangle(27,36,10,18), new Rectangle(27,56,10,18) }, // 0 Mappa
+            { new Rectangle(73, 16, 10, 10), new Rectangle(73,28,10, 10), new Rectangle(73, 40,10, 10), new Rectangle(73, 52, 10, 10), new Rectangle(73,64,10, 10) }, // 1 Quest
+            { new Rectangle(4, 16, 10, 10), new Rectangle(4,28,10, 10), new Rectangle(4, 40,10, 10), new Rectangle(4, 52, 10, 10), new Rectangle(4,64,10, 10) },  // 2 Abilità
+            { new Rectangle(50, 16, 10, 28), new Rectangle(50,46,10,28) },  // 3 Calendario
+            { new Rectangle(119, 16, 10, 18), new Rectangle(119,36,10,18), new Rectangle(119,56,10,18) },  // 4 Bestiario
+            { new Rectangle(96, 16, 10, 10), new Rectangle(96,28,10, 10), new Rectangle(96, 40,10, 10), new Rectangle(96, 52, 10, 10), new Rectangle(96,64,10, 10) },  // 5 Inventario
+    };
+    private final Button[][] subtopicButtons = new Button[SUBTOPIC_IMAGE_RECTS.length][];
+
     public UI(GamePanel gp) {
         this.gp = gp;
         combat = new CombatState(gp, this);
@@ -142,6 +152,17 @@ public class UI {
         for (int i = 0; i < bookmarkButtons.length; i++) {
             final int bookindex = i + 1;
             bookmarkButtons[i] = new Button(() -> gp.selectBookIndex(bookindex));
+        }
+
+        // Un Button per sottoargomento, per ogni area: il click chiama selectBookZone() con
+        // l'indice giusto. Restano inattivi (bounds null) finché la loro area non è quella
+        // aperta — vedi drawBookScreen().
+        for (int area = 0; area < subtopicButtons.length; area++) {
+            subtopicButtons[area] = new Button[SUBTOPIC_IMAGE_RECTS[area].length];
+            for (int z = 0; z < subtopicButtons[area].length; z++) {
+                final int bookzone = z;
+                subtopicButtons[area][z] = new Button(() -> gp.selectBookZone(bookzone));
+            }
         }
 
         try {
@@ -433,8 +454,7 @@ public class UI {
     // esattamente come drawPauseScreen() disegna "PAUSED" sopra al mondo.
     // Sfondo: book.png se nessuna area generale è selezionata, altrimenti book_X.png dell'area
     // attiva (bookmark evidenziato già dentro l'immagine — vedi GamePanel.getCurrentBookImage()).
-    // TODO: il testo placeholder (vedi getBookContentText()) va sostituito dai contenuti veri di
-    // ciascuna area generale quando pronti.
+    // Contenuto delle pagine tolto per ora (vedi STATUS.md) — pagina completamente vuota.
     public void drawBookScreen() {
         BufferedImage bg = gp.getCurrentBookImage();
         if (bg == null) return;
@@ -457,11 +477,23 @@ public class UI {
                     (int) (r.width * scale), (int) (r.height * scale));
         }
 
-        if (gp.bookindex != 0 && !gp.pageTurnActive) {
-            String content = getBookContentText();
-            g2.setFont(MaruMonica.deriveFont(Font.PLAIN, 22f));
-            g2.setColor(Color.white);
-            g2.drawString(content, ox + w / 2 - g2.getFontMetrics().stringWidth(content) / 2, oy + h - 30);
+        // Sottoargomenti (bookzone): un set di pulsanti per area, posizioni placeholder da
+        // aggiustare a vista (stesso procedimento dei bookmark). Attivi SOLO per l'area
+        // effettivamente aperta (gp.bookindex - 1 == area) — per tutte le altre azzero i bounds,
+        // così non restano cliccabili con posizioni "vecchie" da quando erano loro l'area attiva
+        // (altrimenti si sovrapporrebbero al contenuto sbagliato).
+        for (int area = 0; area < subtopicButtons.length; area++) {
+            boolean isActiveArea = (gp.bookindex - 1 == area) && !gp.pageTurnActive;
+            for (int z = 0; z < subtopicButtons[area].length; z++) {
+                if (isActiveArea) {
+                    Rectangle r = SUBTOPIC_IMAGE_RECTS[area][z];
+                    subtopicButtons[area][z].setBounds(
+                            ox + (int) (r.x * scale), oy + (int) (r.y * scale),
+                            (int) (r.width * scale), (int) (r.height * scale));
+                } else {
+                    subtopicButtons[area][z].bounds = null;
+                }
+            }
         }
 
         if (gp.pageTurnActive) {
@@ -478,16 +510,6 @@ public class UI {
         }
     }
 
-    // Contenuto della pagina corrente: prende la voce sbloccata attiva (BookEntry, vedi
-    // GamePanel.getCurrentBookEntry()) e ne legge la pagina. "" se l'area non ha ancora nessuna
-    // voce sbloccata — l'if/else-if a 24 rami di prima è sparito: ora è dato (BookEntry.pages),
-    // non più codice, quindi cresce da solo quando si aggiungono voci reali.
-    private String getBookContentText() {
-        BookEntry entry = gp.getCurrentBookEntry();
-        if (entry == null) return "Niente sbloccato ancora in quest'area";
-        return entry.name + " — Pagina " + (gp.bookpage + 1) + "/" + entry.pages.length + ": " + entry.pages[gp.bookpage];
-    }
-
     // ═════════════════════════════════════════════
     //  LIBRO: input mouse (chiamato da GamePanel, stesso schema di updateMouseHover/handleTitleClick)
     // ═════════════════════════════════════════════
@@ -496,6 +518,11 @@ public class UI {
         if (gp.gameState != gp.bookState) return;
         for (Button b : bookmarkButtons) {
             if (b.click(x, y)) return;
+        }
+        for (Button[] areaButtons : subtopicButtons) {
+            for (Button b : areaButtons) {
+                if (b.click(x, y)) return;
+            }
         }
     }
 
