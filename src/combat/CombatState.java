@@ -153,7 +153,7 @@ public class CombatState {
                 break;
             case CMD_ABILITY:
                 if (gp.player.unlockedAbilities.isEmpty()) {
-                    combatMessage = "No abilities available.";
+                    combatMessage = "Your journey didn't bring\nyou far enough yet.";
                     messageTimer  = 60;
                 } else {
                     inAbilityMenu = true;
@@ -197,6 +197,7 @@ public class CombatState {
         int tickDmg         = ElementSystem.processTurnEffects(monster);
         monster.life       -= tickDmg;
 
+        //MESSAGE BUILDER
         StringBuilder msg = new StringBuilder();
         msg.append("You use ").append(Ability.getName(abilityId));
         if (elemMult > 1.0) msg.append(" [ADVANTAGE]");

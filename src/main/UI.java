@@ -101,13 +101,19 @@ public class UI {
     };
     private final Button[] bookmarkButtons = new Button[BOOKMARK_IMAGE_RECTS.length];
 
+    // Rettangoli dei pulsanti sottoargomento (bookzone), per area (indice esterno = bookindex-1,
+    // stesso ordine di BOOKMARK_IMAGE_RECTS sopra). Posizioni PLACEHOLDER, da aggiustare a vista
+    // come per i bookmark. Quanti Rectangle per area deve combaciare con GamePanel.BOOKZONE_COUNT
+    // (mappa=3, quest=2, abilità=5, calendario=2, bestiario=3, inventario=5) — impilati
+    // verticalmente accumulando y (altezza 20 + margine 5), a partire da y=95, sotto alla fascia
+    // dei bookmark (y=70-85 circa).
     private static final Rectangle[][] SUBTOPIC_IMAGE_RECTS = {
-            { new Rectangle(27, 16, 10, 18), new Rectangle(27,36,10,18), new Rectangle(27,56,10,18) }, // 0 Mappa
-            { new Rectangle(73, 16, 10, 10), new Rectangle(73,28,10, 10), new Rectangle(73, 40,10, 10), new Rectangle(73, 52, 10, 10), new Rectangle(73,64,10, 10) }, // 1 Quest
-            { new Rectangle(4, 16, 10, 10), new Rectangle(4,28,10, 10), new Rectangle(4, 40,10, 10), new Rectangle(4, 52, 10, 10), new Rectangle(4,64,10, 10) },  // 2 Abilità
-            { new Rectangle(50, 16, 10, 28), new Rectangle(50,46,10,28) },  // 3 Calendario
-            { new Rectangle(119, 16, 10, 18), new Rectangle(119,36,10,18), new Rectangle(119,56,10,18) },  // 4 Bestiario
-            { new Rectangle(96, 16, 10, 10), new Rectangle(96,28,10, 10), new Rectangle(96, 40,10, 10), new Rectangle(96, 52, 10, 10), new Rectangle(96,64,10, 10) },  // 5 Inventario
+            { new Rectangle(68, 86, 10, 18), new Rectangle(68, 106, 10, 18), new Rectangle(68, 126, 10, 18) }, // 0 Mappa (3)
+            { new Rectangle(161, 86, 10, 10), new Rectangle(161, 98, 10, 10), new Rectangle(161,110,10,10), new Rectangle(161,122,10,10), new Rectangle(161,134,10,10) }, // 1 Quest (2)
+            { new Rectangle(221, 87, 10, 10), new Rectangle(221, 99, 10, 10), new Rectangle(221, 111, 10, 10), new Rectangle(221, 123, 10, 10), new Rectangle(221, 135, 10, 10) }, // 2 Abilità (5)
+            { new Rectangle(100, 86, 10, 28), new Rectangle(100, 116, 10, 28) }, // 3 Calendario (2)
+            { new Rectangle(40, 87, 10, 18), new Rectangle(40, 107, 10, 18), new Rectangle(40, 127, 10, 18) }, // 4 Bestiario (3)
+            { new Rectangle(189, 85, 10, 10), new Rectangle(189, 97, 10, 10), new Rectangle(189, 109, 10, 10), new Rectangle(189, 121, 10, 10), new Rectangle(189, 133, 10, 10) }, // 5 Inventario (5)
     };
     private final Button[][] subtopicButtons = new Button[SUBTOPIC_IMAGE_RECTS.length][];
 
@@ -155,8 +161,8 @@ public class UI {
         }
 
         // Un Button per sottoargomento, per ogni area: il click chiama selectBookZone() con
-        // l'indice giusto. Restano inattivi (bounds null) finché la loro area non è quella
-        // aperta — vedi drawBookScreen().
+        // l'indice giusto (0-based). Restano inattivi (bounds null) finché la loro area non è
+        // quella aperta — vedi drawBookScreen().
         for (int area = 0; area < subtopicButtons.length; area++) {
             subtopicButtons[area] = new Button[SUBTOPIC_IMAGE_RECTS[area].length];
             for (int z = 0; z < subtopicButtons[area].length; z++) {
@@ -450,11 +456,8 @@ public class UI {
         g2.drawString(text, getXforCenteredText(text), gp.screenHeight / 2);
     }
 
-    // Disegna il libro sopra al mondo (già disegnato da GamePanel prima di chiamare draw()),
-    // esattamente come drawPauseScreen() disegna "PAUSED" sopra al mondo.
-    // Sfondo: book.png se nessuna area generale è selezionata, altrimenti book_X.png dell'area
-    // attiva (bookmark evidenziato già dentro l'immagine — vedi GamePanel.getCurrentBookImage()).
-    // Contenuto delle pagine tolto per ora (vedi STATUS.md) — pagina completamente vuota.
+    // Disegna il libro sopra al mondo (già disegnato da GamePanel prima di chiamare draw()), esattamente come drawPauseScreen() disegna "PAUSED" sopra al mondo.
+    // Sfondo: book.png se nessuna area generale è selezionata, altrimenti book_X.png dell'area attiva (bookmark evidenziato già dentro l'immagine — vedi GamePanel.getCurrentBookImage()).
     public void drawBookScreen() {
         BufferedImage bg = gp.getCurrentBookImage();
         if (bg == null) return;
@@ -477,16 +480,12 @@ public class UI {
                     (int) (r.width * scale), (int) (r.height * scale));
         }
 
-        // Sottoargomenti (bookzone): un set di pulsanti per area, posizioni placeholder da
-        // aggiustare a vista (stesso procedimento dei bookmark). Attivi SOLO per l'area
-        // effettivamente aperta (gp.bookindex - 1 == area) — per tutte le altre azzero i bounds,
-        // così non restano cliccabili con posizioni "vecchie" da quando erano loro l'area attiva
-        // (altrimenti si sovrapporrebbero al contenuto sbagliato).
+        // Sottoargomenti (bookzone): attivi SOLO per l'area effettivamente aperta (gp.bookindex - 1 == area) — per tutte le altre azzero i bounds, così non restano cliccabili con posizioni "vecchie" da quando erano loro l'area attiva (altrimenti si sovrapporrebbero al contenuto sbagliato).
         for (int area = 0; area < subtopicButtons.length; area++) {
             boolean isActiveArea = (gp.bookindex - 1 == area) && !gp.pageTurnActive;
             for (int z = 0; z < subtopicButtons[area].length; z++) {
                 if (isActiveArea) {
-                    Rectangle r = SUBTOPIC_IMAGE_RECTS[area][z];
+                        Rectangle r = SUBTOPIC_IMAGE_RECTS[area][z];
                     subtopicButtons[area][z].setBounds(
                             ox + (int) (r.x * scale), oy + (int) (r.y * scale),
                             (int) (r.width * scale), (int) (r.height * scale));
@@ -544,8 +543,6 @@ public class UI {
         // Disegna testo con tag di stile
         drawStyledText(currentDialogue, textX, textY, width - gp.tileSize * 2);
 
-        // Triangolo "vai avanti" in basso a destra della box
-        drawNextIndicator(x + width, y + height);
     }
 
     // ═════════════════════════════════════════════
@@ -572,7 +569,6 @@ public class UI {
             if (neutralMenuCommand == i) g2.drawString(">", optX - 24, optY);
             optY += 40;
         }
-        drawNextIndicator(x + width, y + height);
     }
 
     public void openNeutralMenu(Entity target, int index, boolean isNpc) {
@@ -604,21 +600,6 @@ public class UI {
             gp.gameState = gp.combatState;
             combat.startCombat(target, idx);
         }
-    }
-
-    // ═════════════════════════════════════════════
-    //  TRIANGOLO "NEXT" INDICATOR
-    // ═════════════════════════════════════════════
-
-    public void drawNextIndicator(int boxRight, int boxBottom) {
-        // Lampeggio: visibile 30 frame, invisibile 30
-        if ((textAnimTick / 30) % 2 == 1) return;
-        int size = 12, margin = 14;
-        int cx = boxRight - margin, cy = boxBottom - margin;
-        int[] xs = {cx - size, cx + size, cx};
-        int[] ys = {cy - size, cy - size, cy + size / 2};
-        g2.setColor(Color.white);
-        g2.fillPolygon(xs, ys, 3);
     }
 
     // ═════════════════════════════════════════════

@@ -75,19 +75,22 @@ public class GamePanel extends JPanel implements Runnable {
     public final int bookindex_bestiary  = 5;
     public final int bookindex_inventory = 6;
 
-    public int bookzone; // indice del sottoargomento selezionato dentro all'area generale
+    public int bookzone = -1; // indice del sottoargomento selezionato; -1 = nessuno ancora (0 è un valore valido, il primo)
     public int bookpage; // pagina di dettaglio dentro al sottoargomento
 
     static final int ZONE_COUNT = 6;
     // Nomi file immagine: indice = bookindex-1 (stesso ordine delle costanti bookindex_* sopra).
     static final String[] ZONE_IMAGES = {"book_map.png", "book_quests.png", "book_skills.png",
             "book_calendar.png", "book_bestiary.png", "book_inventory.png"};
-    // Quanti sottoargomenti/pagine esistono per ciascuna area — indice = bookindex-1, stesso
-    // ordine di ZONE_IMAGES sopra. Numero libero per area (deve però combaciare con quanti
-    // Rectangle metti in UI.SUBTOPIC_IMAGE_RECTS per quell'area, altrimenti da tastiera (W/S)
-    // si potrebbe arrivare a un pulsante che in UI non esiste, o viceversa non arrivarci).
-    static final int[] BOOKZONE_COUNT = {2, 2, 2, 2, 2, 2};
+    // MICRO_PAGE_COUNT: quante pagine ha ciascuna area — indice = bookindex-1, stesso ordine di
+    // ZONE_IMAGES sopra. Numero libero per area (deve combaciare con UI.SUBTOPIC_IMAGE_RECTS).
+    // bookpage resta 0-based (0..MICRO_PAGE_COUNT[area]-1).
     static final int[] MICRO_PAGE_COUNT = {2, 2, 2, 2, 2, 2};
+    // BOOKZONE_COUNT: quanti sottoargomenti ha ciascuna area — indice = bookindex-1, stesso
+    // ordine di ZONE_IMAGES sopra. bookzone è 0-based (0..BOOKZONE_COUNT[area]-1), come pageIndex.
+    // Numero libero per area, deve combaciare con quanti Rectangle ci sono in
+    // UI.SUBTOPIC_IMAGE_RECTS per quella stessa area.
+    static final int[] BOOKZONE_COUNT = {3, 5, 5, 2, 3, 5}; // map, quests, skills, calendar, bestiary, inventory
 
     java.awt.image.BufferedImage bookImage; // pagina di base, nessuna area generale selezionata
     java.awt.image.BufferedImage[] bookZoneImages = new java.awt.image.BufferedImage[ZONE_COUNT]; // book_map.png, ecc.
@@ -343,12 +346,14 @@ public class GamePanel extends JPanel implements Runnable {
     public void selectBookIndex(int newBookindex) {
         if(newBookindex < 1 || newBookindex > ZONE_COUNT || newBookindex == bookindex) return;
         int direction = (bookindex == 0 || newBookindex > bookindex) ? 1 : -1;
-        startBookTransition(newBookindex, 0, 0, direction);
+        startBookTransition(newBookindex, -1, 0, direction); // -1 = nessun sottoargomento selezionato ancora
     }
     // Click su un sottoargomento (bookzone) dentro all'area generale attiva: resta nella stessa area.
+    // -1 = nessun sottoargomento selezionato (sentinella, come bookindex==0) — 0 è un valore VALIDO
+    // (il primo sottoargomento), quindi non può fare doppio servizio da "non selezionato".
     public void selectBookZone(int newBookzone) {
         if(bookindex == 0 || newBookzone < 0 || newBookzone >= BOOKZONE_COUNT[bookindex - 1] || newBookzone == bookzone) return;
-        int direction = (newBookzone > bookzone) ? 1 : -1;
+        int direction = (bookzone == -1 || newBookzone > bookzone) ? 1 : -1;
         startBookTransition(bookindex, newBookzone, 0, direction);
     }
     // Tasti A/D in bookState: area generale precedente/successiva (clamp ai bordi, niente wrap,
@@ -358,11 +363,12 @@ public class GamePanel extends JPanel implements Runnable {
         if(target < 1 || target > ZONE_COUNT) return;
         selectBookIndex(target);
     }
-    // Tasti W/S in bookState: sottoargomento precedente/successivo dentro all'area generale corrente.
-    // Senza effetto se nessuna area generale è aperta (niente sottoargomenti da cambiare).
+    // Tasti W/S in bookState: sottoargomento precedente/successivo dentro all'area generale
+    // corrente. Se nessun sottoargomento è ancora selezionato (-1), S apre il primo e W l'ultimo
+    // (stesso comportamento di cycleBookIndex per bookindex).
     public void cycleBookZone(int direction) {
         if(bookindex == 0) return;
-        int target = bookzone + direction;
+        int target = (bookzone == -1) ? (direction > 0 ? 0 : BOOKZONE_COUNT[bookindex - 1] - 1) : bookzone + direction;
         if(target < 0 || target >= BOOKZONE_COUNT[bookindex - 1]) return;
         selectBookZone(target);
     }
@@ -370,7 +376,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void closeBook() {
         gameState = playState;
         bookindex = 0;
-        bookzone = 0;
+        bookzone = -1;
         bookpage = 0;
         pageTurnActive = false;
     }

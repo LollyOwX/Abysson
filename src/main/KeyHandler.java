@@ -58,7 +58,7 @@ public class KeyHandler implements KeyListener {
             }
             if (code == KeyEvent.VK_I) {
                 gp.bookindex = 0;
-                gp.bookzone = 0;
+                gp.bookzone = -1;
                 gp.bookpage = 0;
                 gp.playCinematic("/cinematics/Open_book.gif", false, gp.bookState);
             }
