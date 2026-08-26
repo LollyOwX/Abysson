@@ -33,6 +33,18 @@ public class CombatState {
     public static final int COMBAT_OVER   = 2;
     public int turnPhase = PLAYER_TURN;
 
+    // ── Ordine dei turni (velocità) ──
+    // Deciso a inizio round (non solo a inizio combattimento) confrontando player.speed e
+    // monster.speed, così un cambio di velocità a metà scontro si riflette dal round dopo.
+    boolean playerGoesFirst = true;  // chi va per primo in QUESTO round
+    boolean firstMoverActed = false; // true dopo che chi va per primo ha già agito
+
+    // ── Coda azioni ──
+    // I messaggi di combattimento passano da qui invece di essere scritti subito in
+    // combatMessage — update() li estrae uno alla volta quando messageTimer torna a 0. Prepara
+    // il terreno per più messaggi sullo stesso evento (es. un multi-colpo) senza sovrascriversi.
+    private final java.util.ArrayDeque<String> actionQueue = new java.util.ArrayDeque<>();
+
     public String combatMessage = "";
     int messageTimer = 0;
 
@@ -55,7 +67,6 @@ public class CombatState {
         this.monster           = monster;
         this.monsterIndex      = monsterIndex;
         this.commandNum        = 0;
-        this.turnPhase         = PLAYER_TURN;
         this.inAbilityMenu     = false;
         this.abilityCommandNum = 0;
         this.combatMessage     = "A wild " + monster.name + " approaches!";
@@ -63,6 +74,7 @@ public class CombatState {
         this.monsterSpriteCounter = 0;
         this.monsterSpriteNum  = 1;
         this.scossaExtraAttack = false;
+        decideTurnOrder(); // chi va per primo nel round 1, in base a player.speed vs monster.speed
     }
 
     void endCombat() {
@@ -73,6 +85,9 @@ public class CombatState {
         monster        = null;
         monsterIndex   = -1;
         turnPhase      = PLAYER_TURN;
+        playerGoesFirst = true;
+        firstMoverActed = false;
+        actionQueue.clear();
         inAbilityMenu  = false;
         abilityCommandNum = 0;
         combatMessage  = "";
@@ -92,6 +107,26 @@ public class CombatState {
             monsterSpriteCounter = 0;
         }
         if (messageTimer > 0) { messageTimer--; return;}
+
+        // Un messaggio in coda va mostrato prima di qualunque altra cosa (anche prima di finire
+        // il combattimento, se turnPhase è già COMBAT_OVER) — vedi queueAction().
+        if (!actionQueue.isEmpty()) {
+            combatMessage = actionQueue.poll();
+            messageTimer  = 90;
+            return;
+        }
+
+        // Stordimento: se è il turno del giocatore ma è stordito, salta il turno da solo, senza
+        // aspettare un click — stesso trattamento del mostro stordito dentro monsterTurn().
+        if (turnPhase == PLAYER_TURN && isStunned(gp.player)) {
+            int selfTick = ElementSystem.processTurnEffects(gp.player);
+            gp.player.life -= selfTick;
+            queueAction("You are stunned and skip your turn!" + (selfTick > 0 ? "  (" + selfTick + " effect damage)" : ""));
+            if (gp.player.life <= 0) { checkDefeat(); return; }
+            advanceRound(true);
+            return;
+        }
+
         if (turnPhase == MONSTER_TURN) { monsterTurn(); return; }
 
         if (turnPhase == COMBAT_OVER) {
@@ -135,7 +170,7 @@ public class CombatState {
     }
 
     public void confirmCommand() {
-        if (turnPhase != PLAYER_TURN || messageTimer > 0) return;
+        if (turnPhase != PLAYER_TURN || messageTimer > 0 || isStunned(gp.player)) return;
 
         if (inAbilityMenu) {
             List<String> abilities = gp.player.unlockedAbilities;
@@ -175,53 +210,130 @@ public class CombatState {
     }
 
     // ─────────────────────────────────────────────
+    //  ORDINE DEI TURNI (velocità) — DealDMG e coda azioni
+    // ─────────────────────────────────────────────
+
+    // Decide chi va per primo in QUESTO round confrontando la velocità — richiamata a inizio
+    // combattimento (startCombat) e a inizio di ogni round successivo (advanceRound), non solo
+    // una volta: così un cambio di velocità a metà scontro si riflette dal round dopo.
+    void decideTurnOrder() {
+        playerGoesFirst = gp.player.speed >= monster.speed; // pareggio -> il giocatore, come prima
+        firstMoverActed = false;
+        turnPhase = playerGoesFirst ? PLAYER_TURN : MONSTER_TURN;
+    }
+
+    // Da richiamare a fine turno di chi ha appena agito. Se era il primo del round, passa al
+    // secondo; se era il secondo, il round è finito e se ne decide uno nuovo (ricontrollando la
+    // velocità, non semplicemente "tocca sempre al giocatore" come prima).
+    void advanceRound(boolean actorWasPlayer) {
+        if (!firstMoverActed) {
+            firstMoverActed = true;
+            turnPhase = actorWasPlayer ? MONSTER_TURN : PLAYER_TURN;
+        } else {
+            decideTurnOrder();
+        }
+        if (turnPhase == PLAYER_TURN) commandNum = 0;
+    }
+
+    boolean isStunned(Entity e) {
+        return ElementSystem.hasEffect(e, ElementSystem.StatusEffect.STORDIMENTO);
+    }
+
+    // Accoda un messaggio di combattimento invece di scriverlo subito in combatMessage — update()
+    // ne estrae uno alla volta quando messageTimer torna a 0 (vedi update()). Prepara il terreno
+    // per più messaggi sullo stesso evento (es. un multi-colpo) senza che si sovrascrivano.
+    void queueAction(String message) {
+        actionQueue.add(message);
+    }
+
+    // Calcola e applica il danno di un'abilità da attacker a target: precisione/schivata,
+    // moltiplicatore elementale, reazione, effetti attivi del bersaglio, e il contraccolpo di
+    // Folgore/Infiammazione sull'attaccante in caso di fallimento. Accentra la logica prima
+    // duplicata (quasi identica) in playerUseAbility()/monsterTurn().
+    //
+    // Cambio di comportamento dovuto all'unificazione: prima solo gli attacchi del mostro
+    // potevano fallire (il giocatore colpiva sempre) — ora precisione/schivata si applicano a
+    // entrambi allo stesso modo, quindi anche il giocatore può mancare un colpo (e subire il
+    // contraccolpo di Folgore/Infiammazione se le porta).
+    void dealDamage(Entity attacker, Entity target, String abilityId) {
+        ElementSystem.Element abilityElement = Ability.getElement(abilityId);
+        double abrBonus = (abilityElement == ElementSystem.Element.FUOCO
+                && ElementSystem.hasEffect(target, ElementSystem.StatusEffect.ABRASIONE)) ? 1.5 : 1.0;
+        int baseDmg     = Ability.use(abilityId, attacker, target);
+        double elemMult = ElementSystem.getMultiplier(abilityElement, target.lastElementHit);
+        double potMult  = ElementSystem.hasEffect(target, ElementSystem.StatusEffect.POTENZIAMENTO) ? 3.0 : 1.0;
+        double rotMult  = ElementSystem.hasEffect(target, ElementSystem.StatusEffect.ROTTURA)
+                ? 1.0 + (0.10 * attacker.level) : 1.0;
+        int totalDmg    = (int) Math.max(1, baseDmg * elemMult * abrBonus * potMult * rotMult);
+        int raggioDmg   = ElementSystem.hasEffect(target, ElementSystem.StatusEffect.RAGGIO)
+                ? ElementSystem.rollD6(1) : 0;
+
+        int hitChance = attacker.precision - target.evasion;
+        boolean hit   = new Random().nextInt(100) < hitChance;
+
+        boolean attackerIsPlayer = (attacker == gp.player);
+        String attackerLabel = attackerIsPlayer ? "You" : attacker.name;
+        String targetLabel   = (target == gp.player) ? "Your" : target.name;
+        String s = attackerIsPlayer ? "" : "s"; // suffisso verbo 3a persona ("use"/"miss" vs "uses"/"misses")
+
+        StringBuilder msg = new StringBuilder();
+
+        if (!hit && ElementSystem.hasEffect(attacker, ElementSystem.StatusEffect.FOLGORE)) {
+            int folgoreDmg = ElementSystem.rollD8(2);
+            attacker.life -= folgoreDmg;
+            msg.append(attackerLabel).append(" miss").append(s).append(" and take").append(s)
+                    .append(" ").append(folgoreDmg).append(" Folgore damage!");
+        } else if (!hit && ElementSystem.hasEffect(attacker, ElementSystem.StatusEffect.INFIAMMAZIONE)) {
+            int infDmg = ElementSystem.rollD6(1);
+            attacker.life -= infDmg;
+            msg.append(attackerLabel).append(" miss").append(s).append(" and take").append(s)
+                    .append(" ").append(infDmg).append(" Infiammazione damage!");
+        } else {
+            target.life -= hit ? (totalDmg + raggioDmg) : 0;
+            Reaction reaction = ElementSystem.getReaction(target.lastElementHit, abilityElement, target.level);
+            int reactionDmg   = ElementSystem.applyReaction(reaction, target, abilityElement);
+            target.life      -= reactionDmg;
+            int tickDmg       = ElementSystem.processTurnEffects(target);
+            target.life      -= tickDmg;
+
+            msg.append(attackerLabel).append(" use").append(s).append(" ").append(Ability.getName(abilityId));
+            if (!hit) {
+                msg.append(" → MISSED!");
+            } else {
+                if (elemMult > 1.0) msg.append(" [ADVANTAGE]");
+                else if (elemMult < 1.0) msg.append(" [DISADVANTAGE]");
+                msg.append(" → ").append(totalDmg).append(" damage");
+                if (raggioDmg   > 0) msg.append(" + ").append(raggioDmg).append(" (Raggio)");
+                if (reactionDmg > 0) msg.append(" + ").append(reactionDmg).append(" (").append(reaction.name).append(")");
+                if (tickDmg     > 0) msg.append(" + ").append(tickDmg).append(" (effects)");
+                if (reaction != Reaction.NONE) msg.append("  ⚡ ").append(reaction.name).append("!");
+            }
+            msg.append("  [").append(targetLabel).append(" HP: ")
+                    .append(Math.max(0, target.life)).append("/").append(target.maxLife).append("]");
+
+            // Scossa: solo quando è il giocatore a colpire e il bersaglio la porta — comportamento
+            // invariato rispetto a prima (il mostro non ne beneficiava nemmeno nel codice originale).
+            if (attackerIsPlayer) {
+                if (hit && !scossaExtraAttack && ElementSystem.hasEffect(target, ElementSystem.StatusEffect.SCOSSA)) {
+                    scossaExtraAttack = true;
+                    msg.append("  [SCOSSA: attack again!]");
+                } else {
+                    scossaExtraAttack = false;
+                }
+            }
+        }
+
+        queueAction(msg.toString());
+    }
+
+    // ─────────────────────────────────────────────
     //  PLAYER TURN
     // ─────────────────────────────────────────────
 
     void playerUseAbility(String abilityId) {
-        ElementSystem.Element abilityElement = Ability.getElement(abilityId);
-        double abrBonus = (abilityElement == ElementSystem.Element.FUOCO
-                && ElementSystem.hasEffect(monster, ElementSystem.StatusEffect.ABRASIONE)) ? 1.5 : 1.0;
-        int baseDmg    = Ability.use(abilityId, gp.player, monster);
-        double elemMult = ElementSystem.getMultiplier(abilityElement, monster.lastElementHit);
-        double potMult = ElementSystem.hasEffect(monster, ElementSystem.StatusEffect.POTENZIAMENTO) ? 3.0 : 1.0;
-        double rotMult = ElementSystem.hasEffect(monster, ElementSystem.StatusEffect.ROTTURA)
-                ? 1.0 + (0.10 * gp.player.level) : 1.0;
-        int totalDmg   = (int) Math.max(1, baseDmg * elemMult * abrBonus * potMult * rotMult);
-        int raggioDmg  = ElementSystem.hasEffect(monster, ElementSystem.StatusEffect.RAGGIO)
-                ? ElementSystem.rollD6(1) : 0;
-        monster.life  -= (totalDmg + raggioDmg);
-        Reaction reaction   = ElementSystem.getReaction(monster.lastElementHit, abilityElement, monster.level);
-        int reactionDmg     = ElementSystem.applyReaction(reaction, monster, abilityElement);
-        monster.life       -= reactionDmg;
-        int tickDmg         = ElementSystem.processTurnEffects(monster);
-        monster.life       -= tickDmg;
-
-        //MESSAGE BUILDER
-        StringBuilder msg = new StringBuilder();
-        msg.append("You use ").append(Ability.getName(abilityId));
-        if (elemMult > 1.0) msg.append(" [ADVANTAGE]");
-        else if (elemMult < 1.0) msg.append(" [DISADVANTAGE]");
-        msg.append(" → ").append(totalDmg).append(" damage");
-        if (raggioDmg  > 0) msg.append(" + ").append(raggioDmg).append(" (Raggio)");
-        if (reactionDmg > 0) msg.append(" + ").append(reactionDmg).append(" (").append(reaction.name).append(")");
-        if (tickDmg    > 0) msg.append(" + ").append(tickDmg).append(" (effects)");
-        msg.append("  [Monster HP: ").append(Math.max(0, monster.life)).append("/").append(monster.maxLife).append("]");
-        if (reaction != Reaction.NONE) msg.append("  ⚡ ").append(reaction.name).append("!");
-        combatMessage = msg.toString();
-        messageTimer  = 90;
-
-        if (monster.life <= 0) {
-            checkVictory();
-        } else {
-            if (!scossaExtraAttack && ElementSystem.hasEffect(monster, ElementSystem.StatusEffect.SCOSSA)) {
-                scossaExtraAttack = true;
-                combatMessage += "  [SCOSSA: you can attack again!]";
-            } else {
-                scossaExtraAttack = false;
-                turnPhase = MONSTER_TURN;
-            }
-        }
+        dealDamage(gp.player, monster, abilityId);
+        if (monster.life <= 0) { checkVictory(); return; }
+        if (!scossaExtraAttack) advanceRound(true); // scossa: il giocatore riattacca subito, niente avanzamento
     }
 
     void tryFlee() {
@@ -235,56 +347,20 @@ public class CombatState {
     // ─────────────────────────────────────────────
 
     void monsterTurn() {
-        String chosenId = monster.chooseAction();
-        ElementSystem.Element abilityElement = Ability.getElement(chosenId);
-        int baseDmg     = Ability.use(chosenId, monster, gp.player);
-        double elemMult = ElementSystem.getMultiplier(abilityElement, gp.player.lastElementHit);
-        double potMult  = ElementSystem.hasEffect(gp.player, ElementSystem.StatusEffect.POTENZIAMENTO) ? 3.0 : 1.0;
-        double rotMult  = ElementSystem.hasEffect(gp.player, ElementSystem.StatusEffect.ROTTURA)
-                ? 1.0 + (0.10 * monster.level) : 1.0;
-        int totalDmg    = (int) Math.max(1, baseDmg * elemMult * potMult * rotMult);
-        int raggioDmg   = ElementSystem.hasEffect(gp.player, ElementSystem.StatusEffect.RAGGIO)
-                ? ElementSystem.rollD6(1) : 0;
-        int hitChance   = monster.precision - gp.player.evasion;
-        boolean hit     = new Random().nextInt(100) < hitChance;
-
-        if (!hit && ElementSystem.hasEffect(monster, ElementSystem.StatusEffect.FOLGORE)) {
-            int folgoreDmg = ElementSystem.rollD8(2);
-            monster.life  -= folgoreDmg;
-            combatMessage  = monster.name + " misses and takes " + folgoreDmg + " Folgore damage!";
-        } else if (!hit && ElementSystem.hasEffect(monster, ElementSystem.StatusEffect.INFIAMMAZIONE)) {
-            int infDmg    = ElementSystem.rollD6(1);
-            monster.life -= infDmg;
-            combatMessage = monster.name + " misses and takes " + infDmg + " Infiammazione damage!";
-        } else {
-            gp.player.life -= hit ? (totalDmg + raggioDmg) : 0;
-            Reaction reaction   = ElementSystem.getReaction(gp.player.lastElementHit, abilityElement, gp.player.level);
-            int reactionDmg     = ElementSystem.applyReaction(reaction, gp.player, abilityElement);
-            gp.player.life     -= reactionDmg;
-            int tickDmg         = ElementSystem.processTurnEffects(gp.player);
-            gp.player.life     -= tickDmg;
-
-            StringBuilder msg = new StringBuilder();
-            msg.append(monster.name).append(" uses ").append(Ability.getName(chosenId));
-            if (!hit) { msg.append(" → MISSED!"); }
-            else {
-                if (elemMult > 1.0) msg.append(" [ADVANTAGE]");
-                else if (elemMult < 1.0) msg.append(" [DISADVANTAGE]");
-                msg.append(" → ").append(totalDmg).append(" damage");
-                if (raggioDmg  > 0) msg.append(" + ").append(raggioDmg).append(" (Raggio)");
-                if (reactionDmg > 0) msg.append(" + ").append(reactionDmg).append(" (").append(reaction.name).append(")");
-                if (tickDmg    > 0) msg.append(" + ").append(tickDmg).append(" (effects)");
-            }
-            msg.append("  [Your HP: ").append(Math.max(0, gp.player.life)).append("/").append(gp.player.maxLife).append("]");
-            if (reaction != Reaction.NONE) msg.append("  ⚡ ").append(reaction.name).append("!");
-            combatMessage = msg.toString();
+        if (isStunned(monster)) {
+            int selfTick = ElementSystem.processTurnEffects(monster);
+            monster.life -= selfTick;
+            queueAction(monster.name + " is stunned and skips its turn!" + (selfTick > 0 ? "  (" + selfTick + " effect damage)" : ""));
+            if (monster.life <= 0) { checkVictory(); return; }
+            advanceRound(false);
+            return;
         }
 
-        messageTimer = 90;
+        String chosenId = monster.chooseAction();
+        dealDamage(monster, gp.player, chosenId);
         if (monster.life <= 0)   { checkVictory(); return; }
         if (gp.player.life <= 0) { checkDefeat();  return; }
-        turnPhase  = PLAYER_TURN;
-        commandNum = 0;
+        advanceRound(false);
     }
 
     // ─────────────────────────────────────────────
@@ -303,13 +379,11 @@ public class CombatState {
 
     void onVictory() {
         //TODO premi
-        combatMessage = "You defeated " + monster.name + "!";
-        messageTimer  = 90;
+        queueAction("You defeated " + monster.name + "!");
     }
     void onDefeat() {
         //TODO penalità
-        combatMessage = "You have been defeated...";
-        messageTimer  = 90;
+        queueAction("You have been defeated...");
     }
 
     // ─────────────────────────────────────────────
