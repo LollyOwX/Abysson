@@ -33,13 +33,10 @@ public class CombatState {
     public static final int COMBAT_OVER   = 2;
     public int turnPhase = PLAYER_TURN;
 
-    // ── Ordine dei turni (velocità) ──
-    // Deciso a inizio round (non solo a inizio combattimento) confrontando player.speed e
-    // monster.speed, così un cambio di velocità a metà scontro si riflette dal round dopo.
+    // Deciso a inizio round
     boolean playerGoesFirst = true;  // chi va per primo in QUESTO round
     boolean firstMoverActed = false; // true dopo che chi va per primo ha già agito
 
-    // ── Coda azioni ──
     // I messaggi di combattimento passano da qui invece di essere scritti subito in
     // combatMessage — update() li estrae uno alla volta quando messageTimer torna a 0. Prepara
     // il terreno per più messaggi sullo stesso evento (es. un multi-colpo) senza sovrascriversi.
@@ -47,10 +44,8 @@ public class CombatState {
 
     public String combatMessage = "";
     int messageTimer = 0;
-
     int monsterSpriteCounter = 0;
     int monsterSpriteNum = 1;
-
     boolean scossaExtraAttack = false;
     boolean combatVictory = false;
 
