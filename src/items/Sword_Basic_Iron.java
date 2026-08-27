@@ -1,11 +1,13 @@
 package items;
 
-public class Sword_Basic_Iron extends Item{
+import entity.StatType;
+
+public class Sword_Basic_Iron extends Item {
     public Sword_Basic_Iron() {
         name = "Basic Iron Sword";
         description = "A basic sword, used by local warriors and wanderers";
         slot = ItemSlot.MainHand;
-        attack = 3;
-        defense = -1;
+        bonus(StatType.ATTACK, 3);
+        bonus(StatType.DIFESA, -1);
     }
 }

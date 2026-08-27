@@ -1,6 +1,8 @@
 package combat;
 
 import entity.Entity;
+import entity.Player;
+import items.Item;
 import main.GamePanel;
 import main.PaletteSwap;
 import main.UI;
@@ -36,6 +38,10 @@ public class CombatState {
     // Deciso a inizio round
     boolean playerGoesFirst = true;  // chi va per primo in QUESTO round
     boolean firstMoverActed = false; // true dopo che chi va per primo ha già agito
+
+    // Evita di rivalutare beforeTurn() (stordimento ecc.) ad ogni frame mentre si aspetta
+    // l'input del giocatore — va valutato una volta sola all'inizio del turno di ciascuno.
+    boolean preTurnChecked = false;
 
     // I messaggi di combattimento passano da qui invece di essere scritti subito in
     // combatMessage — update() li estrae uno alla volta quando messageTimer torna a 0. Prepara
@@ -82,6 +88,7 @@ public class CombatState {
         turnPhase      = PLAYER_TURN;
         playerGoesFirst = true;
         firstMoverActed = false;
+        preTurnChecked = false;
         actionQueue.clear();
         inAbilityMenu  = false;
         abilityCommandNum = 0;
@@ -111,15 +118,15 @@ public class CombatState {
             return;
         }
 
-        // Stordimento: se è il turno del giocatore ma è stordito, salta il turno da solo, senza
-        // aspettare un click — stesso trattamento del mostro stordito dentro monsterTurn().
-        if (turnPhase == PLAYER_TURN && isStunned(gp.player)) {
-            int selfTick = ElementSystem.processTurnEffects(gp.player);
-            gp.player.life -= selfTick;
-            queueAction("You are stunned and skip your turn!" + (selfTick > 0 ? "  (" + selfTick + " effect damage)" : ""));
-            if (gp.player.life <= 0) { checkDefeat(); return; }
-            advanceRound(true);
-            return;
+        if (turnPhase == PLAYER_TURN) {
+            // beforeTurn() va valutato una volta sola a inizio turno, non ad ogni frame in cui
+            // si aspetta l'input — altrimenti il 50% di skip di Stordimento verrebbe ritentato
+            // ogni frame e finirebbe per scattare quasi sempre entro pochi istanti.
+            if (!preTurnChecked) {
+                preTurnChecked = true;
+                if (beforeTurn(gp.player, true)) { advanceRound(true); return; }
+            }
+            return; // aspetta confirmCommand()
         }
 
         if (turnPhase == MONSTER_TURN) { monsterTurn(); return; }
@@ -165,7 +172,7 @@ public class CombatState {
     }
 
     public void confirmCommand() {
-        if (turnPhase != PLAYER_TURN || messageTimer > 0 || isStunned(gp.player)) return;
+        if (turnPhase != PLAYER_TURN || messageTimer > 0) return;
 
         if (inAbilityMenu) {
             List<String> abilities = gp.player.unlockedAbilities;
@@ -205,7 +212,7 @@ public class CombatState {
     }
 
     // ─────────────────────────────────────────────
-    //  ORDINE DEI TURNI (velocità) — DealDMG e coda azioni
+    //  ORDINE DEI TURNI (velocità)
     // ─────────────────────────────────────────────
 
     // Decide chi va per primo in QUESTO round confrontando la velocità — richiamata a inizio
@@ -214,6 +221,7 @@ public class CombatState {
     void decideTurnOrder() {
         playerGoesFirst = gp.player.speed >= monster.speed; // pareggio -> il giocatore, come prima
         firstMoverActed = false;
+        preTurnChecked = false;
         turnPhase = playerGoesFirst ? PLAYER_TURN : MONSTER_TURN;
     }
 
@@ -223,6 +231,7 @@ public class CombatState {
     void advanceRound(boolean actorWasPlayer) {
         if (!firstMoverActed) {
             firstMoverActed = true;
+            preTurnChecked = false;
             turnPhase = actorWasPlayer ? MONSTER_TURN : PLAYER_TURN;
         } else {
             decideTurnOrder();
@@ -241,30 +250,85 @@ public class CombatState {
         actionQueue.add(message);
     }
 
-    // Calcola e applica il danno di un'abilità da attacker a target: precisione/schivata,
-    // moltiplicatore elementale, reazione, effetti attivi del bersaglio, e il contraccolpo di
-    // Folgore/Infiammazione sull'attaccante in caso di fallimento. Accentra la logica prima
-    // duplicata (quasi identica) in playerUseAbility()/monsterTurn().
+    // ─────────────────────────────────────────────
+    //  HOOK PRE/POST TURNO
+    // ─────────────────────────────────────────────
+
+    /**
+     * Richiamato all'inizio del turno di 'actor', PRIMA che agisca. Ritorna true se il turno
+     * va saltato del tutto — il chiamante deve poi passare la mano con advanceRound() e non
+     * lasciar agire l'entità questo giro.
+     *
+     * Generalizza quello che prima era un caso speciale solo per lo stordimento dentro
+     * update()/monsterTurn(): qualunque nuovo "controllo prima di agire" (una nuova azione tra
+     * i turni, un altro status che blocca il turno...) va aggiunto qui, non duplicato nei due
+     * punti da cui si entra in un turno.
+     */
+    boolean beforeTurn(Entity actor, boolean isPlayer) {
+        if (isStunned(actor)) {
+            boolean skipTurn = new Random().nextInt(100) < 50; // Stordimento: 50% di saltare il turno
+            if (skipTurn) {
+                String who = isPlayer ? "You are" : actor.name + " is";
+                String s   = isPlayer ? "" : "s";
+                queueAction(who + " stunned and skip" + s + " the turn!");
+                afterTurn(actor, isPlayer); // il turno è "avvenuto" comunque: tick dei propri effetti
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Richiamato a fine turno di 'actor', DOPO che ha agito (o dopo che gli è stato saltato da
+     * beforeTurn). Applica il tick degli effetti attivi sul PROPRIO portatore — bruciatura,
+     * sovraccarico, tempesta, carbonizzazione, ramificazione, erosione...
+     *
+     * Prima questi effetti ticchettavano solo sul BERSAGLIO quando veniva colpito, dentro
+     * dealDamage(): un mostro con la bruciatura la subiva solo se il giocatore lo colpiva di
+     * nuovo, non ad ogni turno. Ora ogni entità subisce i propri effetti una volta a round, sul
+     * proprio turno — risolve il TODO aperto in STATUS.md §5.
+     */
+    void afterTurn(Entity actor, boolean isPlayer) {
+        int dmg = ElementSystem.processTurnEffects(actor);
+        if (dmg > 0) {
+            actor.life -= dmg;
+            String who = isPlayer ? "You take" : actor.name + " takes";
+            queueAction(who + " " + dmg + " damage from active effects!");
+        }
+    }
+
+    // Calcola e applica il danno di un'abilità da attacker a target: mira/schivata (comprese
+    // le riduzioni da Stordimento/Accecamento/Deviazione e i blocchi mira a distanza di
+    // Accecamento/Polverizzazione/Deviazione), stat giusta per il tipo di abilità (fisica vs
+    // elementale), moltiplicatore elementale, reazione, disarmo (Inondazione), e il contraccolpo
+    // di Folgore/Infiammazione sull'attaccante in caso di fallimento.
     //
-    // Cambio di comportamento dovuto all'unificazione: prima solo gli attacchi del mostro
-    // potevano fallire (il giocatore colpiva sempre) — ora precisione/schivata si applicano a
-    // entrambi allo stesso modo, quindi anche il giocatore può mancare un colpo (e subire il
-    // contraccolpo di Folgore/Infiammazione se le porta).
+    // Qualunque nuova abilità, anche una che non infligge danno diretto (es. un'abilità
+    // "di supporto" che applica solo un effetto), deve comunque passare da qui — non richiamare
+    // Ability.use()/ElementSystem.getReaction() per conto proprio altrove — altrimenti reazioni,
+    // disarmo e SpecialAction non scatterebbero per quell'abilità.
     void dealDamage(Entity attacker, Entity target, String abilityId) {
         ElementSystem.Element abilityElement = Ability.getElement(abilityId);
+
         double abrBonus = (abilityElement == ElementSystem.Element.FUOCO
-                && ElementSystem.hasEffect(target, ElementSystem.StatusEffect.ABRASIONE)) ? 1.5 : 1.0;
+                && ElementSystem.hasEffect(attacker, ElementSystem.StatusEffect.ABRASIONE)) ? 1.5 : 1.0;
+
         int baseDmg     = Ability.use(abilityId, attacker, target);
         double elemMult = ElementSystem.getMultiplier(abilityElement, target.lastElementHit);
-        double potMult  = ElementSystem.hasEffect(target, ElementSystem.StatusEffect.POTENZIAMENTO) ? 3.0 : 1.0;
+        double potMult  = ElementSystem.hasEffect(target, ElementSystem.StatusEffect.POTENZIAMENTO) ? 1.2 : 1.0;
         double rotMult  = ElementSystem.hasEffect(target, ElementSystem.StatusEffect.ROTTURA)
                 ? 1.0 + (0.10 * attacker.level) : 1.0;
-        int totalDmg    = (int) Math.max(1, baseDmg * elemMult * abrBonus * potMult * rotMult);
+        double effMult  = attacker.efficiency / 100.0;
+        int totalDmg    = (int) Math.max(1, baseDmg * elemMult * abrBonus * potMult * rotMult * effMult);
         int raggioDmg   = ElementSystem.hasEffect(target, ElementSystem.StatusEffect.RAGGIO)
-                ? ElementSystem.rollD6(1) : 0;
+                ? 5 * attacker.getElementAttack(ElementSystem.Element.FULMINE) : 0;
 
-        int hitChance = attacker.precision - target.evasion;
-        boolean hit   = new Random().nextInt(100) < hitChance;
+        boolean rangedBlocked = ElementSystem.isRangedBlocked(attacker, abilityId);
+        boolean deflected     = ElementSystem.isDeflected(target, abilityId);
+
+        double precMult   = ElementSystem.precisionMultiplier(attacker);
+        int hitChance      = (int) (attacker.precision * precMult) - target.evasion;
+        boolean hit        = !rangedBlocked && !deflected && new Random().nextInt(100) < hitChance;
 
         boolean attackerIsPlayer = (attacker == gp.player);
         String attackerLabel = attackerIsPlayer ? "You" : attacker.name;
@@ -273,23 +337,25 @@ public class CombatState {
 
         StringBuilder msg = new StringBuilder();
 
-        if (!hit && ElementSystem.hasEffect(attacker, ElementSystem.StatusEffect.FOLGORE)) {
-            int folgoreDmg = ElementSystem.rollD8(2);
+        if (rangedBlocked) {
+            msg.append(attackerLabel).append(" can't take aim").append(s).append(" — no ranged attacks possible!");
+        } else if (deflected) {
+            msg.append(targetLabel).append(" deflect").append(attackerIsPlayer ? "s" : "").append(" the attack!");
+        } else if (!hit && ElementSystem.hasEffect(attacker, ElementSystem.StatusEffect.FOLGORE)) {
+            int folgoreDmg = 10 * attacker.getElementAttack(ElementSystem.Element.FULMINE);
             attacker.life -= folgoreDmg;
             msg.append(attackerLabel).append(" miss").append(s).append(" and take").append(s)
                     .append(" ").append(folgoreDmg).append(" Folgore damage!");
         } else if (!hit && ElementSystem.hasEffect(attacker, ElementSystem.StatusEffect.INFIAMMAZIONE)) {
-            int infDmg = ElementSystem.rollD6(1);
+            int infDmg = 10 * attacker.getElementAttack(ElementSystem.Element.FUOCO);
             attacker.life -= infDmg;
             msg.append(attackerLabel).append(" miss").append(s).append(" and take").append(s)
                     .append(" ").append(infDmg).append(" Infiammazione damage!");
         } else {
             target.life -= hit ? (totalDmg + raggioDmg) : 0;
-            Reaction reaction = ElementSystem.getReaction(target.lastElementHit, abilityElement, target.level);
+            Reaction reaction = ElementSystem.getReaction(target.lastElementHit, abilityElement, target.level, attacker);
             int reactionDmg   = ElementSystem.applyReaction(reaction, target, abilityElement);
             target.life      -= reactionDmg;
-            int tickDmg       = ElementSystem.processTurnEffects(target);
-            target.life      -= tickDmg;
 
             msg.append(attackerLabel).append(" use").append(s).append(" ").append(Ability.getName(abilityId));
             if (!hit) {
@@ -300,16 +366,23 @@ public class CombatState {
                 msg.append(" → ").append(totalDmg).append(" damage");
                 if (raggioDmg   > 0) msg.append(" + ").append(raggioDmg).append(" (Raggio)");
                 if (reactionDmg > 0) msg.append(" + ").append(reactionDmg).append(" (").append(reaction.name).append(")");
-                if (tickDmg     > 0) msg.append(" + ").append(tickDmg).append(" (effects)");
                 if (reaction != Reaction.NONE) msg.append("  ⚡ ").append(reaction.name).append("!");
+
+                // Inondazione: disarmo immediato dell'arma (solo il player ha equipaggiamento)
+                if (reaction.disarms && target instanceof Player) {
+                    ((Player) target).unequip(Item.ItemSlot.MainHand);
+                    msg.append("  [DISARMED: weapon unequipped]");
+                }
             }
             msg.append("  [").append(targetLabel).append(" HP: ")
                     .append(Math.max(0, target.life)).append("/").append(target.maxLife).append("]");
 
-            // Scossa: solo quando è il giocatore a colpire e il bersaglio la porta — comportamento
-            // invariato rispetto a prima (il mostro non ne beneficiava nemmeno nel codice originale).
+            // Scossa: solo con l'Attacco Normale, solo quando è il giocatore a colpire e il
+            // bersaglio la porta — comportamento invariato rispetto a prima salvo la restrizione
+            // esplicita ad "attacchi normali" richiesta ("due attacchi normali di fila").
             if (attackerIsPlayer) {
-                if (hit && !scossaExtraAttack && ElementSystem.hasEffect(target, ElementSystem.StatusEffect.SCOSSA)) {
+                if (hit && abilityId.equals("NormalAttack") && !scossaExtraAttack
+                        && ElementSystem.hasEffect(target, ElementSystem.StatusEffect.SCOSSA)) {
                     scossaExtraAttack = true;
                     msg.append("  [SCOSSA: attack again!]");
                 } else {
@@ -319,6 +392,10 @@ public class CombatState {
         }
 
         queueAction(msg.toString());
+
+        // Azione speciale dell'abilità (STUB per ora — vedi SpecialAction).
+        SpecialAction action = Ability.getSpecialAction(abilityId);
+        if (action != null) action.execute(this, attacker, target);
     }
 
     // ─────────────────────────────────────────────
@@ -327,11 +404,20 @@ public class CombatState {
 
     void playerUseAbility(String abilityId) {
         dealDamage(gp.player, monster, abilityId);
-        if (monster.life <= 0) { checkVictory(); return; }
+        afterTurn(gp.player, true);
+        if (monster.life   <= 0) { checkVictory(); return; }
+        if (gp.player.life <= 0) { checkDefeat();  return; }
         if (!scossaExtraAttack) advanceRound(true); // scossa: il giocatore riattacca subito, niente avanzamento
     }
 
     void tryFlee() {
+        // Naturalizzazione/Infangato bloccano il movimento: fuggire È muoversi, quindi fallisce.
+        if (ElementSystem.hasEffect(gp.player, ElementSystem.StatusEffect.NATURALIZZAZIONE)
+                || ElementSystem.hasEffect(gp.player, ElementSystem.StatusEffect.INFANGATO)) {
+            combatMessage = "You can't move — unable to flee!";
+            messageTimer  = 60;
+            return;
+        }
         combatMessage = "You fled!";
         messageTimer  = 60;
         turnPhase     = COMBAT_OVER;
@@ -342,17 +428,11 @@ public class CombatState {
     // ─────────────────────────────────────────────
 
     void monsterTurn() {
-        if (isStunned(monster)) {
-            int selfTick = ElementSystem.processTurnEffects(monster);
-            monster.life -= selfTick;
-            queueAction(monster.name + " is stunned and skips its turn!" + (selfTick > 0 ? "  (" + selfTick + " effect damage)" : ""));
-            if (monster.life <= 0) { checkVictory(); return; }
-            advanceRound(false);
-            return;
-        }
+        if (beforeTurn(monster, false)) { advanceRound(false); return; }
 
         String chosenId = monster.chooseAction();
         dealDamage(monster, gp.player, chosenId);
+        afterTurn(monster, false);
         if (monster.life <= 0)   { checkVictory(); return; }
         if (gp.player.life <= 0) { checkDefeat();  return; }
         advanceRound(false);

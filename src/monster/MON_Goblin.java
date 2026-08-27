@@ -2,6 +2,7 @@ package monster;
 
 import entity.Entity;
 import main.GamePanel;
+import combat.ElementSystem;
 import java.util.Random;
 
 public class MON_Goblin extends Entity {
@@ -14,6 +15,10 @@ public class MON_Goblin extends Entity {
         maxLife = 20 * level;
         attack = 10 * level;
         defense = 10 * level;
+        // Il Goblin usa Thunderbolt (FULMINE): senza questo la sua parte elementale sarebbe sempre 0
+        elementAttack.put(ElementSystem.Element.FULMINE, 10 * level);
+        elementDefense.put(ElementSystem.Element.FULMINE, 10 * level);
+        efficiency = 100;
         life = maxLife;
         monsterIntelligence = 2;
         behavior = HOSTILE;

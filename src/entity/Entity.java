@@ -9,6 +9,7 @@ import main.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,11 +49,14 @@ public class Entity {
     public boolean dying = false;
     public int dyingCounter = 0;
     public int attack;
+    public Map<ElementSystem.Element, Integer> elementAttack = new EnumMap<>(ElementSystem.Element.class);
     public int defense;
+    public Map<ElementSystem.Element, Integer> elementDefense = new EnumMap<>(ElementSystem.Element.class);
     public int level;
     public int monsterIndex = -1;
     public int precision = 100;
     public int evasion = 0;
+    public int efficiency = 100; // % di efficacia delle proprie azioni (100 = neutro)
     public int maxLife;
     public int life;
 
@@ -77,6 +81,9 @@ public class Entity {
     public Entity(GamePanel gp) {
         this.gp = gp;
     }
+
+    public int getElementAttack(ElementSystem.Element e)  { return elementAttack.getOrDefault(e, 0); }
+    public int getElementDefense(ElementSystem.Element e) { return elementDefense.getOrDefault(e, 0); }
 
     public void changeAlpha(Graphics2D g2, float alphaValue) {
         g2.setComposite(

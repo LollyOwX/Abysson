@@ -9,7 +9,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-
 import entity.Entity;
 
 public class GamePanel extends JPanel implements Runnable {

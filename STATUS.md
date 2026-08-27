@@ -127,7 +127,8 @@ Non serve toccare il parser — riconosce automaticamente qualsiasi tag scritto 
 
 ## 5. TODO aperti
 
-- [ ] **Decisione da prendere**: "effetti attivi" post-turno (tick di veleni/debuff) oggi ticchettano ancora sul BERSAGLIO quando viene colpito (dentro `dealDamage`), non su ogni entità alla fine del proprio turno. L'unica eccezione è lo stordimento, che tickano sé stesso quando salta il turno (altrimenti resterebbe stordito per sempre). Se in futuro si vuole che OGNI effetto attivo (non solo lo stordimento) tickhi una volta a round sul proprio portatore invece che "quando viene colpito", è un cambio di design separato, non fatto qui per non alterare il bilanciamento esistente senza deciderlo esplicitamente.
+- [x] ~~"effetti attivi" post-turno ticchettano sul BERSAGLIO quando viene colpito~~ — risolto il 27/08: `CombatState.beforeTurn()`/`afterTurn()` ticchettano ogni entità sul PROPRIO turno (vedi §6).
+- [x] ~~Aggiungere tutti gli effetti delle reazioni~~ — fatto il 27/08, tutte e 26 implementate (vedi §6). Restano STUB dichiarati solo Illuminazione/Vaporizzazione (nessun sistema di occultamento/volo nel gioco).
 - [ ] `queueAction()`/`actionQueue` è una coda semplice (`ArrayDeque<String>`, un messaggio testuale alla volta) — se in futuro serve accodare azioni più ricche (non solo testo: es. un'animazione per messaggio, o più colpi con dati diversi ciascuno), andrà esteso oltre la semplice stringa.
 - [ ] Tradurre in inglese `ElementSystem.java` (nomi `Element`/`StatusEffect`/`displayName`) e `Reaction.java` — al momento restano in italiano nonostante `CombatState.java` sia stato tradotto, quindi si vedono nomi come "Raggio"/"Folgore" mescolati a testo inglese.
 - [ ] `commandNum == 1` ("Load Game") nel main menu è ancora uno stub (`/* ADD LATER */`) — nessun salvataggio implementato.
@@ -135,8 +136,10 @@ Non serve toccare il parser — riconosce automaticamente qualsiasi tag scritto 
 - [ ] `Inventory` e `Minimap` in combattimento sono placeholder (mostrano solo un messaggio).
 - [ ] Il glow PNG per l'hover del menu va creato/importato — fatto ma non funzionante
 - [ ] Verificare che tutti gli altri oggetti statici (Chest, Boots) siano effettivamente istanziati in `AssetSetter` — solo Key e Door sono attivi al momento, **ma segnalati come non funzionanti**: da investigare a fondo (il fix della direzione di default dovrebbe averli sbloccati, ma va confermato in gioco).
-- [ ] Aggiungere tutti gli effetti delle reazioni.
 - [ ] Contenuto vero delle pagine del libro: tolto tutto (modello dati `BookEntry`/`unlockedBookZones`, testo placeholder) il 02/08 — da riprogettare da zero quando si è pronti, probabilmente ripartendo da `BookEntry.java` (rimasto nel progetto, non referenziato) o da un approccio diverso.
+- [ ] **Da confermare/bilanciare (27/08)**: `Ability.isRanged()` classifica Thunderbolt/AcquaJet/Lightray come "a distanza" e il resto come mischia — assunzione mia, il gioco non aveva finora questa nozione; verifica che rispecchi il design voluto (usata da Accecamento/Polverizzazione/Deviazione).
+- [ ] **Da bilanciare (27/08)**: durata iniziale della Bruciatura Grave da Esplosione fissata a 5 (valore arbitrario, la formula del danno/rimozione dipende da questo numero — vedi §6). Item.percentBonus dei pezzi esistenti (es. `Sword_Basic_Iron`: +3/-1) ora significano percentuali, non più flat — stesso numero, effetto diverso, da ritarare quando ci sono più item con cui confrontare.
+- [ ] **Correzione stessa sessione (27/08)**: ElementoATK/ElementDEF era stato inizialmente accorpato in una sola coppia di stat per tutti gli elementi — sbagliato, era imprecisione mia. Sistemato subito dopo in una coppia ATK/DEF PER ELEMENTO (FireATK/FireDEF...LightATK/LightDEF, vedi §6.5). Le basi del player partono tutte uguali (40/20 su ognuna) solo perché non c'è ancora differenziazione da equip/level design — da rivedere quando ci sarà.
 - [ ] Posizioni placeholder dei pulsanti sottoargomento (`SUBTOPIC_IMAGE_RECTS` in `UI.java`) da aggiustare a vista, stesso procedimento già fatto per i bookmark (aprire `book_X.png` in un editor di immagini, leggere le coordinate pixel).
 - [ ] `res/maps/world2.txt` esiste ma non è caricato da nessun codice (nessun `loadMap("/maps/world2.txt")` in giro) — usa anche ID tile 26-39, oltre il terreno definito (0-25) e sotto `SPECIAL_TILE_BASE=100`. Se in futuro verrà caricata andrà sistemata (o quegli ID vanno rimappati, o vanno definiti come terreno aggiuntivo in `getTileImage()`).
 - [ ] ESC nel libro chiude tutto in un colpo solo, non risale di un livello alla volta (pagina→voce→area→chiuso) — possibile miglioramento futuro, non richiesto esplicitamente.
@@ -144,3 +147,38 @@ Non serve toccare il parser — riconosce automaticamente qualsiasi tag scritto 
 ---
 
 *Fine status — prossimo aggiornamento quando accumuliamo un altro blocco di modifiche.*
+## 6. Sessione 27/08 — Sistema stat/equip, azioni pre/post turno, reazioni complete
+
+Blocco di 4 modifiche correlate, spiegate a fondo in chat lo stesso giorno.
+
+### 6.1 Azioni tra i turni (pre/post-azione)
+Nuovi hook generici in `CombatState`: `beforeTurn(actor, isPlayer)` (richiamato prima che l'attore agisca — ritorna `true` se il turno va saltato, es. Stordimento) e `afterTurn(actor, isPlayer)` (richiamato dopo — ticka gli effetti attivi del portatore, `ElementSystem.processTurnEffects()`). Prima lo stordimento era un caso speciale duplicato in `update()` e in testa a `monsterTurn()`; ora è solo il primo utilizzatore di un meccanismo generico — un futuro "controllo prima di agire" o "tick dopo aver agito" va aggiunto qui, non duplicato nei punti di ingresso del turno. `preTurnChecked` (bool) evita che il 50% di skip di Stordimento venga rivalutato ad ogni frame mentre si aspetta l'input del giocatore.
+
+### 6.2 Stat: calcStat + equip percentuale
+9 statistiche (`entity/StatType.java`): Vita, Attack, ElementoATK, Difesa, ElementDEF, Velocità, Elusione, Precisione, Efficienza. Aggiunte alle esistenti: `elementAttack`/`elementDefense`/`efficiency` su `Entity`. Formula: **stat finale = base flat (in `Player`, `baseX`) × (1 + bonus%/100)**. `Player.calcStat(stat, bonus, statChanged)` — statico, decide se sommare o sottrarre in base allo stato dello SLOT: `Player.EquipSlot` (uno per `MainHand`/`OffHand`/`Chestplate`) porta il proprio `statChanged` privato. **Nota sulla pseudocode originale**: il toggle di `statChanged` va fatto UNA volta per slot dopo aver richiamato `calcStat` per ogni sua statistica non-zero, non ad ogni singola chiamata — altrimenti un item con più stat alternerebbe somma e sottrazione invece di applicarle tutte insieme (bug nella bozza fornita, corretto qui). `Item.statBonusPercent` (Map<StatType,Integer>) sostituisce i vecchi campi flat: stessi numeri di prima (`Sword_Basic_Iron`: +3/-1) ma ora significano percentuali. Corretto anche un bug preesistente: `equip()` non gestiva davvero `OffHand` (finiva sempre nel ramo Chestplate).
+
+### 6.3 DealDmg esteso + SpecialAction (stub)
+`Ability.use()` ora sceglie da solo Attack/Difesa fisici o ElementoATK/ElementDEF in base all'elemento dell'abilità (`Ability.isElemental()`) — prima tutte le abilità, incluse quelle elementali, usavano sempre Attack/Difesa fisici. Corretto di riflesso un bug di `Lightray` (formula invertita: usava `target.defense*2 - user.attack`). Nuovo `combat/SpecialAction.java` (interfaccia, eseguita da `dealDamage()` dopo il danno se non null) + `Ability.getSpecialAction(id)` — **STUB**, nessuna abilità ne ha ancora una. Qualunque nuova abilità, anche senza danno diretto, deve comunque passare da `dealDamage()` per far scattare reazioni/disarmo/SpecialAction.
+
+### 6.4 Tutte le 26 reazioni implementate
+`Reaction.java` riscritta con un `Builder` (supporta secondo effetto simultaneo, riapplicazione elemento, disarmo — impossibile con i 6 campi posizionali di prima). Tabella completa in `ElementSystem.getReaction()`. Novità/fix degni di nota:
+- **Esplosione**: ora applica DUE effetti (Stordimento 3 + Bruciatura Grave, nuovo `StatusEffect`) invece di un solo marcatore.
+- **Resistenza**: bloccava TUTTI i nuovi effetti; ora blocca solo quelli positivi (bug fix, coerente con la descrizione "impossibilità di ricevere nuovi effetti positivi").
+- **Abrasione**: bonificava (per errore) il danno FUOCO subito dal portatore; ora bonifica le SUE azioni FUOCO in uscita (coerente con l'essere classificata come effetto positivo).
+- **Folgore/Infiammazione**: da danno fisso (1d8/1d6) a `10 * ElementoATK` di chi fallisce l'azione.
+- **Raggio**: da danno fisso a `5 * ElementoATK` dell'attaccante.
+- **Inondazione**: ora disarma davvero (`Player.unequip(MainHand)`) invece di limitarsi a un marcatore.
+- **Stordimento/Accecamento/Deviazione**: penalità di mira centralizzate in `ElementSystem.precisionMultiplier()`; Accecamento/Polverizzazione bloccano la mira a distanza (`isRangedBlocked`), Deviazione la devia (`isDeflected`) — entrambe usano la nuova classificazione mischia/distanza di `Ability.isRanged()` (assunzione da confermare, vedi TODO).
+- **Ramificazione**: nuovo campo `ActiveEffect.stacks`, cresce di 1 ad ogni tick proprio, danno = `stacks * 15 * ElementoATK`.
+- **Naturalizzazione/Infangato**: agganciate a `CombatState.tryFlee()` (bloccano la fuga, unico "movimento" che il combattimento ha).
+- **Illuminazione/Vaporizzazione**: STUB dichiarati — nessun sistema di occultamento/volo a cui agganciarle.
+- **Firenado**: diffusione dell'elemento agli alleati vicini è STUB — il combattimento è 1v1, nessun sistema party.
+
+### 6.5 Correzione: ATK/DEF elementale spaccato per elemento (stessa sessione, dopo il primo giro)
+Il primo giro di §6.2/6.4 usava una singola coppia `elementAttack`/`elementDefense` per tutti gli elementi — non era quello che si voleva, era una mia semplificazione eccessiva. Corretto:
+- `entity/StatType.java`: da `ELEMENTO_ATK`/`ELEMENT_DEF` unici a 6 coppie, una per elemento — `FIRE_ATK`/`FIRE_DEF`, `WATER_ATK`/`WATER_DEF`, `ELECTRIC_ATK`/`ELECTRIC_DEF`, `EARTH_ATK`/`EARTH_DEF`, `WIND_ATK`/`WIND_DEF`, `LIGHT_ATK`/`LIGHT_DEF`. FISICO/NONE restano su `ATTACK`/`DIFESA` (non hanno una coppia elementale).
+- `Entity.elementAttack`/`elementDefense`: da singolo `int` a `Map<Element,Integer>` (+ getter `getElementAttack(Element)`/`getElementDefense(Element)`, default 0 per elementi non impostati).
+- `Player`: basi `baseElementAttack`/`baseElementDefense` sono ora anch'esse mappe per elemento (private); `recalculateStats()` cicla su tutti gli elementi applicando il bonus % dello `StatType` giusto a ciascuno. Partono tutte uguali (40 ATK / 20 DEF su ognuna) — stesso valore del vecchio stat unico, semplicemente non ancora differenziate.
+- `ElementSystem.attackStat(Element)`/`defenseStat(Element)`: nuova mappa Element → StatType, usata da `recalculateStats()`. Ritornano `null` per FISICO/NONE.
+- Tutte le formule "X\*ATK" delle reazioni (Folgore, Infiammazione, Raggio, Carbonizzazione, Sovraccarico, Tempesta, Ramificazione, Elettrizzazione, Firenado) ora usano lo stat ATK dell'elemento giusto invece del generico — es. Folgore (Fulmine) usa `ElectricATK`, Infiammazione (Fuoco) usa `FireATK`. Sovraccarico/Tempesta (50/50 tra due elementi) usano l'ATK dell'elemento estratto quel tick, quindi il 50/50 ora cambia davvero il numero, non solo l'etichetta come nel primo giro.
+- `MON_Goblin` (usa Thunderbolt/Fulmine): imposta `elementAttack.put(FULMINE, ...)` invece del vecchio campo singolo.

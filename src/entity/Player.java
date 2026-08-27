@@ -4,24 +4,45 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import main.GamePanel;
 import main.KeyHandler;
+import combat.ElementSystem;
 import java.awt.image.BufferedImage;
+import java.util.EnumMap;
+import java.util.Map;
 
 public class Player extends Entity {
     KeyHandler KeyH;
     public final int screenX;
     public final int screenY;
     public String playerClass;
-    //Base Stats
-    public int baseAttack    = 30;
-    public int baseDefense   = 20;
-    public int baseMaxLife   = 100;
-    public int baseSpeed;    // assegnato in setDefaultValues dopo il calcolo
-    public int basePrecision = 100;
-    public int baseEvasion   = 0;
-    //Items
-    public items.Item equippedMainHand = null;
-    public items.Item equippedChestplate = null;
-    public items.Item equippedOffHand = null;
+
+    // ── Stat base (flat) ────────────────────────────────────────
+    // Il valore "vero" del personaggio, prima di qualunque bonus % da equip.
+    // stat finale = baseX * (1 + percentBonus[X]/100) — vedi recalculateStats().
+    public int baseMaxLife;
+    public int baseAttack;
+    public int baseDefense;
+    public int baseSpeed;
+    public int basePrecision;
+    public int baseEvasion;
+    public int baseEfficiency;
+    // Una coppia ATK/DEF base per elemento (FUOCO/ACQUA/FULMINE/TERRA/ARIA/LUCE) —
+    // niente ElementoATK unico, vedi StatType.
+    private final Map<ElementSystem.Element, Integer> baseElementAttack  = new EnumMap<>(ElementSystem.Element.class);
+    private final Map<ElementSystem.Element, Integer> baseElementDefense = new EnumMap<>(ElementSystem.Element.class);
+
+    // Somma dei bonus % correnti per stat, accumulata da calcStat() ad ogni equip/unequip.
+    private final Map<StatType, Integer> percentBonus = new EnumMap<>(StatType.class);
+
+    // ── Equipaggiamento ──────────────────────────────────────────
+    // Ogni slot ha il proprio "statChanged": true = i bonus % dell'item nello slot
+    // sono già stati sommati a percentBonus, false = non ancora (o già rimossi).
+    public static class EquipSlot {
+        public items.Item item = null;
+        public boolean statChanged = false;
+    }
+    public EquipSlot mainHandSlot = new EquipSlot();
+    public EquipSlot offHandSlot  = new EquipSlot();
+    public EquipSlot chestSlot    = new EquipSlot();
 
     public Player(GamePanel gp, KeyHandler KeyH) {
         super(gp);
@@ -43,15 +64,31 @@ public class Player extends Entity {
     public void setDefaultValues() {
         worldX = gp.tileSize * 23;
         worldY = gp.tileSize * 21;
-        speed = 4;
+        speed = 10;
         direction = "down";
         idleDirection = "down";
 
-        maxLife = 1000;
+        // Valori base (flat) del personaggio. Prima venivano scritti direttamente nelle stat
+        // derivate (attack/defense/...), scavalcando baseAttack/baseDefense — inconsistenza
+        // pre-esistente: ora le basi sono la fonte di verità e le derivate si calcolano da qui.
+        baseMaxLife        = 1000;
+        baseAttack         = 40;
+        baseDefense        = 20;
+        baseSpeed          = speed;
+        basePrecision      = 100;
+        baseEvasion        = 0;
+        baseEfficiency     = 100;
+        // Stesso valore uniforme su tutti gli elementi per ora (40/20, come il vecchio
+        // ElementoATK/ElementDEF unico) — la differenziazione per elemento arriverà da
+        // equipaggiamento/level design, qui parte identica finché non si decide altrimenti.
+        for (ElementSystem.Element e : ElementSystem.Element.values()) {
+            if (ElementSystem.attackStat(e) == null) continue; // FISICO/NONE non hanno una coppia elementale
+            baseElementAttack.put(e, 40);
+            baseElementDefense.put(e, 20);
+        }
+
+        recalculateStats(); // nessun equip ancora: le derivate = le basi (bonus % tutti a 0)
         life = maxLife;
-        attack = 40;
-        defense = 20;
-        baseSpeed = speed;
 
         unlockedAbilities.add("PowerStrike");
         unlockedAbilities.add("AcquaJet");
@@ -143,64 +180,81 @@ public class Player extends Entity {
         gp.KeyH.enterPressed = false;
     }
 
-    public void equip(items.Item item) {
-        if (item.slot == items.Item.ItemSlot.MainHand) {
-            equippedMainHand = item;
-        } else {
-            equippedChestplate = item;
+    // ─────────────────────────────────────────────
+    //  EQUIP / STAT
+    // ─────────────────────────────────────────────
+
+    /**
+     * Somma o sottrae il bonus percentuale di UNA statistica al totale accumulato.
+     * statChanged è lo stato dello SLOT (non della singola stat): false = il bonus
+     * va ancora sommato (equip), true = va tolto (unequip) — per questo lo slot lo
+     * inverte una volta sola dopo aver richiamato calcStat per ogni sua statistica,
+     * non ad ogni chiamata (altrimenti un item con più stat alternerebbe somma e
+     * sottrazione invece di applicarle tutte insieme).
+     */
+    public static int calcStat(int stat, int bonus, boolean statChanged) {
+        return statChanged ? stat - bonus : stat + bonus;
+    }
+
+    private void applySlotBonus(EquipSlot slot) {
+        if (slot.item == null) return;
+        for (Map.Entry<StatType, Integer> e : slot.item.statBonusPercent.entrySet()) {
+            int current = percentBonus.getOrDefault(e.getKey(), 0);
+            percentBonus.put(e.getKey(), calcStat(current, e.getValue(), slot.statChanged));
         }
+        slot.statChanged = !slot.statChanged; // un solo toggle per l'intero slot
+    }
+
+    private EquipSlot slotFor(items.Item.ItemSlot type) {
+        switch (type) {
+            case MainHand:    return mainHandSlot;
+            case OffHand:     return offHandSlot;
+            case Chestplate:  return chestSlot;
+            default:          return mainHandSlot;
+        }
+    }
+
+    public void equip(items.Item item) {
+        EquipSlot slot = slotFor(item.slot);
+        if (slot.item != null) applySlotBonus(slot); // toglie prima i bonus del pezzo precedente
+        slot.item = item;
+        applySlotBonus(slot); // poi somma quelli del nuovo pezzo
         recalculateStats();
     }
 
-    public void unequip(items.Item.ItemSlot slot) {
-        if (slot == items.Item.ItemSlot.MainHand) {
-            equippedMainHand = null;
-        } else {
-            equippedChestplate = null;
+    public void unequip(items.Item.ItemSlot slotType) {
+        EquipSlot slot = slotFor(slotType);
+        if (slot.item != null) {
+            applySlotBonus(slot);
+            slot.item = null;
         }
         recalculateStats();
     }
 
     public void recalculateStats() {
-        attack    = baseAttack;
-        defense   = baseDefense;
-        maxLife   = baseMaxLife;
-        speed     = baseSpeed;
-        precision = basePrecision;
-        evasion   = baseEvasion;
+        maxLife        = Math.max(1, (int) Math.round(baseMaxLife        * pct(StatType.VITA)));
+        attack         = Math.max(0, (int) Math.round(baseAttack         * pct(StatType.ATTACK)));
+        defense        = Math.max(0, (int) Math.round(baseDefense        * pct(StatType.DIFESA)));
+        speed          = Math.max(1, (int) Math.round(baseSpeed          * pct(StatType.VELOCITA)));
+        evasion        = Math.max(0, (int) Math.round(baseEvasion        * pct(StatType.ELUSIONE)));
+        precision      = Math.max(0, (int) Math.round(basePrecision      * pct(StatType.PRECISIONE)));
+        efficiency     = Math.max(0, (int) Math.round(baseEfficiency     * pct(StatType.EFFICIENZA)));
 
-        if (equippedMainHand != null) {
-            attack    += equippedMainHand.attack;
-            defense   += equippedMainHand.defense;
-            maxLife   += equippedMainHand.maxLife;
-            speed     += equippedMainHand.speed;
-            precision += equippedMainHand.precision;
-            evasion   += equippedMainHand.evasion;
+        // Una coppia ATK/DEF per elemento, ciascuna con il proprio bonus % (StatType.FIRE_ATK...)
+        for (ElementSystem.Element e : ElementSystem.Element.values()) {
+            StatType atkType = ElementSystem.attackStat(e);
+            StatType defType = ElementSystem.defenseStat(e);
+            if (atkType == null) continue; // FISICO/NONE non hanno una coppia elementale
+            int baseAtk = baseElementAttack.getOrDefault(e, 0);
+            int baseDef = baseElementDefense.getOrDefault(e, 0);
+            elementAttack.put(e, Math.max(0, (int) Math.round(baseAtk * pct(atkType))));
+            elementDefense.put(e, Math.max(0, (int) Math.round(baseDef * pct(defType))));
         }
-        if (equippedChestplate != null) {
-            attack    += equippedChestplate.attack;
-            defense   += equippedChestplate.defense;
-            maxLife   += equippedChestplate.maxLife;
-            speed     += equippedChestplate.speed;
-            precision += equippedChestplate.precision;
-            evasion   += equippedChestplate.evasion;
-        }
-        if (equippedOffHand != null) {
-            attack    += equippedOffHand.attack;
-            defense   += equippedOffHand.defense;
-            maxLife   += equippedOffHand.maxLife;
-            speed     += equippedOffHand.speed;
-            precision += equippedOffHand.precision;
-            evasion   += equippedOffHand.evasion;
-        }
+    }
 
-        // Clamp: nessuna stat va sotto 0
-        attack    = Math.max(0, attack);
-        defense   = Math.max(0, defense);
-        maxLife   = Math.max(1, maxLife);
-        speed     = Math.max(1, speed);
-        precision = Math.max(0, precision);
-        evasion   = Math.max(0, evasion);
+    // stat = flat * %  →  percentBonus è espresso in "punti percentuali" (3 = +3%)
+    private double pct(StatType type) {
+        return 1.0 + percentBonus.getOrDefault(type, 0) / 100.0;
     }
 
     public void interactNPC(int i) {
