@@ -52,6 +52,11 @@ public class CollisionChecker {
 			}
 			break;
 		}
+		try {
+
+        }catch(Exception e) {
+
+		}
 	}
 	public int checkObject(Entity entity, boolean player) {
 		int index = 999;
