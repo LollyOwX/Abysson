@@ -218,17 +218,17 @@ Riferimento autonomo (non un log di sessione): tutto quello che serve per lavora
 In `quest/QuestRegistry.get()`, un nuovo `case` con un id univoco:
 ```java
 case "old_man_favor":
-    return new Quest(
+        return new Quest(
             "old_man_favor",
-            "Un favore per il vecchio",
-            "Il vecchio del villaggio ha bisogno di aiuto.",
+                    "Un favore per il vecchio",
+                    "Il vecchio del villaggio ha bisogno di aiuto.",
             QuestTier.FLAVOR,
             "OldMan", // NPC che la assegna (solo informativo, non collegato automaticamente — vedi 9.2)
             List.of(
                     new QuestStep("Torna a parlare con lui", QuestEventType.TALK, "OldMan"),
                     new QuestStep("Sconfiggi il Goblin", QuestEventType.KILL, "Goblin", 3) // goalCount=3
             )
-    );
+                    );
 ```
 - È una **step machine**: gli step si sbloccano in ordine, uno per volta. Un evento che combacerebbe con lo step 2 non fa nulla se la quest è ancora allo step 0.
 - `targetId` deve combaciare **esattamente** con quello che passa chi notifica l'evento (case-sensitive): `monster.name` per KILL (es. `"Goblin"`), `entity.name` dell'NPC per TALK, il `locationId` scelto a mano per REACH_LOCATION.
@@ -236,7 +236,7 @@ case "old_man_favor":
 - Ogni chiamata a `QuestRegistry.get()` crea un'istanza NUOVA (stato mutabile) — non riusarne una condivisa.
 
 ### 9.2 Come farla partire
-- **Dialogo NPC**: `npc.givesQuestId = "old_man_favor";` dove l'NPC viene istanziato. La prima volta che il giocatore ci parla, `speak()` chiama da solo `QuestManager.startQuest()` — idempotente, sicuro anche se ci riparla altre volte.
+- **Dialogo NPC**: `Entity.givesQuestId` porta solo il DATO ("quale quest"), impostato in `AssetSetter.place()` (overload a 7 argomenti, `null` = nessuna) o nel costruttore dell'NPC. `Entity.speak()` NON la assegna più da sola: sta alla sottoclasse NPC decidere A QUALE `dialoguesIndex` chiamare `gp.questManager.startQuest(givesQuestId)` — stesso pattern usato per qualunque altro regalo condizionato al dialogo (es. la spada in `Npc_HumanRedWorker`). `startQuest()` resta idempotente, sicuro anche se richiamato più volte.
 - **Trigger di mappa**: in `EventHandler.checkEvent()`, una riga come le altre già presenti (`damagePit`/`healingPool`):
   ```java
   questStartEvent(30, 15, "any", "old_man_favor");
@@ -287,3 +287,9 @@ bookpage 0 = titolo/descrizione/stato, bookpage 1 = lista obiettivi con `[x]`/`[
 - **Nota sulla scelta del punto**: l'alternativa (metterlo nel costruttore dell'NPC stesso, `Npc_HumanRedWorker.java`) resta più coerente con come il resto del progetto è scritto (quell'NPC si autoconfigura interamente lì — dialoghi, hitbox...) — qui è stato messo in `AssetSetter` su richiesta esplicita, perché in questo punto si vede a colpo d'occhio insieme a tutti gli altri piazzamenti. Da tenere a mente se in futuro si aggiungono più NPC della stessa classe con quest diverse: quel caso torna a favorire il costruttore.
 
 **`UI`: da singolo messaggio a coda impilata**: prima un secondo `showMessage()` sovrascriveva silenziosamente il primo se ancora a schermo (helper interno, non esposto). Ora `messages` è una lista di box, ognuno con il proprio timer indipendente (~2 secondi) — più messaggi contemporanei si impilano uno sotto l'altro invece di accavallarsi. Con l'NPC attuale la sovrapposizione non capita mai davvero in pratica (`givesQuestId` scatta al primo dialogo, la spada al terzo — momenti diversi), ma resta la protezione generale corretta per quando due notifiche arriveranno sullo stesso frame.
+
+## 11. Sessione 27/08 (continua) — Assegnazione quest spostata dentro l'NPC
+
+`Entity.speak()` non chiama più `startQuest(givesQuestId)` automaticamente al primo dialogo — restava troppo rigido (un solo momento possibile, sempre il primo click, uguale per ogni NPC). `givesQuestId` ora è solo il dato ("quale quest dare"); OGNI sottoclasse NPC decide da sé A QUALE `dialoguesIndex` chiamare `gp.questManager.startQuest(givesQuestId)`, esattamente come già faceva `Npc_HumanRedWorker` per la spada. `Entity.speak()` continua a notificare `TALK` ad ogni dialogo (invariato — resta generico, serve agli step quest tipo "parla con X").
+
+`Npc_HumanRedWorker`: la quest `"goblin_bounty"` ora parte allo stesso `dialoguesIndex==2` della spada — scelta deliberata (non obbligata) per far vedere, nello stesso identico dialogo, i due box impilati di §10 invece che uno alla volta. Per darla in un punto diverso basta cambiare quel numero nella sua `speak()`.
