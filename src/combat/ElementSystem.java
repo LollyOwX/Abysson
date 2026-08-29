@@ -331,7 +331,7 @@ public class ElementSystem {
      * CombatState.afterTurn() dopo che l'entità ha agito — o dopo aver saltato il turno).
      * Prima ticchettavano solo sul BERSAGLIO quando veniva colpito, dentro dealDamage: ora
      * ogni entità subisce i propri effetti una volta a round, sul proprio turno (vedi §5
-     * TODO in STATUS.md — risolto qui). Ritorna il danno totale da effetti questo tick.
+     * TO DO in STATUS.md — risolto qui). Ritorna il danno totale da effetti questo tick.
      */
     public static int processTurnEffects(Entity target) {
         int damage = 0;

@@ -22,9 +22,15 @@ public class UI {
     BufferedImage health_left_full, health_left_half, health_left_low, health_left_empty,
             health_center_full, health_center_half, health_center_low, health_center_empty,
             health_right_full, health_right_half, health_right_low, health_right_empty;
-    public boolean messageOn = false;
-    public String message = " ";
-    int messageCounter = 0;
+    // Coda di messaggi mostrati CONTEMPORANEAMENTE, un box impilato sotto l'altro (non uno alla
+    // volta come i messaggi di combattimento) — es. spada raccolta + missione assegnata nello
+    // stesso dialogo non si sovrascrivono più a vicenda.
+    private final List<MessageEntry> messages = new ArrayList<>();
+    private static class MessageEntry {
+        final String text;
+        int counter = 0;
+        MessageEntry(String text) { this.text = text; }
+    }
     public boolean gameFinished = false;
     public String currentDialogue = "";
     public int commandNum = 0;
@@ -104,18 +110,24 @@ public class UI {
     // Rettangoli dei pulsanti sottoargomento (bookzone), per area (indice esterno = bookindex-1,
     // stesso ordine di BOOKMARK_IMAGE_RECTS sopra). Posizioni PLACEHOLDER, da aggiustare a vista
     // come per i bookmark. Quanti Rectangle per area deve combaciare con GamePanel.BOOKZONE_COUNT
-    // (mappa=3, quest=2, abilità=5, calendario=2, bestiario=3, inventario=5) — impilati
+    // (mappa=3, quest=5, abilità=5, calendario=2, bestiario=3, inventario=5) — impilati
     // verticalmente accumulando y (altezza 20 + margine 5), a partire da y=95, sotto alla fascia
     // dei bookmark (y=70-85 circa).
     private static final Rectangle[][] SUBTOPIC_IMAGE_RECTS = {
             { new Rectangle(68, 86, 10, 18), new Rectangle(68, 106, 10, 18), new Rectangle(68, 126, 10, 18) }, // 0 Mappa (3)
-            { new Rectangle(161, 86, 10, 10), new Rectangle(161, 98, 10, 10), new Rectangle(161,110,10,10), new Rectangle(161,122,10,10), new Rectangle(161,134,10,10) }, // 1 Quest (2)
+            { new Rectangle(161, 86, 10, 10), new Rectangle(161, 98, 10, 10), new Rectangle(161,110,10,10), new Rectangle(161,122,10,10), new Rectangle(161,134,10,10) }, // 1 Quest (5)
             { new Rectangle(221, 87, 10, 10), new Rectangle(221, 99, 10, 10), new Rectangle(221, 111, 10, 10), new Rectangle(221, 123, 10, 10), new Rectangle(221, 135, 10, 10) }, // 2 Abilità (5)
             { new Rectangle(100, 86, 10, 28), new Rectangle(100, 116, 10, 28) }, // 3 Calendario (2)
             { new Rectangle(40, 87, 10, 18), new Rectangle(40, 107, 10, 18), new Rectangle(40, 127, 10, 18) }, // 4 Bestiario (3)
             { new Rectangle(189, 85, 10, 10), new Rectangle(189, 97, 10, 10), new Rectangle(189, 109, 10, 10), new Rectangle(189, 121, 10, 10), new Rectangle(189, 133, 10, 10) }, // 5 Inventario (5)
     };
     private final Button[][] subtopicButtons = new Button[SUBTOPIC_IMAGE_RECTS.length][];
+
+    // Area di testo per il contenuto dinamico delle pagine (per ora solo l'area Quest) —
+    // spazio immagine originale del libro (272x272, stesso sistema dei rettangoli sopra).
+    // PLACEHOLDER, da aggiustare a vista: nessun'altra area disegna ancora testo, quindi non
+    // c'era un riferimento da cui partire.
+    private static final Rectangle PAGE_CONTENT_RECT = new Rectangle(95, 20, 165, 230);
 
     public UI(GamePanel gp) {
         this.gp = gp;
@@ -183,7 +195,7 @@ public class UI {
         }
     }
 
-    public void showMessage(String text) { message = text; messageOn = true; }
+    public void showMessage(String text) { messages.add(new MessageEntry(text)); }
 
     public void draw(Graphics2D g2) {
         this.g2 = g2;
@@ -212,8 +224,34 @@ public class UI {
         if (gp.gameState == gp.dialogueState) { drawDialogueScreen(); }
         if (gp.gameState == gp.combatState)   { combat.draw(g2); }
         if (gp.gameState == gp.bookState)     { drawBookScreen(); }
+
+        drawMessage(); // banner in alto, impilabile — vedi drawMessage()
     }
 
+    // Banner in alto a schermo per messaggi generici (es. notifiche quest da QuestManager, o il
+    // pickup oggetto già presente in Npc_HumanRedWorker) — ognuno sparisce da solo dopo ~2
+    // secondi. Se più di uno è attivo insieme, si impilano un box sotto l'altro invece di
+    // sovrascriversi. Disegnato sempre sopra a qualunque schermata sia attiva, tranne il titolo.
+    public void drawMessage() {
+        if (messages.isEmpty() || gp.gameState == gp.titleState) return;
+
+        g2.setFont(MaruMonica.deriveFont(Font.PLAIN, 22f));
+        int x = gp.tileSize / 2;
+        int width = gp.screenWidth - gp.tileSize, height = gp.tileSize;
+        int gap = 8; // spazio tra un box impilato e il successivo
+
+        for (int i = 0; i < messages.size(); i++) {
+            MessageEntry m = messages.get(i);
+            int y = gp.tileSize / 3 + i * (height + gap);
+
+            drawSubWindwow(x, y, width, height);
+            g2.setColor(Color.white);
+            g2.drawString(m.text, x + 20, y + height / 2 + 8);
+
+            m.counter++;
+        }
+        messages.removeIf(m -> m.counter > 120); // ~2 secondi a 60fps, ciascuno per conto proprio
+    }
     public void drawPlayerLife() {
         int x = gp.tileSize / 2;
         int y = gp.tileSize / 2;
@@ -469,6 +507,8 @@ public class UI {
         int oy = (gp.screenHeight - h) / 2;
         g2.drawImage(bg, ox, oy, w, h, null);
 
+        if (gp.bookindex == gp.bookindex_quests) drawQuestPageContent(ox, oy, scale);
+
         // Bookmark: sempre cliccabili (anche per cambiare area generale mentre se ne sta già
         // guardando una). I bounds si ricalcolano ogni frame perché seguono lo scaling del libro.
         // Niente overlay separato sopra: la linguetta evidenziata è già dentro book_X.png
@@ -485,7 +525,7 @@ public class UI {
             boolean isActiveArea = (gp.bookindex - 1 == area) && !gp.pageTurnActive;
             for (int z = 0; z < subtopicButtons[area].length; z++) {
                 if (isActiveArea) {
-                        Rectangle r = SUBTOPIC_IMAGE_RECTS[area][z];
+                    Rectangle r = SUBTOPIC_IMAGE_RECTS[area][z];
                     subtopicButtons[area][z].setBounds(
                             ox + (int) (r.x * scale), oy + (int) (r.y * scale),
                             (int) (r.width * scale), (int) (r.height * scale));
@@ -505,6 +545,48 @@ public class UI {
                 int fx = (gp.screenWidth - fw) / 2;
                 int fy = (gp.screenHeight - fh) / 2;
                 g2.drawImage(frame, fx, fy, fw, fh, null);
+            }
+        }
+    }
+
+    // ═════════════════════════════════════════════
+    //  LIBRO: contenuto pagine Quest (bookzone = una quest CONOSCIUTA — vedi QuestManager,
+    //  bookpage 0 = riepilogo, bookpage 1 = lista obiettivi)
+    // ═════════════════════════════════════════════
+
+    private void drawQuestPageContent(int ox, int oy, double scale) {
+        if (gp.bookzone < 0) return; // nessuna voce selezionata: solo lo sfondo dell'area
+
+        List<quest.Quest> known = gp.questManager.getKnownQuests();
+        if (gp.bookzone >= known.size()) return; // slot senza quest assegnata: pagina vuota
+        quest.Quest q = known.get(gp.bookzone);
+
+        Rectangle r = PAGE_CONTENT_RECT;
+        int x = ox + (int) (r.x * scale);
+        int y = oy + (int) (r.y * scale);
+        int w = (int) (r.width * scale);
+
+        g2.setFont(MaruMonica.deriveFont(Font.PLAIN, 18f));
+        g2.setColor(Color.black); // testo scuro sopra la pagina chiara del libro
+        g2.drawString(q.title, x, y);
+
+        if (gp.bookpage == 0) {
+            drawStyledText(q.description, x, y + 28, w);
+            String stateLabel = (q.state == quest.QuestState.COMPLETED) ? "Completata" : "In corso";
+            g2.setColor(Color.black);
+            g2.drawString("Stato: " + stateLabel, x, y + 28 + 80);
+        } else {
+            int textY = y + 28;
+            for (int i = 0; i < q.steps.size(); i++) {
+                quest.QuestStep step = q.steps.get(i);
+                boolean done = i < q.currentStepIndex || q.state == quest.QuestState.COMPLETED;
+                boolean current = i == q.currentStepIndex && q.state == quest.QuestState.ACTIVE;
+                String marker = done ? "[x] " : (current ? "[ ] " : "    ");
+                String progress = (current && step.goalCount > 1)
+                        ? " (" + step.currentCount + "/" + step.goalCount + ")" : "";
+                g2.setColor(Color.black);
+                drawStyledText(marker + step.description + progress, x, textY, w);
+                textY += 32;
             }
         }
     }

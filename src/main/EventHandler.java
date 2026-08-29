@@ -44,6 +44,7 @@ public class EventHandler {
         if (canTouchEvent == true) {
             if (hit(28, 11, "any") == true) {damagePit(23, 10, gp.dialogueState);}
             if (hit(19, 14, "up") == true) {healingPool(19, 14, gp.dialogueState);}
+            questStartEvent(22, 10, "any", "goblin_bounty");
         }
     }
 
@@ -80,6 +81,25 @@ public class EventHandler {
             gp.ui.currentDialogue =
                     "Drinking from the Lake,\nyour vital energy got restored";
             gp.player.life = gp.player.maxLife;
+        }
+    }
+
+    // ── Quest: trigger di mappa ────────────────────────────────────
+    // Capacità pronta, non ancora richiamata da checkEvent(): nessuna mappa ha ancora un
+    // punto/quest reale a cui agganciarle. Per usarle, aggiungi una riga in checkEvent() come
+    // per damagePit/healingPool, es.: questStartEvent(30, 15, "any", "goblin_bounty");
+
+    /** Avvia una quest quando il giocatore tocca (col,row) da reqDirection ("any" = qualsiasi). */
+    public void questStartEvent(int col, int row, String reqDirection, String questId) {
+        if (hit(col, row, reqDirection)) {
+            gp.questManager.startQuest(questId);
+        }
+    }
+
+    /** Notifica un obiettivo REACH_LOCATION quando il giocatore tocca (col,row). */
+    public void locationEvent(int col, int row, String reqDirection, String locationId) {
+        if (hit(col, row, reqDirection)) {
+            gp.questManager.notify(quest.QuestEventType.REACH_LOCATION, locationId);
         }
     }
 }

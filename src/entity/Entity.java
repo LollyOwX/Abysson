@@ -57,6 +57,7 @@ public class Entity {
     public int precision = 100;
     public int evasion = 0;
     public int efficiency = 100; // % di efficacia delle proprie azioni (100 = neutro)
+    public String givesQuestId = null; // id di QuestRegistry assegnato da speak(), null = nessuna
     public int maxLife;
     public int life;
 
@@ -233,6 +234,9 @@ public class Entity {
     }
 
     public void speak() {
+
+        if (givesQuestId != null) gp.questManager.startQuest(givesQuestId);
+        gp.questManager.notify(quest.QuestEventType.TALK, this.name);
 
         if (dialogues[dialoguesIndex] == null) {
             dialoguesIndex = dialogueResetIndex;

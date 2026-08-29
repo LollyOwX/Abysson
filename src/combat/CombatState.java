@@ -454,6 +454,7 @@ public class CombatState {
 
     void onVictory() {
         //TODO premi
+        gp.questManager.notify(quest.QuestEventType.KILL, monster.name);
         queueAction("You defeated " + monster.name + "!");
     }
     void onDefeat() {

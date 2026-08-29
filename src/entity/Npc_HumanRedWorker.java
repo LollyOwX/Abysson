@@ -103,6 +103,7 @@ public class Npc_HumanRedWorker extends Entity {
             gp.player.equip(new items.Sword_Basic_Iron());
             gp.ui.showMessage("Hai ottenuto: Spada!");
             itemGiven = true;
+
         }
     }
 }

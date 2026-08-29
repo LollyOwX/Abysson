@@ -182,3 +182,108 @@ Il primo giro di §6.2/6.4 usava una singola coppia `elementAttack`/`elementDefe
 - `ElementSystem.attackStat(Element)`/`defenseStat(Element)`: nuova mappa Element → StatType, usata da `recalculateStats()`. Ritornano `null` per FISICO/NONE.
 - Tutte le formule "X\*ATK" delle reazioni (Folgore, Infiammazione, Raggio, Carbonizzazione, Sovraccarico, Tempesta, Ramificazione, Elettrizzazione, Firenado) ora usano lo stat ATK dell'elemento giusto invece del generico — es. Folgore (Fulmine) usa `ElectricATK`, Infiammazione (Fuoco) usa `FireATK`. Sovraccarico/Tempesta (50/50 tra due elementi) usano l'ATK dell'elemento estratto quel tick, quindi il 50/50 ora cambia davvero il numero, non solo l'etichetta come nel primo giro.
 - `MON_Goblin` (usa Thunderbolt/Fulmine): imposta `elementAttack.put(FULMINE, ...)` invece del vecchio campo singolo.
+
+## 7. Sessione 27/08 (continua) — Struttura Quest
+
+Nuovo package `quest/` (7 file): `QuestEventType` (enum: KILL/TALK/REACH_LOCATION/COLLECT/CUSTOM), `QuestTier` (CRITICO/MAGGIORE/FLAVOR, rispecchia i tier del Calendar System §1), `QuestState` (NOT_STARTED/ACTIVE/COMPLETED/FAILED — FAILED è uno stub non ancora agganciato), `QuestStep` (uno step = descrizione + trigger + target + goal, con `matches()`/`isComplete()`), `Quest` (**step machine**: sequenza di `QuestStep`, uno attivo alla volta — `notify()` avanza solo se l'evento combacia con lo step corrente, non con step futuri o già superati), `QuestRegistry` (dispatcher statico delle definizioni, stesso stile di `combat/Ability.java` — vedi il suo header per "come aggiungere una nuova quest"), `QuestManager` (liste `active`/`completed` separate; correzione fatta nella sessione successiva, vedi §8 — non collegate 1:1 a bookzone come scritto qui inizialmente).
+
+**Quest ottenibili sia da dialogo NPC che da trigger di mappa, dal primo giro**:
+- Dialogo: nuovo campo `Entity.givesQuestId` (null di default) — se impostato, `speak()` chiama `QuestManager.startQuest()` la prima volta che ci si parla; ad ogni `speak()` notifica anche un evento `TALK` col nome dell'NPC (per step tipo "parla con X").
+- Trigger di mappa: due nuovi metodi in `EventHandler` (`questStartEvent()`/`locationEvent()`), stesso pattern di `damagePit()`/`healingPool()` esistenti. **Capacità pronta ma non richiamata da `checkEvent()`** — nessuna mappa ha ancora un punto reale a cui agganciarle; per usarle basta una riga in `checkEvent()` come per gli eventi esistenti.
+- Combattimento: `CombatState.onVictory()` notifica `KILL` col nome del mostro sconfitto — già collegato, funziona.
+
+**Un solo esempio concreto** in `QuestRegistry` (`"goblin_bounty"`, un solo step: sconfiggi il Goblin) per provare che l'impianto giri end-to-end con quello che già esiste (l'unico mostro nel gioco). Il campo `giverNpc` è un placeholder ("Villager") — nessun NPC con quel nome esiste ancora, da allineare quando c'è.
+
+**Deliberatamente non collegato**:
+- `QuestEventType.COLLECT` — nessun sistema di inventario reale esiste (`Player.pickUpObject()` è uno stub vuoto), quindi non c'è nulla da notificare. Il valore enum esiste già per quando ci sarà.
+- Rendering delle quest nel libro (bookzone Quests) — solo la struttura dati è pronta, la UI resta da fare.
+- Persistenza: nessun sistema di salvataggio esiste ancora (§5) — lo stato delle quest si perde alla chiusura del gioco, come tutto il resto.
+
+## 8. Sessione 27/08 (continua) — Quest nel libro + notifiche a schermo
+
+**Correzione rispetto a §7**: avevo scritto lì che `BOOKZONE_COUNT` per l'area Quest fosse 2 (Attive/Completate) — falso, il valore vero nel codice è **5** (il commento in `GamePanel`/`UI` diceva "quest=2" ma sia l'array `BOOKZONE_COUNT` sia i `Rectangle` in `SUBTOPIC_IMAGE_RECTS` per quell'area erano già 5: commento sbagliato, corretto anche quello. Il progetto usa la convenzione "bookzone = singola voce, es. Quest 1/Quest 2" (vedi il commento originale sui 3 livelli in `GamePanel.java`) — quindi **una bookzone = una quest**, non uno stato.
+
+- `QuestManager.getKnownQuests()`: lista concatenata active+completed (ordine stabile) — bookzone *N* mostra la N-esima quest conosciuta dal giocatore (non tutte quelle esistenti in `QuestRegistry`: una quest mai iniziata non compare, niente spoiler). Cap a 5 slot per ora (come `BOOKZONE_COUNT`); da alzare (lì + i `Rectangle` corrispondenti in `UI.SUBTOPIC_IMAGE_RECTS`) se `QuestRegistry` supera le 5 quest raggiungibili in una run.
+- `UI.drawQuestPageContent()`: disegna testo VERO per la prima volta in una pagina del libro (finora erano solo immagini pre-renderizzate, `book_X.png`, senza overlay di testo). bookpage 0 = titolo + descrizione + stato; bookpage 1 = lista obiettivi con `[x]`/`[ ]` e progresso (`3/5`) sullo step attivo. Area di testo (`PAGE_CONTENT_RECT`) è un **placeholder** (95,20,165,230 nello spazio immagine 272×272) — da aggiustare a vista come i rettangoli di bookmark/subtopic, nessun riferimento precedente da cui partire visto che nessun'altra area disegna ancora testo.
+- `QuestManager.getQuestById(id)`: lookup diretto per id (cercando in active poi completed) — utile per far dipendere qualcos'altro dallo stato di UNA quest specifica (es. un dialogo NPC diverso se il giocatore l'ha già completata) senza scorrere a mano le due liste ogni volta.
+
+**Come il giocatore viene informato**: prima di questa sessione, **in nessun modo** — `UI.showMessage()`/`messageOn` esistevano già (usati da `Npc_HumanRedWorker` per "Hai ottenuto: Spada!") ma non erano MAI disegnati da nessuna parte: un aggancio morto, bug preesistente non mio. Aggiunto `UI.drawMessage()` (banner in alto, ~2 secondi, richiamato da `draw()` sempre tranne che nel titolo) e ora `QuestManager` lo usa per tre eventi: avvio quest ("Nuova missione: ..."), avanzamento di step ("Nuovo obiettivo: ..."), completamento ("Missione completata: ..."). Di riflesso, questo ha sistemato anche il messaggio della spada, che ora funziona davvero.
+- `QuestManager` tiene ora un riferimento a `GamePanel` (passato nel costruttore, `new QuestManager(this)` in `GamePanel`) per poter chiamare `gp.ui.showMessage()` — stesso pattern di `CombatState`/`EventHandler`/`UI` stesse, che tengono già tutte `gp`.
+
+## 9. Guida pratica — Aggiungere e usare le Quest
+
+Riferimento autonomo (non un log di sessione): tutto quello che serve per lavorare sul sistema quest senza dover rileggere §6-8. Se qualcosa qui e nei commenti del codice (`QuestRegistry`, `QuestManager`, `EventHandler`) diverge, fidati del codice: questa sezione va tenuta aggiornata a mano quando cambia qualcosa di strutturale.
+
+### 9.1 Aggiungere una nuova quest
+In `quest/QuestRegistry.get()`, un nuovo `case` con un id univoco:
+```java
+case "old_man_favor":
+    return new Quest(
+            "old_man_favor",
+            "Un favore per il vecchio",
+            "Il vecchio del villaggio ha bisogno di aiuto.",
+            QuestTier.FLAVOR,
+            "OldMan", // NPC che la assegna (solo informativo, non collegato automaticamente — vedi 9.2)
+            List.of(
+                    new QuestStep("Torna a parlare con lui", QuestEventType.TALK, "OldMan"),
+                    new QuestStep("Sconfiggi il Goblin", QuestEventType.KILL, "Goblin", 3) // goalCount=3
+            )
+    );
+```
+- È una **step machine**: gli step si sbloccano in ordine, uno per volta. Un evento che combacerebbe con lo step 2 non fa nulla se la quest è ancora allo step 0.
+- `targetId` deve combaciare **esattamente** con quello che passa chi notifica l'evento (case-sensitive): `monster.name` per KILL (es. `"Goblin"`), `entity.name` dell'NPC per TALK, il `locationId` scelto a mano per REACH_LOCATION.
+- `goalCount` di default è 1 — per "N volte" usa il costruttore a 4 argomenti.
+- Ogni chiamata a `QuestRegistry.get()` crea un'istanza NUOVA (stato mutabile) — non riusarne una condivisa.
+
+### 9.2 Come farla partire
+- **Dialogo NPC**: `npc.givesQuestId = "old_man_favor";` dove l'NPC viene istanziato. La prima volta che il giocatore ci parla, `speak()` chiama da solo `QuestManager.startQuest()` — idempotente, sicuro anche se ci riparla altre volte.
+- **Trigger di mappa**: in `EventHandler.checkEvent()`, una riga come le altre già presenti (`damagePit`/`healingPool`):
+  ```java
+  questStartEvent(30, 15, "any", "old_man_favor");
+  ```
+  `"any"` = da qualunque direzione; altrimenti `"up"`/`"down"`/`"left"`/`"right"`.
+- **Combattimento**: nessuna azione da fare per KILL, `CombatState.onVictory()` notifica già ogni vittoria.
+- Il campo `giverNpc` in `Quest` è solo testo/riferimento, NON collega automaticamente nulla: l'associazione vera con un NPC è impostare `givesQuestId` su quell'NPC come sopra.
+
+### 9.3 Tipi di obiettivo (QuestEventType)
+| Tipo | Chi lo notifica | targetId | Stato |
+|---|---|---|---|
+| `KILL` | `CombatState.onVictory()` | `monster.name` | Collegato |
+| `TALK` | `Entity.speak()` (ogni volta che si parla a un NPC) | `entity.name` | Collegato |
+| `REACH_LOCATION` | `EventHandler.locationEvent(col,row,dir,locationId)` — riga da aggiungere in `checkEvent()` | id a piacere | Capacità pronta, nessun punto di mappa la usa ancora |
+| `COLLECT` | — | — | **Non collegato**: nessun inventario reale esiste (`Player.pickUpObject()` è uno stub vuoto). Andrebbe agganciato lì, ma prima serve un sistema oggetti minimo |
+| `CUSTOM` | a mano, dal punto del codice dove serve: `gp.questManager.notify(QuestEventType.CUSTOM, "un_id")` | id a piacere | Per obiettivi troppo specifici per meritare un tipo tutto loro |
+
+### 9.4 Leggere lo stato di una quest da altrove nel codice
+```java
+Quest q = gp.questManager.getQuestById("old_man_favor"); // null se mai iniziata
+if (q != null && q.state == QuestState.COMPLETED) { /* ... */ }
+if (q != null) {
+    QuestStep step = q.currentStep(); // step attivo, non null se la quest è ACTIVE
+    // step.description, step.currentCount, step.goalCount
+}
+```
+`gp.questManager.getActive()` / `getCompleted()` per le liste intere; `getKnownQuests()` per la lista concatenata (ordine stabile) usata anche dal libro.
+
+### 9.5 Come il giocatore viene informato
+Automatico, non serve fare nulla in più: `QuestManager` chiama `gp.ui.showMessage()` (banner in alto, ~2 secondi) da solo su avvio quest, avanzamento di step e completamento. Se serve un messaggio diverso da quello di default (es. testo custom invece di "Nuovo obiettivo: <descrizione step>"), va cambiato dentro `QuestManager.notify()`/`startQuest()` — non c'è un modo per personalizzarlo per singola quest al momento.
+
+### 9.6 Vederla nel libro
+Non serve fare nulla in più: qualunque quest **conosciuta** (attiva o completata — non quelle mai iniziate) compare da sola come bookzone nell'area Quest, nell'ordine `getKnownQuests()`. Limite attuale: **5 slot** (`GamePanel.BOOKZONE_COUNT[1]`). Se `QuestRegistry` arriva ad avere più di 5 quest raggiungibili nella stessa run, vanno alzati insieme:
+1. `GamePanel.BOOKZONE_COUNT` (il valore per l'area quests, indice 1)
+2. Il numero di `Rectangle` in `UI.SUBTOPIC_IMAGE_RECTS[1]` (deve combaciare 1:1)
+
+bookpage 0 = titolo/descrizione/stato, bookpage 1 = lista obiettivi con `[x]`/`[ ]` e progresso. `UI.PAGE_CONTENT_RECT` è la zona di testo — placeholder, da aggiustare a vista sul PNG vero se il testo esce dai margini della pagina disegnata.
+
+### 9.7 Limiti noti (da non dare per scontato che funzionino)
+- Nessuna persistenza: lo stato quest si perde alla chiusura del gioco (nessun sistema di salvataggio esiste, §5).
+- `QuestState.FAILED` esiste ma non è agganciato a nulla — nessuna quest può "fallire" al momento.
+- `COLLECT` non è collegato (9.3).
+- Un solo esempio reale in `QuestRegistry` (`"goblin_bounty"`) — tutto il resto in questa guida è dimostrato solo in astratto, non testato in gioco con contenuti veri.
+
+## 10. Sessione 27/08 (continua) — Quest da AssetSetter + messaggi impilati
+
+**`AssetSetter.place()`**: nuovo overload a 7 argomenti (`..., paletteDef, questId`) — se `questId` è `null` non assegna nessuna quest (comportamento invariato per obj/monster, che continuano a usare la versione a 6 argomenti senza toccarla). `setNpc()` ora collega davvero `Npc_HumanRedWorker` alla quest `"goblin_bounty"` (l'unica reale in `QuestRegistry`) — primo esempio end-to-end funzionante: dialogo che assegna la quest, uccisione del Goblin che la completa, libro che la mostra.
+- **Nota sulla scelta del punto**: l'alternativa (metterlo nel costruttore dell'NPC stesso, `Npc_HumanRedWorker.java`) resta più coerente con come il resto del progetto è scritto (quell'NPC si autoconfigura interamente lì — dialoghi, hitbox...) — qui è stato messo in `AssetSetter` su richiesta esplicita, perché in questo punto si vede a colpo d'occhio insieme a tutti gli altri piazzamenti. Da tenere a mente se in futuro si aggiungono più NPC della stessa classe con quest diverse: quel caso torna a favorire il costruttore.
+
+**`UI`: da singolo messaggio a coda impilata**: prima un secondo `showMessage()` sovrascriveva silenziosamente il primo se ancora a schermo (helper interno, non esposto). Ora `messages` è una lista di box, ognuno con il proprio timer indipendente (~2 secondi) — più messaggi contemporanei si impilano uno sotto l'altro invece di accavallarsi. Con l'NPC attuale la sovrapposizione non capita mai davvero in pratica (`givesQuestId` scatta al primo dialogo, la spada al terzo — momenti diversi), ma resta la protezione generale corretta per quando due notifiche arriveranno sullo stesso frame.

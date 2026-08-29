@@ -11,7 +11,7 @@ public class MON_Goblin extends Entity {
 
         name = "Goblin";
         level = 2 * gp.difficulty;
-        speed = 10;
+        speed = 4;
         maxLife = 20 * level;
         attack = 10 * level;
         defense = 10 * level;

@@ -13,11 +13,18 @@ public class AssetSetter {
 		this.gp = gp;
 	}
 
-void place(Entity[] array, int index, Supplier<Entity> factory, int col, int row, String paletteDef) {
+	void place(Entity[] array, int index, Supplier<Entity> factory, int col, int row, String paletteDef) {
+		place(array, index, factory, col, row, paletteDef, null);
+	}
+
+	// Overload con questId: se null, non assegna nessuna quest — obj/monster continuano a usare
+	// la versione a 6 argomenti sopra senza doverla toccare.
+	void place(Entity[] array, int index, Supplier<Entity> factory, int col, int row, String paletteDef, String questId) {
 		Entity e = factory.get();
 		e.worldX  = gp.tileSize * col;
 		e.worldY  = gp.tileSize * row;
 		e.palette = PaletteSwap.parsePalette(paletteDef);
+		if (questId != null) e.givesQuestId = questId;
 		array[index] = e;
 	}
 
@@ -27,7 +34,7 @@ void place(Entity[] array, int index, Supplier<Entity> factory, int col, int row
 	}
 
 	public void setNpc() {
-		place(gp.npc, 0, () -> new Npc_HumanRedWorker(gp), 21, 21, null);
+		place(gp.npc, 0, () -> new Npc_HumanRedWorker(gp), 21, 21, null, "goblin_bounty");
 	}
 
 	public void setMonster() {
