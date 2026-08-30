@@ -32,6 +32,10 @@ public class Player extends Entity {
 
     // Somma dei bonus % correnti per stat, accumulata da calcStat() ad ogni equip/unequip.
     private final Map<StatType, Integer> percentBonus = new EnumMap<>(StatType.class);
+    // Stadio 3 (dopo flat e percentuale): moltiplicatore per stat, 1.0 = nessun effetto — non
+    // ancora popolato da nessuno, pronto per buff/debuff temporanei futuri (es. una pozione,
+    // uno status). Ordine di calcolo: stat flat, poi percentuale, poi questo — vedi recalculateStats().
+    private final Map<StatType, Double> statMultiplier = new EnumMap<>(StatType.class);
 
     // ── Equipaggiamento ──────────────────────────────────────────
     // Ogni slot ha il proprio "statChanged": true = i bonus % dell'item nello slot
@@ -268,13 +272,13 @@ public class Player extends Entity {
     }
 
     public void recalculateStats() {
-        maxLife        = Math.max(1, (int) Math.round(baseMaxLife        * pct(StatType.VITA)));
-        attack         = Math.max(0, (int) Math.round(baseAttack         * pct(StatType.ATTACK)));
-        defense        = Math.max(0, (int) Math.round(baseDefense        * pct(StatType.DIFESA)));
-        speed          = Math.max(1, (int) Math.round(baseSpeed          * pct(StatType.VELOCITA)));
-        evasion        = Math.max(0, (int) Math.round(baseEvasion        * pct(StatType.ELUSIONE)));
-        precision      = Math.max(0, (int) Math.round(basePrecision      * pct(StatType.PRECISIONE)));
-        efficiency     = Math.max(0, (int) Math.round(baseEfficiency     * pct(StatType.EFFICIENZA)));
+        maxLife        = Math.max(1, (int) Math.round(baseMaxLife        * pct(StatType.VITA)       * mult(StatType.VITA)));
+        attack         = Math.max(0, (int) Math.round(baseAttack         * pct(StatType.ATTACK)     * mult(StatType.ATTACK)));
+        defense        = Math.max(0, (int) Math.round(baseDefense        * pct(StatType.DIFESA)     * mult(StatType.DIFESA)));
+        speed          = Math.max(1, (int) Math.round(baseSpeed          * pct(StatType.VELOCITA)   * mult(StatType.VELOCITA)));
+        evasion        = Math.max(0, (int) Math.round(baseEvasion        * pct(StatType.ELUSIONE)   * mult(StatType.ELUSIONE)));
+        precision      = Math.max(0, (int) Math.round(basePrecision      * pct(StatType.PRECISIONE) * mult(StatType.PRECISIONE)));
+        efficiency     = Math.max(0, (int) Math.round(baseEfficiency     * pct(StatType.EFFICIENZA) * mult(StatType.EFFICIENZA)));
 
         // Una coppia ATK/DEF per elemento, ciascuna con il proprio bonus % (StatType.FIRE_ATK...)
         for (ElementSystem.Element e : ElementSystem.Element.values()) {
@@ -283,14 +287,19 @@ public class Player extends Entity {
             if (atkType == null) continue; // FISICO/NONE non hanno una coppia elementale
             int baseAtk = baseElementAttack.getOrDefault(e, 0);
             int baseDef = baseElementDefense.getOrDefault(e, 0);
-            elementAttack.put(e, Math.max(0, (int) Math.round(baseAtk * pct(atkType))));
-            elementDefense.put(e, Math.max(0, (int) Math.round(baseDef * pct(defType))));
+            elementAttack.put(e, Math.max(0, (int) Math.round(baseAtk * pct(atkType) * mult(atkType))));
+            elementDefense.put(e, Math.max(0, (int) Math.round(baseDef * pct(defType) * mult(defType))));
         }
     }
 
-    // stat = flat * %  →  percentBonus è espresso in "punti percentuali" (3 = +3%)
+    // stat = flat * % * moltiplicatore, in quest'ordine — percentBonus è espresso in "punti
+    // percentuali" (3 = +3%), statMultiplier è un fattore diretto (1.0 = nessun effetto).
     private double pct(StatType type) {
         return 1.0 + percentBonus.getOrDefault(type, 0) / 100.0;
+    }
+
+    private double mult(StatType type) {
+        return statMultiplier.getOrDefault(type, 1.0);
     }
 
     public void interactNPC(int i) {

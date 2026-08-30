@@ -58,6 +58,15 @@ public class UI {
     private static final String MENU_HOVER_IMAGE_PATH = "/ui/menu_hover_glow.png";
     private BufferedImage menuHoverImage;
 
+    // Box di notifica: head (14x17, punta decorativa) + body (1x17, ripetuto quante volte
+    // serve) — vedi drawMessage(). NOTIFY_SCALE è il fattore di ingrandimento dei due sprite
+    // nativi; NOTIFY_SLIDE_FRAMES quanti frame dura lo scorrimento in entrata da destra.
+    private static final String NOTIFY_HEAD_PATH = "/ui/notify_bookmark_head.png";
+    private static final String NOTIFY_BODY_PATH = "/ui/notify_bookmark_body.png";
+    private BufferedImage notifyHead, notifyBody;
+    private static final int NOTIFY_SCALE = 3;
+    private static final int NOTIFY_SLIDE_FRAMES = 15;
+
     private int mouseX = -1, mouseY = -1;
     private int hoveredIndex = -1; // voce sotto il mouse, -1 se nessuna (solo mouse)
     private final Rectangle[] menuItemBounds = new Rectangle[4];
@@ -140,6 +149,19 @@ public class UI {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        try {
+            InputStream headIs = getClass().getResourceAsStream(NOTIFY_HEAD_PATH);
+            InputStream bodyIs = getClass().getResourceAsStream(NOTIFY_BODY_PATH);
+            if (headIs != null && bodyIs != null) {
+                notifyHead = ImageIO.read(headIs);
+                notifyBody = ImageIO.read(bodyIs);
+            } else {
+                System.err.println("ERROR: resource not found: " + NOTIFY_HEAD_PATH + " or " + NOTIFY_BODY_PATH);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void showMessage(String text) { messages.add(new MessageEntry(text)); }
@@ -175,29 +197,62 @@ public class UI {
         drawMessage(); // banner in alto, impilabile — vedi drawMessage()
     }
 
-    // Banner in alto a schermo per messaggi generici (es. notifiche quest da QuestManager, o il
-    // pickup oggetto già presente in Npc_HumanRedWorker) — ognuno sparisce da solo dopo ~2
-    // secondi. Se più di uno è attivo insieme, si impilano un box sotto l'altro invece di
-    // sovrascriversi. Disegnato sempre sopra a qualunque schermata sia attiva, tranne il titolo.
+    // Notifica in alto a destra, a forma di segnalibro: head (punta decorativa a sinistra) +
+    // body ripetuto quante volte serve per contenere il testo — larga solo quanto serve, non un
+    // rettangolo pieno. Scorre in entrata da fuori schermo (destra) alla posizione di riposo;
+    // testo e box si muovono insieme (stesso offsetX). Più notifiche insieme si impilano verso
+    // il basso, come prima. Disegnata sempre sopra a qualunque schermata sia attiva, tranne il
+    // titolo — non ferma il gioco: è solo un overlay disegnato ad ogni frame di draw() normale.
     public void drawMessage() {
         if (messages.isEmpty() || gp.gameState == gp.titleState) return;
 
-        g2.setFont(MaruMonica.deriveFont(Font.PLAIN, 22f));
-        int x = gp.tileSize / 2;
-        int width = gp.screenWidth - gp.tileSize, height = gp.tileSize;
-        int gap = 8; // spazio tra un box impilato e il successivo
+        g2.setFont(MaruMonica.deriveFont(Font.PLAIN, 20f));
+        FontMetrics fm = g2.getFontMetrics();
+
+        int headW    = (notifyHead != null) ? notifyHead.getWidth()  * NOTIFY_SCALE : 0;
+        int boxH     = (notifyHead != null) ? notifyHead.getHeight() * NOTIFY_SCALE : gp.tileSize;
+        int bodyTileW = NOTIFY_SCALE; // notify_bookmark_body è 1px largo: ogni tile disegnato = NOTIFY_SCALE px
+        int padLeft = 10, padRight = 14;
+        int rightEdge = gp.screenWidth - gp.tileSize / 2;
+        int gap = 6; // spazio verticale tra una notifica impilata e la successiva
 
         for (int i = 0; i < messages.size(); i++) {
             MessageEntry m = messages.get(i);
-            int y = gp.tileSize / 3 + i * (height + gap);
 
-            drawSubWindwow(x, y, width, height);
+            int textW      = fm.stringWidth(m.text);
+            int bodyNeeded = textW + padLeft + padRight;
+            int bodyTiles  = Math.max(1, (int) Math.ceil(bodyNeeded / (double) bodyTileW));
+            int totalW     = headW + bodyTiles * bodyTileW;
+
+            int restingX = rightEdge - totalW;
+            int y = gp.tileSize / 3 + i * (boxH + gap);
+
+            // Ease-out: parte fuori schermo a destra (x = screenWidth), arriva a restingX in
+            // NOTIFY_SLIDE_FRAMES frame. Stesso offsetX applicato sia al box che al testo sotto.
+            double t      = Math.min(1.0, m.counter / (double) NOTIFY_SLIDE_FRAMES);
+            double eased  = 1 - Math.pow(1 - t, 3);
+            int offsetX   = (int) ((1 - eased) * (gp.screenWidth - restingX));
+            int x = restingX + offsetX;
+
+            if (notifyHead != null && notifyBody != null) {
+                g2.drawImage(notifyHead, x, y, headW, boxH, null);
+                int bx = x + headW;
+                for (int b = 0; b < bodyTiles; b++) {
+                    g2.drawImage(notifyBody, bx, y, bodyTileW, boxH, null);
+                    bx += bodyTileW;
+                }
+            } else {
+                // Sprite non caricati: fallback al vecchio box semplice, non blocca il gioco per questo.
+                drawSubWindwow(x, y, totalW, boxH);
+            }
+
             g2.setColor(Color.white);
-            g2.drawString(m.text, x + 20, y + height / 2 + 8);
+            int textY = y + (boxH + fm.getAscent()) / 2 - 2;
+            g2.drawString(m.text, x + headW + padLeft, textY);
 
             m.counter++;
         }
-        messages.removeIf(m -> m.counter > 120); // ~2 secondi a 60fps, ciascuno per conto proprio
+        messages.removeIf(m -> m.counter > NOTIFY_SLIDE_FRAMES + 120); // scorrimento + ~2 secondi fermo, ciascuno per conto proprio
     }
     public void drawPlayerLife() {
         int x = gp.tileSize / 2;

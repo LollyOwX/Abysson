@@ -25,7 +25,7 @@ public class Npc_HumanRedWorker extends Entity {
         solidAreaDefaultY = solidArea.y;
         solidArea.width = 32;
         solidArea.height = 32;
-        dialogueResetIndex = 5;
+        dialogueResetIndex = 6;
         getImage();
         setDialogue();
     }
@@ -47,10 +47,22 @@ public class Npc_HumanRedWorker extends Entity {
         dialogues[0] = "<rainbow>Oh, hi there!</rainbow>";
         dialogues[1] = "What can I do for you?";
         dialogues[2] = "Not that I can do anything...";
-        dialogues[3] = "Explore as much \nas you want";
-        dialogues[4] = "I'll stay here";
+        dialogues[3] = "Could you slay some \ngoblins for me?";
+        dialogues[4] = "Thanks!";
         dialogues[5] = "Here, take this sword!";
-        dialogues[6] = "Good luck";
+        dialogues[6] = "Good luck!";
+    }
+
+    public void speak() {
+        super.speak();
+        if (dialoguesIndex == 6 && !itemGiven) {
+            gp.player.equip(new items.Sword_Basic_Iron());
+            gp.ui.showMessage("Hai ottenuto: Spada!");
+            itemGiven = true;
+        }
+        if (dialoguesIndex == 5 && givesQuestId != null) {
+            gp.questManager.startQuest(givesQuestId); // idempotente: sicuro anche se richiamato più volte
+        }
     }
 
     public void getImage() {
@@ -95,20 +107,6 @@ public class Npc_HumanRedWorker extends Entity {
                 idleDirection = "idle_right";
             }
             actionLockCounter = 0;
-        }
-    }
-    public void speak() {
-        super.speak();
-        if (dialoguesIndex == 2 && !itemGiven) {
-            gp.player.equip(new items.Sword_Basic_Iron());
-            gp.ui.showMessage("Hai ottenuto: Spada!");
-            itemGiven = true;
-        }
-        // Stesso dialoguesIndex della spada apposta: fa vedere insieme, nello stesso dialogo,
-        // che i due box si impilano invece di accavallarsi (vedi UI.drawMessage()). Per darla
-        // in un punto diverso del dialogo, basta cambiare questo numero.
-        if (dialoguesIndex == 2 && givesQuestId != null) {
-            gp.questManager.startQuest(givesQuestId); // idempotente: sicuro anche se richiamato più volte
         }
     }
 }
