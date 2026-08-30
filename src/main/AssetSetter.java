@@ -13,7 +13,7 @@ public class AssetSetter {
 		this.gp = gp;
 	}
 
-	void place(Entity[] array, int index, Supplier<Entity> factory, int col, int row, String paletteDef) {
+void place(Entity[] array, int index, Supplier<Entity> factory, int col, int row, String paletteDef) {
 		place(array, index, factory, col, row, paletteDef, null);
 	}
 

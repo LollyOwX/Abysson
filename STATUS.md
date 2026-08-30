@@ -218,17 +218,17 @@ Riferimento autonomo (non un log di sessione): tutto quello che serve per lavora
 In `quest/QuestRegistry.get()`, un nuovo `case` con un id univoco:
 ```java
 case "old_man_favor":
-        return new Quest(
+    return new Quest(
             "old_man_favor",
-                    "Un favore per il vecchio",
-                    "Il vecchio del villaggio ha bisogno di aiuto.",
+            "Un favore per il vecchio",
+            "Il vecchio del villaggio ha bisogno di aiuto.",
             QuestTier.FLAVOR,
             "OldMan", // NPC che la assegna (solo informativo, non collegato automaticamente — vedi 9.2)
             List.of(
                     new QuestStep("Torna a parlare con lui", QuestEventType.TALK, "OldMan"),
                     new QuestStep("Sconfiggi il Goblin", QuestEventType.KILL, "Goblin", 3) // goalCount=3
             )
-                    );
+    );
 ```
 - È una **step machine**: gli step si sbloccano in ordine, uno per volta. Un evento che combacerebbe con lo step 2 non fa nulla se la quest è ancora allo step 0.
 - `targetId` deve combaciare **esattamente** con quello che passa chi notifica l'evento (case-sensitive): `monster.name` per KILL (es. `"Goblin"`), `entity.name` dell'NPC per TALK, il `locationId` scelto a mano per REACH_LOCATION.
@@ -293,3 +293,78 @@ bookpage 0 = titolo/descrizione/stato, bookpage 1 = lista obiettivi con `[x]`/`[
 `Entity.speak()` non chiama più `startQuest(givesQuestId)` automaticamente al primo dialogo — restava troppo rigido (un solo momento possibile, sempre il primo click, uguale per ogni NPC). `givesQuestId` ora è solo il dato ("quale quest dare"); OGNI sottoclasse NPC decide da sé A QUALE `dialoguesIndex` chiamare `gp.questManager.startQuest(givesQuestId)`, esattamente come già faceva `Npc_HumanRedWorker` per la spada. `Entity.speak()` continua a notificare `TALK` ad ogni dialogo (invariato — resta generico, serve agli step quest tipo "parla con X").
 
 `Npc_HumanRedWorker`: la quest `"goblin_bounty"` ora parte allo stesso `dialoguesIndex==2` della spada — scelta deliberata (non obbligata) per far vedere, nello stesso identico dialogo, i due box impilati di §10 invece che uno alla volta. Per darla in un punto diverso basta cambiare quel numero nella sua `speak()`.
+
+## 12. Sessione 27/08 (continua) — Struttura Weapon/Armor/Jewelry (struttura decisa dall'utente)
+
+Struttura dati per i 3 tipi di oggetto, così come descritta esplicitamente (non una mia proposta): `items/ItemCategory.java` (ARMA/ARMATURA/GIOIELLO), `items/Component.java` (slot generico gemma/incantesimo/roccia — porta solo un `id` stringa, nessuna logica), `items/Weapon.java`, `items/Armor.java`, `items/Jewelry.java`.
+
+**Deliberatamente non implementato in questa sessione — "add components"**: la funzione che legge tutti i componenti equipaggiati su un oggetto (gemme/incantesimi/rocce) e li riduce in UN blocco di bonus/effetti unico (invece di controllarli uno per uno) è stata esplicitamente rimandata al futuro da chi ha dato la spec. Di conseguenza: `Weapon`/`Armor`/`Jewelry` portano solo i campi grezzi descritti (Affilatezza, Metallo, Rocce...), `statBonusPercent` (il ponte verso `Player.recalculateStats()`, esistente da prima) resta vuota per questi 3 tipi — equipaggiarli non rompe nulla ma non dà ancora bonus reali. `Sword_Basic_Iron` (esempio "a mano", da prima di questa struttura) resta com'era, non migrato a `Weapon`.
+
+**Scelte interpretative fatte per completare campi non specificati esplicitamente — da confermare**:
+- `Weapon.pomo` — la spec diceva "Butt = velocità" in inglese in mezzo a una lista italiana; tradotto come "pomo" (l'estremità opposta alla lama di un'arma). Se si intendeva altro, va solo rinominato il campo.
+- `Armor.armorType` — lasciato `String` libero (non un enum chiuso): la spec dice "tipo di armatura e di conseguenza dove andrà" ma non elenca i tipi reali (elmo/corazza/gambali/...). Oggi ESISTE solo lo slot `Chestplate` per l'armatura — ogni `Armor` ci va sempre, qualunque `armorType`. Quando i tipi reali saranno decisi, andranno aggiunti gli `ItemSlot` mancanti (`Legs`/`Hands`/`Feet`...) e `armorType` può diventare un enum chiuso.
+- `Jewelry`: `gemma` (singola) usata da Corona/Collana/Anello, `rocce[9]` usata SOLO da Bracciale ("solo rocce, no gemme") — tenuti entrambi come campo sulla stessa classe invece di sottoclassi separate, per non irrigidire la gerarchia prima che l'aggregazione vera esista.
+
+**Nuovi slot su `Item.ItemSlot`/`Player`**: `Head`, `Neck`, `Ring1`, `Ring2`, `Bracelet1`, `Bracelet2` (prima esistevano solo `MainHand`/`OffHand`/`Chestplate`) — necessari per corona/collana/i 2 anelli/i 2 bracciali dei Gioielli. `Player` ha un `EquipSlot` in più per ciascuno (`headSlot`, `neckSlot`, `ring1Slot`, `ring2Slot`, `bracelet1Slot`, `bracelet2Slot`), `slotFor()` aggiornato di conseguenza. Un elmo (`Armor`) potrà in futuro condividere lo slot `Head` con una corona (`Jewelry`) — stesso slot, categorie diverse, corretto: un solo oggetto per zona del corpo, non per categoria.
+- **Limite noto**: anelli e bracciali hanno 2 slot ciascuno ma nessuna logica "equipaggia nel primo slot libero" — `Jewelry` di tipo `ANELLO`/`BRACCIALE` parte sempre su `Ring1`/`Bracelet1`, va spostata a mano su `Ring2`/`Bracelet2` (`item.slot = ItemSlot.Ring2;` prima di chiamare `equip()`) se il primo è già occupato.
+
+## 13. Sessione 27/08 (continua) — UI del libro estratta in package/classe separati
+
+Nuovo package `book/` (1 file, `BookUI.java`) — tutto quello che riguardava SOLO il libro spostato da `UI.java`: i rettangoli di bookmark/sottoargomenti (`BOOKMARK_IMAGE_RECTS`, `SUBTOPIC_IMAGE_RECTS`, `PAGE_CONTENT_RECT`), i `Button` corrispondenti, `draw()` (ex `drawBookScreen()`), `drawQuestPageContent()`, `handleClick()` (ex `handleBookClick()`).
+
+**Stesso pattern già esistente per il combattimento**, non inventato apposta: `UI` teneva già `public CombatState combat` come sotto-schermata separata — `public book.BookUI book` fa lo stesso, istanziato allo stesso modo (`book = new book.BookUI(gp, this);`, subito dopo `combat = new CombatState(gp, this);`). `UI.draw()` ora chiama `book.draw(g2)` invece di `drawBookScreen()`; `GamePanel`'s mouse listener chiama `ui.book.handleClick(...)` invece di `ui.handleBookClick(...)`.
+
+**Cosa è rimasto in `UI` apposta** (condiviso con altre schermate, non solo il libro): il font `MaruMonica`, `drawStyledText()` — `BookUI` li usa tramite il riferimento `ui` che tiene (`ui.MaruMonica`, `ui.drawStyledText(...)`), niente di duplicato. `Button` (già un file a sé in `main/Button.java` da prima) non si è dovuto toccare.
+
+Due commenti in `GamePanel.java` che citavano `UI.SUBTOPIC_IMAGE_RECTS` corretti in `book.BookUI.SUBTOPIC_IMAGE_RECTS`.
+
+## 14. Sessione 27/08 (continua) — Armature reali (12 tipi) + armi con categoria/sottotipo/combo
+
+**Armor**: `ArmorType` non è più una stringa libera — enum chiuso con i 12 tipi reali (HELMET, GORGET, PAULDRON, REREBRACE, COUTER, VANBRACE, GAUNTLET, CUIRASSE, CUISSE, POLEYN, GREAVE, SABATON), mappati 1:1 sui nuovi `ItemSlot`. **`Chestplate` rimosso** (sostituito, come deciso) — nessun riferimento rimasto in tutto il repo. `Item.ItemSlot`/`Player` hanno ora i 10 slot armatura nuovi (`pauldronSlot`...`sabatonSlot`); Helmet/Gorget condividono `Head`/`Neck` con Corona/Collana (Jewelry) — stessa logica già decisa in §12: un solo oggetto per zona del corpo, non per categoria (assunzione mia, non riconfermata esplicitamente in questa sessione, ma coerente con quanto già scritto). Nuovo `Armor.WeightClass` (LEGGERA/MEDIA/PESANTE), usato dalla penetrazione degli archi.
+
+**Weapon**: `WeaponType` (il mio placeholder a 3 valori) sostituito da `WeaponCategory` (SPADE/MAZZE/LANCE/ARMI_A_DISTANZA/DIFENSIVE, 5) + `WeaponSubtype` (16 valori reali, ognuno con la propria `category`). `lama` (che accorpava taglio+contundente) **spezzato** in `taglio`+`contundente` distinti (per il combo di Mazza chiodata/Ascia). Nuovi campi: `disarmChance` (Frusta), `stunChance` (Falce — riusa `StatusEffect.STORDIMENTO` già esistente), `counterattackChance` (Coltello da lancio), `peso` (Spadone: il danno usa questo invece di taglio/contundente/punta), `comboTypes` (`DamageType[]`, null di default — Mazza chiodata: {PERFORANTE,CONTUNDENTE}, Ascia: {TAGLIO,CONTUNDENTE}). Le armi Difensive (Scudo/Broquel/Sai) di default vanno in `OffHand` invece di `MainHand`.
+
+**Deliberatamente non fatto — resta dentro il perimetro "add components" già rimandato al futuro (§12)**:
+- Nessun numero è popolato per `disarmChance`/`stunChance`/`counterattackChance`/`comboTypes` — non ho valori reali per "quanto" disarma una Frusta o stordisce una Falce, restano a 0/null finché non li imposta chi crea l'istanza vera (un futuro `WeaponRegistry`, stesso pattern di `Ability`/`QuestRegistry`).
+- Nessuna logica in `CombatState` legge ancora questi campi (disarmo su hit, stordimento su hit, contrattacco, combo taglio+contundente, penetrazione per `WeightClass`) — solo la struttura dati, come per tutto il resto della categoria "add components".
+
+## 15. Sessione 27/08 (continua) — Correzione slot + Registry + meccaniche armi in combattimento
+
+**Correzione**: Helmet/Gorget erano finiti condivisi con Head/Neck dei Gioielli in §14 nonostante l'intento fosse tenerli separati — in realtà il codice era già corretto (slot dedicati `helmetSlot`/`gorgetSlot`), solo il commento sopra `Armor.java` diceva ancora "condivisi": corretto anche quello. Gioielli/Armi/Armatura restano completamente distaccati, nessuno slot in comune.
+
+**`WeaponRegistry`/`ArmorRegistry`/`JewelryRegistry`** (nuovi, in `items/`) — stesso pattern statico di `Ability`/`QuestRegistry`. Un solo esempio reale per categoria (`"short_sword_basic"`, `"cuirasse_basic"`, `"iron_ring_basic"`) con numeri placeholder — nessun bilanciamento reale dato, solo per provare che l'impianto giri.
+
+**Meccaniche armi ora vive in `CombatState.dealDamage()`**, automatiche su ogni colpo andato a segno (come deciso):
+- **Combo** (`Weapon.comboTypes`): il bonus si somma al danno già inflitto (es. Mazza chiodata: `punta + contundente`).
+- **Disarmo** (`disarmChance`): tira, se riesce disequipaggia il MainHand del bersaglio (solo se è il Player — i mostri non hanno equip).
+- **Stordimento** (`stunChance`): tira, se riesce applica `StatusEffect.STORDIMENTO` per 1 turno (riusa il sistema già esistente).
+- **Contrattacco** (`counterattackChance`): dipende dall'arma di chi SUBISCE il colpo, non di chi attacca — tira sull'arma del bersaglio, se riesce infligge danno di rientro all'attaccante.
+
+Tutte e 4 leggono l'arma equipaggiata in `MainHand` (helper `weaponOf()`, `null` se l'entità non è un Player o non ha nulla equipaggiato — i mostri restano esclusi da queste meccaniche per ora). Nessun numero reale è ancora nel registry per queste probabilità (restano 0 nell'unico esempio `short_sword_basic`), quindi oggi non scattano mai finché non le imposti su un'arma vera.
+
+**Ancora da fare (ordine dato: 2 → 3 → 1, fatti 2 e 3, resta 1)**: l'inventario vero — un contenitore che tenga gli oggetti posseduti-ma-non-equipaggiati, popolato dalla raccolta nel mondo (`Player.pickUpObject()` è ancora uno stub vuoto) e da un menu per equipaggiare da lì. Liste separate confermate: equipaggiabili (Weapon/Armor/Jewelry) e oggetti "puri" (es. una Key) non nella stessa lista.
+
+## 16. Sessione 27/08 (continua) — Disarmo/Stordimento confermati, Contrattacco ristrutturato, stub Inventory
+
+**Disarmo e Stordimento**: confermato che il design già in campo (base 0, solo l'arma che imposta un valore >0 ha una chance — es. Frusta per disarmo, Falce per stordimento) corrisponde a "0 con bonus flat se l'equip lo permette". Nessuna modifica di codice necessaria.
+
+**Contrattacco ristrutturato**: prima era danno di rientro immediato e inline; ora scatena un **turno EXTRA per il player, ristretto a soli Attack/Ability** (niente Inventory/Minimap/Flee), che **non sostituisce** il suo turno normale del round.
+- `CombatState`: nuovi campi `counterattackPending`/`counterattackOrigin`/`insideCounterattack` (quest'ultimo anti-ricorsione, per quando i mostri potranno equipaggiare armi in futuro — oggi `weaponOf()` ritorna sempre `null` per loro, quindi solo il player può subire un contrattacco).
+- `monsterTurn()`: se dopo l'attacco del mostro `counterattackPending` è vero, invece di `advanceRound()` passa `turnPhase` a `PLAYER_TURN` con `preTurnChecked=true` (salta `beforeTurn()` — è un'azione bonus, non il turno vero, niente ri-check dello stordimento).
+- `confirmCommand()`/`navigateUp()`/`navigateDown()`/`drawCommandMenu()`: durante `counterattackPending` il menu mostra SOLO Attack/Ability ("Counterattack! Choose:").
+- `executeCounterattack()`: risolve il colpo (via `dealDamage()`, niente `afterTurn()` — bonus, non tick doppio degli effetti) e poi riprende il round esattamente da dove `monsterTurn()` l'aveva lasciato (`advanceRound(false)`).
+
+**`items/Inventory.java`** (nuovo) — STUB richiesto: solo le due liste separate (`equippables: List<Item>`, `pureItems: List<String>`), nessuna logica (niente add/remove/equip-da-qui/raccolta). **Non ancora agganciato a `Player`** — nessun campo `Player.inventory` esiste ancora, la prossima sessione su questo tema dovrà collegarlo (più `pickUpObject()`, più un menu vero al posto dello stub "Inventory is empty.").
+
+## 17. Sessione 27/08 (continua) — Add components implementato + un oggetto per tipologia
+
+**"Add components" implementato**: `Item.computeBonusPercent()` (no-op di default, così `Sword_Basic_Iron` resta invariata) sovrascritta da `Weapon`/`Armor`/`Jewelry` — ognuna traduce i propri campi grezzi in `statBonusPercent` (letta poi dal sistema di equip già esistente da prima). Richiamata da `Player.equip()` subito prima di applicare i bonus dello slot. Nuovo `Item.addComponents()` (helper condiviso) somma il bonus di ogni componente innestato tramite il nuovo `ComponentRegistry` (dispatcher statico, stesso pattern di Ability/QuestRegistry — 4 componenti di esempio: `ruby_shard`, `haste_rune`, `iron_vein_stone`, `swift_stone`).
+
+**Scelte interpretative fatte per la traduzione campi→stat (nessuna formula data, da confermare/correggere)**:
+- `Weapon`: `taglio+contundente+punta+peso` → `ATTACK` (sommati insieme, non per-tipo); `pomo` → `VELOCITA`; `guardia` → `DIFESA`. `manico`/`metallo`/`legamenti` NON producono bonus (manico è la difesa contro il disarmo altrui — non implementata; metallo/legamenti sono durabilità, nessuna stat "durabilità" esiste).
+- `Armor`: `metallo` → `DIFESA`; `legamenti` → `VELOCITA` ("mobilità" — poteva essere `ELUSIONE` altrettanto ragionevolmente). `rifiniture`/`sostegno` non producono bonus.
+- `Jewelry`: `metalli` → `EFFICIENZA` (nessuna stat specifica indicata per "bonus stat" generico).
+
+**Correzione/completamento da §14-15**: `Weapon.penetratesUpTo` (Armor.WeightClass) — il campo per "Arco corto ignora armatura leggera / Arco lungo penetra pesante" non era mai stato aggiunto nella sessione che ha introdotto `Armor.WeightClass`, solo menzionato nei commenti. Aggiunto ora come struttura dati — **il meccanismo vero resta non collegato**: la DIFESA del Player è un aggregato unico, non tracciata pezzo per pezzo, quindi "ignora la difesa dei pezzi leggeri" non ha ancora un modo pulito di applicarsi colpo per colpo in `CombatState`.
+
+**Content per testare tutto**: `WeaponRegistry` (16 armi, una per sottotipo), `ArmorRegistry` (12 armature, una per tipo), `JewelryRegistry` (4 gioielli, uno per tipo) — tutti con numeri placeholder di esempio, non un bilanciamento reale. Combo (Mazza chiodata, Ascia), disarmo (Frusta), stordimento (Falce), contrattacco (Coltello da lancio) e penetrazione (i 2 archi) sono popolati sui rispettivi esempi, pronti per essere provati in combattimento (tranne la penetrazione, non collegata — vedi sopra).

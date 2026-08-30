@@ -3,6 +3,7 @@ package combat;
 import entity.Entity;
 import entity.Player;
 import items.Item;
+import items.Weapon;
 import main.GamePanel;
 import main.PaletteSwap;
 import main.UI;
@@ -55,6 +56,14 @@ public class CombatState {
     boolean scossaExtraAttack = false;
     boolean combatVictory = false;
 
+    // Contrattacco (Weapon.counterattackChance): un turno EXTRA per il player, ristretto a
+    // Attack/Ability, che NON sostituisce il suo turno normale — vedi il blocco counterattack
+    // dentro dealDamage() e resolveCounterattackCommand(). Solo il player può subirlo oggi: weaponOf() ritorna
+    // null per i mostri (non hanno equip), quindi non possono mai essere il difensore qui.
+    boolean counterattackPending = false;
+    Entity counterattackOrigin   = null; // chi il player deve colpire (chi l'ha appena attaccato)
+    boolean insideCounterattack  = false; // guardia anti-ricorsione, vedi il blocco counterattack in dealDamage()
+
     public CombatState(GamePanel gp, UI ui) {
         this.gp = gp;
         this.ui = ui;
@@ -96,6 +105,9 @@ public class CombatState {
         messageTimer   = 0;
         scossaExtraAttack = false;
         combatVictory  = false;
+        counterattackPending = false;
+        counterattackOrigin  = null;
+        insideCounterattack  = false;
     }
 
     // ─────────────────────────────────────────────
@@ -151,6 +163,8 @@ public class CombatState {
         if (inAbilityMenu) {
             abilityCommandNum--;
             if (abilityCommandNum < 0) abilityCommandNum = gp.player.unlockedAbilities.size() - 1;
+        } else if (counterattackPending) {
+            commandNum = (commandNum == CMD_ATTACK) ? CMD_ABILITY : CMD_ATTACK; // solo 2 scelte, niente Inventory/Minimap/Flee
         } else {
             commandNum--;
             if (commandNum < 0) commandNum = CMD_COUNT - 1;
@@ -161,6 +175,8 @@ public class CombatState {
         if (inAbilityMenu) {
             abilityCommandNum++;
             if (abilityCommandNum >= gp.player.unlockedAbilities.size()) abilityCommandNum = 0;
+        } else if (counterattackPending) {
+            commandNum = (commandNum == CMD_ATTACK) ? CMD_ABILITY : CMD_ATTACK;
         } else {
             commandNum++;
             if (commandNum >= CMD_COUNT) commandNum = 0;
@@ -173,6 +189,11 @@ public class CombatState {
 
     public void confirmCommand() {
         if (turnPhase != PLAYER_TURN || messageTimer > 0) return;
+
+        if (counterattackPending) {
+            resolveCounterattackCommand();
+            return;
+        }
 
         if (inAbilityMenu) {
             List<String> abilities = gp.player.unlockedAbilities;
@@ -209,6 +230,43 @@ public class CombatState {
                 tryFlee();
                 break;
         }
+    }
+
+    // Menu ristretto durante un contrattacco: solo Attack/Ability (Inventory/Minimap/Flee
+    // ignorati anche se per errore commandNum ci finisse sopra) — vedi dealDamage().
+    private void resolveCounterattackCommand() {
+        if (inAbilityMenu) {
+            List<String> abilities = gp.player.unlockedAbilities;
+            if (!abilities.isEmpty()) {
+                executeCounterattack(abilities.get(abilityCommandNum));
+                inAbilityMenu = false;
+                abilityCommandNum = 0;
+            }
+            return;
+        }
+        if (commandNum == CMD_ATTACK) {
+            executeCounterattack("NormalAttack");
+        } else if (commandNum == CMD_ABILITY) {
+            if (!gp.player.unlockedAbilities.isEmpty()) {
+                inAbilityMenu = true;
+                abilityCommandNum = 0;
+            }
+        }
+    }
+
+    // Risolve il colpo di contrattacco e riprende il round esattamente da dove monsterTurn()
+    // l'aveva lasciato — niente afterTurn(): è un'azione bonus, non il vero turno del player,
+    // quindi non fa ticchettare di nuovo i suoi effetti attivi.
+    private void executeCounterattack(String abilityId) {
+        counterattackPending = false;
+        Entity origin = counterattackOrigin;
+        counterattackOrigin = null;
+        commandNum = CMD_ATTACK; // ripristina il menu normale per il prossimo vero turno
+
+        dealDamage(gp.player, origin, abilityId);
+        if (origin.life     <= 0) { checkVictory(); return; }
+        if (gp.player.life  <= 0) { checkDefeat();  return; }
+        advanceRound(false);
     }
 
     // ─────────────────────────────────────────────
@@ -307,6 +365,28 @@ public class CombatState {
     // "di supporto" che applica solo un effetto), deve comunque passare da qui — non richiamare
     // Ability.use()/ElementSystem.getReaction() per conto proprio altrove — altrimenti reazioni,
     // disarmo e SpecialAction non scatterebbero per quell'abilità.
+    // Arma equipaggiata in MainHand da un'entità, se ne ha una e se è un Weapon (non tutte le
+    // entità hanno equip — i mostri oggi non ne hanno, weaponOf ritorna null per loro).
+    private Weapon weaponOf(Entity e) {
+        if (!(e instanceof Player)) return null;
+        Item item = ((Player) e).mainHandSlot.item;
+        return (item instanceof Weapon) ? (Weapon) item : null;
+    }
+
+    // Somma i 2 tipi di danno grezzo che l'arma combina (Weapon.comboTypes) — es. Mazza chiodata
+    // combina PERFORANTE+CONTUNDENTE, quindi somma w.punta + w.contundente.
+    private int comboDamage(Weapon w) {
+        int total = 0;
+        for (Weapon.DamageType t : w.comboTypes) {
+            total += switch (t) {
+                case TAGLIO -> w.taglio;
+                case CONTUNDENTE -> w.contundente;
+                case PERFORANTE -> w.punta;
+            };
+        }
+        return total;
+    }
+
     void dealDamage(Entity attacker, Entity target, String abilityId) {
         ElementSystem.Element abilityElement = Ability.getElement(abilityId);
 
@@ -373,6 +453,50 @@ public class CombatState {
                     ((Player) target).unequip(Item.ItemSlot.MainHand);
                     msg.append("  [DISARMED: weapon unequipped]");
                 }
+
+                // Meccaniche dell'arma equipaggiata da chi attacca — tutte automatiche su ogni
+                // colpo andato a segno (nessuna richiede un'azione dedicata nel menu).
+                Weapon attackerWeapon = weaponOf(attacker);
+                if (attackerWeapon != null) {
+                    // Combo: il bonus si somma sopra al danno già inflitto, non lo sostituisce.
+                    if (attackerWeapon.comboTypes != null) {
+                        int comboBonus = comboDamage(attackerWeapon);
+                        if (comboBonus > 0) {
+                            target.life -= comboBonus;
+                            msg.append(" + ").append(comboBonus).append(" (combo)");
+                        }
+                    }
+                    if (attackerWeapon.disarmChance > 0
+                            && new Random().nextInt(100) < attackerWeapon.disarmChance
+                            && target instanceof Player) {
+                        ((Player) target).unequip(Item.ItemSlot.MainHand);
+                        msg.append("  [DISARMED]");
+                    }
+                    if (attackerWeapon.stunChance > 0
+                            && new Random().nextInt(100) < attackerWeapon.stunChance) {
+                        ElementSystem.addEffect(target, ElementSystem.StatusEffect.STORDIMENTO, 1);
+                        msg.append("  [STUNNED]");
+                    }
+                }
+
+                // Contrattacco: dipende dall'arma di chi SUBISCE il colpo, non di chi attacca.
+                // Concede un turno EXTRA ad "attack/ability" soltanto — NON sostituisce il turno
+                // normale di nessuno dei due. Solo il player può subirlo oggi (weaponOf() ritorna
+                // null per i mostri, che non hanno equip): il ramo "else" qui sotto è quindi
+                // irraggiungibile ora, pronto per quando/se i mostri potranno equipaggiare armi.
+                Weapon targetWeapon = weaponOf(target);
+                if (targetWeapon != null && targetWeapon.counterattackChance > 0 && !insideCounterattack
+                        && new Random().nextInt(100) < targetWeapon.counterattackChance) {
+                    msg.append("  [COUNTERATTACK TRIGGERED]");
+                    if (target instanceof Player) {
+                        counterattackPending = true;
+                        counterattackOrigin  = attacker;
+                    } else {
+                        insideCounterattack = true;
+                        dealDamage(target, attacker, target.chooseAction());
+                        insideCounterattack = false;
+                    }
+                }
             }
             msg.append("  [").append(targetLabel).append(" HP: ")
                     .append(Math.max(0, target.life)).append("/").append(target.maxLife).append("]");
@@ -435,6 +559,14 @@ public class CombatState {
         afterTurn(monster, false);
         if (monster.life <= 0)   { checkVictory(); return; }
         if (gp.player.life <= 0) { checkDefeat();  return; }
+        if (counterattackPending) {
+            // Turno extra per il player, non il suo turno vero: preTurnChecked=true salta
+            // beforeTurn() (niente ri-check dello stordimento per un'azione bonus).
+            turnPhase = PLAYER_TURN;
+            preTurnChecked = true;
+            commandNum = CMD_ATTACK;
+            return;
+        }
         advanceRound(false);
     }
 
@@ -548,11 +680,22 @@ public class CombatState {
         int x = gp.tileSize / 2, y = gp.screenHeight - gp.tileSize * 4;
         int w = gp.screenWidth - gp.tileSize, h = gp.tileSize * 4 - gp.tileSize / 2;
         ui.drawSubWindwow(x, y, w, h);
-        String[] commands = {"Attack", "Ability", "Inventory", "Minimap", "Flee"};
         g2.setFont(ui.MaruMonica.deriveFont(Font.PLAIN, 20f));
+
+        // Turno extra da contrattacco: solo Attack/Ability, niente Inventory/Minimap/Flee — non
+        // sostituisce il turno normale, quindi il menu resta ristretto finché non si sceglie.
+        String[] commands = counterattackPending
+                ? new String[]{"Attack", "Ability"}
+                : new String[]{"Attack", "Ability", "Inventory", "Minimap", "Flee"};
+
+        if (counterattackPending) {
+            g2.setColor(new Color(255, 180, 120));
+            g2.drawString("Counterattack! Choose:", x + gp.tileSize, y + 24);
+        }
+
         g2.setColor(Color.white);
-        int textX = x + gp.tileSize, textY = y + 36;
-        int lineH = (h - 20) / CMD_COUNT;
+        int textX = x + gp.tileSize, textY = y + (counterattackPending ? 56 : 36);
+        int lineH = (h - (counterattackPending ? 56 : 20)) / commands.length;
         for (int i = 0; i < commands.length; i++) {
             g2.drawString(commands[i], textX, textY);
             if (commandNum == i) g2.drawString(">", textX - 28, textY);

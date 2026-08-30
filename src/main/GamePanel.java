@@ -84,19 +84,19 @@ public class GamePanel extends JPanel implements Runnable {
     static final String[] ZONE_IMAGES = {"book_map.png", "book_quests.png", "book_skills.png",
             "book_calendar.png", "book_bestiary.png", "book_inventory.png"};
     // MICRO_PAGE_COUNT: quante pagine ha ciascuna area — indice = bookindex-1, stesso ordine di
-    // ZONE_IMAGES sopra. Numero libero per area (deve combaciare con UI.SUBTOPIC_IMAGE_RECTS).
+    // ZONE_IMAGES sopra. Numero libero per area (deve combaciare con book.BookUI.SUBTOPIC_IMAGE_RECTS).
     // bookpage resta 0-based (0..MICRO_PAGE_COUNT[area]-1).
     static final int[] MICRO_PAGE_COUNT = {2, 2, 2, 2, 2, 2};
     // BOOKZONE_COUNT: quanti sottoargomenti ha ciascuna area — indice = bookindex-1, stesso
     // ordine di ZONE_IMAGES sopra. bookzone è 0-based (0..BOOKZONE_COUNT[area]-1), come pageIndex.
     // Numero libero per area, deve combaciare con quanti Rectangle ci sono in
-    // UI.SUBTOPIC_IMAGE_RECTS per quella stessa area.
+    // book.BookUI.SUBTOPIC_IMAGE_RECTS per quella stessa area.
     static final int[] BOOKZONE_COUNT = {3, 5, 5, 2, 3, 5}; // map, quests, skills, calendar, bestiary, inventory
 
     java.awt.image.BufferedImage bookImage; // pagina di base, nessuna area generale selezionata
     java.awt.image.BufferedImage[] bookZoneImages = new java.awt.image.BufferedImage[ZONE_COUNT]; // book_map.png, ecc.
-    GifPlayer pageTurnPlayer = new GifPlayer();
-    boolean pageTurnActive = false;
+    public GifPlayer pageTurnPlayer = new GifPlayer();
+    public boolean pageTurnActive = false;
 
     // Valori a cui passare (bookindex/bookzone/bookpage) non appena l'animazione turning_pages finisce
     int pendingBookindex, pendingBookzone, pendingBookpage;
@@ -118,7 +118,7 @@ public class GamePanel extends JPanel implements Runnable {
             @Override
             public void mouseClicked(MouseEvent e) {
                 ui.handleTitleClick(e.getX(), e.getY());
-                ui.handleBookClick(e.getX(), e.getY());
+                ui.book.handleClick(e.getX(), e.getY());
             }
         };
         this.addMouseMotionListener(titleMouseHandler);

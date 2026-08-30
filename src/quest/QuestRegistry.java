@@ -28,7 +28,7 @@ public class QuestRegistry {
                         "Taglia sul Goblin",
                         "Un goblin infesta i dintorni del villaggio.",
                         QuestTier.FLAVOR,
-                        "Npc_HumanRedWorker", // placeholder: da allineare a un NPC vero quando ce n'è uno con questo nome
+                        "Villager", // placeholder: da allineare a un NPC vero quando ce n'è uno con questo nome
                         List.of(
                                 new QuestStep("Sconfiggi il Goblin", QuestEventType.KILL, "Goblin")
                         )

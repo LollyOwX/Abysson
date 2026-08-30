@@ -40,9 +40,27 @@ public class Player extends Entity {
         public items.Item item = null;
         public boolean statChanged = false;
     }
-    public EquipSlot mainHandSlot = new EquipSlot();
-    public EquipSlot offHandSlot  = new EquipSlot();
-    public EquipSlot chestSlot    = new EquipSlot();
+    public EquipSlot mainHandSlot  = new EquipSlot();
+    public EquipSlot offHandSlot   = new EquipSlot();
+    public EquipSlot headSlot      = new EquipSlot(); // Corona (Jewelry) o Helmet (Armor)
+    public EquipSlot neckSlot      = new EquipSlot(); // Collana (Jewelry) o Gorget (Armor)
+    public EquipSlot ring1Slot     = new EquipSlot();
+    public EquipSlot ring2Slot     = new EquipSlot();
+    public EquipSlot bracelet1Slot = new EquipSlot();
+    public EquipSlot bracelet2Slot = new EquipSlot();
+    // I 10 pezzi d'armatura (Helmet/Gorget inclusi — slot propri, non condivisi con i Gioielli)
+    public EquipSlot helmetSlot    = new EquipSlot();
+    public EquipSlot gorgetSlot    = new EquipSlot();
+    public EquipSlot pauldronSlot  = new EquipSlot();
+    public EquipSlot rerebraceSlot = new EquipSlot();
+    public EquipSlot couterSlot    = new EquipSlot();
+    public EquipSlot vanbraceSlot  = new EquipSlot();
+    public EquipSlot gauntletSlot  = new EquipSlot();
+    public EquipSlot cuirasseSlot  = new EquipSlot();
+    public EquipSlot cuisseSlot    = new EquipSlot();
+    public EquipSlot poleynSlot    = new EquipSlot();
+    public EquipSlot greaveSlot    = new EquipSlot();
+    public EquipSlot sabatonSlot   = new EquipSlot();
 
     public Player(GamePanel gp, KeyHandler KeyH) {
         super(gp);
@@ -207,16 +225,34 @@ public class Player extends Entity {
 
     private EquipSlot slotFor(items.Item.ItemSlot type) {
         switch (type) {
-            case MainHand:    return mainHandSlot;
-            case OffHand:     return offHandSlot;
-            case Chestplate:  return chestSlot;
-            default:          return mainHandSlot;
+            case MainHand:   return mainHandSlot;
+            case OffHand:    return offHandSlot;
+            case Head:       return headSlot;
+            case Neck:       return neckSlot;
+            case Ring1:      return ring1Slot;
+            case Ring2:      return ring2Slot;
+            case Bracelet1:  return bracelet1Slot;
+            case Bracelet2:  return bracelet2Slot;
+            case Helmet:     return helmetSlot;
+            case Gorget:     return gorgetSlot;
+            case Pauldron:   return pauldronSlot;
+            case Rerebrace:  return rerebraceSlot;
+            case Couter:     return couterSlot;
+            case Vanbrace:   return vanbraceSlot;
+            case Gauntlet:   return gauntletSlot;
+            case Cuirasse:   return cuirasseSlot;
+            case Cuisse:     return cuisseSlot;
+            case Poleyn:     return poleynSlot;
+            case Greave:     return greaveSlot;
+            case Sabaton:    return sabatonSlot;
+            default:         return mainHandSlot;
         }
     }
 
     public void equip(items.Item item) {
         EquipSlot slot = slotFor(item.slot);
         if (slot.item != null) applySlotBonus(slot); // toglie prima i bonus del pezzo precedente
+        item.computeBonusPercent(); // "add components": ricalcola i bonus dai campi grezzi + componenti innestati
         slot.item = item;
         applySlotBonus(slot); // poi somma quelli del nuovo pezzo
         recalculateStats();

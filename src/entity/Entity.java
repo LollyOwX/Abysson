@@ -249,7 +249,9 @@ public class Entity {
 
         dialoguesIndex++;
 
-        if (dialoguesIndex >= dialogues.length || dialogues[dialoguesIndex] == null) {
+        if (dialoguesIndex >= dialogues.length ||
+                dialogues[dialoguesIndex] == null) {
+
             dialoguesIndex = dialogueResetIndex;
 
         }

@@ -44,7 +44,6 @@ public class EventHandler {
         if (canTouchEvent == true) {
             if (hit(28, 11, "any") == true) {damagePit(23, 10, gp.dialogueState);}
             if (hit(19, 14, "up") == true) {healingPool(19, 14, gp.dialogueState);}
-            questStartEvent(22, 10, "any", "goblin_bounty");
         }
     }
 
