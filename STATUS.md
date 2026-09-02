@@ -378,3 +378,32 @@ Tutte e 4 leggono l'arma equipaggiata in `MainHand` (helper `weaponOf()`, `null`
 - `NOTIFY_SCALE` (3) e `NOTIFY_SLIDE_FRAMES` (15) sono costanti facili da ritoccare. Fallback al vecchio `drawSubWindwow` se gli sprite non si caricano (non blocca il gioco per un asset mancante).
 
 **Piccola modifica alle stat** (`Player.recalculateStats()`): aggiunto un terzo stadio di calcolo dopo flat e percentuale — un moltiplicatore per stat (`statMultiplier`, default 1.0 = nessun effetto). Ordine ora: **stat flat → percentuale → moltiplicatore**. Non ancora popolato da nessuno (nessun buff/debuff temporaneo lo usa ancora) — struttura pronta, comportamento numerico invariato finché qualcosa non ci scrive dentro.
+
+## 19. Sessione 27/08 (continua) — Asset notifica aggiornati a 20x20/1x20 + fix allineamento 1px
+
+Aggiornato il commento di riferimento alle dimensioni reali dei due sprite (head 20x20, body 1x20) — il calcolo stesso (`headW`/`boxH`) non doveva cambiare, legge già `notifyHead.getWidth()`/`getHeight()` dall'immagine, non valori scritti a mano.
+
+Aggiunto `NOTIFY_HEAD_Y_OFFSET` (-1): nell'asset l'head risulta 1px nativo più in basso del body, disallineandoli quando disegnati alla stessa y. L'head viene ora disegnato con `y + NOTIFY_HEAD_Y_OFFSET * NOTIFY_SCALE`. Se il verso risultasse sbagliato (l'head finisce più in alto invece che allineato), basta cambiare il segno della costante (-1 → 1).
+
+## 20. Sessione 27/08 (continua) — Salto, Rampino, Cornice, Collinetta
+
+Nuovo movimento oltre gli ostacoli, come discusso: salto sempre disponibile, rampino dietro `Player.hookUnlocked` (di default `false`).
+
+**`tile/SpecialTile.java`** esteso con `Kind` (DECORATION/HOOK/CORNICE/COLLINETTA) e `Direction` (per le cornici, quale verso è attraversabile). Nuove tile: `appiglio` (HOOK), `cornice_giu/su/sinistra/destra` (CORNICE, una per direzione), `collinetta` (COLLINETTA). `TileManager.getSpecialTileAt(col,row)` nuovo, usato da `CollisionChecker`.
+
+**`tile/TileLink.java` + `tile/TileLinkRegistry.java`** (nuovi): il formato di collegamento è esattamente quello dato — `world01,col16,row17 link world01,col15,row20`, un file per riga (`res/maps/tile_links.txt`, oggi vuoto/commentato: nessuna tile `appiglio` è ancora piazzata su una mappa vera). Ogni riga vale nei DUE sensi, registrata automaticamente al contrario senza doverla scrivere due volte. La virgola tra `col` e `row` è obbligatoria su entrambi i lati — una riga malformata stampa un errore chiaro in console e viene scartata, non ignorata silenziosamente.
+
+**`main/CollisionChecker.java`**: 3 nuovi metodi — `tileAhead(entity, N)` (colonna/riga a N tile di distanza nella direzione in cui l'entità guarda, gestisce sia `"up"` che `"idle_up"`), `specialTileAt(col,row)`, `isTileCollisionAt(col,row)`.
+
+**`entity/Player.java`**: nuovo `hookUnlocked` (bool, default false — tocca SOLO le meccaniche del rampino, il salto non ha un flag equivalente). Nuovo stato di movimento scriptato condiviso (`scripting`/`startScriptedMove()`/`updateScriptedMove()` — interpolazione lineare posizione, input normale disattivo finché non finisce): usato da tutte e 3 le meccaniche.
+- `tryCornice()`: automatico camminando contro una CORNICE dal verso giusto (niente tasto) — dal verso sbagliato resta un muro normale (gestito dalla collisione esistente, invariata).
+- `tryJump()`: tasto SPAZIO, solo su COLLINETTA, verifica che l'atterraggio (2 tile avanti) non sia bloccato prima di partire.
+- `tryHook()`: tasto SPAZIO (stesso di jump — mutuamente esclusivi per tipo di tile, si prova prima jump poi hook), solo su HOOK e solo se `hookUnlocked`. Cerca un `TileLink` per (mondo corrente, colonna, riga) della tile davanti — nessun link registrato = l'appiglio è muto, non succede nulla. Stesso mondo = riposizionamento diretto; mondo diverso = stessa animazione ma a fine corsa cambia mappa (`GamePanel.loadWorld()`).
+
+**`main/GamePanel.java`**: nuovo `currentWorld` (String, default `"world01"`) e `loadWorld(worldId, col, row)` — ricarica la griglia di tile e riposiziona il player. **Limite esplicito**: `npc[]`/`obj[]`/`monster[]` NON vengono ricaricati/ripuliti al cambio mondo — `AssetSetter` oggi piazza sempre lo stesso contenuto fisso pensato per `world01`, non è ancora data-driven per mappa. Finché non lo diventa, cambiare mondo sposta il terreno sotto i piedi ma lascia gli oggetti/npc del mondo precedente dove stavano.
+
+**`main/KeyHandler.java`**: nuovo tasto SPAZIO (`spacePressed`), consumato/resettato come `enterPressed`.
+
+**Semplificazione dichiarata sulla Collinetta**: la tua descrizione parlava di "rettangoli di collisione più piccoli" — il sistema di collisione qui lavora per cella di griglia intera, non per rettangoli dentro la cella, quindi ho implementato la collinetta come qualunque altro ostacolo a tile piena, scavalcato dal salto esattamente come una cornice/staccionata (2 tile di spostamento). Il risultato di gioco (cammini, non passi, salti, passi) dovrebbe essere lo stesso; se invece ti serve DAVVERO poter "sfiorare" il bordo della tile camminando e bloccarti solo sulla parte centrale, è un lavoro via più grosso sul collision system, da fare a parte.
+
+**Non testabile oggi**: nessuna mappa ha ancora tile `appiglio`/`cornice_*`/`collinetta` piazzate (serve editarle a mano nei file `.txt` delle mappe), e non esistono `world02`/`world03`/`world04` — i link cross-mondo restano solo infrastruttura pronta finché non ci sono altre mappe da collegare.

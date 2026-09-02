@@ -58,7 +58,7 @@ public class UI {
     private static final String MENU_HOVER_IMAGE_PATH = "/ui/menu_hover_glow.png";
     private BufferedImage menuHoverImage;
 
-    // Box di notifica: head (14x17, punta decorativa) + body (1x17, ripetuto quante volte
+    // Box di notifica: head (20x20, punta decorativa) + body (1x20, ripetuto quante volte
     // serve) — vedi drawMessage(). NOTIFY_SCALE è il fattore di ingrandimento dei due sprite
     // nativi; NOTIFY_SLIDE_FRAMES quanti frame dura lo scorrimento in entrata da destra.
     private static final String NOTIFY_HEAD_PATH = "/ui/notify_bookmark_head.png";
@@ -66,6 +66,10 @@ public class UI {
     private BufferedImage notifyHead, notifyBody;
     private static final int NOTIFY_SCALE = 3;
     private static final int NOTIFY_SLIDE_FRAMES = 15;
+    // Nell'asset l'head è 1px (nativo) più in basso del body: li allinea alzando l'head di 1px
+    // nativo (scala inclusa). Se dopo la modifica risulta storto nell'altro verso, cambia il
+    // segno (-1 -> 1).
+    private static final int NOTIFY_HEAD_Y_OFFSET = -1;
 
     private int mouseX = -1, mouseY = -1;
     private int hoveredIndex = -1; // voce sotto il mouse, -1 se nessuna (solo mouse)
@@ -213,7 +217,7 @@ public class UI {
         int boxH     = (notifyHead != null) ? notifyHead.getHeight() * NOTIFY_SCALE : gp.tileSize;
         int bodyTileW = NOTIFY_SCALE; // notify_bookmark_body è 1px largo: ogni tile disegnato = NOTIFY_SCALE px
         int padLeft = 10, padRight = 14;
-        int rightEdge = gp.screenWidth - gp.tileSize / 2;
+        int rightEdge = gp.screenWidth;
         int gap = 6; // spazio verticale tra una notifica impilata e la successiva
 
         for (int i = 0; i < messages.size(); i++) {
@@ -225,7 +229,7 @@ public class UI {
             int totalW     = headW + bodyTiles * bodyTileW;
 
             int restingX = rightEdge - totalW;
-            int y = gp.tileSize / 3 + i * (boxH + gap);
+            int y = i * (boxH + gap) + gap;
 
             // Ease-out: parte fuori schermo a destra (x = screenWidth), arriva a restingX in
             // NOTIFY_SLIDE_FRAMES frame. Stesso offsetX applicato sia al box che al testo sotto.
@@ -235,7 +239,7 @@ public class UI {
             int x = restingX + offsetX;
 
             if (notifyHead != null && notifyBody != null) {
-                g2.drawImage(notifyHead, x, y, headW, boxH, null);
+                g2.drawImage(notifyHead, x, y + NOTIFY_HEAD_Y_OFFSET * NOTIFY_SCALE, headW, boxH, null);
                 int bx = x + headW;
                 for (int b = 0; b < bodyTiles; b++) {
                     g2.drawImage(notifyBody, bx, y, bodyTileW, boxH, null);

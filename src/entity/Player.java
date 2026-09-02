@@ -15,6 +15,13 @@ public class Player extends Entity {
     public final int screenY;
     public String playerClass;
 
+    // Rampino: sblocca l'uso delle tile SpecialTile.Kind.HOOK (vedi tryHook()) — di default
+    // disattivo, pensato per essere sbloccato più avanti (item/skill). Il salto (COLLINETTA/
+    // CORNICE) non ha un flag equivalente: è sempre disponibile, tocca solo le meccaniche del
+    // rampino questo blocco.
+    public boolean hookUnlocked = false;
+
+
     // ── Stat base (flat) ────────────────────────────────────────
     // Il valore "vero" del personaggio, prima di qualunque bonus % da equip.
     // stat finale = baseX * (1 + percentBonus[X]/100) — vedi recalculateStats().
@@ -154,6 +161,9 @@ public class Player extends Entity {
         // Blocca il movimento se il neutral menu è aperto
         if (gp.ui.neutralMenuOpen) return;
 
+        // Movimento scriptato in corso (salto/rampino): input normale disattivo finché non finisce.
+        if (scripting) { updateScriptedMove(); return; }
+
         if (KeyH.upPressed || KeyH.downPressed || KeyH.leftPressed || KeyH.rightPressed || KeyH.enterPressed) {
             double dx = 0;
             double dy = 0;
@@ -163,26 +173,31 @@ public class Player extends Entity {
             if (KeyH.rightPressed) { dx += 1; direction = "right"; idleDirection = "idle_right"; }
 
             if (dx != 0 || dy != 0) {
-                double len = Math.sqrt(dx * dx + dy * dy);
-                dx /= len; dy /= len;
-                int moveX = (int) Math.round(dx * speed);
-                int moveY = (int) Math.round(dy * speed);
+                // Cornice: se davanti c'è una tile attraversabile a senso unico dal verso in cui
+                // sto camminando, non è un movimento normale — scatta la discesa scriptata e
+                // salta tutta la logica di collisione sotto per questo frame.
+                if (!tryCornice()) {
+                    double len = Math.sqrt(dx * dx + dy * dy);
+                    dx /= len; dy /= len;
+                    int moveX = (int) Math.round(dx * speed);
+                    int moveY = (int) Math.round(dy * speed);
 
-                collisionOn = false;
-                worldX += moveX;
-                gp.cChecker.checkTile(this);
-                gp.cChecker.checkObject(this, true);
-                gp.cChecker.checkEntity(this, gp.npc);
-                gp.cChecker.checkEntity(this, gp.monster);
-                if (collisionOn) worldX -= moveX;
+                    collisionOn = false;
+                    worldX += moveX;
+                    gp.cChecker.checkTile(this);
+                    gp.cChecker.checkObject(this, true);
+                    gp.cChecker.checkEntity(this, gp.npc);
+                    gp.cChecker.checkEntity(this, gp.monster);
+                    if (collisionOn) worldX -= moveX;
 
-                collisionOn = false;
-                worldY += moveY;
-                gp.cChecker.checkTile(this);
-                gp.cChecker.checkObject(this, true);
-                gp.cChecker.checkEntity(this, gp.npc);
-                gp.cChecker.checkEntity(this, gp.monster);
-                if (collisionOn) worldY -= moveY;
+                    collisionOn = false;
+                    worldY += moveY;
+                    gp.cChecker.checkTile(this);
+                    gp.cChecker.checkObject(this, true);
+                    gp.cChecker.checkEntity(this, gp.npc);
+                    gp.cChecker.checkEntity(this, gp.monster);
+                    if (collisionOn) worldY -= moveY;
+                }
             }
 
             gp.eHandler.checkEvent();
@@ -200,6 +215,134 @@ public class Player extends Entity {
         int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
         contactMonster(monsterIndex);
         gp.KeyH.enterPressed = false;
+
+        // Salto (sempre disponibile) e rampino (solo se hookUnlocked) — mutuamente esclusivi per
+        // tipo di tile davanti, sicuro chiamarli entrambi in sequenza sullo stesso tasto.
+        if (KeyH.spacePressed) {
+            if (!tryJump()) tryHook();
+            KeyH.spacePressed = false;
+        }
+    }
+
+    // ─────────────────────────────────────────────
+    //  MOVIMENTO SCRIPTATO (salto / rampino)
+    // ─────────────────────────────────────────────
+    // Durante uno scripted move la posizione si interpola linearmente da inizio a fine in
+    // 'scriptDuration' frame; l'input normale resta disattivo (vedi in cima a update()).
+
+    private boolean scripting = false;
+    private int scriptStartX, scriptStartY, scriptEndX, scriptEndY, scriptDuration, scriptElapsed;
+    private Runnable scriptOnComplete;
+
+    private void startScriptedMove(int endX, int endY, int durationFrames, Runnable onComplete) {
+        scriptStartX    = worldX;
+        scriptStartY    = worldY;
+        scriptEndX      = endX;
+        scriptEndY      = endY;
+        scriptDuration  = Math.max(1, durationFrames);
+        scriptElapsed   = 0;
+        scriptOnComplete = onComplete;
+        scripting       = true;
+    }
+
+    private void updateScriptedMove() {
+        scriptElapsed++;
+        double t = Math.min(1.0, scriptElapsed / (double) scriptDuration);
+        worldX = (int) (scriptStartX + (scriptEndX - scriptStartX) * t);
+        worldY = (int) (scriptStartY + (scriptEndY - scriptStartY) * t);
+        if (t >= 1.0) {
+            scripting = false;
+            Runnable callback = scriptOnComplete;
+            scriptOnComplete = null;
+            if (callback != null) callback.run();
+        }
+    }
+
+    /**
+     * Cornice (SpecialTile.Kind.CORNICE): se la tile 1 avanti nella direzione in cui sto
+     * camminando è attraversabile a senso unico DA QUESTO verso, avvia la discesa scriptata (2
+     * tile) e ritorna true — il chiamante deve saltare il movimento/collisione normale per
+     * questo frame. Dall'altro lato (passableFrom non combacia) ritorna false: resta un muro
+     * normale, gestito dalla collisione esistente. Sempre disponibile, nessun unlock.
+     */
+    private boolean tryCornice() {
+        if (scripting) return false;
+        int[] ahead = gp.cChecker.tileAhead(this, 1);
+        tile.SpecialTile special = gp.cChecker.specialTileAt(ahead[0], ahead[1]);
+        if (special == null || special.kind != tile.SpecialTile.Kind.CORNICE) return false;
+
+        tile.SpecialTile.Direction needed = switch (direction) {
+            case "up"    -> tile.SpecialTile.Direction.UP;
+            case "down"  -> tile.SpecialTile.Direction.DOWN;
+            case "left"  -> tile.SpecialTile.Direction.LEFT;
+            case "right" -> tile.SpecialTile.Direction.RIGHT;
+            default      -> null;
+        };
+        if (special.passableFrom != needed) return false;
+
+        int dxTiles = 0, dyTiles = 0;
+        switch (direction) {
+            case "up":    dyTiles = -2; break;
+            case "down":  dyTiles = 2;  break;
+            case "left":  dxTiles = -2; break;
+            case "right": dxTiles = 2;  break;
+        }
+        startScriptedMove(worldX + dxTiles * gp.tileSize, worldY + dyTiles * gp.tileSize, 12, null);
+        return true;
+    }
+
+    /**
+     * Salto (SpecialTile.Kind.COLLINETTA): SEMPLIFICAZIONE rispetto a "rettangolo di collisione
+     * più piccolo" — la tile blocca per intero come qualunque altra, il salto la scavalca tutta
+     * atterrando sulla tile subito successiva (2 tile di spostamento, come la cornice). Sempre
+     * disponibile, nessun unlock. Ritorna true se il salto è partito.
+     */
+    private boolean tryJump() {
+        if (scripting) return false;
+        int[] obstacle = gp.cChecker.tileAhead(this, 1);
+        tile.SpecialTile special = gp.cChecker.specialTileAt(obstacle[0], obstacle[1]);
+        if (special == null || special.kind != tile.SpecialTile.Kind.COLLINETTA) return false;
+
+        int[] landing = gp.cChecker.tileAhead(this, 2);
+        if (gp.cChecker.isTileCollisionAt(landing[0], landing[1])) return false; // atterraggio bloccato
+
+        int dxTiles = 0, dyTiles = 0;
+        switch (direction) {
+            case "up":    dyTiles = -2; break;
+            case "down":  dyTiles = 2;  break;
+            case "left":  dxTiles = -2; break;
+            case "right": dxTiles = 2;  break;
+        }
+        startScriptedMove(worldX + dxTiles * gp.tileSize, worldY + dyTiles * gp.tileSize, 12, null);
+        return true;
+    }
+
+    /**
+     * Rampino (SpecialTile.Kind.HOOK): richiede hookUnlocked. La destinazione viene da
+     * TileLinkRegistry per (mondo corrente, colonna, riga) della tile davanti — nessun link
+     * registrato = nessun effetto (l'appiglio è "muto", non succede nulla). Stesso mondo =
+     * riposizionamento immediato (scenograficamente un'arrampicata su muro); mondo diverso =
+     * stessa animazione ma a fine corsa cambia la mappa sotto (vedi GamePanel.loadWorld() e la
+     * nota lì sopra: npc/oggetti non sono ancora per-mondo).
+     */
+    private boolean tryHook() {
+        if (scripting || !hookUnlocked) return false;
+        int[] ahead = gp.cChecker.tileAhead(this, 1);
+        tile.SpecialTile special = gp.cChecker.specialTileAt(ahead[0], ahead[1]);
+        if (special == null || special.kind != tile.SpecialTile.Kind.HOOK) return false;
+
+        tile.TileLink link = tile.TileLinkRegistry.get(gp.currentWorld, ahead[0], ahead[1]);
+        if (link == null) return false; // appiglio senza destinazione registrata: nessun effetto
+
+        if (link.toWorld.equals(gp.currentWorld)) {
+            startScriptedMove(link.toCol * gp.tileSize, link.toRow * gp.tileSize, 20, null);
+        } else {
+            // Le due mappe non condividono lo stesso spazio di coordinate: non si può animare
+            // uno scorrimento continuo tra l'una e l'altra. L'animazione "resta ferma" sul posto
+            // e il cambio mondo scatta di netto a fine corsa (vedi GamePanel.loadWorld()).
+            startScriptedMove(worldX, worldY, 20, () -> gp.loadWorld(link.toWorld, link.toCol, link.toRow));
+        }
+        return true;
     }
 
     // ─────────────────────────────────────────────

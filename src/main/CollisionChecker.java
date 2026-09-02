@@ -1,6 +1,7 @@
 package main;
 
 import entity.Entity;
+import tile.SpecialTile;
 
 public class CollisionChecker {
 	GamePanel gp;
@@ -232,5 +233,44 @@ public class CollisionChecker {
 		entity.solidArea.y = entity.solidAreaDefaultY;
 		gp.player.solidArea.x = gp.player.solidAreaDefaultX;
 		gp.player.solidArea.y = gp.player.solidAreaDefaultY;
+	}
+
+	// ─────────────────────────────────────────────
+	//  RAMPINO / SALTO — usati da Player.tryJump()/tryHook()/tryCornice()
+	// ─────────────────────────────────────────────
+
+	/** Colonna/riga a 'tilesAhead' tile di distanza da 'entity', nella direzione in cui sta
+	 *  guardando ORA (gestisce sia "up"/"down"/"left"/"right" che "idle_up" ecc.). Calcolata dal
+	 *  centro del solidArea, non dall'angolo dello sprite. */
+	public int[] tileAhead(Entity entity, int tilesAhead) {
+		int centerX = entity.worldX + entity.solidArea.x + entity.solidArea.width  / 2;
+		int centerY = entity.worldY + entity.solidArea.y + entity.solidArea.height / 2;
+		int col = centerX / gp.tileSize;
+		int row = centerY / gp.tileSize;
+
+		String dir = entity.direction != null ? entity.direction : "down";
+		if (dir.startsWith("idle_")) dir = dir.substring(5); // "idle_up" -> "up"
+
+		switch (dir) {
+			case "up":    row -= tilesAhead; break;
+			case "down":  row += tilesAhead; break;
+			case "left":  col -= tilesAhead; break;
+			case "right": col += tilesAhead; break;
+			default: break; // direzione sconosciuta: nessun offset, torna la cella corrente
+		}
+		return new int[]{col, row};
+	}
+
+	/** La SpecialTile a (col,row), o null se è terreno normale o fuori mappa. */
+	public SpecialTile specialTileAt(int col, int row) {
+		return gp.tileM.getSpecialTileAt(col, row);
+	}
+
+	/** true se (col,row) blocca il movimento — fuori mappa conta come bloccato. Non controlla
+	 *  entità (npc/mostri) sopra: solo il terreno/le tile — vedi TODO in STATUS.md. */
+	public boolean isTileCollisionAt(int col, int row) {
+		if (col < 0 || row < 0 || col >= gp.maxWorldCol || row >= gp.maxWorldRow) return true;
+		int id = gp.tileM.mapTileNum[col][row];
+		return gp.tileM.tile[id].collision;
 	}
 }

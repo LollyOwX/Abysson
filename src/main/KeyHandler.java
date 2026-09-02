@@ -4,7 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
-    public boolean upPressed, downPressed, leftPressed, rightPressed, enterPressed, escPressed;
+    public boolean upPressed, downPressed, leftPressed, rightPressed, enterPressed, escPressed, spacePressed;
     GamePanel gp;
 
     public KeyHandler(GamePanel gp) { this.gp = gp; }
@@ -50,6 +50,7 @@ public class KeyHandler implements KeyListener {
             if (code == KeyEvent.VK_DOWN) gp.zoomInOut(-1);
             if (code == KeyEvent.VK_P) gp.gameState = gp.pauseState;
             if (code == KeyEvent.VK_ENTER) enterPressed = true;
+            if (code == KeyEvent.VK_SPACE) spacePressed = true; // salto (collinetta) / aggancio (rampino) — vedi Player.tryJump()/tryHook()
             if (code == KeyEvent.VK_ESCAPE) {
                 escPressed = true;
                 gp.gameState = gp.titleState;

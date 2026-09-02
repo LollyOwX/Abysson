@@ -28,6 +28,9 @@ public class GamePanel extends JPanel implements Runnable {
     public final int maxWorldRow = 50;
     public final int worldWidth = tileSize * maxWorldCol;
     public final int worldHeight = tileSize * maxWorldRow;
+    // Id del mondo/mappa attualmente caricato — usato da TileLinkRegistry per sapere "da dove"
+    // parte un aggancio (stesso file base del nome, es. "world01" -> /maps/world01.txt).
+    public String currentWorld = "world01";
 
     public int gameState;
     public final int playState = 1;
@@ -381,6 +384,22 @@ public class GamePanel extends JPanel implements Runnable {
         bookpage = 0;
         pageTurnActive = false;
     }
+
+    /**
+     * Cambia il mondo/mappa attivo e riposiziona il player alla tile (col,row) del nuovo mondo —
+     * usato dal rampino quando il link punta a un mondo diverso (Player.tryHook()). Ricarica
+     * solo la griglia di tile: npc[]/obj[]/monster[] NON vengono ricaricati/ripuliti, perché
+     * AssetSetter oggi piazza sempre lo stesso contenuto fisso per "world01", non per-mondo —
+     * finché AssetSetter non diventa data-driven per mappa, cambiare mondo sposta il terreno
+     * sotto i piedi ma lascia gli oggetti/npc del mondo precedente dove stavano. Vedi STATUS.md.
+     */
+    public void loadWorld(String worldId, int col, int row) {
+        currentWorld = worldId;
+        tileM.loadMap("/maps/" + worldId + ".txt");
+        player.worldX = col * tileSize;
+        player.worldY = row * tileSize;
+    }
+
     private void drawCinematic(Graphics2D g2) {
         java.awt.image.BufferedImage frame = cinematicPlayer.getCurrentFrame();
         if(frame != null) {

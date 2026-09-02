@@ -148,6 +148,18 @@ public class TileManager {
         }
     }
 
+    /** Ritorna la SpecialTile piazzata a (col,row), o null se non è una tile speciale (terreno
+     *  normale) o se la posizione è fuori mappa. Usata da CollisionChecker per rampino/salto. */
+    public SpecialTile getSpecialTileAt(int col, int row) {
+        if (col < 0 || row < 0 || col >= gp.maxWorldCol || row >= gp.maxWorldRow) return null;
+        int id = mapTileNum[col][row];
+        if (id < SPECIAL_TILE_BASE) return null;
+        int ordinal = id - SPECIAL_TILE_BASE;
+        SpecialTile[] specials = SpecialTile.values();
+        if (ordinal < 0 || ordinal >= specials.length) return null;
+        return specials[ordinal];
+    }
+
     public void draw(Graphics2D g2) {
         // Avanza il contatore animazione ad ogni frame
         animationTick++;
