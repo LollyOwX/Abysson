@@ -22,6 +22,23 @@ public abstract class Item {
     }
 
     // ── Identità ──────────────────────────────────────────────
+    // Ogni oggetto creato (new Weapon(...), new Armor(...), new Jewelry(...), o un item "a mano"
+    // come Sword_Basic_Iron) è la SUA istanza, mai deduplicata per tipo — due Weapon dello stesso
+    // WeaponSubtype (es. due Spada Corta) restano due oggetti indipendenti: modificare gemme/
+    // incantesimi/campi grezzi sull'uno non tocca l'altro. Questo è già garantito dal fatto che
+    // sono normali oggetti Java (equals() di default = identità, ogni new è a sé) — instanceId
+    // qui sotto non serve a questo, serve solo ad avere un riferimento stabile e leggibile per
+    // distinguere in un log/UI due oggetti altrimenti identici (es. due spade base senza
+    // incantesimi, visivamente indistinguibili l'una dall'altra).
+    //
+    // NOTA per chi costruirà l'inventario vero: gli EQUIPAGGIABILI (Weapon/Armor/Jewelry) vanno
+    // sempre in una lista di riferimenti a oggetti (List<Item>, come già in items/Inventory.java)
+    // — mai in una mappa "tipo -> quantità" con un contatore, altrimenti si perde quale copia ha
+    // quali componenti. Gli oggetti "puri" senza componenti (una Key) possono restare stackati
+    // per nome, non hanno questo problema.
+    private static long nextInstanceId = 1;
+    public final long instanceId = nextInstanceId++;
+
     public String       name        = "Item";
     public String       description = "";
     public ItemSlot      slot        = ItemSlot.MainHand;
@@ -69,4 +86,3 @@ public abstract class Item {
         }
     }
 }
-

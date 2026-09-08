@@ -414,6 +414,21 @@ public class Player extends Entity {
         recalculateStats();
     }
 
+    /**
+     * Deriva l'arma difensiva dall'equip: OffHand se è un'arma con canDefend (scudo/broquel/
+     * sai...), altrimenti MainHand se ha il tag canDefend, altrimenti null (niente da parare
+     * con — il minigioco di CombatState forza la schivata in quel caso). Calcolata al volo, non
+     * salvata: riflette sempre l'equip attuale senza doverla tenere sincronizzata a mano.
+     */
+    @Override
+    public items.Weapon resolveDefenseWeapon() {
+        items.Item offHandItem = offHandSlot.item;
+        if (offHandItem instanceof items.Weapon w && w.canDefend) return w;
+        items.Item mainHandItem = mainHandSlot.item;
+        if (mainHandItem instanceof items.Weapon w && w.canDefend) return w;
+        return null;
+    }
+
     public void recalculateStats() {
         maxLife        = Math.max(1, (int) Math.round(baseMaxLife        * pct(StatType.VITA)       * mult(StatType.VITA)));
         attack         = Math.max(0, (int) Math.round(baseAttack         * pct(StatType.ATTACK)     * mult(StatType.ATTACK)));

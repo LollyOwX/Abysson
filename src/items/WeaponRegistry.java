@@ -2,7 +2,10 @@ package items;
 
 import items.Weapon.WeaponSubtype;
 import items.Weapon.DamageType;
+import items.Weapon.ZoneType;
 import items.Armor.WeightClass;
+
+import java.awt.geom.Rectangle2D;
 
 /**
  * Dispatcher statico per le definizioni delle armi — stesso stile di combat/Ability.java e
@@ -131,6 +134,11 @@ public class WeaponRegistry {
                 w.name = "Scudo"; w.description = "Largo e solido, ma appesantisce.";
                 w.affilatezza = 1; w.pomo = -4; w.manico = 3; w.guardia = 14;
                 w.metallo = 50; w.legamenti = 45;
+                w.canDefend = true;
+                w.staticGuard = true; // non ruota mai, non può essere eluso
+                w.restAngleDeg = 0;
+                w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-30, -40, 60, 50), ZoneType.RIGID));
+                w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(18, -38, 10, 14), ZoneType.WEAK)); // il fermaglio, in alto a destra
                 return w;
             }
             case "buckler_basic": {
@@ -138,6 +146,10 @@ public class WeaponRegistry {
                 w.name = "Broquel"; w.description = "Piccolo e veloce, protegge meno di uno scudo.";
                 w.affilatezza = 1; w.pomo = 4; w.manico = 5; w.guardia = 6;
                 w.metallo = 30; w.legamenti = 30;
+                w.canDefend = true;
+                w.restAngleDeg = 0;
+                w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
+                w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 8, 10), ZoneType.WEAK)); // il bordo, piccolo e vicino al centro (facile da beccare)
                 return w;
             }
             case "sai_basic": {
@@ -145,6 +157,10 @@ public class WeaponRegistry {
                 w.name = "Sai"; w.description = "Una spada secondaria per la mano debole.";
                 w.affilatezza = 1; w.pomo = 3; w.manico = 6; w.guardia = 3;
                 w.taglio = 4; w.punta = 3; w.metallo = 25; w.legamenti = 25;
+                w.canDefend = true;
+                w.restAngleDeg = 0;
+                w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
+                w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 6), ZoneType.WEAK)); // la punta, stretta
                 return w;
             }
 

@@ -9,6 +9,9 @@ import main.PaletteSwap;
 import main.UI;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
+import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.Random;
 
@@ -64,6 +67,19 @@ public class CombatState {
     Entity counterattackOrigin   = null; // chi il player deve colpire (chi l'ha appena attaccato)
     boolean insideCounterattack  = false; // guardia anti-ricorsione, vedi il blocco counterattack in dealDamage()
 
+    // ─────────────────────────────────────────────
+    //  MIRA (attacco normale del player — parata/schivata angolare)
+    // ─────────────────────────────────────────────
+    // Sostituisce SOLO "NormalAttack" del player: le abilità restano a formula come prima.
+    // Vedi startAiming()/confirmAim() per il flusso completo.
+    boolean aiming = false;
+    int clashX, clashY;      // punto fisso di riferimento a schermo (centro del mostro)
+    int aimX, aimY;          // posizione del colpo scelta dall'attaccante (coordinate schermo)
+    double aimAngleDeg = 0;  // angolazione del colpo
+    static final int AIM_RANGE = 60;      // raggio massimo di spostamento dal centro (px)
+    static final int AIM_STEP = 6;        // px spostati per pressione tasto
+    public static final double AIM_ANGLE_STEP = 10; // gradi ruotati per pressione tasto — pubblica, la usa anche KeyHandler
+
     public CombatState(GamePanel gp, UI ui) {
         this.gp = gp;
         this.ui = ui;
@@ -108,6 +124,7 @@ public class CombatState {
         counterattackPending = false;
         counterattackOrigin  = null;
         insideCounterattack  = false;
+        aiming = false;
     }
 
     // ─────────────────────────────────────────────
@@ -184,11 +201,14 @@ public class CombatState {
     }
 
     public void pressEsc() {
+        if (aiming) { aiming = false; return; } // annulla la mira, torna al menu senza consumare il turno
         if (inAbilityMenu) { inAbilityMenu = false; abilityCommandNum = 0; }
     }
 
     public void confirmCommand() {
         if (turnPhase != PLAYER_TURN || messageTimer > 0) return;
+
+        if (aiming) { confirmAim(); return; }
 
         if (counterattackPending) {
             resolveCounterattackCommand();
@@ -207,7 +227,7 @@ public class CombatState {
 
         switch (commandNum) {
             case CMD_ATTACK:
-                playerUseAbility("NormalAttack");
+                startAiming();
                 break;
             case CMD_ABILITY:
                 if (gp.player.unlockedAbilities.isEmpty()) {
@@ -388,6 +408,14 @@ public class CombatState {
     }
 
     void dealDamage(Entity attacker, Entity target, String abilityId) {
+        dealDamage(attacker, target, abilityId, false);
+    }
+
+    // forceHit=true: salta il tiro di mira interno, il colpo va sempre a segno — usato dal
+    // minigioco di parata/schivata (CombatState.resolveDodge()/resolveParry()) quando l'esito
+    // è già stato deciso da un altro calcolo (schivata fallita, parata elusa) e non va rideciso
+    // qui con un secondo tiro casuale indipendente.
+    void dealDamage(Entity attacker, Entity target, String abilityId, boolean forceHit) {
         ElementSystem.Element abilityElement = Ability.getElement(abilityId);
 
         double abrBonus = (abilityElement == ElementSystem.Element.FUOCO
@@ -408,7 +436,7 @@ public class CombatState {
 
         double precMult   = ElementSystem.precisionMultiplier(attacker);
         int hitChance      = (int) (attacker.precision * precMult) - target.evasion;
-        boolean hit        = !rangedBlocked && !deflected && new Random().nextInt(100) < hitChance;
+        boolean hit        = forceHit || (!rangedBlocked && !deflected && new Random().nextInt(100) < hitChance);
 
         boolean attackerIsPlayer = (attacker == gp.player);
         String attackerLabel = attackerIsPlayer ? "You" : attacker.name;
@@ -534,6 +562,130 @@ public class CombatState {
         if (!scossaExtraAttack) advanceRound(true); // scossa: il giocatore riattacca subito, niente avanzamento
     }
 
+    // ─────────────────────────────────────────────
+    //  MIRA — attacco normale del player: minigioco angolare di parata/schivata
+    //  (SOLO "NormalAttack"; le abilità restano su playerUseAbility()/dealDamage() a formula)
+    // ─────────────────────────────────────────────
+
+    void startAiming() {
+        aiming = true;
+        int monsterSize = gp.tileSize * 3;
+        clashX = gp.screenWidth / 2;
+        clashY = gp.tileSize + monsterSize / 2; // stesso centro usato da drawMonster()
+        aimX = clashX;
+        aimY = clashY;
+        aimAngleDeg = 0;
+    }
+
+    public void aimMove(int dx, int dy) {
+        if (!aiming) return;
+        aimX = clamp(aimX + dx * AIM_STEP, clashX - AIM_RANGE, clashX + AIM_RANGE);
+        aimY = clamp(aimY + dy * AIM_STEP, clashY - AIM_RANGE, clashY + AIM_RANGE);
+    }
+
+    public void aimRotate(double deltaDeg) {
+        if (!aiming) return;
+        aimAngleDeg = (aimAngleDeg + deltaDeg + 360) % 360;
+    }
+
+    private int clamp(int v, int lo, int hi) {
+        return Math.max(lo, Math.min(hi, v));
+    }
+
+    // La "lama" dell'attaccante: un rettangolo sottile centrato su (aimX,aimY), ruotato di
+    // aimAngleDeg. Stesso spazio di coordinate (schermo) delle zone del difensore trasformate.
+    private Shape buildAttackShape() {
+        Rectangle2D.Double local = new Rectangle2D.Double(-3, -20, 6, 40);
+        AffineTransform t = new AffineTransform();
+        t.translate(aimX, aimY);
+        t.rotate(Math.toRadians(aimAngleDeg));
+        return t.createTransformedShape(local);
+    }
+
+    // Una zona di difesa (coordinate locali, pivot=impugnatura) ruotata di angleDeg e traslata
+    // sul punto di scontro fisso (clashX,clashY).
+    private Area transformedZone(Weapon.DefenseZone zone, double angleDeg) {
+        AffineTransform t = new AffineTransform();
+        t.translate(clashX, clashY);
+        t.rotate(Math.toRadians(angleDeg));
+        return new Area(t.createTransformedShape(zone.shape));
+    }
+
+    void confirmAim() {
+        aiming = false;
+        Weapon defWeapon = monster.resolveDefenseWeapon();
+        // Nessuna regola data su come il difensore sceglie tra parare e schivare: placeholder
+        // dichiarato — se ha un'arma difensiva prova a pararla il più delle volte, altrimenti
+        // schiva sempre (non ha nulla con cui parare). Da rivedere quando deciderai l'IA vera.
+        boolean willParry = defWeapon != null && new Random().nextInt(100) < 70;
+
+        if (willParry) resolveParry(defWeapon);
+        else resolveDodge();
+    }
+
+    private void resolveDodge() {
+        boolean isRanged = Ability.isRanged("NormalAttack"); // sempre false oggi: NormalAttack è mischia
+        int relevantStat = isRanged ? gp.player.precision : gp.player.speed;
+        int dodgeChance = clamp(monster.evasion - relevantStat, 0, 100);
+        boolean dodged = new Random().nextInt(100) < dodgeChance;
+
+        if (dodged) {
+            queueAction(monster.name + " dodges out of the way!");
+        } else {
+            queueAction(monster.name + " fails to dodge — clean hit!");
+            dealDamage(gp.player, monster, "NormalAttack", true); // schivata fallita: colpo garantito, niente secondo tiro
+        }
+        finishPlayerAttack();
+    }
+
+    private void resolveParry(Weapon defWeapon) {
+        // Quanto l'arma difensiva "trema" rispetto al riposo quando intercetta — manico alto =
+        // meno variazione, arma più precisa. Scelta di formula arbitraria, non bilanciata: solo
+        // per avere qualcosa di funzionante da tarare in seguito.
+        double variance = 40.0 / (1 + defWeapon.manico / 20.0);
+        double defenseAngleDeg = defWeapon.staticGuard ? defWeapon.restAngleDeg
+                : defWeapon.restAngleDeg + (new Random().nextDouble() * 2 - 1) * variance;
+
+        Area attackArea = new Area(buildAttackShape());
+        boolean weakHit = false, rigidHit = false;
+
+        for (Weapon.DefenseZone zone : defWeapon.defenseZones) {
+            Area overlap = new Area(attackArea);
+            overlap.intersect(transformedZone(zone, defenseAngleDeg));
+            if (!overlap.isEmpty()) {
+                if (zone.type == Weapon.ZoneType.WEAK) weakHit = true;
+                else rigidHit = true;
+            }
+        }
+
+        if (weakHit) {
+            int loss = 8; // placeholder: quanta durabilità toglie un colpo su punto debole
+            defWeapon.metallo   = Math.max(0, defWeapon.metallo   - loss);
+            defWeapon.legamenti = Math.max(0, defWeapon.legamenti - loss);
+            queueAction(monster.name + " blocks, but you hit a WEAK POINT! -" + loss + " durability");
+        } else if (rigidHit) {
+            int loss = 2; // placeholder: usura normale di un blocco riuscito
+            defWeapon.legamenti = Math.max(0, defWeapon.legamenti - loss);
+            queueAction(monster.name + " blocks your attack.");
+        } else if (defWeapon.staticGuard) {
+            // Uno scudo non può mai essere eluso: nessun overlap geometrico forza comunque un
+            // blocco rigido, non un colpo passato.
+            defWeapon.legamenti = Math.max(0, defWeapon.legamenti - 2);
+            queueAction(monster.name + " blocks with the shield.");
+        } else {
+            queueAction("You slip past " + monster.name + "'s guard!");
+            dealDamage(gp.player, monster, "NormalAttack", true); // parata elusa: colpo garantito
+        }
+        finishPlayerAttack();
+    }
+
+    private void finishPlayerAttack() {
+        afterTurn(gp.player, true);
+        if (monster.life   <= 0) { checkVictory(); return; }
+        if (gp.player.life <= 0) { checkDefeat();  return; }
+        if (!scossaExtraAttack) advanceRound(true);
+    }
+
     void tryFlee() {
         // Naturalizzazione/Infangato bloccano il movimento: fuggire È muoversi, quindi fallisce.
         if (ElementSystem.hasEffect(gp.player, ElementSystem.StatusEffect.NATURALIZZAZIONE)
@@ -605,9 +757,35 @@ public class CombatState {
         drawPlayerHUD();
         drawMessageBox();
         if (turnPhase == PLAYER_TURN && messageTimer == 0) {
-            if (inAbilityMenu) drawAbilityMenu();
-            else               drawCommandMenu();
+            if (aiming)             drawAimingOverlay();
+            else if (inAbilityMenu) drawAbilityMenu();
+            else                    drawCommandMenu();
         }
+    }
+
+    // Zona di mira (riquadro), la guardia del difensore alla sua posizione di RIPOSO (non
+    // l'angolo vero a cui finirà — quello si scopre solo al momento della parata, così mirare
+    // "alla cieca" ha un senso), e la lama dell'attaccante alla posizione/angolo correnti.
+    void drawAimingOverlay() {
+        g2.setColor(new Color(255, 255, 255, 50));
+        g2.fillRect(clashX - AIM_RANGE, clashY - AIM_RANGE, AIM_RANGE * 2, AIM_RANGE * 2);
+
+        Weapon defWeapon = monster.resolveDefenseWeapon();
+        if (defWeapon != null) {
+            for (Weapon.DefenseZone zone : defWeapon.defenseZones) {
+                g2.setColor(zone.type == Weapon.ZoneType.WEAK
+                        ? new Color(255, 70, 70, 150) : new Color(140, 140, 255, 150));
+                g2.fill(transformedZone(zone, defWeapon.restAngleDeg));
+            }
+        }
+
+        g2.setColor(Color.yellow);
+        g2.fill(buildAttackShape());
+
+        g2.setFont(ui.MaruMonica.deriveFont(Font.PLAIN, 16f));
+        g2.setColor(Color.white);
+        g2.drawString("Arrows: aim   A/D: rotate   Enter: strike   Esc: back",
+                gp.tileSize / 2, gp.screenHeight - gp.tileSize / 2);
     }
 
     void drawBackground() {

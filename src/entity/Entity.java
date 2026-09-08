@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
 import combat.ElementSystem;
+import items.Weapon;
 import main.*;
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,6 +59,20 @@ public class Entity {
     public int evasion = 0;
     public int efficiency = 100; // % di efficacia delle proprie azioni (100 = neutro)
     public String givesQuestId = null; // id di QuestRegistry — a QUALE dialoguesIndex darla è deciso dalla sottoclasse NPC
+
+    // Arma equipaggiata — per entità semplici (mostri) impostata direttamente da chi le
+    // costruisce (es. MON_Goblin), un campo generico (non solo per parare: è "cosa ha in mano
+    // ora"), così un mostro che cambia arma durante il combattimento aggiorna anche cosa può
+    // usare per parare senza bisogno di un campo dedicato. Il Player la ignora: ha già il
+    // proprio sistema di equip vero (mainHandSlot/offHandSlot), sovrascrive resolveDefenseWeapon()
+    // per derivarla da lì invece che da questo campo.
+    public Weapon equippedWeapon;
+
+    /** L'arma usabile per parare — solo se equipaggiata E ha canDefend=true, altrimenti null
+     *  (niente con cui parare: il minigioco di CombatState forza la schivata in quel caso). */
+    public Weapon resolveDefenseWeapon() {
+        return (equippedWeapon != null && equippedWeapon.canDefend) ? equippedWeapon : null;
+    }
     public int maxLife;
     public int life;
 

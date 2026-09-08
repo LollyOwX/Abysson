@@ -1,6 +1,16 @@
 package items;
 
+import combat.WeaponHitboxBuilder;
 import entity.StatType;
+
+import javax.imageio.ImageIO;
+import java.awt.Shape;
+import java.awt.geom.Area;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Un'arma. I campi restano dati grezzi tradotti in bonus % reali da computeBonusPercent()
@@ -65,6 +75,32 @@ public class Weapon extends Item {
     // colpo per colpo. Vedi STATUS.md.
     public Armor.WeightClass penetratesUpTo;
 
+    // ── Geometria di parata (minigioco angolare in CombatState) ─────────────────────
+    // Forme in coordinate LOCALI, pivot = impugnatura = origine (0,0), asse verticale = lama a
+    // riposo — CombatState le ruota/traduce sullo schermo al momento della parata. Due modi per
+    // popolarle: a mano (vedi WeaponRegistry: Scudo/Broquel/Sai, rettangoli placeholder) oppure
+    // da un'immagine dettagliata vera via loadRigidZoneFromImage() (solo zone RIGIDE — le zone
+    // DEBOLI restano sempre da aggiungere a parte, manualmente).
+    public enum ZoneType { RIGID, WEAK }
+
+    public static class DefenseZone {
+        public final Shape shape; // coordinate locali, pivot = impugnatura
+        public final ZoneType type;
+        public DefenseZone(Shape shape, ZoneType type) { this.shape = shape; this.type = type; }
+    }
+
+    public final List<DefenseZone> defenseZones = new ArrayList<>();
+    public double restAngleDeg = 0;      // orientamento di riposo ("verticale"), specifico per arma
+    public boolean canDefend  = false;   // può essere l'arma difensiva nella parata — vero di norma per le Difensive
+    public boolean staticGuard = false;  // true SOLO per lo scudo vero: non ruota mai, non può essere eluso
+
+    // Percorsi immagine: itemPath per l'icona/inventario, combatItemPath per la versione
+    // dettagliata da cui estrarre la geometria di parata (vedi loadRigidZoneFromImage() sotto).
+    // Nessun asset vero esiste ancora per le armi di WeaponRegistry — sono stringhe pronte, non
+    // ancora popolate/testate con un'immagine reale.
+    public String itemPath;
+    public String combatItemPath;
+
     public final Component[] gemme       = new Component[3]; // bonus vari, effetto per gemma
     public final Component[] incantesimi = new Component[2]; // effetti speciali (come SpecialAction)
 
@@ -78,6 +114,29 @@ public class Weapon extends Item {
 
     public WeaponCategory weaponCategory() {
         return subtype.category;
+    }
+
+    /**
+     * Carica combatItemPath e aggiunge a defenseZones UNA zona RIGIDA costruita da ogni pixel
+     * non vuoto dell'immagine (vedi combat.WeaponHitboxBuilder — stesso approccio "shader" di
+     * PaletteSwap). Le zone deboli NON sono generate qui: vanno aggiunte a parte. Non fa nulla
+     * se combatItemPath è null o la risorsa non si trova (stampa un errore, non blocca).
+     * Da richiamare esplicitamente (non automatico nel costruttore: i campi vengono popolati
+     * dopo, dai vari Registry).
+     */
+    public void loadRigidZoneFromImage() {
+        if (combatItemPath == null) return;
+        try (InputStream is = getClass().getResourceAsStream(combatItemPath)) {
+            if (is == null) {
+                System.err.println("ERROR: resource not found: " + combatItemPath);
+                return;
+            }
+            BufferedImage image = ImageIO.read(is);
+            Area rigid = WeaponHitboxBuilder.getOrBuild(combatItemPath, image);
+            defenseZones.add(new DefenseZone(rigid, ZoneType.RIGID));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

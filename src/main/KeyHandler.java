@@ -1,5 +1,6 @@
 package main;
 
+import combat.CombatState;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -74,6 +75,13 @@ public class KeyHandler implements KeyListener {
             if (code == KeyEvent.VK_S)      gp.ui.combat.navigateDown();
             if (code == KeyEvent.VK_ENTER)  gp.ui.combat.confirmCommand();
             if (code == KeyEvent.VK_ESCAPE) gp.ui.combat.pressEsc();
+            // Mira dell'attacco normale (minigioco di parata/schivata) — no-op se non si sta mirando
+            if (code == KeyEvent.VK_UP)    gp.ui.combat.aimMove(0, -1);
+            if (code == KeyEvent.VK_DOWN)  gp.ui.combat.aimMove(0, 1);
+            if (code == KeyEvent.VK_LEFT)  gp.ui.combat.aimMove(-1, 0);
+            if (code == KeyEvent.VK_RIGHT) gp.ui.combat.aimMove(1, 0);
+            if (code == KeyEvent.VK_A)     gp.ui.combat.aimRotate(-CombatState.AIM_ANGLE_STEP);
+            if (code == KeyEvent.VK_D)     gp.ui.combat.aimRotate(CombatState.AIM_ANGLE_STEP);
 
         } else if (gp.gameState == gp.cinematicState) {
             if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_ESCAPE) gp.skipCinematic();
