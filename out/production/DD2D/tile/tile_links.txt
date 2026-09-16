@@ -1,0 +1,6 @@
+# Un collegamento per riga: world,colX,rowY link world,colX,rowY
+# La virgola tra col e row è obbligatoria su entrambi i lati.
+# Ogni riga vale nei due sensi (non serve scriverla due volte).
+#
+# Esempio (commentato finché non ci sono davvero tile "appiglio" piazzate su una mappa):
+# world01,col16,row17 link world01,col15,row20
