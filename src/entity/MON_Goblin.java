@@ -1,6 +1,4 @@
-package monster;
-
-import entity.Entity;
+package entity;
 import main.GamePanel;
 import combat.ElementSystem;
 import items.WeaponRegistry;

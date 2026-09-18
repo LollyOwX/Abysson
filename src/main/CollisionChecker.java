@@ -243,8 +243,8 @@ public class CollisionChecker {
 	 *  guardando ORA (gestisce sia "up"/"down"/"left"/"right" che "idle_up" ecc.). Calcolata dal
 	 *  centro del solidArea, non dall'angolo dello sprite. */
 	public int[] tileAhead(Entity entity, int tilesAhead) {
-		int centerX = entity.worldX + entity.solidArea.x + entity.solidArea.width  / 2;
-		int centerY = entity.worldY + entity.solidArea.y + entity.solidArea.height / 2;
+		int centerX = (int) (entity.worldX + entity.solidArea.x + (double) entity.solidArea.width / 2);
+		int centerY = (int) (entity.worldY + entity.solidArea.y + (double) entity.solidArea.height / 2);
 		int col = centerX / gp.tileSize;
 		int row = centerY / gp.tileSize;
 

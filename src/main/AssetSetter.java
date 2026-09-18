@@ -1,10 +1,9 @@
 package main;
 
 import entity.Entity;
+import entity.*;
 import entity.Npc_HumanRedWorker;
-import monster.*;
 import object.*;
-
 import java.util.function.Supplier;
 
 public class AssetSetter {
@@ -34,7 +33,7 @@ void place(Entity[] array, int index, Supplier<Entity> factory, int col, int row
 	}
 
 	public void setNpc() {
-		place(gp.npc, 0, () -> new Npc_HumanRedWorker(gp), 21, 21, null, "goblin_bounty");
+		place(gp.npc, 3, () -> new Npc_HumanRedWorker(gp), 21, 21, null, "goblin_bounty");
 	}
 
 	public void setMonster() {

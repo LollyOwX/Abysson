@@ -235,8 +235,8 @@ public class Player extends Entity {
     private Runnable scriptOnComplete;
 
     private void startScriptedMove(int endX, int endY, int durationFrames, Runnable onComplete) {
-        scriptStartX    = worldX;
-        scriptStartY    = worldY;
+        scriptStartX    = (int) worldX;
+        scriptStartY    = (int) worldY;
         scriptEndX      = endX;
         scriptEndY      = endY;
         scriptDuration  = Math.max(1, durationFrames);
@@ -287,7 +287,7 @@ public class Player extends Entity {
             case "left":  dxTiles = -2; break;
             case "right": dxTiles = 2;  break;
         }
-        startScriptedMove(worldX + dxTiles * gp.tileSize, worldY + dyTiles * gp.tileSize, 12, null);
+        startScriptedMove((int) (worldX + dxTiles * gp.tileSize), (int) (worldY + dyTiles * gp.tileSize), 12, null);
         return true;
     }
 
@@ -313,7 +313,7 @@ public class Player extends Entity {
             case "left":  dxTiles = -2; break;
             case "right": dxTiles = 2;  break;
         }
-        startScriptedMove(worldX + dxTiles * gp.tileSize, worldY + dyTiles * gp.tileSize, 12, null);
+        startScriptedMove((int) (worldX + dxTiles * gp.tileSize), (int) (worldY + dyTiles * gp.tileSize), 12, null);
         return true;
     }
 
@@ -340,15 +340,10 @@ public class Player extends Entity {
             // Le due mappe non condividono lo stesso spazio di coordinate: non si può animare
             // uno scorrimento continuo tra l'una e l'altra. L'animazione "resta ferma" sul posto
             // e il cambio mondo scatta di netto a fine corsa (vedi GamePanel.loadWorld()).
-            startScriptedMove(worldX, worldY, 20, () -> gp.loadWorld(link.toWorld, link.toCol, link.toRow));
+            startScriptedMove((int) worldX, (int) worldY, 20, () -> gp.loadWorld(link.toWorld, link.toCol, link.toRow));
         }
         return true;
     }
-
-    // ─────────────────────────────────────────────
-    //  EQUIP / STAT
-    // ─────────────────────────────────────────────
-
     /**
      * Somma o sottrae il bonus percentuale di UNA statistica al totale accumulato.
      * statChanged è lo stato dello SLOT (non della singola stat): false = il bonus
