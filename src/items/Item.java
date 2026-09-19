@@ -22,14 +22,7 @@ public abstract class Item {
     }
 
     // ── Identità ──────────────────────────────────────────────
-    // Ogni oggetto creato (new Weapon(...), new Armor(...), new Jewelry(...), o un item "a mano"
-    // come Sword_Basic_Iron) è la SUA istanza, mai deduplicata per tipo — due Weapon dello stesso
-    // WeaponSubtype (es. due Spada Corta) restano due oggetti indipendenti: modificare gemme/
-    // incantesimi/campi grezzi sull'uno non tocca l'altro. Questo è già garantito dal fatto che
-    // sono normali oggetti Java (equals() di default = identità, ogni new è a sé) — instanceId
-    // qui sotto non serve a questo, serve solo ad avere un riferimento stabile e leggibile per
-    // distinguere in un log/UI due oggetti altrimenti identici (es. due spade base senza
-    // incantesimi, visivamente indistinguibili l'una dall'altra).
+    // Ogni oggetto creato è la SUA istanza, non tocca le altre
     //
     // NOTA per chi costruirà l'inventario vero: gli EQUIPAGGIABILI (Weapon/Armor/Jewelry) vanno
     // sempre in una lista di riferimenti a oggetti (List<Item>, come già in items/Inventory.java)
@@ -58,6 +51,18 @@ public abstract class Item {
     protected void bonus(StatType type, int percent) {
         statBonusPercent.put(type, percent);
     }
+
+    // ── Rarità e bonus a scaglioni ───────────────────────────────
+    // Rispecchia le colonne G/H/I della scheda Equip: cumulativi, non esclusivi — Masterwork ha
+    // sia synergyBonusStub (G, sbloccato da High Quality) che fullSetOrStyleStub (H, sbloccato da
+    // Masterwork); Mythic ha anche mythicUniqueStub (I). Solo testo STUB per ora, nessuna logica
+    // — stesso pattern "contenitore vuoto" di Component: verranno tradotti in id/Registry reali
+    // quando la meccanica sarà implementata. Chi crea l'oggetto decide quali riempire in base a
+    // rarity; non c'è derivazione automatica qui.
+    public Rarity rarity = Rarity.COMMON;
+    public String synergyBonusStub;   // % che sinergizza con la build — da High Quality in su
+    public String fullSetOrStyleStub; // full set (armatura/scudo) o stile di combattimento (arma) — da Masterwork in su
+    public String mythicUniqueStub;   // effetto unico per pezzo, indipendente dal set — solo Mythic
 
     /**
      * L'"add components": ricalcola statBonusPercent da zero leggendo i campi grezzi propri

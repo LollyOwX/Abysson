@@ -2,10 +2,7 @@ package items;
 
 import items.Weapon.WeaponSubtype;
 import items.Weapon.DamageType;
-import items.Weapon.ZoneType;
 import items.Armor.WeightClass;
-
-import java.awt.geom.Rectangle2D;
 
 /**
  * Dispatcher statico per le definizioni delle armi — stesso stile di combat/Ability.java e
@@ -128,39 +125,18 @@ public class WeaponRegistry {
                 return w;
             }
 
-            // ── Difensive (bonus difensivi) ────────────────────────
-            case "shield_basic": {
-                Weapon w = new Weapon(WeaponSubtype.SCUDO);
-                w.name = "Scudo"; w.description = "Largo e solido, ma appesantisce.";
-                w.affilatezza = 1; w.pomo = -4; w.manico = 3; w.guardia = 14;
-                w.metallo = 50; w.legamenti = 45;
-                w.canDefend = true;
-                w.staticGuard = true; // non ruota mai, non può essere eluso
-                w.restAngleDeg = 0;
-                w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-30, -40, 60, 50), ZoneType.RIGID));
-                w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(18, -38, 10, 14), ZoneType.WEAK)); // il fermaglio, in alto a destra
-                return w;
-            }
-            case "buckler_basic": {
-                Weapon w = new Weapon(WeaponSubtype.BROQUEL);
-                w.name = "Broquel"; w.description = "Piccolo e veloce, protegge meno di uno scudo.";
-                w.affilatezza = 1; w.pomo = 4; w.manico = 5; w.guardia = 6;
-                w.metallo = 30; w.legamenti = 30;
-                w.canDefend = true;
-                w.restAngleDeg = 0;
-                w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
-                w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 8, 10), ZoneType.WEAK)); // il bordo, piccolo e vicino al centro (facile da beccare)
-                return w;
-            }
-            case "sai_basic": {
-                Weapon w = new Weapon(WeaponSubtype.SAI);
-                w.name = "Sai"; w.description = "Una spada secondaria per la mano debole.";
-                w.affilatezza = 1; w.pomo = 3; w.manico = 6; w.guardia = 3;
-                w.taglio = 4; w.punta = 3; w.metallo = 25; w.legamenti = 25;
-                w.canDefend = true;
-                w.restAngleDeg = 0;
-                w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
-                w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 6), ZoneType.WEAK)); // la punta, stretta
+            // ── Template rarità: esempio Masterwork ────────────────
+            // Dimostra i campi di Item.java sulla stessa Spada Corta di sopra: G+H valorizzati
+            // (cumulativo da High Quality), I ancora vuoto (solo Mythic). Testo preso dalla
+            // scheda Equip (Type "Short Sword", Build "Atk") per restare coerenti col design.
+            case "short_sword_masterwork": {
+                Weapon w = new Weapon(WeaponSubtype.SPADA_CORTA);
+                w.name = "Spada Corta (Masterwork)"; w.description = "Leggera e maneggevole.";
+                w.affilatezza = 1; w.pomo = 5; w.manico = 10; w.guardia = 3;
+                w.taglio = 8; w.punta = 2; w.metallo = 50; w.legamenti = 50;
+                w.rarity = Rarity.MASTERWORK;
+                w.synergyBonusStub   = "STUB"; // G: "+% controllo; +% prob. di agire due volte nel round"
+                w.fullSetOrStyleStub = "STUB"; // H: [Stile: Assalto] Doppio Tempo
                 return w;
             }
 

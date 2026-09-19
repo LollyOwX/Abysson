@@ -82,6 +82,19 @@ public class ArmorRegistry {
                 a.rifiniture = 1; a.metallo = 3; a.sostegno = 20; a.legamenti = 4;
                 return a;
             }
+            // ── Template rarità: esempio Masterwork ────────────────
+            // G+H valorizzati (cumulativo), I ancora vuoto (solo Mythic). Testo dalla scheda
+            // Equip (Type "Helmet", Build "Defense").
+            case "helmet_masterwork": {
+                Armor a = new Armor(ArmorType.HELMET, WeightClass.LEGGERA);
+                a.name = "Elmo Semplice (Masterwork)"; a.description = "Protezione base per la testa.";
+                a.rifiniture = 1; a.metallo = 6; a.sostegno = 30; a.legamenti = 3;
+                a.rarity = Rarity.MASTERWORK;
+                a.synergyBonusStub   = "STUB"; // G: "+% difesa da impatto; -% durata dello stordimento subito"
+                a.fullSetOrStyleStub = "STUB"; // H: [Full Set: Guardia] Elmo Saldo
+                return a;
+            }
+
             default:
                 System.err.println("Armor non trovata: " + id);
                 return null;
