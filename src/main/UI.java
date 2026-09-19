@@ -479,11 +479,11 @@ public class UI {
 
         } else if (screen == 2) {
             if (cmd == 0) {
-                gp.difficulty = 1; gp.aSetter.setMonster(); gp.gameState = gp.playState; gp.playMusic(0);
+                gp.difficulty = 1; gp.aSetter.placeEntities(); gp.gameState = gp.playState; gp.playMusic(0);
             } else if (cmd == 1) {
-                gp.difficulty = 2; gp.aSetter.setMonster(); gp.gameState = gp.playState; gp.playMusic(0);
+                gp.difficulty = 2; gp.aSetter.placeEntities(); gp.gameState = gp.playState; gp.playMusic(0);
             } else if (cmd == 2) {
-                gp.difficulty = 3; gp.aSetter.setMonster(); gp.gameState = gp.playState; gp.playMusic(0);
+                gp.difficulty = 3; gp.aSetter.placeEntities(); gp.gameState = gp.playState; gp.playMusic(0);
             } else if (cmd == 3) {
                 titleScreenState = 1; commandNum = 0;
             }

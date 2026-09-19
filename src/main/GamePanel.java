@@ -155,8 +155,7 @@ public class GamePanel extends JPanel implements Runnable {
         return bookZoneImages[bookindex - 1] != null ? bookZoneImages[bookindex - 1] : bookImage;
     }
     public void setupGame() {
-        aSetter.setObject();
-        aSetter.setNpc();
+        aSetter.placeEntities();
         playMusic(0);
         gameState = titleState;
     }
