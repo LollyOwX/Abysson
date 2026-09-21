@@ -39,9 +39,11 @@ public class Player extends Entity {
 
     // Somma dei bonus % correnti per stat, accumulata da calcStat() ad ogni equip/unequip.
     private final Map<StatType, Integer> percentBonus = new EnumMap<>(StatType.class);
-    // Stadio 3 (dopo flat e percentuale): moltiplicatore per stat, 1.0 = nessun effetto — non
-    // ancora popolato da nessuno, pronto per buff/debuff temporanei futuri (es. una pozione,
-    // uno status). Ordine di calcolo: stat flat, poi percentuale, poi questo — vedi recalculateStats().
+    // Stadio 3 (dopo flat e percentuale): moltiplicatore per stat, 1.0 = nessun effetto —
+    // popolato da applySlotBonus() (item.statMultiplier, affilatezza/rifiniture) ad ogni
+    // equip/unequip, stesso toggle di percentBonus; pronto anche per buff/debuff temporanei
+    // futuri (es. una pozione, uno status), che si limiterebbero ad aggiungerci un'altra fonte.
+    // Ordine di calcolo: stat flat, poi percentuale, poi questo — vedi recalculateStats().
     private final Map<StatType, Double> statMultiplier = new EnumMap<>(StatType.class);
 
     // ── Equipaggiamento ──────────────────────────────────────────
@@ -72,6 +74,24 @@ public class Player extends Entity {
     public EquipSlot poleynSlot    = new EquipSlot();
     public EquipSlot greaveSlot    = new EquipSlot();
     public EquipSlot sabatonSlot   = new EquipSlot();
+
+    /** Tutti i 20 slot in un array — usato da equippedItems() e da qualunque futuro codice che
+     *  debba iterarli tutti, invece di ripetere l'elenco a mano ogni volta. */
+    private EquipSlot[] allSlots() {
+        return new EquipSlot[]{
+            mainHandSlot, offHandSlot, headSlot, neckSlot, ring1Slot, ring2Slot, bracelet1Slot, bracelet2Slot,
+            helmetSlot, gorgetSlot, pauldronSlot, rerebraceSlot, couterSlot, vanbraceSlot, gauntletSlot,
+            cuirasseSlot, cuisseSlot, poleynSlot, greaveSlot, sabatonSlot
+        };
+    }
+
+    /** Tutti gli item attualmente equipaggiati (slot vuoti esclusi) — usato da CombatState per
+     *  richiamare gli effetti PRE_TURN/POST_TURN di ogni pezzo ad ogni turno del player. */
+    public java.util.List<items.Item> equippedItems() {
+        java.util.List<items.Item> list = new java.util.ArrayList<>();
+        for (EquipSlot s : allSlots()) if (s.item != null) list.add(s.item);
+        return list;
+    }
 
     public Player(GamePanel gp, KeyHandler KeyH) {
         super(gp);
@@ -344,6 +364,11 @@ public class Player extends Entity {
         }
         return true;
     }
+
+    // ─────────────────────────────────────────────
+    //  EQUIP / STAT
+    // ─────────────────────────────────────────────
+
     /**
      * Somma o sottrae il bonus percentuale di UNA statistica al totale accumulato.
      * statChanged è lo stato dello SLOT (non della singola stat): false = il bonus
@@ -361,6 +386,10 @@ public class Player extends Entity {
         for (Map.Entry<StatType, Integer> e : slot.item.statBonusPercent.entrySet()) {
             int current = percentBonus.getOrDefault(e.getKey(), 0);
             percentBonus.put(e.getKey(), calcStat(current, e.getValue(), slot.statChanged));
+        }
+        for (Map.Entry<StatType, Double> e : slot.item.statMultiplier.entrySet()) {
+            double current = statMultiplier.getOrDefault(e.getKey(), 1.0);
+            statMultiplier.put(e.getKey(), slot.statChanged ? current / e.getValue() : current * e.getValue());
         }
         slot.statChanged = !slot.statChanged; // un solo toggle per l'intero slot
     }

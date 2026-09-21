@@ -2,7 +2,9 @@ package items;
 
 import entity.StatType;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 public abstract class Item {
@@ -22,7 +24,14 @@ public abstract class Item {
     }
 
     // ── Identità ──────────────────────────────────────────────
-    // Ogni oggetto creato è la SUA istanza, non tocca le altre
+    // Ogni oggetto creato (new Weapon(...), new Armor(...), new Jewelry(...), o un item "a mano"
+    // come Sword_Basic_Iron) è la SUA istanza, mai deduplicata per tipo — due Weapon dello stesso
+    // WeaponSubtype (es. due Spada Corta) restano due oggetti indipendenti: modificare gemme/
+    // incantesimi/campi grezzi sull'uno non tocca l'altro. Questo è già garantito dal fatto che
+    // sono normali oggetti Java (equals() di default = identità, ogni new è a sé) — instanceId
+    // qui sotto non serve a questo, serve solo ad avere un riferimento stabile e leggibile per
+    // distinguere in un log/UI due oggetti altrimenti identici (es. due spade base senza
+    // incantesimi, visivamente indistinguibili l'una dall'altra).
     //
     // NOTA per chi costruirà l'inventario vero: gli EQUIPAGGIABILI (Weapon/Armor/Jewelry) vanno
     // sempre in una lista di riferimenti a oggetti (List<Item>, come già in items/Inventory.java)
@@ -37,19 +46,60 @@ public abstract class Item {
     public ItemSlot      slot        = ItemSlot.MainHand;
     public ItemCategory category; // impostata dal costruttore delle sottoclassi (Weapon/Armor/Jewelry)
 
+    // Percorso del png — STUB, non si tocca: nessun asset esiste ancora, nessuna logica di
+    // caricamento/rendering va costruita per questo campo. Condiviso da Weapon/Armor/Jewelry.
+    // Weapon ha in più combatItemPath (percorso "esteso" per il minigioco di parata): lo
+    // popolano davvero solo le Difensive (Scudo/Broquel/Sai), le altre armi lo lasciano null —
+    // vedi Weapon.loadRigidZoneFromImage().
+    public String itemPath;
+
     // ── Modificatori stat ──────────────────────────────────────
-    // Percentuale di bonus/malus per statistica (es. bonus(ATTACK, 3) = +3%).
-    // La parte "flat" di ogni stat resta sul personaggio (baseX in Player);
-    // l'equipaggiamento modifica solo la percentuale finale applicata sopra
-    // quel valore base — vedi Player.recalculateStats().
-    //
-    // Weapon/Armor/Jewelry NON la popolano più a mano (bonus(...) nel costruttore, come faceva
-    // Sword_Basic_Iron): la traducono dai loro campi grezzi tramite computeBonusPercent() —
-    // l'"add components". Sword_Basic_Iron resta com'era, invariata.
+    // Percentuale di bonus/malus per statistica (es. taglio=8 -> ATTACK +8%, tradotto da
+    // computeBonusPercent()). La parte "flat" di ogni stat resta sul personaggio (baseX in
+    // Player); l'equipaggiamento modifica percentuale e moltiplicatore applicati sopra quel
+    // valore base — vedi Player.recalculateStats() (stat = flat * % * moltiplicatore, in
+    // quest'ordine).
     public Map<StatType, Integer> statBonusPercent = new EnumMap<>(StatType.class);
 
-    protected void bonus(StatType type, int percent) {
-        statBonusPercent.put(type, percent);
+    // Stadio "moltiplicatore" per stat (1.0 = nessun effetto) — popolato SOLO da
+    // applyQualityLevel() (affilatezza/rifiniture), sulle stesse stat che l'oggetto ha appena
+    // messo in statBonusPercent. Player lo somma (moltiplica) insieme a quello delle altre fonti
+    // (buff/debuff) nel suo statMultiplier — vedi Player.applySlotBonus()/mult().
+    public Map<StatType, Double> statMultiplier = new EnumMap<>(StatType.class);
+
+    // Effetti risolti da gemme/incantesimi/rocce (vedi addComponents()) — SEMPRE effetti
+    // speciali via combat.SpecialEffectRegistry, mai bonus %. Tre liste per timing:
+    // PRE_TURN/POST_TURN (richiamati da CombatState.beforeTurn()/afterTurn() sul portatore ad
+    // ogni turno, finché l'oggetto resta equipaggiato) vs ACTIVE (scatta solo se qualcuno lo
+    // invoca esplicitamente — vedi SpecialEffect).
+    public final List<combat.SpecialEffect> preTurnEffects  = new ArrayList<>();
+    public final List<combat.SpecialEffect> postTurnEffects = new ArrayList<>();
+    public final List<combat.SpecialEffect> activeEffects   = new ArrayList<>();
+
+    /** Azzera tutto quello che computeBonusPercent() ricalcola da zero ad ogni chiamata —
+     *  un solo posto invece di ripetere 4 clear() in ogni sottoclasse. */
+    protected void clearComputedBonuses() {
+        statBonusPercent.clear();
+        statMultiplier.clear();
+        preTurnEffects.clear();
+        postTurnEffects.clear();
+        activeEffects.clear();
+    }
+
+    /**
+     * Moltiplicatore di qualità (affilatezza per Weapon, rifiniture per Armor) — 0.25 per
+     * livello, applicato a TUTTE le stat che l'oggetto ha appena messo in statBonusPercent (non
+     * solo la "principale"): scelta interpretativa esplicita, la spec non diceva se limitarlo a
+     * una singola stat — correggimi se intendevi solo quella principale dell'oggetto.
+     * level=0 non tocca nulla (niente moltiplicatore 1.0 esplicito, statMultiplier resta vuoto
+     * per quella stat — equivalente, ma non sporca la mappa per niente).
+     */
+    protected void applyQualityLevel(int level) {
+        if (level == 0) return;
+        double factor = 1.0 + 0.25 * level;
+        for (StatType t : statBonusPercent.keySet()) {
+            statMultiplier.merge(t, factor, (a, b) -> a * b);
+        }
     }
 
     // ── Rarità e bonus a scaglioni ───────────────────────────────
@@ -64,30 +114,50 @@ public abstract class Item {
     public String fullSetOrStyleStub; // full set (armatura/scudo) o stile di combattimento (arma) — da Masterwork in su
     public String mythicUniqueStub;   // effetto unico per pezzo, indipendente dal set — solo Mythic
 
+    // Risolvono gli stub sopra nell'effetto reale via combat.SpecialEffectRegistry — lo stesso
+    // registry usato da Ability per le abilità (vedi SpecialEffect). Tornano null finché lo
+    // stub resta testo libero non registrato (es. "STUB"): comportamento corretto, non un
+    // errore. Nessuno li richiama ancora da nessuna parte — sono il punto di aggancio pronto
+    // per quando smetteranno di essere STUB, non logica già in funzione.
+    public combat.SpecialEffect resolveSynergyEffect()       { return combat.SpecialEffectRegistry.get(synergyBonusStub); }
+    public combat.SpecialEffect resolveFullSetOrStyleEffect() { return combat.SpecialEffectRegistry.get(fullSetOrStyleStub); }
+    public combat.SpecialEffect resolveMythicUniqueEffect()   { return combat.SpecialEffectRegistry.get(mythicUniqueStub); }
+
     /**
-     * L'"add components": ricalcola statBonusPercent da zero leggendo i campi grezzi propri
-     * della sottoclasse + i componenti innestati (gemme/incantesimi/rocce) — UN blocco letto
+     * L'"add components": ricalcola statBonusPercent/statMultiplier/passiveEffects/
+     * activeEffects da zero leggendo i campi grezzi propri della sottoclasse (via
+     * MaterialRegistry) + i componenti innestati (via SpecialEffectRegistry) — UN blocco letto
      * una sola volta qui, invece di controllare ogni componente uno per uno ad ogni accesso.
      * Richiamata da Player.equip() prima di applicare i bonus (così riflette anche componenti
      * cambiati dopo la creazione dell'oggetto, es. una gemma incastonata più tardi).
      *
-     * No-op di default: oggetti "a mano" come Sword_Basic_Iron impostano statBonusPercent
-     * direttamente nel costruttore e NON vanno ricalcolati — chiamare questo metodo su di loro
-     * non fa nulla, i loro bonus restano quelli impostati. Weapon/Armor/Jewelry la sovrascrivono.
+     * No-op di default: un item "a mano" che non la sovrascrive resta con qualunque bonus sia
+     * stato impostato altrove (nessuno lo fa più oggi — Weapon/Armor/Jewelry la sovrascrivono
+     * tutte). Tenuta come no-op, non astratta, per non forzare un override su un futuro item
+     * "puro" che non ne avesse bisogno.
      */
     public void computeBonusPercent() {
         // no-op di default
     }
 
-    /** Helper condiviso da Weapon/Armor/Jewelry: somma il bonus di ogni componente innestato
-     *  (via ComponentRegistry) a statBonusPercent. Slot null o id sconosciuto = nessun bonus,
-     *  non un errore. */
+    /**
+     * Helper condiviso da Weapon/Armor/Jewelry: risolve ogni componente innestato (gemma/
+     * incantesimo/roccia) in combat.SpecialEffectRegistry e lo smista in passiveEffects o
+     * activeEffects secondo il suo timing() — gemme e incantesimi danno SEMPRE un effetto
+     * speciale, mai un bonus % (quello lo danno solo i campi grezzi, via MaterialRegistry).
+     * Slot null o id sconosciuto/non ancora implementato = nessun effetto, non un errore.
+     */
     protected void addComponents(Component[] components) {
         if (components == null) return;
         for (Component c : components) {
             if (c == null) continue;
-            ComponentRegistry.Effect eff = ComponentRegistry.get(c.id);
-            if (eff != null) statBonusPercent.merge(eff.stat, eff.percent, Integer::sum);
+            combat.SpecialEffect eff = combat.SpecialEffectRegistry.get(c.id);
+            if (eff == null) continue;
+            switch (eff.timing()) {
+                case PRE_TURN  -> preTurnEffects.add(eff);
+                case POST_TURN -> postTurnEffects.add(eff);
+                case ACTIVE    -> activeEffects.add(eff);
+            }
         }
     }
 }

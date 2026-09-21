@@ -51,16 +51,20 @@ public class Weapon extends Item {
 
     public final WeaponSubtype subtype;
 
-    public int affilatezza; // livello
-    public int pomo;        // "Butt" nella tua spec — tradotto come "pomo": velocità. Correggimi il nome se intendevi altro.
-    public int manico;      // controllo: probabilità di non essere disarmato — NON tradotto in stat: è la difesa contro il disarmo altrui, non implementata (vedi STATUS.md)
-    public int guardia;     // difesa della mano (- danni alle braccia — gestiremo dopo, per ora solo il numero)
-    public int taglio;      // danni da taglio — prima insieme a contundente in un unico "lama", separati per il combo di Mazza chiodata/Ascia
-    public int contundente; // danni contundenti — vedi sopra
-    public int punta;       // danni perforanti
-    public int metallo;     // durabilità lama — non tradotto in stat, nessuna stat "durabilità" esiste ancora
-    public int legamenti;   // durabilità arma globale — vedi sopra
-    public int peso;        // Spadone: il danno usa questo invece di taglio/contundente/punta — utile anche per Scudo/Broquel (largo,lento / piccolo,veloce)
+    // affilatezza è un LIVELLO (non un ID): moltiplica il bonus totale, non lo genera — vedi
+    // Item.applyQualityLevel(). Tutti gli altri campi qui sotto sono ID: il numero non è più il
+    // bonus stesso, è una chiave in MaterialRegistry che lo risolve (stesso id = stesso effetto
+    // su qualunque arma). manico/metallo/legamenti restano ID "pronti" ma senza tabella ancora.
+    public int affilatezza; // livello: 0.25x di moltiplicatore per livello sul bonus totale dell'arma
+    public int pomo;        // ID -> VELOCITA (MaterialRegistry.weaponPomo) — "Butt" nella tua spec, tradotto come "pomo". Correggimi il nome se intendevi altro.
+    public int manico;      // ID senza tabella — controllo/probabilità di non essere disarmato, non implementata (vedi STATUS.md)
+    public int guardia;     // ID -> DIFESA (MaterialRegistry.weaponGuardia)
+    public int taglio;      // ID -> ATTACK (MaterialRegistry.blade) — prima insieme a contundente in un unico "lama", separati per il combo di Mazza chiodata/Ascia
+    public int contundente; // ID -> ATTACK (MaterialRegistry.blade) — vedi sopra
+    public int punta;       // ID -> ATTACK (MaterialRegistry.blade)
+    public int metallo;     // ID senza tabella — durabilità lama, nessuna stat "durabilità" esiste ancora
+    public int legamenti;   // ID senza tabella — durabilità arma globale, vedi sopra
+    public int peso;        // ID -> ATTACK (MaterialRegistry.blade) — Spadone: il danno usa questo invece di taglio/contundente/punta; utile anche per Scudo/Broquel (largo,lento / piccolo,veloce)
 
     public int disarmChance;        // % probabilità di disarmare l'avversario — Frusta
     public int stunChance;          // % probabilità di stordire 1 turno — Falce (riusa StatusEffect.STORDIMENTO)
@@ -94,15 +98,13 @@ public class Weapon extends Item {
     public boolean canDefend  = false;   // può essere l'arma difensiva nella parata — vero di norma per le Difensive
     public boolean staticGuard = false;  // true SOLO per lo scudo vero: non ruota mai, non può essere eluso
 
-    // Percorsi immagine: itemPath per l'icona/inventario, combatItemPath per la versione
-    // dettagliata da cui estrarre la geometria di parata (vedi loadRigidZoneFromImage() sotto).
-    // Nessun asset vero esiste ancora per le armi di WeaponRegistry — sono stringhe pronte, non
-    // ancora popolate/testate con un'immagine reale.
-    public String itemPath;
+    // itemPath (icona/inventario) è ereditato da Item, condiviso con Armor/Jewelry. Questo è il
+    // secondo percorso, specifico di Weapon: la versione "estesa" da cui estrarre la geometria
+    // di parata (vedi loadRigidZoneFromImage() sotto) — lo popolano davvero solo le Difensive.
     public String combatItemPath;
 
     public final Component[] gemme       = new Component[3]; // bonus vari, effetto per gemma
-    public final Component[] incantesimi = new Component[2]; // effetti speciali (come SpecialAction)
+    public final Component[] incantesimi = new Component[2]; // effetti speciali (come SpecialEffect)
 
     public Weapon(WeaponSubtype subtype) {
         this.category = ItemCategory.ARMA;
@@ -140,21 +142,33 @@ public class Weapon extends Item {
     }
 
     /**
-     * "Add components": taglio+contundente+punta+peso -> ATTACK (i 4 numeri "di danno" sommati,
-     * scelta di semplicità: peso conta quanto un danno normale, non lo sostituisce, così lo
-     * Spadone non ha bisogno di un ramo a parte); pomo -> VELOCITA; guardia -> DIFESA. manico/
-     * metallo/legamenti non producono bonus (vedi i commenti sui campi sopra). Scelte
-     * interpretative, non numeri o formule che mi hai dato tu: correggile se non vanno bene.
+     * "Add components": taglio/contundente/punta/peso sono ID che MaterialRegistry.blade()
+     * risolve e somma su ATTACK (scelta di semplicità: peso conta quanto un danno normale, non
+     * lo sostituisce, così lo Spadone non ha bisogno di un ramo a parte); pomo -> VELOCITA;
+     * guardia -> DIFESA, entrambi via il proprio metodo in MaterialRegistry. manico/metallo/
+     * legamenti non producono bonus (vedi i commenti sui campi sopra — nessuna tabella ancora).
+     * affilatezza chiude il calcolo moltiplicando quello che è stato appena messo in
+     * statBonusPercent (vedi Item.applyQualityLevel()). Scelte interpretative, non numeri o
+     * formule che mi hai dato tu: correggile se non vanno bene.
      */
     @Override
     public void computeBonusPercent() {
-        statBonusPercent.clear();
-        int atkBonus = taglio + contundente + punta + peso;
+        clearComputedBonuses();
+        int atkBonus = MaterialRegistry.blade(taglio) + MaterialRegistry.blade(contundente)
+                     + MaterialRegistry.blade(punta)  + MaterialRegistry.blade(peso);
         if (atkBonus != 0) statBonusPercent.merge(StatType.ATTACK, atkBonus, Integer::sum);
-        if (pomo != 0)     statBonusPercent.merge(StatType.VELOCITA, pomo, Integer::sum);
-        if (guardia != 0)  statBonusPercent.merge(StatType.DIFESA, guardia, Integer::sum);
+        int velBonus = MaterialRegistry.weaponPomo(pomo);
+        if (velBonus != 0) statBonusPercent.merge(StatType.VELOCITA, velBonus, Integer::sum);
+        // Difensive (Scudo/Broquel/Sai): guardia È la stat che scala con rarità/livello (è il
+        // loro "Build" Defense/Elemental Def/Special Def). Mischia/distanza: guardia resta un
+        // tratto fisso della forma dell'arma, invariata rispetto a prima — vedi MaterialRegistry.
+        int difBonus = (subtype.category == WeaponCategory.DIFENSIVE)
+            ? MaterialRegistry.offhandGuardia(guardia)
+            : MaterialRegistry.weaponGuardia(guardia);
+        if (difBonus != 0) statBonusPercent.merge(StatType.DIFESA, difBonus, Integer::sum);
         addComponents(gemme);
         addComponents(incantesimi);
+        applyQualityLevel(affilatezza);
     }
 }
 

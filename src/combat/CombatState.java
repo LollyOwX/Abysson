@@ -343,6 +343,7 @@ public class CombatState {
      * punti da cui si entra in un turno.
      */
     boolean beforeTurn(Entity actor, boolean isPlayer) {
+        firePreTurnEffects(actor);
         if (isStunned(actor)) {
             boolean skipTurn = new Random().nextInt(100) < 50; // Stordimento: 50% di saltare il turno
             if (skipTurn) {
@@ -367,12 +368,46 @@ public class CombatState {
      * proprio turno — risolve il TODO aperto in STATUS.md §5.
      */
     void afterTurn(Entity actor, boolean isPlayer) {
+        firePostTurnEffects(actor);
         int dmg = ElementSystem.processTurnEffects(actor);
         if (dmg > 0) {
             actor.life -= dmg;
             String who = isPlayer ? "You take" : actor.name + " takes";
             queueAction(who + " " + dmg + " damage from active effects!");
         }
+    }
+
+    /** PRE_TURN/POST_TURN di ogni pezzo equipaggiato da 'actor' — solo i Player hanno equip
+     *  oggi (weaponOf() lo nota già: i mostri non ne hanno), quindi per un Monster questi due
+     *  metodi non trovano nulla da richiamare, non è un caso speciale da gestire qui. source e
+     *  target sono sempre 'actor' — vedi SpecialEffect. */
+    /** PRE_TURN/POST_TURN di ogni pezzo equipaggiato da 'actor' — solo i Player hanno equip
+     *  oggi (weaponOf() lo nota già: i mostri non ne hanno), quindi per un Monster questi due
+     *  metodi non trovano nulla da richiamare, non è un caso speciale da gestire qui.
+     *
+     *  target è il vero avversario (opponentOf), non più 'actor' due volte: un effetto "su di
+     *  sé" (es. una cura) ignora semplicemente target e agisce solo su source; un effetto
+     *  offensivo (es. "Eco", che attacca due volte: il secondo colpo scatta come POST_TURN) ha
+     *  già il bersaglio giusto senza doverlo recuperare da solo. Correzione rispetto al giro
+     *  scorso, dove passavo source==target per errore. */
+    private void firePreTurnEffects(Entity actor) {
+        if (!(actor instanceof Player p)) return;
+        Entity opponent = opponentOf(actor);
+        for (Item item : p.equippedItems())
+            for (SpecialEffect eff : item.preTurnEffects) eff.execute(this, actor, opponent);
+    }
+
+    private void firePostTurnEffects(Entity actor) {
+        if (!(actor instanceof Player p)) return;
+        Entity opponent = opponentOf(actor);
+        for (Item item : p.equippedItems())
+            for (SpecialEffect eff : item.postTurnEffects) eff.execute(this, actor, opponent);
+    }
+
+    /** L'altro combattente rispetto ad actor — sempre gp.player o monster, essendo un
+     *  combattimento 1 contro 1. */
+    private Entity opponentOf(Entity actor) {
+        return (actor == gp.player) ? monster : gp.player;
     }
 
     // Calcola e applica il danno di un'abilità da attacker a target: mira/schivata (comprese
@@ -384,7 +419,7 @@ public class CombatState {
     // Qualunque nuova abilità, anche una che non infligge danno diretto (es. un'abilità
     // "di supporto" che applica solo un effetto), deve comunque passare da qui — non richiamare
     // Ability.use()/ElementSystem.getReaction() per conto proprio altrove — altrimenti reazioni,
-    // disarmo e SpecialAction non scatterebbero per quell'abilità.
+    // disarmo e SpecialEffect non scatterebbero per quell'abilità.
     // Arma equipaggiata in MainHand da un'entità, se ne ha una e se è un Weapon (non tutte le
     // entità hanno equip — i mostri oggi non ne hanno, weaponOf ritorna null per loro).
     private Weapon weaponOf(Entity e) {
@@ -545,8 +580,8 @@ public class CombatState {
 
         queueAction(msg.toString());
 
-        // Azione speciale dell'abilità (STUB per ora — vedi SpecialAction).
-        SpecialAction action = Ability.getSpecialAction(abilityId);
+        // Azione speciale dell'abilità (STUB per ora — vedi SpecialEffect).
+        SpecialEffect action = Ability.getSpecialAction(abilityId);
         if (action != null) action.execute(this, attacker, target);
     }
 

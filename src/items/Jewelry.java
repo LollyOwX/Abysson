@@ -22,7 +22,7 @@ public class Jewelry extends Item {
 
     public JewelryType jewelryType;
     public String legame;  // tipo di vantaggio (es. "tipo le corde dei bracciali") — non numerico, nessun bonus stat
-    public int metalli;    // bonus stat — nessuna stat specifica indicata, vedi computeBonusPercent()
+    public int metalli;    // bonus stat diretto (non un ID) — Jewelry resta fuori dalla conversione a ID di Weapon/Armor, non richiesta per i gioielli. Nessuna stat specifica indicata, vedi computeBonusPercent()
 
     public Component   gemma; // effetti speciali — usata da CORONA/COLLANA/ANELLO, null per BRACCIALE
     public final Component[] rocce = new Component[9]; // effetti speciali in combo — solo BRACCIALE, resta vuoto per gli altri tipi
@@ -45,7 +45,7 @@ public class Jewelry extends Item {
      */
     @Override
     public void computeBonusPercent() {
-        statBonusPercent.clear();
+        clearComputedBonuses();
         if (metalli != 0) statBonusPercent.merge(StatType.EFFICIENZA, metalli, Integer::sum);
         if (gemma != null) addComponents(new Component[]{gemma});
         addComponents(rocce);

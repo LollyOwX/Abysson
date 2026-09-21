@@ -73,10 +73,11 @@ public class Ability {
 
     /**
      * Azione speciale della singola abilità, eseguita da CombatState.dealDamage() dopo il
-     * danno (vedi SpecialAction). STUB: nessuna abilità ne ha ancora una.
+     * danno (vedi SpecialEffect). Delega a SpecialEffectRegistry — STUB: nessun id di abilità
+     * è ancora registrato lì, quindi ritorna sempre null finché non aggiungi un case.
      */
-    public static SpecialAction getSpecialAction(String id) {
-        return null;
+    public static SpecialEffect getSpecialAction(String id) {
+        return SpecialEffectRegistry.get(id);
     }
 
     private static int offense(String id, Entity user) {

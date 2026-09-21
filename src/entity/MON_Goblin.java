@@ -1,7 +1,10 @@
-package entity;
+package monster;
+
+import entity.Entity;
 import main.GamePanel;
 import combat.ElementSystem;
 import items.WeaponRegistry;
+import items.ShieldRegistry;
 import java.util.Random;
 
 public class MON_Goblin extends Entity {
@@ -23,8 +26,9 @@ public class MON_Goblin extends Entity {
         behavior = HOSTILE;
 
         // Arma equipaggiata — usata anche dal minigioco di parata (vedi Entity.resolveDefenseWeapon()).
-        // Riusa un pezzo già definito in WeaponRegistry invece di ridisegnare una geometria a mano.
-        equippedWeapon = WeaponRegistry.get("buckler_basic");
+        // Riusa un pezzo già definito in ShieldRegistry invece di ridisegnare una geometria a mano
+        // (le Difensive sono state spostate lì da WeaponRegistry, vedi STATUS.md).
+        equippedWeapon = ShieldRegistry.get("broquel_defense_0_10_common");
 
         unlockedAbilities.add("NormalAttack");
         unlockedAbilities.add("PowerStrike");

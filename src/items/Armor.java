@@ -22,10 +22,14 @@ public class Armor extends Item {
     public final ArmorType armorType;
     public WeightClass weightClass;
 
-    public int rifiniture; // livello — non tradotto in stat, vedi computeBonusPercent()
-    public int metallo;    // stat principale: resistenza ai danni (difesa e altro)
-    public int sostegno;   // stat principale: durabilità — non tradotto in stat, nessuna stat "durabilità" esiste ancora
-    public int legamenti;  // stat principale: mobilità
+    // rifiniture è un LIVELLO (non un ID): moltiplica il bonus totale, non lo genera — vedi
+    // Item.applyQualityLevel(). metallo/legamenti sono ID: il numero non è più il bonus stesso,
+    // è una chiave in MaterialRegistry che lo risolve. sostegno resta un ID "pronto" ma senza
+    // tabella ancora.
+    public int rifiniture; // livello: 0.25x di moltiplicatore per livello sul bonus totale del pezzo
+    public int metallo;    // ID -> DIFESA (MaterialRegistry.armorMetallo) — stat principale: resistenza ai danni
+    public int sostegno;   // ID senza tabella — durabilità, nessuna stat "durabilità" esiste ancora
+    public int legamenti;  // ID -> VELOCITA (MaterialRegistry.armorLegamenti) — stat principale: mobilità
 
     public final Component[] incantesimi = new Component[2]; // "[1] ovvero 2 incantesimi"
 
@@ -50,15 +54,21 @@ public class Armor extends Item {
     }
 
     /**
-     * "Add components": metallo -> DIFESA ("resistenza ai danni"); legamenti -> VELOCITA
-     * ("mobilità" — scelta interpretativa, poteva essere ELUSIONE altrettanto ragionevolmente).
-     * rifiniture/sostegno non producono bonus (vedi commenti sui campi sopra).
+     * "Add components": metallo -> DIFESA ("resistenza ai danni"), legamenti -> VELOCITA
+     * ("mobilità" — scelta interpretativa, poteva essere ELUSIONE altrettanto ragionevolmente),
+     * entrambi via il proprio metodo in MaterialRegistry. sostegno non produce bonus (vedi
+     * commento sul campo sopra — nessuna tabella ancora). rifiniture chiude il calcolo
+     * moltiplicando quello che è stato appena messo in statBonusPercent (vedi
+     * Item.applyQualityLevel()).
      */
     @Override
     public void computeBonusPercent() {
-        statBonusPercent.clear();
-        if (metallo != 0)   statBonusPercent.merge(StatType.DIFESA, metallo, Integer::sum);
-        if (legamenti != 0) statBonusPercent.merge(StatType.VELOCITA, legamenti, Integer::sum);
+        clearComputedBonuses();
+        int difBonus = MaterialRegistry.armorMetallo(metallo);
+        if (difBonus != 0) statBonusPercent.merge(StatType.DIFESA, difBonus, Integer::sum);
+        int velBonus = MaterialRegistry.armorLegamenti(legamenti);
+        if (velBonus != 0) statBonusPercent.merge(StatType.VELOCITA, velBonus, Integer::sum);
         addComponents(incantesimi);
+        applyQualityLevel(rifiniture);
     }
 }
