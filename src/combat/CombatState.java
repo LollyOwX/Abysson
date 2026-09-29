@@ -2,7 +2,9 @@ package combat;
 
 import entity.Entity;
 import entity.Player;
+import items.Armor;
 import items.Item;
+import items.Rarity;
 import items.Weapon;
 import main.GamePanel;
 import main.PaletteSwap;
@@ -12,8 +14,10 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public class CombatState {
     GamePanel gp;
@@ -379,22 +383,18 @@ public class CombatState {
 
     /** PRE_TURN/POST_TURN di ogni pezzo equipaggiato da 'actor' — solo i Player hanno equip
      *  oggi (weaponOf() lo nota già: i mostri non ne hanno), quindi per un Monster questi due
-     *  metodi non trovano nulla da richiamare, non è un caso speciale da gestire qui. source e
-     *  target sono sempre 'actor' — vedi SpecialEffect. */
-    /** PRE_TURN/POST_TURN di ogni pezzo equipaggiato da 'actor' — solo i Player hanno equip
-     *  oggi (weaponOf() lo nota già: i mostri non ne hanno), quindi per un Monster questi due
      *  metodi non trovano nulla da richiamare, non è un caso speciale da gestire qui.
      *
      *  target è il vero avversario (opponentOf), non più 'actor' due volte: un effetto "su di
      *  sé" (es. una cura) ignora semplicemente target e agisce solo su source; un effetto
      *  offensivo (es. "Eco", che attacca due volte: il secondo colpo scatta come POST_TURN) ha
-     *  già il bersaglio giusto senza doverlo recuperare da solo. Correzione rispetto al giro
-     *  scorso, dove passavo source==target per errore. */
+     *  già il bersaglio giusto senza doverlo recuperare da solo. */
     private void firePreTurnEffects(Entity actor) {
         if (!(actor instanceof Player p)) return;
         Entity opponent = opponentOf(actor);
         for (Item item : p.equippedItems())
             for (SpecialEffect eff : item.preTurnEffects) eff.execute(this, actor, opponent);
+        fireRaritySpecialEffects(p, actor, opponent, SpecialEffect.Timing.PRE_TURN);
     }
 
     private void firePostTurnEffects(Entity actor) {
@@ -402,6 +402,83 @@ public class CombatState {
         Entity opponent = opponentOf(actor);
         for (Item item : p.equippedItems())
             for (SpecialEffect eff : item.postTurnEffects) eff.execute(this, actor, opponent);
+        fireRaritySpecialEffects(p, actor, opponent, SpecialEffect.Timing.POST_TURN);
+    }
+
+    /**
+     * Effetti legati alla rarità, non ai componenti — richiamati dopo i preTurnEffects/
+     * postTurnEffects "normali" sopra, stesso timing.
+     *   MITICO   — invariato: attivo SEMPRE, su QUALUNQUE pezzo equipaggiato, per pezzo
+     *              (ognuno il proprio mythicUniqueStub) — indipendente dal set.
+     *   FULL SET — OGNI pezzo d'armatura equipaggiato spara il PROPRIO fullSetOrStyleStub (non
+     *              un bonus condiviso: ognuno ha un testo diverso), MA solo se
+     *              activeArmorMatchGroup() dice che il set è completo — vedi Player: 12 slot,
+     *              confrontati per GRUPPO (Guardia+Passo sono lo stesso gruppo, Veggente+Ombra
+     *              pure — Voto resta da solo, un Voto da 12 pezzi non può esistere).
+     */
+    private void fireRaritySpecialEffects(Player p, Entity actor, Entity opponent, SpecialEffect.Timing timing) {
+        boolean setComplete = p.activeArmorMatchGroup() >= 0;
+        for (Item item : p.equippedItems()) {
+            if (item.rarity == Rarity.MYTHIC) {
+                SpecialEffect eff = item.resolveMythicUniqueEffect();
+                if (eff != null && eff.timing() == timing) eff.execute(this, actor, opponent);
+            }
+            if (setComplete && item instanceof Armor) {
+                SpecialEffect eff = item.resolveFullSetOrStyleEffect();
+                if (eff != null && eff.timing() == timing) eff.execute(this, actor, opponent);
+            }
+        }
+    }
+
+    // Chiavi "una volta per combattimento" (es. Elmo Saldo: il primo stordimento annullato) —
+    // svuotato implicitamente ad ogni nuovo CombatState (un combattimento = un'istanza).
+    private final Set<String> usedOnce = new HashSet<>();
+
+    /** true la prima volta che viene chiamato con questa chiave in questo combattimento, false
+     *  tutte le volte successive — per gli effetti "una volta per combattimento". */
+    boolean consumeOnce(String key) {
+        return usedOnce.add(key);
+    }
+
+    /** true se 'e' ha ORA attivo un effetto — mitico (sempre) o di pieno set (solo se il
+     *  gruppo è completo, vedi Player.activeArmorMatchGroup()) — il cui testo INIZIA con
+     *  'textPrefix'. startsWith invece di equals: da questa sessione i testi Masterwork/Mitico
+     *  hanno un suffisso di livello in coda (es. "(livello Adepto)"), diverso per fascia — vedi
+     *  generate_equip.py. Per query puntuali FUORI dal ciclo di turno (es. "posso essere
+     *  disarmato adesso?"). */
+    boolean hasActivePassive(Entity e, String textPrefix) {
+        if (!(e instanceof Player p)) return false;
+        for (Item item : p.equippedItems())
+            if (item.rarity == Rarity.MYTHIC && item.mythicUniqueStub != null && item.mythicUniqueStub.startsWith(textPrefix)) return true;
+        if (p.activeArmorMatchGroup() >= 0)
+            for (Item item : p.equippedItems())
+                if (item instanceof Armor && item.fullSetOrStyleStub != null && item.fullSetOrStyleStub.startsWith(textPrefix)) return true;
+        return false;
+    }
+
+    // 3 pezzi diversi danno la stessa immunità (Vanbrace full-set Guardia + il suo stesso
+    // mitico + Gauntlet mitico) — non è un "caso speciale" per ognuno, sono 3 prefissi che
+    // questo helper controlla nello stesso modo generico di hasActivePassive().
+    private static final String[] DISARM_IMMUNITY_TEXTS = {
+        "[Full Set: Guardia] Presa Ferrea: non perdi mai l'arma, nemmeno per effetti che ignorano le resistenze",
+        "[Mitico] Presa Eterna: la tua arma non può mai essere rimossa o sostituita contro la tua volontà",
+        "[Mitico] Mano di Ferro: non puoi mai essere disarmato",
+    };
+    private boolean isDisarmImmune(Entity e) {
+        for (String t : DISARM_IMMUNITY_TEXTS) if (hasActivePassive(e, t)) return true;
+        return false;
+    }
+
+    /** "Guardia... riduce i danni alle mani, se subiti (come IRL)" + "controllo: probDiDisarmo-
+     *  controllo": Guardia E Manico dell'arma equipaggiata da 'target' sottraggono ENTRAMBI
+     *  punti percentuali diretti dalla probabilità di essere disarmato (10 punti ciascuno =
+     *  -10%, si sommano), non passano da MaterialRegistry — sono modificatori diretti, non un
+     *  bonus %/StatType. Nessun'arma equipaggiata (mostri) = nessuna resistenza, chance
+     *  invariata. */
+    private int effectiveDisarmChance(int baseChance, Entity target) {
+        Weapon defWeapon = weaponOf(target);
+        int resistenza = (defWeapon != null) ? (defWeapon.guardia + defWeapon.manico) : 0;
+        return Math.max(0, baseChance - resistenza * 10);
     }
 
     /** L'altro combattente rispetto ad actor — sempre gp.player o monster, essendo un
@@ -426,20 +503,6 @@ public class CombatState {
         if (!(e instanceof Player)) return null;
         Item item = ((Player) e).mainHandSlot.item;
         return (item instanceof Weapon) ? (Weapon) item : null;
-    }
-
-    // Somma i 2 tipi di danno grezzo che l'arma combina (Weapon.comboTypes) — es. Mazza chiodata
-    // combina PERFORANTE+CONTUNDENTE, quindi somma w.punta + w.contundente.
-    private int comboDamage(Weapon w) {
-        int total = 0;
-        for (Weapon.DamageType t : w.comboTypes) {
-            total += switch (t) {
-                case TAGLIO -> w.taglio;
-                case CONTUNDENTE -> w.contundente;
-                case PERFORANTE -> w.punta;
-            };
-        }
-        return total;
     }
 
     void dealDamage(Entity attacker, Entity target, String abilityId) {
@@ -511,8 +574,11 @@ public class CombatState {
                 if (reactionDmg > 0) msg.append(" + ").append(reactionDmg).append(" (").append(reaction.name).append(")");
                 if (reaction != Reaction.NONE) msg.append("  ⚡ ").append(reaction.name).append("!");
 
-                // Inondazione: disarmo immediato dell'arma (solo il player ha equipaggiamento)
-                if (reaction.disarms && target instanceof Player) {
+                // Inondazione: disarmo "immediato" (base 100%, comunque riducibile dalla
+                // Guardia del bersaglio — vedi effectiveDisarmChance) dell'arma (solo il
+                // player ha equipaggiamento).
+                if (reaction.disarms && target instanceof Player && !isDisarmImmune(target)
+                        && new Random().nextInt(100) < effectiveDisarmChance(100, target)) {
                     ((Player) target).unequip(Item.ItemSlot.MainHand);
                     msg.append("  [DISARMED: weapon unequipped]");
                 }
@@ -521,17 +587,10 @@ public class CombatState {
                 // colpo andato a segno (nessuna richiede un'azione dedicata nel menu).
                 Weapon attackerWeapon = weaponOf(attacker);
                 if (attackerWeapon != null) {
-                    // Combo: il bonus si somma sopra al danno già inflitto, non lo sostituisce.
-                    if (attackerWeapon.comboTypes != null) {
-                        int comboBonus = comboDamage(attackerWeapon);
-                        if (comboBonus > 0) {
-                            target.life -= comboBonus;
-                            msg.append(" + ").append(comboBonus).append(" (combo)");
-                        }
-                    }
                     if (attackerWeapon.disarmChance > 0
-                            && new Random().nextInt(100) < attackerWeapon.disarmChance
-                            && target instanceof Player) {
+                            && target instanceof Player
+                            && !isDisarmImmune(target)
+                            && new Random().nextInt(100) < effectiveDisarmChance(attackerWeapon.disarmChance, target)) {
                         ((Player) target).unequip(Item.ItemSlot.MainHand);
                         msg.append("  [DISARMED]");
                     }
@@ -695,7 +754,6 @@ public class CombatState {
 
         if (weakHit) {
             int loss = 8; // placeholder: quanta durabilità toglie un colpo su punto debole
-            defWeapon.metallo   = Math.max(0, defWeapon.metallo   - loss);
             defWeapon.legamenti = Math.max(0, defWeapon.legamenti - loss);
             queueAction(monster.name + " blocks, but you hit a WEAK POINT! -" + loss + " durability");
         } else if (rigidHit) {

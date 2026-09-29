@@ -1,0 +1,39 @@
+Set che POSSONO completare un 12/12 (stesso gruppo upper+gambe):
+  Gruppo A: Guardia (upper, Defense) + Passo (gambe, Speed)
+  Gruppo B: Veggente (upper, Elemental Def) + Ombra (gambe, Elusivity)
+Set che NON possono mai completare un 12/12 (nessuna gamba nello stesso gruppo):
+  Voto (upper, Special Def) — resta al massimo un set da 8 pezzi (solo upper-body)
+
+Tutti e 32 i testi Full Set (H) unici, per set:
+  [Helmet / Defense] [Full Set: Guardia] STUB — Elmo Saldo: il primo stordimento di ogni combattimento viene annullato
+  [Helmet / Elemental Def] [Full Set: Veggente] STUB — Occhio Limpido: immune all'accecamento, vedi le debolezze elementali del nemico
+  [Helmet / Special Def] [Full Set: Voto] STUB — Mente Intatta: gli effetti che ti fanno perdere il turno vengono riflessi sul lanciatore
+  [Gorget / Defense] [Full Set: Guardia] STUB — Gola Serrata: il sanguinamento non può essere riapplicato finché è attivo
+  [Gorget / Elemental Def] [Full Set: Veggente] STUB — Respiro di Brace: curi invece di subire danni la prima volta che ti Infiammi
+  [Gorget / Special Def] [Full Set: Voto] STUB — Voce Inflessibile: puoi usare una abilità anche durante il silenzio, una volta per combattimento
+  [Pauldron / Defense] [Full Set: Guardia] STUB — Spalla d'Acciaio: chi tenta di disarmarti subisce contraccolpo
+  [Pauldron / Elemental Def] [Full Set: Veggente] STUB — Parafulmine: la Scossa subita si scarica sul nemico più vicino
+  [Pauldron / Special Def] [Full Set: Voto] STUB — Spalla Consacrata: una maledizione a tua scelta viene dissolta a fine round
+  [Rerebrace / Defense] [Full Set: Guardia] STUB — Braccio Instancabile: il peso dell'arma non riduce più il numero di attacchi per turno
+  [Rerebrace / Elemental Def] [Full Set: Veggente] STUB — Ancora di Vento: non puoi essere spostato dalla tua posizione in combattimento
+  [Rerebrace / Special Def] [Full Set: Voto] STUB — Purga Lenta: a fine round rimuovi automaticamente il debuff più vecchio
+  [Couter / Defense] [Full Set: Guardia] STUB — Gomito Fermo: i colpi a distanza non possono essere critici contro di te
+  [Couter / Elemental Def] [Full Set: Veggente] STUB — Corrente Contraria: ogni rallentamento subito ti dà invece un turno di velocità
+  [Couter / Special Def] [Full Set: Voto] STUB — Vena Chiusa: ciò che il nemico ti drena viene restituito a te a fine combattimento
+  [Vanbrace / Defense] [Full Set: Guardia] STUB — Presa Ferrea: non perdi mai l'arma, nemmeno per effetti che ignorano le resistenze
+  [Vanbrace / Elemental Def] [Full Set: Veggente] STUB — Scaglia di Pietra: la Rottura subita si trasforma in armatura temporanea
+  [Vanbrace / Special Def] [Full Set: Voto] STUB — Nome Nascosto: il primo nemico che ti marchia perde il proprio turno
+  [Gauntlet / Defense] [Full Set: Guardia] STUB — Pugno Chiuso: puoi parare a mani nude senza penalità
+  [Gauntlet / Elemental Def] [Full Set: Veggente] STUB — Mano che Spezza: puoi interrompere una reazione elementale prima che si inneschi, una volta per combattimento
+  [Gauntlet / Special Def] [Full Set: Voto] STUB — Mano Salda: chi ti deruba lascia cadere un proprio oggetto
+  [Cuirasse / Defense] [Full Set: Guardia] STUB — Corazza Intera: i colpi critici contro di te diventano colpi normali
+  [Cuirasse / Elemental Def] [Full Set: Veggente] STUB — Guscio Prismatico: assorbi una volta per combattimento un attacco elementale e ne guadagni l'elemento
+  [Cuirasse / Special Def] [Full Set: Voto] STUB — Fede Inamovibile: nessun attacco può ignorare la tua armatura
+  [Cuisse / Speed] [Full Set: Passo] STUB — Passo Continuo: muoverti non consuma mai il turno
+  [Cuisse / Elusivity] [Full Set: Ombra] STUB — Vuoto: una schivata riuscita ti rende intangibile fino al tuo turno
+  [Poleyn / Speed] [Full Set: Passo] STUB — Ginocchio Leggero: l'armatura pesante non applica più penalità di velocità
+  [Poleyn / Elusivity] [Full Set: Ombra] STUB — Anticipo: agisci sempre per primo nel primo round di ogni combattimento
+  [Greave / Speed] [Full Set: Passo] STUB — Corsa Libera: immune a tutti gli effetti di rallentamento
+  [Greave / Elusivity] [Full Set: Ombra] STUB — Passo Muto: i nemici non ti individuano finché non attacchi
+  [Sabaton / Speed] [Full Set: Passo] STUB — Suola Salda: il terreno ostile non ti rallenta né ti danneggia
+  [Sabaton / Elusivity] [Full Set: Ombra] STUB — Dissolvenza: una fuga riuscita non fa perdere il loot né il progresso della zona

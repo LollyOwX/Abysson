@@ -93,6 +93,37 @@ public class Player extends Entity {
         return list;
     }
 
+    /** Tutti e 12 gli slot armatura, in ordine fisso — usato da activeArmorMatchGroup(). */
+    private EquipSlot[] allArmorSlots() {
+        return new EquipSlot[]{
+            helmetSlot, gorgetSlot, pauldronSlot, rerebraceSlot, couterSlot, vanbraceSlot,
+            gauntletSlot, cuirasseSlot, cuisseSlot, poleynSlot, greaveSlot, sabatonSlot
+        };
+    }
+
+    // Gruppo di abbinamento per il controllo "set completo da 12" — NON è l'armorSetID esatto
+    // del pezzo (quello resta 1..5, ognuno con il proprio fullSetOrStyleStub): è solo per
+    // decidere se due pezzi "contano" come parte dello stesso set quando li confronti.
+    // Guardia(1) e Passo(4) sono nello stesso gruppo, Veggente(2) e Ombra(5) pure — 3 upper e 2
+    // gambe non si dividono in pari, quindi Voto(3) resta da solo: un Voto completo da 12 pezzi
+    // non può esistere (nessuna gamba condivide il suo gruppo), resta al massimo un set da 8
+    // (solo upper). Indice = armorSetID, valore = gruppo.
+    private static final int[] MATCH_GROUP = {0, 1, 2, 3, 1, 2};
+
+    /** Il gruppo condiviso se TUTTI e 12 gli slot armatura sono pieni E appartengono allo
+     *  stesso gruppo (Guardia+Passo insieme contano come "stesso set" anche se armorSetID è
+     *  1 e 4 — è il gruppo che deve combaciare, non il numero esatto); altrimenti -1. */
+    public int activeArmorMatchGroup() {
+        Integer firstGroup = null;
+        for (EquipSlot s : allArmorSlots()) {
+            if (!(s.item instanceof items.Armor a)) return -1;
+            int group = MATCH_GROUP[a.armorSetID];
+            if (firstGroup == null) firstGroup = group;
+            else if (group != firstGroup) return -1;
+        }
+        return firstGroup;
+    }
+
     public Player(GamePanel gp, KeyHandler KeyH) {
         super(gp);
         this.gp = gp;
@@ -381,6 +412,17 @@ public class Player extends Entity {
         return statChanged ? stat - bonus : stat + bonus;
     }
 
+    /** Applica un moltiplicatore extra a una stat (es. un buff di combattimento) sopra a quello
+     *  già dato dall'equip — merge moltiplicativo nella stessa mappa di applySlotBonus(), poi
+     *  ricalcola subito. Nessun sistema di durata/decadimento: resta finché qualcosa non lo
+     *  toglie esplicitamente o il combattimento finisce (CombatState/Player vengono ricreati) —
+     *  è il punto di aggancio "pronto per buff/debuff futuri" di cui parla il commento sopra
+     *  statMultiplier, ancora inutilizzato da nessun effetto prima di questo. */
+    public void applyTemporaryMultiplier(StatType type, double factor) {
+        statMultiplier.merge(type, factor, (a, b) -> a * b);
+        recalculateStats();
+    }
+
     private void applySlotBonus(EquipSlot slot) {
         if (slot.item == null) return;
         for (Map.Entry<StatType, Integer> e : slot.item.statBonusPercent.entrySet()) {
@@ -427,6 +469,18 @@ public class Player extends Entity {
         slot.item = item;
         applySlotBonus(slot); // poi somma quelli del nuovo pezzo
         recalculateStats();
+
+        // Vincolo 1-mano/2-mani (vedi Weapon.WeaponSubtype.twoHanded): un'arma a due mani non
+        // può stare insieme a un'OffHand, e viceversa — equipaggiare l'una libera forzatamente
+        // l'altra, invece di lasciarle equipaggiate insieme in uno stato incoerente.
+        if (item.slot == items.Item.ItemSlot.MainHand
+                && item instanceof items.Weapon w && w.subtype.twoHanded
+                && offHandSlot.item != null) {
+            unequip(items.Item.ItemSlot.OffHand);
+        } else if (item.slot == items.Item.ItemSlot.OffHand
+                && mainHandSlot.item instanceof items.Weapon mw && mw.subtype.twoHanded) {
+            unequip(items.Item.ItemSlot.MainHand);
+        }
     }
 
     public void unequip(items.Item.ItemSlot slotType) {
