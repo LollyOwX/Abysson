@@ -477,7 +477,7 @@ public class CombatState {
      *  invariata. */
     private int effectiveDisarmChance(int baseChance, Entity target) {
         Weapon defWeapon = weaponOf(target);
-        int resistenza = (defWeapon != null) ? (defWeapon.guardia + defWeapon.manico) : 0;
+        int resistenza = (defWeapon != null) ? (defWeapon.guardiaBonus + defWeapon.manicoBonus) : 0;
         return Math.max(0, baseChance - resistenza * 10);
     }
 
@@ -736,7 +736,7 @@ public class CombatState {
         // Quanto l'arma difensiva "trema" rispetto al riposo quando intercetta — manico alto =
         // meno variazione, arma più precisa. Scelta di formula arbitraria, non bilanciata: solo
         // per avere qualcosa di funzionante da tarare in seguito.
-        double variance = 40.0 / (1 + defWeapon.manico / 20.0);
+        double variance = 40.0 / (1 + defWeapon.manicoBonus / 20.0);
         double defenseAngleDeg = defWeapon.staticGuard ? defWeapon.restAngleDeg
                 : defWeapon.restAngleDeg + (new Random().nextDouble() * 2 - 1) * variance;
 
@@ -754,16 +754,16 @@ public class CombatState {
 
         if (weakHit) {
             int loss = 8; // placeholder: quanta durabilità toglie un colpo su punto debole
-            defWeapon.legamenti = Math.max(0, defWeapon.legamenti - loss);
+            defWeapon.durability = Math.max(0, defWeapon.durability - loss);
             queueAction(monster.name + " blocks, but you hit a WEAK POINT! -" + loss + " durability");
         } else if (rigidHit) {
             int loss = 2; // placeholder: usura normale di un blocco riuscito
-            defWeapon.legamenti = Math.max(0, defWeapon.legamenti - loss);
+            defWeapon.durability = Math.max(0, defWeapon.durability - loss);
             queueAction(monster.name + " blocks your attack.");
         } else if (defWeapon.staticGuard) {
             // Uno scudo non può mai essere eluso: nessun overlap geometrico forza comunque un
             // blocco rigido, non un colpo passato.
-            defWeapon.legamenti = Math.max(0, defWeapon.legamenti - 2);
+            defWeapon.durability = Math.max(0, defWeapon.durability - 2);
             queueAction(monster.name + " blocks with the shield.");
         } else {
             queueAction("You slip past " + monster.name + "'s guard!");

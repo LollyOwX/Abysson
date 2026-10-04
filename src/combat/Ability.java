@@ -82,7 +82,12 @@ public class Ability {
 
     private static int offense(String id, Entity user) {
         Element e = getElement(id);
-        return isElemental(id) ? user.getElementAttack(e) : user.attack;
+        if (isElemental(id)) return user.getElementAttack(e);
+        if (id.equals("NormalAttack") && user instanceof entity.Player p
+                && p.mainHandSlot.item instanceof items.Weapon w) {
+            return w.baseDamage(user.attack);
+        }
+        return user.attack;
     }
 
     private static int defense(String id, Entity target) {

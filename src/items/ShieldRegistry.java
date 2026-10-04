@@ -20,7 +20,7 @@ public class ShieldRegistry {
             case "shield_defense_0_10_common": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo da scudiero";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 1;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 1;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -32,7 +32,7 @@ public class ShieldRegistry {
             case "shield_elemental_def_0_10_common": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo da scudiero";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 1;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 1;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -44,7 +44,7 @@ public class ShieldRegistry {
             case "shield_special_def_0_10_common": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo da scudiero";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 1;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 1;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -56,7 +56,7 @@ public class ShieldRegistry {
             case "shield_defense_10_20_common": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudetto da guardia";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 2;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 2;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -68,7 +68,7 @@ public class ShieldRegistry {
             case "shield_elemental_def_10_20_common": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudetto da guardia";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 2;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 2;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -80,7 +80,7 @@ public class ShieldRegistry {
             case "shield_special_def_10_20_common": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudetto da guardia";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 2;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 2;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -92,7 +92,7 @@ public class ShieldRegistry {
             case "shield_defense_10_20_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Targa di solida fattura";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 3;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 3;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -105,7 +105,7 @@ public class ShieldRegistry {
             case "shield_elemental_def_10_20_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Targa di solida fattura";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 3;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 3;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -118,7 +118,7 @@ public class ShieldRegistry {
             case "shield_special_def_10_20_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Targa di solida fattura";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 3;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 3;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -131,7 +131,7 @@ public class ShieldRegistry {
             case "shield_defense_20_30_common": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo da sentinella";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 4;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 4;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -143,7 +143,7 @@ public class ShieldRegistry {
             case "shield_elemental_def_20_30_common": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo da sentinella";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 4;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 4;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -155,7 +155,7 @@ public class ShieldRegistry {
             case "shield_special_def_20_30_common": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo da sentinella";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 4;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 4;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -167,7 +167,7 @@ public class ShieldRegistry {
             case "shield_defense_20_30_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo Rinforzato di buona guardia";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 5;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 5;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -180,7 +180,7 @@ public class ShieldRegistry {
             case "shield_elemental_def_20_30_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo Rinforzato di buona guardia";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 5;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 5;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -193,7 +193,7 @@ public class ShieldRegistry {
             case "shield_special_def_20_30_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo Rinforzato di buona guardia";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 5;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 5;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -206,7 +206,7 @@ public class ShieldRegistry {
             case "shield_defense_20_30_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo Torre del Maestro Scudiero";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 6;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 6;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -220,7 +220,7 @@ public class ShieldRegistry {
             case "shield_elemental_def_20_30_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo Torre del Maestro Scudiero";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 6;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 6;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -234,7 +234,7 @@ public class ShieldRegistry {
             case "shield_special_def_20_30_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo Torre del Maestro Scudiero";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 6;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 6;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -248,7 +248,7 @@ public class ShieldRegistry {
             case "shield_defense_30_40_common": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudetto da presidio";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 7;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 7;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -260,7 +260,7 @@ public class ShieldRegistry {
             case "shield_elemental_def_30_40_common": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudetto da presidio";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 7;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 7;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -272,7 +272,7 @@ public class ShieldRegistry {
             case "shield_special_def_30_40_common": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudetto da presidio";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 7;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 7;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -284,7 +284,7 @@ public class ShieldRegistry {
             case "shield_defense_30_40_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Targa di manifattura da assedio";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 8;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 8;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -297,7 +297,7 @@ public class ShieldRegistry {
             case "shield_elemental_def_30_40_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Targa di manifattura da assedio";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 8;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 8;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -310,7 +310,7 @@ public class ShieldRegistry {
             case "shield_special_def_30_40_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Targa di manifattura da assedio";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 8;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 8;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -323,7 +323,7 @@ public class ShieldRegistry {
             case "shield_defense_30_40_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo del Baluardo del Gran Difensore";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 9;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 9;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -337,7 +337,7 @@ public class ShieldRegistry {
             case "shield_elemental_def_30_40_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo del Baluardo del Gran Difensore";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 9;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 9;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -351,7 +351,7 @@ public class ShieldRegistry {
             case "shield_special_def_30_40_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo del Baluardo del Gran Difensore";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 9;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 9;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -365,7 +365,7 @@ public class ShieldRegistry {
             case "shield_defense_30_40_mythic": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo del Baluardo Caduto";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 10;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 10;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -380,7 +380,7 @@ public class ShieldRegistry {
             case "shield_elemental_def_30_40_mythic": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo del Baluardo Caduto";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 10;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 10;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -395,7 +395,7 @@ public class ShieldRegistry {
             case "shield_special_def_30_40_mythic": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo del Baluardo Caduto";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 10;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 10;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -410,7 +410,7 @@ public class ShieldRegistry {
             case "shield_defense_40_50_common": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo da milizia";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 11;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 11;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -422,7 +422,7 @@ public class ShieldRegistry {
             case "shield_elemental_def_40_50_common": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo da milizia";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 11;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 11;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -434,7 +434,7 @@ public class ShieldRegistry {
             case "shield_special_def_40_50_common": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo da milizia";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 11;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 11;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -446,7 +446,7 @@ public class ShieldRegistry {
             case "shield_defense_40_50_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo Rinforzato di ferrea guardia";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 12;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 12;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -459,7 +459,7 @@ public class ShieldRegistry {
             case "shield_elemental_def_40_50_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo Rinforzato di ferrea guardia";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 12;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 12;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -472,7 +472,7 @@ public class ShieldRegistry {
             case "shield_special_def_40_50_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo Rinforzato di ferrea guardia";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 12;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 12;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -485,7 +485,7 @@ public class ShieldRegistry {
             case "shield_defense_40_50_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo Torre del Guardiano Supremo";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 13;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 13;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -499,7 +499,7 @@ public class ShieldRegistry {
             case "shield_elemental_def_40_50_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo Torre del Guardiano Supremo";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 13;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 13;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -513,7 +513,7 @@ public class ShieldRegistry {
             case "shield_special_def_40_50_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo Torre del Guardiano Supremo";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 13;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 13;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -527,7 +527,7 @@ public class ShieldRegistry {
             case "shield_defense_40_50_mythic": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo del Baluardo Eterno";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 14;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 14;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -542,7 +542,7 @@ public class ShieldRegistry {
             case "shield_elemental_def_40_50_mythic": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo del Baluardo Eterno";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 14;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 14;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -557,7 +557,7 @@ public class ShieldRegistry {
             case "shield_special_def_40_50_mythic": {
                 Weapon w = new Weapon(WeaponSubtype.SCUDO);
                 w.name = "Scudo del Baluardo Eterno";
-                w.affilatezza = 1; w.pomo = -2; w.guardia = 14;
+                w.affilatezza = 1; w.pomo[0] = -2; w.metalli[0] = 14;
                 w.canDefend = true;
                 w.staticGuard = true; // non ruota mai, non può essere eluso
                 w.restAngleDeg = 0;
@@ -574,7 +574,7 @@ public class ShieldRegistry {
             case "broquel_defense_0_10_common": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel da scudiero";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 1;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 1;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -585,7 +585,7 @@ public class ShieldRegistry {
             case "broquel_elemental_def_0_10_common": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel da scudiero";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 1;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 1;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -596,7 +596,7 @@ public class ShieldRegistry {
             case "broquel_special_def_0_10_common": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel da scudiero";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 1;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 1;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -607,7 +607,7 @@ public class ShieldRegistry {
             case "broquel_defense_10_20_common": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Rotellino da guardia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 2;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 2;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -618,7 +618,7 @@ public class ShieldRegistry {
             case "broquel_elemental_def_10_20_common": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Rotellino da guardia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 2;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 2;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -629,7 +629,7 @@ public class ShieldRegistry {
             case "broquel_special_def_10_20_common": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Rotellino da guardia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 2;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 2;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -640,7 +640,7 @@ public class ShieldRegistry {
             case "broquel_defense_10_20_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Rotella di solida fattura";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 3;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 3;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -652,7 +652,7 @@ public class ShieldRegistry {
             case "broquel_elemental_def_10_20_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Rotella di solida fattura";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 3;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 3;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -664,7 +664,7 @@ public class ShieldRegistry {
             case "broquel_special_def_10_20_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Rotella di solida fattura";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 3;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 3;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -676,7 +676,7 @@ public class ShieldRegistry {
             case "broquel_defense_20_30_common": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel da sentinella";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 4;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 4;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -687,7 +687,7 @@ public class ShieldRegistry {
             case "broquel_elemental_def_20_30_common": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel da sentinella";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 4;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 4;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -698,7 +698,7 @@ public class ShieldRegistry {
             case "broquel_special_def_20_30_common": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel da sentinella";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 4;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 4;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -709,7 +709,7 @@ public class ShieldRegistry {
             case "broquel_defense_20_30_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel Rinforzato di buona guardia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 5;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 5;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -721,7 +721,7 @@ public class ShieldRegistry {
             case "broquel_elemental_def_20_30_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel Rinforzato di buona guardia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 5;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 5;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -733,7 +733,7 @@ public class ShieldRegistry {
             case "broquel_special_def_20_30_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel Rinforzato di buona guardia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 5;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 5;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -745,7 +745,7 @@ public class ShieldRegistry {
             case "broquel_defense_20_30_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Brocchiero del Maestro Scudiero";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 6;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 6;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -758,7 +758,7 @@ public class ShieldRegistry {
             case "broquel_elemental_def_20_30_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Brocchiero del Maestro Scudiero";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 6;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 6;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -771,7 +771,7 @@ public class ShieldRegistry {
             case "broquel_special_def_20_30_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Brocchiero del Maestro Scudiero";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 6;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 6;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -784,7 +784,7 @@ public class ShieldRegistry {
             case "broquel_defense_30_40_common": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Rotellino da presidio";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 7;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 7;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -795,7 +795,7 @@ public class ShieldRegistry {
             case "broquel_elemental_def_30_40_common": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Rotellino da presidio";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 7;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 7;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -806,7 +806,7 @@ public class ShieldRegistry {
             case "broquel_special_def_30_40_common": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Rotellino da presidio";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 7;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 7;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -817,7 +817,7 @@ public class ShieldRegistry {
             case "broquel_defense_30_40_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Rotella di manifattura da assedio";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 8;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 8;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -829,7 +829,7 @@ public class ShieldRegistry {
             case "broquel_elemental_def_30_40_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Rotella di manifattura da assedio";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 8;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 8;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -841,7 +841,7 @@ public class ShieldRegistry {
             case "broquel_special_def_30_40_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Rotella di manifattura da assedio";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 8;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 8;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -853,7 +853,7 @@ public class ShieldRegistry {
             case "broquel_defense_30_40_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel del Duellante del Gran Difensore";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 9;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 9;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -866,7 +866,7 @@ public class ShieldRegistry {
             case "broquel_elemental_def_30_40_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel del Duellante del Gran Difensore";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 9;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 9;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -879,7 +879,7 @@ public class ShieldRegistry {
             case "broquel_special_def_30_40_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel del Duellante del Gran Difensore";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 9;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 9;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -892,7 +892,7 @@ public class ShieldRegistry {
             case "broquel_defense_30_40_mythic": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel del Duellante Esiliato";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 10;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 10;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -906,7 +906,7 @@ public class ShieldRegistry {
             case "broquel_elemental_def_30_40_mythic": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel del Duellante Esiliato";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 10;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 10;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -920,7 +920,7 @@ public class ShieldRegistry {
             case "broquel_special_def_30_40_mythic": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel del Duellante Esiliato";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 10;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 10;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -934,7 +934,7 @@ public class ShieldRegistry {
             case "broquel_defense_40_50_common": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel da milizia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 11;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 11;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -945,7 +945,7 @@ public class ShieldRegistry {
             case "broquel_elemental_def_40_50_common": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel da milizia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 11;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 11;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -956,7 +956,7 @@ public class ShieldRegistry {
             case "broquel_special_def_40_50_common": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel da milizia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 11;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 11;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -967,7 +967,7 @@ public class ShieldRegistry {
             case "broquel_defense_40_50_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel Rinforzato di ferrea guardia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 12;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 12;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -979,7 +979,7 @@ public class ShieldRegistry {
             case "broquel_elemental_def_40_50_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel Rinforzato di ferrea guardia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 12;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 12;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -991,7 +991,7 @@ public class ShieldRegistry {
             case "broquel_special_def_40_50_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel Rinforzato di ferrea guardia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 12;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 12;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -1003,7 +1003,7 @@ public class ShieldRegistry {
             case "broquel_defense_40_50_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Brocchiero del Guardiano Supremo";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 13;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 13;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -1016,7 +1016,7 @@ public class ShieldRegistry {
             case "broquel_elemental_def_40_50_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Brocchiero del Guardiano Supremo";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 13;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 13;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -1029,7 +1029,7 @@ public class ShieldRegistry {
             case "broquel_special_def_40_50_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Brocchiero del Guardiano Supremo";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 13;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 13;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -1042,7 +1042,7 @@ public class ShieldRegistry {
             case "broquel_defense_40_50_mythic": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel del Duellante Immortale";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 14;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 14;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -1056,7 +1056,7 @@ public class ShieldRegistry {
             case "broquel_elemental_def_40_50_mythic": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel del Duellante Immortale";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 14;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 14;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -1070,7 +1070,7 @@ public class ShieldRegistry {
             case "broquel_special_def_40_50_mythic": {
                 Weapon w = new Weapon(WeaponSubtype.BROQUEL);
                 w.name = "Broquel del Duellante Immortale";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 14;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 14;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-15, -20, 30, 25), ZoneType.RIGID));
@@ -1086,7 +1086,7 @@ public class ShieldRegistry {
             case "sai_defense_0_10_common": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai da scudiero";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 1;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 1;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1097,7 +1097,7 @@ public class ShieldRegistry {
             case "sai_elemental_def_0_10_common": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai da scudiero";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 1;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 1;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1108,7 +1108,7 @@ public class ShieldRegistry {
             case "sai_special_def_0_10_common": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai da scudiero";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 1;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 1;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1119,7 +1119,7 @@ public class ShieldRegistry {
             case "sai_defense_10_20_common": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Pugnale a Uncino da guardia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 2;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 2;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1130,7 +1130,7 @@ public class ShieldRegistry {
             case "sai_elemental_def_10_20_common": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Pugnale a Uncino da guardia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 2;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 2;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1141,7 +1141,7 @@ public class ShieldRegistry {
             case "sai_special_def_10_20_common": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Pugnale a Uncino da guardia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 2;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 2;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1152,7 +1152,7 @@ public class ShieldRegistry {
             case "sai_defense_10_20_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Pugnale a Forcella di solida fattura";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 3;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 3;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1164,7 +1164,7 @@ public class ShieldRegistry {
             case "sai_elemental_def_10_20_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Pugnale a Forcella di solida fattura";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 3;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 3;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1176,7 +1176,7 @@ public class ShieldRegistry {
             case "sai_special_def_10_20_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Pugnale a Forcella di solida fattura";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 3;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 3;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1188,7 +1188,7 @@ public class ShieldRegistry {
             case "sai_defense_20_30_common": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai da sentinella";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 4;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 4;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1199,7 +1199,7 @@ public class ShieldRegistry {
             case "sai_elemental_def_20_30_common": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai da sentinella";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 4;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 4;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1210,7 +1210,7 @@ public class ShieldRegistry {
             case "sai_special_def_20_30_common": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai da sentinella";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 4;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 4;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1221,7 +1221,7 @@ public class ShieldRegistry {
             case "sai_defense_20_30_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai Ricurvo di buona guardia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 5;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 5;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1233,7 +1233,7 @@ public class ShieldRegistry {
             case "sai_elemental_def_20_30_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai Ricurvo di buona guardia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 5;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 5;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1245,7 +1245,7 @@ public class ShieldRegistry {
             case "sai_special_def_20_30_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai Ricurvo di buona guardia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 5;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 5;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1257,7 +1257,7 @@ public class ShieldRegistry {
             case "sai_defense_20_30_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai da Duello del Maestro Scudiero";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 6;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 6;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1270,7 +1270,7 @@ public class ShieldRegistry {
             case "sai_elemental_def_20_30_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai da Duello del Maestro Scudiero";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 6;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 6;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1283,7 +1283,7 @@ public class ShieldRegistry {
             case "sai_special_def_20_30_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai da Duello del Maestro Scudiero";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 6;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 6;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1296,7 +1296,7 @@ public class ShieldRegistry {
             case "sai_defense_30_40_common": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Pugnale a Uncino da presidio";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 7;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 7;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1307,7 +1307,7 @@ public class ShieldRegistry {
             case "sai_elemental_def_30_40_common": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Pugnale a Uncino da presidio";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 7;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 7;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1318,7 +1318,7 @@ public class ShieldRegistry {
             case "sai_special_def_30_40_common": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Pugnale a Uncino da presidio";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 7;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 7;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1329,7 +1329,7 @@ public class ShieldRegistry {
             case "sai_defense_30_40_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Pugnale a Forcella di manifattura da assedio";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 8;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 8;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1341,7 +1341,7 @@ public class ShieldRegistry {
             case "sai_elemental_def_30_40_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Pugnale a Forcella di manifattura da assedio";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 8;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 8;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1353,7 +1353,7 @@ public class ShieldRegistry {
             case "sai_special_def_30_40_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Pugnale a Forcella di manifattura da assedio";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 8;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 8;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1365,7 +1365,7 @@ public class ShieldRegistry {
             case "sai_defense_30_40_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai del Maestro del Gran Difensore";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 9;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 9;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1378,7 +1378,7 @@ public class ShieldRegistry {
             case "sai_elemental_def_30_40_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai del Maestro del Gran Difensore";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 9;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 9;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1391,7 +1391,7 @@ public class ShieldRegistry {
             case "sai_special_def_30_40_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai del Maestro del Gran Difensore";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 9;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 9;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1404,7 +1404,7 @@ public class ShieldRegistry {
             case "sai_defense_30_40_mythic": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai del Serpente Silenzioso";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 10;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 10;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1418,7 +1418,7 @@ public class ShieldRegistry {
             case "sai_elemental_def_30_40_mythic": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai del Serpente Silenzioso";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 10;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 10;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1432,7 +1432,7 @@ public class ShieldRegistry {
             case "sai_special_def_30_40_mythic": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai del Serpente Silenzioso";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 10;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 10;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1446,7 +1446,7 @@ public class ShieldRegistry {
             case "sai_defense_40_50_common": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai da milizia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 11;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 11;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1457,7 +1457,7 @@ public class ShieldRegistry {
             case "sai_elemental_def_40_50_common": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai da milizia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 11;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 11;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1468,7 +1468,7 @@ public class ShieldRegistry {
             case "sai_special_def_40_50_common": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai da milizia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 11;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 11;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1479,7 +1479,7 @@ public class ShieldRegistry {
             case "sai_defense_40_50_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai Ricurvo di ferrea guardia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 12;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 12;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1491,7 +1491,7 @@ public class ShieldRegistry {
             case "sai_elemental_def_40_50_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai Ricurvo di ferrea guardia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 12;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 12;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1503,7 +1503,7 @@ public class ShieldRegistry {
             case "sai_special_def_40_50_high_quality": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai Ricurvo di ferrea guardia";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 12;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 12;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1515,7 +1515,7 @@ public class ShieldRegistry {
             case "sai_defense_40_50_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai da Duello del Guardiano Supremo";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 13;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 13;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1528,7 +1528,7 @@ public class ShieldRegistry {
             case "sai_elemental_def_40_50_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai da Duello del Guardiano Supremo";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 13;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 13;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1541,7 +1541,7 @@ public class ShieldRegistry {
             case "sai_special_def_40_50_masterwork": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai da Duello del Guardiano Supremo";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 13;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 13;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1554,7 +1554,7 @@ public class ShieldRegistry {
             case "sai_defense_40_50_mythic": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai del Serpente Ancestrale";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 14;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 14;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1568,7 +1568,7 @@ public class ShieldRegistry {
             case "sai_elemental_def_40_50_mythic": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai del Serpente Ancestrale";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 14;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 14;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));
@@ -1582,7 +1582,7 @@ public class ShieldRegistry {
             case "sai_special_def_40_50_mythic": {
                 Weapon w = new Weapon(WeaponSubtype.SAI);
                 w.name = "Sai del Serpente Ancestrale";
-                w.affilatezza = 1; w.pomo = 2; w.guardia = 14;
+                w.affilatezza = 1; w.pomo[0] = 2; w.metalli[0] = 14;
                 w.canDefend = true;
                 w.restAngleDeg = 0;
                 w.defenseZones.add(new Weapon.DefenseZone(new Rectangle2D.Double(-4, -35, 8, 35), ZoneType.RIGID));

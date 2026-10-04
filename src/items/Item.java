@@ -61,10 +61,10 @@ public abstract class Item {
     // quest'ordine).
     public Map<StatType, Integer> statBonusPercent = new EnumMap<>(StatType.class);
 
-    // Stadio "moltiplicatore" per stat (1.0 = nessun effetto) — popolato SOLO da
-    // applyQualityLevel() (affilatezza/rifiniture), sulle stesse stat che l'oggetto ha appena
-    // messo in statBonusPercent. Player lo somma (moltiplica) insieme a quello delle altre fonti
-    // (buff/debuff) nel suo statMultiplier — vedi Player.applySlotBonus()/mult().
+    // Stadio "moltiplicatore" per stat (1.0 = nessun effetto) — oggi nessun oggetto lo popola
+    // (la qualità scala direttamente statBonusPercent, vedi applyQualityLevel()). Resta per
+    // buff/debuff futuri: Player lo moltiplica nel suo statMultiplier — vedi
+    // Player.applySlotBonus()/mult().
     public Map<StatType, Double> statMultiplier = new EnumMap<>(StatType.class);
 
     // Effetti risolti da gemme/incantesimi/rocce (vedi addComponents()) — SEMPRE effetti
@@ -87,19 +87,44 @@ public abstract class Item {
     }
 
     /**
-     * Moltiplicatore di qualità (affilatezza per Weapon, rifiniture per Armor) — 0.25 per
-     * livello, applicato a TUTTE le stat che l'oggetto ha appena messo in statBonusPercent (non
-     * solo la "principale"): scelta interpretativa esplicita, la spec non diceva se limitarlo a
-     * una singola stat — correggimi se intendevi solo quella principale dell'oggetto.
-     * level=0 non tocca nulla (niente moltiplicatore 1.0 esplicito, statMultiplier resta vuoto
-     * per quella stat — equivalente, ma non sporca la mappa per niente).
+     * Qualità (affilatezza per Weapon, rifiniture per Armor): scala di poco TUTTI i bonus % che
+     * l'oggetto ha appena messo in statBonusPercent — solo quelli dell'oggetto, non la stat
+     * intera del Player. Il grosso del bonus resta quello dei component (ID -> bonus, vedi
+     * ComponentRegistry). Arrotondato all'intero più vicino (statBonusPercent è intero).
      */
+    protected static final double QUALITY_STEP = 0.25; // per livello
     protected void applyQualityLevel(int level) {
         if (level == 0) return;
-        double factor = 1.0 + 0.25 * level;
-        for (StatType t : statBonusPercent.keySet()) {
-            statMultiplier.merge(t, factor, (a, b) -> a * b);
+        double factor = 1.0 + QUALITY_STEP * level;
+        statBonusPercent.replaceAll((t, v) -> (int) Math.round(v * factor));
+    }
+
+    // ── Durabilità ────────────────────────────────────────────
+    // 100 per tutti; le armi a distanza vere la leggono da struttura[0] (vedi Weapon). durability
+    // parte da -1 = "non ancora inizializzata": si riempie al primo computeBonusPercent().
+    public int maxDurability = 100;
+    public int durability = -1;
+
+    protected void initDurability() {
+        if (durability < 0 || durability > maxDurability) durability = maxDurability;
+    }
+
+    // Somma al statBonusPercent il bonus di ogni ID in ids[fromSlot..] per quella famiglia/component.
+    protected void addComponentBonus(ComponentRegistry.Family f, ComponentRegistry.Part p, int[] ids, int fromSlot) {
+        for (int i = fromSlot; i < ids.length; i++) {
+            ComponentRegistry.Entry e = ComponentRegistry.get(f, p, ids[i]);
+            if (e != null && e.stat != null) statBonusPercent.merge(e.stat, e.value, Integer::sum);
         }
+    }
+
+    // Somma i valori di un component senza StatType (guardia/manico: resistenza al disarmo).
+    protected int componentValueSum(ComponentRegistry.Family f, ComponentRegistry.Part p, int[] ids) {
+        int sum = 0;
+        for (int id : ids) {
+            ComponentRegistry.Entry e = ComponentRegistry.get(f, p, id);
+            if (e != null) sum += e.value;
+        }
+        return sum;
     }
 
     // ── Rarità e bonus a scaglioni ───────────────────────────────
