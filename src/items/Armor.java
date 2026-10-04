@@ -1,7 +1,5 @@
 package items;
 
-import entity.StatType;
-
 /**
  * Un'armatura. I 12 tipi mappano 1:1 sui 12 slot armatura, tutti distinti dai Gioielli — Helmet
  * e Gorget NON condividono nulla con Corona/Collana (vedi Item.ItemSlot: Weapon/Armor/Jewelry
@@ -22,14 +20,14 @@ public class Armor extends Item {
     public final ArmorType armorType;
     public WeightClass weightClass;
 
-    // rifiniture è un LIVELLO (non un ID): moltiplica il bonus totale, non lo genera — vedi
-    // Item.applyQualityLevel(). metallo/legamenti sono ID: il numero non è più il bonus stesso,
-    // è una chiave in MaterialRegistry che lo risolve. sostegno resta un ID "pronto" ma senza
-    // tabella ancora.
-    public int rifiniture; // livello: 0.25x di moltiplicatore per livello sul bonus totale del pezzo
-    public int metallo;    // ID -> DIFESA (MaterialRegistry.armorMetallo) — stat principale: resistenza ai danni
-    public int sostegno;   // ID senza tabella — durabilità, nessuna stat "durabilità" esiste ancora
-    public int legamenti;  // ID -> VELOCITA (MaterialRegistry.armorLegamenti) — stat principale: mobilità
+    // rifiniture è un LIVELLO (non un ID): scala di poco tutti i bonus del pezzo — vedi
+    // Item.applyQualityLevel(). Gli altri campi sono component: nomecomponent[slot] = ID,
+    // risolto da ComponentRegistry (famiglia ARMOR).
+    public int rifiniture;
+    public final int[] metalli   = new int[3]; // -> DIFESA, fino a 3, sommati
+    public final int[] legamenti = new int[1]; // -> VELOCITA
+    public final int[] sostegno  = new int[1]; // nessuna tabella ancora
+    public int armorSetID;                     // 1=Guardia 2=Veggente 3=Voto (upper) — 4=Passo 5=Ombra (gambe)
 
     public final Component[] incantesimi = new Component[2]; // "[1] ovvero 2 incantesimi"
 
@@ -54,20 +52,16 @@ public class Armor extends Item {
     }
 
     /**
-     * "Add components": metallo -> DIFESA ("resistenza ai danni"), legamenti -> VELOCITA
-     * ("mobilità" — scelta interpretativa, poteva essere ELUSIONE altrettanto ragionevolmente),
-     * entrambi via il proprio metodo in MaterialRegistry. sostegno non produce bonus (vedi
-     * commento sul campo sopra — nessuna tabella ancora). rifiniture chiude il calcolo
-     * moltiplicando quello che è stato appena messo in statBonusPercent (vedi
-     * Item.applyQualityLevel()).
+     * "Add components": metalli -> DIFESA, legamenti -> VELOCITA via ComponentRegistry (famiglia
+     * ARMOR), poi applyQualityLevel(rifiniture). Durabilità 100.
      */
     @Override
     public void computeBonusPercent() {
         clearComputedBonuses();
-        int difBonus = MaterialRegistry.armorMetallo(metallo);
-        if (difBonus != 0) statBonusPercent.merge(StatType.DIFESA, difBonus, Integer::sum);
-        int velBonus = MaterialRegistry.armorLegamenti(legamenti);
-        if (velBonus != 0) statBonusPercent.merge(StatType.VELOCITA, velBonus, Integer::sum);
+        addComponentBonus(ComponentRegistry.Family.ARMOR, ComponentRegistry.Part.METALLI, metalli, 0);
+        addComponentBonus(ComponentRegistry.Family.ARMOR, ComponentRegistry.Part.LEGAMENTI, legamenti, 0);
+        addComponentBonus(ComponentRegistry.Family.ARMOR, ComponentRegistry.Part.SOSTEGNO, sostegno, 0);
+        initDurability();
         addComponents(incantesimi);
         applyQualityLevel(rifiniture);
     }

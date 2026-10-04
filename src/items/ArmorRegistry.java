@@ -12,7 +12,9 @@ import items.Armor.WeightClass;
  * 2=Veggente/3=Voto (upper, per Build), 4=Passo/5=Ombra (gambe, per Build) — vedi
  * Player.activeArmorSetID(). Generato da script a partire dalla scheda Equip.
  */
-public class ArmorRegistry {
+public class
+
+ArmorRegistry {
     public static Armor get(String id) {
         switch (id) {
             // ══════ Helmet ══════

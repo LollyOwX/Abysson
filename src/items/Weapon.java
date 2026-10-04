@@ -13,25 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Un'arma. I campi restano dati grezzi tradotti in bonus % reali da computeBonusPercent()
- * (l'"add components", vedi Item) quando l'oggetto viene equipaggiato. Le probabilità
- * (disarmChance, stunChance, counterattackChance) e penetratesUpTo non hanno un default
- * "giusto": restano a 0/null finché non li imposta chi crea l'istanza vera (vedi
- * WeaponRegistry) — i numeri lì dentro sono di esempio, non un bilanciamento reale.
- *
- * Componenti per categoria (nomi tuoi, con quale StatType risolvono se non specificato
- * altrimenti nel commento sul campo):
- *   Mischia (SPADE/MAZZE/LANCE) e Coltello da Lancio ("stessa composizione della mischia"):
- *     Pomello(pomo)=peso->VELOCITA, Manico(manico)=controllo (senza tabella), Guardia(guardia)
- *     =riduce i danni alle mani se subiti (non uno statBonusPercent: vedi CombatState.
- *     effectiveDisarmChance()), Lama(lama)=durabilità (senza tabella), Punta(punta)=danni
- *     ->ATTACK — UNICA fonte di danno ora (prima taglio/contundente/peso, sostituiti).
- *   Armi a distanza vere (ARCO_CORTO/ARCO_LUNGO/BALESTRA, non il Coltello):
- *     Corda(corda)=danni->ATTACK, legamenti=durabilità (senza tabella, riusa il campo sotto),
- *     Struttura(struttura)=precisione->PRECISIONE.
- *   Difensive (SCUDO/BROQUEL/SAI — "stesso sistema di Armor, gestito come un'arma"):
- *     Metalli(metalli[0..2])=resistenza->DIFESA (fino a 3, sommati, come Armor.metalli),
- *     legamenti=durabilità (senza tabella, stesso campo di cui sopra, riusato).
+ * Un'arma. I campi grezzi sono array di component (nomecomponent[slot] = ID) tradotti in bonus
+ * da computeBonusPercent() (l'"add components", vedi Item) tramite ComponentRegistry, per
+ * famiglia: Mischia (SPADE/MAZZE/LANCE + Coltello da Lancio), Distanza (ARCO_CORTO/ARCO_LUNGO/
+ * BALESTRA), Scudo (SCUDO/BROQUEL/SAI). Le probabilità (disarmChance, stunChance,
+ * counterattackChance) e penetratesUpTo non hanno un default "giusto": restano a 0/null finché
+ * non li imposta chi crea l'istanza vera (vedi WeaponRegistry) — i numeri lì dentro sono di
+ * esempio, non un bilanciamento reale.
  */
 public class Weapon extends Item {
 
@@ -69,44 +57,34 @@ public class Weapon extends Item {
 
     public final WeaponSubtype subtype;
 
-    // affilatezza è un LIVELLO (non un ID): moltiplica il bonus totale, non lo genera — vedi
-    // Item.applyQualityLevel(). Gli altri campi numerici sono ID: il numero non è più il bonus
-    // stesso, è una chiave in MaterialRegistry che lo risolve (stesso id = stesso effetto su
-    // qualunque arma) — ECCETTO guardia, che è un modificatore diretto (vedi sotto), non un ID.
-    public int affilatezza; // livello: 0.25x di moltiplicatore per livello sul bonus totale dell'arma
+    // affilatezza è un LIVELLO (non un ID): scala di poco tutti i bonus dell'oggetto — vedi
+    // Item.applyQualityLevel(). Tutti gli altri campi sono component: nomecomponent[slot] = ID,
+    // risolto da ComponentRegistry per la famiglia dell'arma (l'ID 4 di pomo non è l'ID 4 di
+    // corda). Un campo senza tabella per la famiglia dell'arma non produce nulla.
+    public int affilatezza;
 
     // ── Mischia + Coltello da Lancio ─────────────────────────────
-    public int pomo;    // Pomello: peso — ID -> VELOCITA (MaterialRegistry.weaponPomo)
-    // Manico: controllo — riduce la probabilità di essere disarmato ESATTAMENTE come Guardia
-    // (10 punti = -10%, si sommano tra loro): vedi CombatState.effectiveDisarmChance(). Non è
-    // un bonus %/StatType, non passa da MaterialRegistry — un numero diretto, non un ID.
-    public int manico;
-    // Guardia: riduce i danni alle mani SE SUBITI (disarmo) — non passa da MaterialRegistry,
-    // è un numero di "resistenza" sottratto direttamente dalla probabilità di disarmo
-    // dell'avversario in CombatState.effectiveDisarmChance() (10 punti = -10% di probabilità),
-    // non un bonus %/StatType come le altre.
-    public int guardia;
-    // Lama: durabilità — quanto danno può assorbire l'arma prima di rompersi, PUNTI DIRETTI
-    // (range fisso 0-100, non un ID: non passa da MaterialRegistry, il numero È i punti).
-    // Nessun evento la consuma ancora (a differenza di Weapon.legamenti sulle Difensive, che
-    // la parata già scala — vedi CombatState linee 755+): manca un evento di usura per le armi
-    // da mischia equivalente alla parata, e nessuna logica di "cosa succede a durabilità 0"
-    // (rottura? malus? niente?) — lasciata aperta, vedi STATUS.md.
-    public int lama;
-    public int punta; // Punta: danni — ID -> ATTACK (MaterialRegistry.blade) — unica fonte di danno per la mischia
+    public final int[] pomo   = new int[1]; // -> VELOCITA
+    public final int[] manico = new int[1]; // -> controllo: resistenza al disarmo (manicoBonus)
+    public final int[] guardia = new int[1]; // -> resistenza al disarmo (guardiaBonus)
+    public final int[] lama   = new int[1]; // nessuna tabella ancora
+    // Punta: -> ATTACK. Nelle MAZZE (Mazza Chiodata, Ascia, Spadone) punta[0] NON è un ID: è il
+    // peso dell'arma, un valore diretto (vedi baseDamage()).
+    public final int[] punta  = new int[1];
 
     // ── Solo armi a distanza vere (non il Coltello, che usa i campi sopra) ──
-    public int corda;     // Corda: danni — ID -> ATTACK (MaterialRegistry.blade)
-    public int struttura; // Struttura: precisione — ID -> PRECISIONE (MaterialRegistry.weaponStruttura)
+    public final int[] corda = new int[1];     // -> PRECISIONE
+    public final int[] struttura = new int[1]; // NON è un ID: durabilità massima, valore diretto (le altre armi hanno 100)
+    // legamenti (sotto) nelle armi a distanza -> ATTACK
 
-    // ── Solo Difensive (Scudo/Broquel/Sai) ───────────────────────
-    public final int[] metalli = new int[3]; // Metalli: resistenza — ID -> DIFESA (MaterialRegistry.armorMetallo), fino a 3, sommati — come Armor.metalli
+    // ── Scudi e armature (Difensive) ─────────────────────────────
+    public final int[] metalli   = new int[3]; // -> DIFESA, fino a 3, sommati
+    public final int[] legamenti = new int[1]; // distanza: -> ATTACK; scudi: nessuna tabella ancora
 
-    // legamenti: durabilità — PUNTI DIRETTI (range fisso 0-100, non un ID: non passa da
-    // MaterialRegistry), stessa semantica di Lama. Riusato da armi a distanza vere E Difensive
-    // (queste ultime lo scalano già durante la parata — vedi CombatState linee 755+). Non
-    // usato dalla mischia (quella ha Lama per lo stesso ruolo).
-    public int legamenti;
+    // Valori risolti da computeBonusPercent() per guardia/manico (non sono un StatType): letti da
+    // CombatState per disarmo e parata.
+    public int guardiaBonus;
+    public int manicoBonus;
 
     public int disarmChance;        // % probabilità di disarmare l'avversario — Frusta
     public int stunChance;          // % probabilità di stordire 1 turno — Falce (riusa StatusEffect.STORDIMENTO)
@@ -182,37 +160,60 @@ public class Weapon extends Item {
         }
     }
 
+    public ComponentRegistry.Family family() {
+        if (subtype.category == WeaponCategory.DIFENSIVE) return ComponentRegistry.Family.SHIELD;
+        if (subtype.category == WeaponCategory.ARMI_A_DISTANZA && subtype != WeaponSubtype.COLTELLO_DA_LANCIO)
+            return ComponentRegistry.Family.RANGED;
+        return ComponentRegistry.Family.MELEE;
+    }
+
+    /** MAZZE: punta[0] è il peso, danno diretto invece di un ID. */
+    public boolean usesWeightDamage() {
+        return subtype.category == WeaponCategory.MAZZE;
+    }
+
     /**
-     * "Add components", diverso per categoria (vedi il commento in testa alla classe):
-     *   Difensive     -> somma metalli[0..2] su DIFESA (come Armor.metalli)
-     *   Distanza vere -> corda su ATTACK, struttura su PRECISIONE
-     *   Tutto il resto (mischia + Coltello, che usa la stessa composizione) -> punta su
-     *                    ATTACK, pomo su VELOCITA
-     * guardia NON entra qui: non è un bonus %, è letto direttamente da CombatState quando
-     * serve (resistenza al disarmo) — vedi il commento sul campo. manico/lama/legamenti non
-     * producono bonus (nessuna tabella ancora, vedi i commenti sui campi). affilatezza chiude
-     * il calcolo moltiplicando quello appena messo in statBonusPercent (Item.
-     * applyQualityLevel()). Scelte interpretative, non numeri o formule che mi hai dato tu:
-     * correggile se non vanno bene.
+     * Danno base di NormalAttack per chi impugna l'arma. Mazza Chiodata/Ascia: danno = peso
+     * (l'ATK del Player non conta, solo gli ATTACK % dell'arma stessa, es. gemme/incantesimi).
+     * Spadone: danno = ATK + peso. Tutte le altre armi: ATK.
+     */
+    public int baseDamage(int atk) {
+        if (subtype == WeaponSubtype.SPADONE) return atk + punta[0];
+        if (usesWeightDamage()) {
+            return (int) Math.round(punta[0] * (1 + statBonusPercent.getOrDefault(StatType.ATTACK, 0) / 100.0));
+        }
+        return atk;
+    }
+
+    /**
+     * "Add components": per la famiglia dell'arma somma ogni component al suo StatType (prima
+     * della qualità), poi chiude con applyQualityLevel(affilatezza). Durabilità: 100 per tutte,
+     * struttura[0] per le armi a distanza vere.
      */
     @Override
     public void computeBonusPercent() {
         clearComputedBonuses();
-        if (subtype.category == WeaponCategory.DIFENSIVE) {
-            int difBonus = 0;
-            for (int m : metalli) difBonus += MaterialRegistry.armorMetallo(m);
-            if (difBonus != 0) statBonusPercent.merge(StatType.DIFESA, difBonus, Integer::sum);
-        } else if (subtype.category == WeaponCategory.ARMI_A_DISTANZA && subtype != WeaponSubtype.COLTELLO_DA_LANCIO) {
-            int atkBonus = MaterialRegistry.blade(corda);
-            if (atkBonus != 0) statBonusPercent.merge(StatType.ATTACK, atkBonus, Integer::sum);
-            int precBonus = MaterialRegistry.weaponStruttura(struttura);
-            if (precBonus != 0) statBonusPercent.merge(StatType.PRECISIONE, precBonus, Integer::sum);
-        } else {
-            int atkBonus = MaterialRegistry.blade(punta);
-            if (atkBonus != 0) statBonusPercent.merge(StatType.ATTACK, atkBonus, Integer::sum);
-            int velBonus = MaterialRegistry.weaponPomo(pomo);
-            if (velBonus != 0) statBonusPercent.merge(StatType.VELOCITA, velBonus, Integer::sum);
+        ComponentRegistry.Family fam = family();
+        switch (fam) {
+            case SHIELD -> {
+                addComponentBonus(fam, ComponentRegistry.Part.METALLI, metalli, 0);
+                addComponentBonus(fam, ComponentRegistry.Part.LEGAMENTI, legamenti, 0);
+            }
+            case RANGED -> {
+                addComponentBonus(fam, ComponentRegistry.Part.CORDA, corda, 0);
+                addComponentBonus(fam, ComponentRegistry.Part.LEGAMENTI, legamenti, 0);
+            }
+            case MELEE -> {
+                addComponentBonus(fam, ComponentRegistry.Part.PUNTA, punta, usesWeightDamage() ? 1 : 0);
+                addComponentBonus(fam, ComponentRegistry.Part.POMO, pomo, 0);
+                addComponentBonus(fam, ComponentRegistry.Part.LAMA, lama, 0);
+            }
+            default -> { }
         }
+        guardiaBonus = componentValueSum(fam, ComponentRegistry.Part.GUARDIA, guardia);
+        manicoBonus  = componentValueSum(fam, ComponentRegistry.Part.MANICO, manico);
+        maxDurability = (fam == ComponentRegistry.Family.RANGED) ? struttura[0] : 100;
+        initDurability();
         addComponents(gemme);
         addComponents(incantesimi);
         applyQualityLevel(affilatezza);
