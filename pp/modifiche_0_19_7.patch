@@ -1,0 +1,279 @@
+diff --git a/src/combat/CombatState.java b/src/combat/CombatState.java
+--- a/src/combat/CombatState.java
++++ b/src/combat/CombatState.java
+@@ -409,21 +409,21 @@ public class CombatState {
+      * Effetti legati alla rarità, non ai componenti — richiamati dopo i preTurnEffects/
+      * postTurnEffects "normali" sopra, stesso timing.
+-     *   MITICO   — invariato: attivo SEMPRE, su QUALUNQUE pezzo equipaggiato, per pezzo
+-     *              (ognuno il proprio mythicUniqueStub) — indipendente dal set.
+-     *   FULL SET — OGNI pezzo d'armatura equipaggiato spara il PROPRIO fullSetOrStyleStub (non
+-     *              un bonus condiviso: ognuno ha un testo diverso), MA solo se
+-     *              activeArmorMatchGroup() dice che il set è completo — vedi Player: 12 slot,
+-     *              confrontati per GRUPPO (Guardia+Passo sono lo stesso gruppo, Veggente+Ombra
+-     *              pure — Voto resta da solo, un Voto da 12 pezzi non può esistere).
++     *   MITICO   — attivo su QUALUNQUE pezzo equipaggiato, per pezzo (ognuno il proprio
++     *              mythicUniqueStub), indipendente dal set — ma NON se il pezzo è rotto.
++     *   FULL SET — OGNI pezzo d'armatura equipaggiato spara il PROPRIO testo full set (per le
++     *              gambe, quello per l'upperID indossato — Armor.fullSetStubFor()), MA solo se
++     *              Player.activeFullID() dice che il set è valido: 8 upper con lo stesso
++     *              upperID + 4 gambe con lo stesso lowerID che accettano quell'upperID. Resta
++     *              attivo anche per i pezzi rotti: tengono i loro ID.
+      */
+     private void fireRaritySpecialEffects(Player p, Entity actor, Entity opponent, SpecialEffect.Timing timing) {
+-        boolean setComplete = p.activeArmorMatchGroup() >= 0;
++        int fullID = p.activeFullID();
+         for (Item item : p.equippedItems()) {
+-            if (item.rarity == Rarity.MYTHIC) {
++            if (item.rarity == Rarity.MYTHIC && !item.isBroken()) {
+                 SpecialEffect eff = item.resolveMythicUniqueEffect();
+                 if (eff != null && eff.timing() == timing) eff.execute(this, actor, opponent);
+             }
+-            if (setComplete && item instanceof Armor) {
+-                SpecialEffect eff = item.resolveFullSetOrStyleEffect();
++            if (fullID > 0 && item instanceof Armor a) {
++                SpecialEffect eff = SpecialEffectRegistry.get(a.fullSetStubFor(fullID / 10));
+                 if (eff != null && eff.timing() == timing) eff.execute(this, actor, opponent);
+             }
+@@ -441,17 +441,20 @@ public class CombatState {
+     }
+ 
+-    /** true se 'e' ha ORA attivo un effetto — mitico (sempre) o di pieno set (solo se il
+-     *  gruppo è completo, vedi Player.activeArmorMatchGroup()) — il cui testo INIZIA con
+-     *  'textPrefix'. startsWith invece di equals: da questa sessione i testi Masterwork/Mitico
+-     *  hanno un suffisso di livello in coda (es. "(livello Adepto)"), diverso per fascia — vedi
+-     *  generate_equip.py. Per query puntuali FUORI dal ciclo di turno (es. "posso essere
+-     *  disarmato adesso?"). */
++    /** true se 'e' ha ORA attivo un effetto — mitico (sempre, se il pezzo non è rotto) o di pieno
++     *  set (solo se Player.activeFullID() è valido) — il cui testo INIZIA con 'textPrefix'.
++     *  startsWith invece di equals: i testi Masterwork/Mitico hanno un suffisso di livello in
++     *  coda (es. "(livello Adepto)"), diverso per fascia — vedi generate_equip.py. Per query
++     *  puntuali FUORI dal ciclo di turno (es. "posso essere disarmato adesso?"). */
+     boolean hasActivePassive(Entity e, String textPrefix) {
+         if (!(e instanceof Player p)) return false;
+         for (Item item : p.equippedItems())
+-            if (item.rarity == Rarity.MYTHIC && item.mythicUniqueStub != null && item.mythicUniqueStub.startsWith(textPrefix)) return true;
+-        if (p.activeArmorMatchGroup() >= 0)
+-            for (Item item : p.equippedItems())
+-                if (item instanceof Armor && item.fullSetOrStyleStub != null && item.fullSetOrStyleStub.startsWith(textPrefix)) return true;
++            if (item.rarity == Rarity.MYTHIC && !item.isBroken() && item.mythicUniqueStub != null && item.mythicUniqueStub.startsWith(textPrefix)) return true;
++        int fullID = p.activeFullID();
++        if (fullID > 0)
++            for (Item item : p.equippedItems()) {
++                if (!(item instanceof Armor a)) continue;
++                String stub = a.fullSetStubFor(fullID / 10);
++                if (stub != null && stub.startsWith(textPrefix)) return true;
++            }
+         return false;
+     }
+@@ -503,5 +506,5 @@ public class CombatState {
+         if (!(e instanceof Player)) return null;
+         Item item = ((Player) e).mainHandSlot.item;
+-        return (item instanceof Weapon) ? (Weapon) item : null;
++        return (item instanceof Weapon w && !w.isBroken()) ? w : null; // arma rotta = nessun'arma
+     }
+ 
+@@ -510,4 +513,32 @@ public class CombatState {
+     }
+ 
++    // Durabilità per tipologia (vedi Item.tipologie): su ogni colpo andato a segno perdono 1
++    // punto i pezzi del bersaglio (armatura e scudo) e l'arma di chi attacca (solo il Player)
++    // che hanno 'type' in lista. Dopo il calo i bonus vengono ricalcolati (DIFESA in
++    // proporzione, tutto a 0 se rotto).
++    private void wearEquipment(Entity attacker, Entity target, String type, StringBuilder msg) {
++        if (target instanceof Player p) {
++            for (Item item : p.equippedItems()) {
++                boolean defensive = item instanceof Armor
++                        || (item instanceof Weapon w && w.family() == items.ComponentRegistry.Family.SHIELD);
++                if (defensive && item.wear(type, 1) && item.isBroken()) msg.append("  [").append(item.name).append(" broke!]");
++            }
++            p.refreshEquipment();
++        }
++        if (attacker instanceof Player p) {
++            Weapon w = weaponOf(attacker);
++            if (w != null && w.wear(type, 1)) {
++                if (w.isBroken()) msg.append("  [").append(w.name).append(" broke!]");
++                p.refreshEquipment();
++            }
++        }
++    }
++
++    // Dopo un calo di durabilità dell'arma in parata (resolveParry): ricalcola i bonus e avvisa se si è rotta.
++    private void onWeaponWorn(Weapon w) {
++        gp.player.refreshEquipment();
++        if (w.isBroken()) queueAction(w.name + " broke!");
++    }
++
+     // forceHit=true: salta il tiro di mira interno, il colpo va sempre a segno — usato dal
+     // minigioco di parata/schivata (CombatState.resolveDodge()/resolveParry()) quando l'esito
+@@ -574,4 +605,5 @@ public class CombatState {
+                 if (reactionDmg > 0) msg.append(" + ").append(reactionDmg).append(" (").append(reaction.name).append(")");
+                 if (reaction != Reaction.NONE) msg.append("  ⚡ ").append(reaction.name).append("!");
++                wearEquipment(attacker, target, items.DamageTypes.of(abilityElement), msg);
+ 
+                 // Inondazione: disarmo "immediato" (base 100%, comunque riducibile dalla
+@@ -756,8 +788,10 @@ public class CombatState {
+             int loss = 8; // placeholder: quanta durabilità toglie un colpo su punto debole
+             defWeapon.durability = Math.max(0, defWeapon.durability - loss);
++            onWeaponWorn(defWeapon);
+             queueAction(monster.name + " blocks, but you hit a WEAK POINT! -" + loss + " durability");
+         } else if (rigidHit) {
+             int loss = 2; // placeholder: usura normale di un blocco riuscito
+             defWeapon.durability = Math.max(0, defWeapon.durability - loss);
++            onWeaponWorn(defWeapon);
+             queueAction(monster.name + " blocks your attack.");
+         } else if (defWeapon.staticGuard) {
+@@ -765,4 +799,5 @@ public class CombatState {
+             // blocco rigido, non un colpo passato.
+             defWeapon.durability = Math.max(0, defWeapon.durability - 2);
++            onWeaponWorn(defWeapon);
+             queueAction(monster.name + " blocks with the shield.");
+         } else {
+@@ -830,8 +865,13 @@ public class CombatState {
+     }
+ 
++    // Ultimo drop di onVictory() — non ancora agganciato a un Inventory (Inventory non è collegato
++    // al Player, vedi STATUS.md).
++    public Item loot;
++
+     void onVictory() {
+-        //TODO premi
+         gp.questManager.notify(quest.QuestEventType.KILL, monster.name);
+         queueAction("You defeated " + monster.name + "!");
++        loot = items.LootTable.roll(monster.level, new Random());
++        if (loot != null) queueAction("Loot: " + loot.name + " (" + loot.rarity + ")");
+     }
+     void onDefeat() {
+diff --git a/src/entity/Player.java b/src/entity/Player.java
+--- a/src/entity/Player.java
++++ b/src/entity/Player.java
+@@ -102,25 +102,36 @@ public class Player extends Entity {
+     }
+ 
+-    // Gruppo di abbinamento per il controllo "set completo da 12" — NON è l'armorSetID esatto
+-    // del pezzo (quello resta 1..5, ognuno con il proprio fullSetOrStyleStub): è solo per
+-    // decidere se due pezzi "contano" come parte dello stesso set quando li confronti.
+-    // Guardia(1) e Passo(4) sono nello stesso gruppo, Veggente(2) e Ombra(5) pure — 3 upper e 2
+-    // gambe non si dividono in pari, quindi Voto(3) resta da solo: un Voto completo da 12 pezzi
+-    // non può esistere (nessuna gamba condivide il suo gruppo), resta al massimo un set da 8
+-    // (solo upper). Indice = armorSetID, valore = gruppo.
+-    private static final int[] MATCH_GROUP = {0, 1, 2, 3, 1, 2};
+-
+-    /** Il gruppo condiviso se TUTTI e 12 gli slot armatura sono pieni E appartengono allo
+-     *  stesso gruppo (Guardia+Passo insieme contano come "stesso set" anche se armorSetID è
+-     *  1 e 4 — è il gruppo che deve combaciare, non il numero esatto); altrimenti -1. */
+-    public int activeArmorMatchGroup() {
+-        Integer firstGroup = null;
++    /** fullID del set indossato (Armor.fullID: upperID e lowerID uno dopo l'altro) se i 12 slot
++     *  sono pieni, gli 8 upper hanno lo stesso upperID, le 4 gambe lo stesso lowerID e accettano
++     *  quell'upperID; altrimenti 0. I pezzi rotti contano comunque: tengono i loro ID. */
++    public int activeFullID() {
++        int upper = 0, lower = 0;
++        java.util.List<items.Armor> lowers = new java.util.ArrayList<>();
+         for (EquipSlot s : allArmorSlots()) {
+-            if (!(s.item instanceof items.Armor a)) return -1;
+-            int group = MATCH_GROUP[a.armorSetID];
+-            if (firstGroup == null) firstGroup = group;
+-            else if (group != firstGroup) return -1;
++            if (!(s.item instanceof items.Armor a)) return 0;
++            if (a.lowerID == 0) {
++                if (a.upperID == 0 || (upper != 0 && upper != a.upperID)) return 0;
++                upper = a.upperID;
++            } else {
++                if (lower != 0 && lower != a.lowerID) return 0;
++                lower = a.lowerID;
++                lowers.add(a);
++            }
+         }
+-        return firstGroup;
++        if (upper == 0 || lower == 0) return 0;
++        for (items.Armor a : lowers) if (!a.acceptsUpperID(upper)) return 0;
++        return items.Armor.fullID(upper, lower);
++    }
++
++    /** Ricalcola i bonus di ogni pezzo equipaggiato — da chiamare quando cambia la durabilità
++     *  (calo proporzionale della DIFESA, rottura a 0). */
++    public void refreshEquipment() {
++        for (EquipSlot s : allSlots()) {
++            if (s.item == null) continue;
++            applySlotBonus(s);              // toglie i bonus calcolati prima
++            s.item.computeBonusPercent();
++            applySlotBonus(s);              // somma quelli aggiornati
++        }
++        recalculateStats();
+     }
+ 
+diff --git a/src/items/Item.java b/src/items/Item.java
+--- a/src/items/Item.java
++++ b/src/items/Item.java
+@@ -110,4 +110,37 @@ public abstract class Item {
+     }
+ 
++    // Tipologie di durabilità: l'oggetto perde durabilità SOLO per azioni di un tipo in lista
++    // (vedi DamageTypes). Default impostato dalle sottoclassi.
++    public String[] tipologie = {};
++
++    /** Rotto = durabilità a 0 (non quella ancora da inizializzare, -1). */
++    public boolean isBroken() { return durability == 0; }
++
++    /** Toglie 'amount' di durabilità se 'type' è in tipologie. true se ha consumato qualcosa. */
++    public boolean wear(String type, int amount) {
++        if (durability <= 0 || amount <= 0) return false;
++        for (String t : tipologie) {
++            if (t.equals(type)) {
++                durability = Math.max(0, durability - amount);
++                return true;
++            }
++        }
++        return false;
++    }
++
++    // Da chiamare in fondo a computeBonusPercent(). Rotto: nessun bonus assoluto (stat ed effetti
++    // dell'oggetto; gli ID di set restano, vedi Player.activeFullID()). Danneggiato: se
++    // scalesDefence, solo DIFESA cala in proporzione alla durabilità; gli altri bonus no.
++    protected void applyDurabilityState(boolean scalesDefence) {
++        if (isBroken()) {
++            clearComputedBonuses();
++            return;
++        }
++        if (scalesDefence && durability < maxDurability) {
++            double ratio = (double) durability / maxDurability;
++            statBonusPercent.computeIfPresent(StatType.DIFESA, (t, v) -> (int) Math.round(v * ratio));
++        }
++    }
++
+     // Somma al statBonusPercent il bonus di ogni ID in ids[fromSlot..] per quella famiglia/component.
+     protected void addComponentBonus(ComponentRegistry.Family f, ComponentRegistry.Part p, int[] ids, int fromSlot) {
+diff --git a/src/items/Weapon.java b/src/items/Weapon.java
+--- a/src/items/Weapon.java
++++ b/src/items/Weapon.java
+@@ -132,4 +132,6 @@ public class Weapon extends Item {
+         // secondaria". Dual wield/mano diversa: sposta .slot manualmente dopo la creazione.
+         this.slot = (subtype.category == WeaponCategory.DIFENSIVE) ? ItemSlot.OffHand : ItemSlot.MainHand;
++        this.tipologie = (family() == ComponentRegistry.Family.SHIELD)
++                ? DamageTypes.defensiveDefault() : new String[]{DamageTypes.FISICO};
+     }
+ 
+@@ -179,4 +181,5 @@ public class Weapon extends Item {
+      */
+     public int baseDamage(int atk) {
++        if (isBroken()) return atk;
+         if (subtype == WeaponSubtype.SPADONE) return atk + punta[0];
+         if (usesWeightDamage()) {
+@@ -189,5 +192,6 @@ public class Weapon extends Item {
+      * "Add components": per la famiglia dell'arma somma ogni component al suo StatType (prima
+      * della qualità), poi chiude con applyQualityLevel(affilatezza). Durabilità: 100 per tutte,
+-     * struttura[0] per le armi a distanza vere.
++     * struttura[0] per le armi a distanza vere; a 0 l'arma è rotta (nessun bonus), scudi/Sai
++     * danneggiati perdono DIFESA in proporzione.
+      */
+     @Override
+@@ -218,4 +222,9 @@ public class Weapon extends Item {
+         addComponents(incantesimi);
+         applyQualityLevel(affilatezza);
++        applyDurabilityState(fam == ComponentRegistry.Family.SHIELD);
++        if (isBroken()) {
++            guardiaBonus = 0;
++            manicoBonus = 0;
++        }
+     }
+ }

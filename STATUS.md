@@ -1,4 +1,4 @@
-# Abysson — Status del codice (2026-07-19)
+# Abysson — Status del codice (2026-10-05)
 
 Questo file va tenuto in `docs/STATUS.md` (o dove preferisci nel repo). Non è generato automaticamente: lo aggiorno io a mano ogni tanto, su richiesta, quando facciamo un blocco di modifiche significativo.
 
@@ -542,30 +542,31 @@ Sezione di riferimento, non un'altra voce di log — consolida come funziona TUT
 ### Struttura di un Item
 - `rarity` (COMMON/HIGH_QUALITY/MASTERWORK/MYTHIC) + 3 stub testuali cumulativi per tier: `synergyBonusStub`(G, da High Quality), `fullSetOrStyleStub`(H, da Masterwork), `mythicUniqueStub`(I, solo Mythic) — testo preso 1:1 dalla scheda, **non letto da nessuna logica di gioco per il Full Set** (vedi sotto), lo è invece `mythicUniqueStub` via `resolveMythicUniqueEffect()`.
 - `itemPath`/`combatItemPath`: STUB dichiarati "da non toccare", nessun asset.
-- `statBonusPercent` (Map, %) + `statMultiplier` (Map, moltiplicatore da `affilatezza`/`rifiniture`, 0.25×/livello) → `Player.applySlotBonus()` li aggrega entrambi.
+- `statBonusPercent` (Map, %) → `Player.applySlotBonus()`. La qualità (`affilatezza`/`rifiniture`, +25% per livello, `Item.QUALITY_STEP`) scala **solo i bonus dell'oggetto** dentro `statBonusPercent`, arrotondati. `statMultiplier` (moltiplicatore sull'intera stat del Player) non è più popolato da nessun oggetto: resta per buff/debuff futuri. Dettagli in §30.
 - `preTurnEffects`/`postTurnEffects`/`activeEffects`: liste di `SpecialEffect` risolte da `gemme[]`/`incantesimi[]`/`rocce[]` via `SpecialEffectRegistry` (mai più un bonus % diretto, sempre un effetto speciale).
 
 ### Componenti per categoria (schema finale)
-- **Armatura** (upper 8 Type + gambe 4 Type): `metalli[3]`(somma, → DIFESA per upper, fisso per gambe) — `sostegno`(**durabilità, punti diretti, range fisso 0-100** — non un ID) — `legamenti`(→ VELOCITA per upper come stat scalata, fisso per upper; **scalata** per le gambe). `rifiniture` = livello qualità.
+- **Armatura** (upper 8 Type + gambe 4 Type): `metalli[3]`(ID somma, → DIFESA) — `legamenti[1]`(ID → VELOCITA) — `sostegno[1]`(ID, **nessuna tabella ancora**). `rifiniture` = livello qualità. Durabilità 100 per tutti, vedi sotto.
 - **Gioielli**: `metalli`(bonus diretto, non ID, → EFFICIENZA) + `legame`(ID → **VITA**, si somma a metalli, non lo sostituisce) + `gemma`/`rocce` (→ SpecialEffect).
-- **Armi da mischia + Coltello da Lancio** (stessa composizione): `pomo`(Pomello, fisso → VELOCITA) — `manico`(Manico, **resistenza al disarmo**, si somma a Guardia) — `guardia`(Guardia, **resistenza al disarmo**, NON più uno stat%) — `lama`(Lama, **durabilità, punti diretti, range fisso** — nessun evento la consuma ancora) — `punta`(Punta, **unica fonte di danno** → ATTACK). `taglio`/`contundente`/`peso`/`comboTypes` **rimossi** (incompatibili con Punta unica fonte di danno).
-- **Armi a distanza vere** (Arco Corto/Lungo, Balestra): `corda`(Corda, → ATTACK, scala) — `struttura`(Struttura, fisso → **PRECISIONE**) — `legamenti`(durabilità, punti diretti, fisso).
-- **Difensive** (Scudo/Broquel/Sai — stesso sistema di Armor, gestite come Weapon): `metalli[3]`(→ DIFESA, scala) — `legamenti`(**durabilità**, punti diretti — **già consumata** dal minigioco di parata, vedi sotto).
+- **Armi da mischia + Coltello da Lancio** (famiglia MELEE): `pomo[1]`(→ VELOCITA) — `manico[1]`(ID → resistenza al disarmo, `manicoBonus`) — `guardia[1]`(ID → resistenza al disarmo, `guardiaBonus`) — `lama[1]`(ID, **nessuna tabella ancora**) — `punta[1]`(→ ATTACK; nelle **MAZZE** `punta[0]` è il **peso diretto**: Mazza Chiodata/Ascia danno = peso, Spadone danno = ATK + peso, vedi `Weapon.baseDamage()`). `taglio`/`contundente`/`peso`/`comboTypes` rimossi.
+- **Armi a distanza vere** (famiglia RANGED: Arco Corto/Lungo, Balestra): `corda[1]`(ID → **PRECISIONE**) — `legamenti[1]`(ID → **ATTACK**) — `struttura[1]`(**non un ID**: durabilità massima diretta, 100 oggi).
+- **Difensive** (famiglia SHIELD: Scudo/Broquel/Sai — gestite come Weapon): `metalli[3]`(→ DIFESA) — `legamenti[1]`(ID, **nessuna tabella ancora**). Gli altri campi di Weapon esistono ma non hanno tabella per questa famiglia: ignorati.
+- **Come si risolvono**: `nomecomponent[slot] = ID`, indici da 0. `ComponentRegistry` ha una tabella per (famiglia, component): ID → nome in gioco, StatType, valore. L'ID 4 di `pomo` non è l'ID 4 di `corda`. Un component senza tabella (o con ID 0) non produce nulla. Slot: `metalli`=3, tutti gli altri=1. Vedi §30.
 
 ### Formula stat
 `finale = flat × pct(type) × moltiplicatore(type)`, i 3 fattori calcolati separatamente poi moltiplicati in quest'ordine — `Player.recalculateStats()`.
 
 ### Resistenza al disarmo
-`CombatState.effectiveDisarmChance(baseChance, target)`: `chance effettiva = baseChance - (guardia + manico dell'arma del bersaglio) × 10`, clampato a 0. Applicata ai 2 punti reali dove il disarmo scatta (Inondazione, base 100%; `disarmChance` dell'arma attaccante). In più: **immunità totale** (bypassa il calcolo) per 2 Mitici (`Presa Eterna`/Vanbrace, `Mano di Ferro`/Gauntlet) via `CombatState.isDisarmImmune()` — controllo diretto sul testo dell'item, non un `SpecialEffect`.
+`CombatState.effectiveDisarmChance(baseChance, target)`: `chance effettiva = baseChance - (guardiaBonus + manicoBonus dell'arma del bersaglio) × 10` (valori risolti da `ComponentRegistry`; ID e valore coincidono, 0..14), clampato a 0. Applicata ai 2 punti reali dove il disarmo scatta (Inondazione, base 100%; `disarmChance` dell'arma attaccante). In più: **immunità totale** (bypassa il calcolo) per 2 Mitici (`Presa Eterna`/Vanbrace, `Mano di Ferro`/Gauntlet) via `CombatState.isDisarmImmune()` — controllo diretto sul testo dell'item, non un `SpecialEffect`.
 
 ### Durabilità — stato reale
-Punti diretti (range fisso, non un ID/non passa da MaterialRegistry) su `lama`(mischia), `legamenti`(distanza+Difensive), `sostegno`(Armor). **Solo le Difensive la consumano davvero oggi**: il minigioco di parata (`CombatState`, colpo su punto RIGIDO/DEBOLE) scala `legamenti` dello scudo/broquel/sai equipaggiato. Mischia (`lama`) e Armor (`sostegno`) non hanno ancora un evento che le consumi — nessuna logica per "cosa succede a durabilità 0" (rottura? malus? niente?) da nessuna parte.
+`Item.durability`/`maxDurability`: 100 per tutti gli oggetti, tranne archi e balestre (`struttura[0]`, 100 oggi). Parte da -1 (non inizializzata), si riempie al primo `computeBonusPercent()` (cioè all'`equip()`). Si consuma per **tipologia** (`Item.tipologie`, `DamageTypes`) e nella parata; a 0 l'oggetto è rotto. Regole complete in §30.
 
 ### Sistema SpecialEffect (`combat/SpecialEffect.java` + `SpecialEffectRegistry.java`)
 `Timing{PRE_TURN, POST_TURN, ACTIVE}`. `PRE_TURN`/`POST_TURN` richiamati da `CombatState.beforeTurn()`/`afterTurn()` per il Player (i mostri non hanno equip). `target` nell'`execute()` è sempre il vero avversario (non l'entità stessa) — un effetto "su di sé" ignora `target`, uno offensivo (es. "Eco") lo usa. `ACTIVE` per le abilità (`Ability.getSpecialAction()` delega qui).
 
 ### Sistema Set — upper e gambe SEPARATI (corretto dopo un errore)
-`Armor.armorSetID`: 1=Guardia/2=Veggente/3=Voto (upper-body, per Build) — 4=Passo/5=Ombra (gambe, per Build). **Due famiglie indipendenti**, non 12 slot uniformi: `Player.activeArmorSetIDs()` ritorna 0-2 id (uno dall'upper-body se gli 8 pezzi sono tutti uguali, uno dalle gambe se i 4 pezzi sono tutti uguali) — possono essere entrambi attivi insieme. Per ciascun set attivo, `CombatState.fireRaritySpecialEffects()` spara **UN solo bonus scelto** (`SET_BONUS_TEXT[]`), non uno a pezzo:
+**Superato da §30** (`armorSetID`/`activeArmorMatchGroup()` non esistono più): ora `upperID`/`lowerID`/`acceptedUpperIDs`/`fullID`, controllati da `Player.activeFullID()`. I 5 bonus scelti nella lista qui sotto restano come descrizione dei set:
 - Guardia → Elmo Saldo (reale: primo stordimento annullato 1×/combat)
 - Veggente → Occhio Limpido (reale: immune Accecamento)
 - Voto → Purga Lenta (reale: rimuove il debuff più vecchio a fine round)
@@ -578,18 +579,23 @@ Gli altri 27 testi "Full Set" (32 totali − 5 scelti) restano SOLO flavor text 
 - **54 testi Armor Full Set/Mitico non scelti/non implementabili** — mancano sanguinamento, maledizione/marchio/drenaggio/silenzio/confusione (l'intero set Voto originario), critici, rallentamento/spinta/schivata/iniziativa/furtività/danno da terreno, rivelazione UI, riflessione proiettili, resource/carica accumulabile, hook "on-heal" centralizzato
 - **`synergyBonusStub`** (colonna G) — non risolto da nessuna logica, mai richiamato
 - **`itemPath`/`combatItemPath`** — nessun asset, dichiarati "da non toccare"
-- **`manico`** ora ha un meccanismo (disarmo) ma **`lama`/`sostegno`** restano senza un evento che le consumi
+- **`lama`, `sostegno`, `legamenti` di armi/scudi**: slot presenti ma senza tabella in `ComponentRegistry` — non danno nessun bonus (non sono più durabilità). `manico` ha un effetto (disarmo) ma nessun oggetto lo imposta.
+- **Testi Full Set mancanti per le nuove combinazioni delle gambe**: Passo+Voto e Ombra+Voto (`Armor.fullSetStubAlt` è null → nessun effetto).
 - **Nessun oggetto del catalogo ha più di un metallo/gemma** (`metalli[1]`/`[2]` sempre 0, `gemme[]`/`incantesimi[]`/`rocce[]` vuoti tranne lo starter del player) — crafting/socketing non esiste ancora
 - **`Inventory.java`** resta 2 liste vuote, non agganciato a `Player`
-- **Nessun sistema di loot** — `CombatState.onVictory()` ancora stub (dal brainstorm roguelike di sessioni fa)
+- **Loot non agganciato a un inventario**: `LootTable` genera il drop (§30) ma `Inventory` non è collegato al Player: resta in `CombatState.loot` + messaggio a schermo.
 
 ### TODO aperti (oltre a quelli in §5)
-- [ ] Decidere un evento di usura per `lama`(mischia)/`sostegno`(Armor), analogo a quello già esistente per le Difensive nella parata
-- [ ] Decidere cosa succede quando durabilità arriva a 0
+- [ ] Decidere i bonus di `lama`, `sostegno`, `legamenti` (armi/scudi) e riempire le tabelle in `ComponentRegistry`
+- [ ] Scrivere i testi Full Set per Passo+Voto e Ombra+Voto (`fullSetStubAlt`)
+- [ ] Calcolo PRECISIONE e mitigazione danni % (prossima sessione)
+- [ ] Usura per danni da status/veleno/sanguinamento (oggi solo i colpi che passano da `dealDamage()`)
 - [ ] Full Set: valutare se gli altri 27 testi scartati vadano recuperati per qualcos'altro (bonus secondari? scelte alternative per il player?) o restano solo lore
 - [ ] Sistema di crafting/socketing per riempire `metalli[1]`/`[2]` e le gemme sugli oggetti generati
 
 ## 29. Correzione set (gruppo, non ID esatto) + varianti per livello + 1-mano/2-mani
+
+> Il meccanismo dei set descritto qui (`armorSetID`, `MATCH_GROUP`, `activeArmorMatchGroup()`) è stato **sostituito in §30**. Restano validi varianti per livello e vincolo 1-mano/2-mani.
 
 **Bug del giro scorso corretto**: avevo sbagliato a capire la richiesta iniziale — il modello "ogni pezzo il proprio bonus, gate su tutti e 12 uguali" **era quello giusto**, il problema è che 3 archetipi upper (Guardia/Veggente/Voto) e 2 gambe (Passo/Ombra) su ID numerici diversi non potevano MAI dare "12 uguali" per nessuno dei 5 (una gamba non avrà mai lo stesso numero di un pezzo Veggente). Scelta l'opzione 2 tra le due proposte (non scartare Passo/Ombra, considerarli "stesso set" per il confronto pur restando effetti diversi):
 
@@ -609,3 +615,48 @@ Gli altri 27 testi "Full Set" (32 totali − 5 scelti) restano SOLO flavor text 
 `Player.equip()`: equipaggiare un'arma a 2 mani in MainHand libera forzatamente l'OffHand (se occupata); equipaggiare un'OffHand mentre impugni un'arma a 2 mani libera forzatamente la MainHand. Nessuno stato incoerente possibile (mai arma a 2 mani + scudo insieme).
 
 **Non testato in-game** (stesso limite del sandbox, nessun asset grafico) — verificato: compilazione pulita, 1120/1120 id, testo che varia per fascia e si risolve comunque, `full_set_texts.txt` generato correttamente. Il vincolo 1-mano/2-mani è verificato solo per lettura del codice (richiede un `Player` vero per un test end-to-end).
+
+## 30. Sessione 0.19.5-0.19.7 — Component per famiglia, durabilità per tipologia, set upper/lower, loot
+
+### 30.1 Component: `nome[slot] = ID`, tabelle per famiglia (`items/ComponentRegistry.java`)
+- Quattro famiglie: **MELEE** (SPADE/MAZZE/LANCE + Coltello da Lancio), **RANGED** (Arco Corto/Lungo, Balestra), **SHIELD** (Scudo/Broquel/Sai), **ARMOR**. `Weapon.family()` la ricava dal sottotipo.
+- Ogni tabella è (famiglia, component) → ID → `Entry(nome, StatType, valore)`. I valori di partenza sono quelli delle vecchie tabelle di `MaterialRegistry` (che oggi non usa più nessuno: si può togliere). I nomi sono segnaposto ("Punta 3"); solo `manico[0]=3` ha un nome vero ("Manico rifinito").
+- Tabelle oggi: MELEE `punta`→ATTACK (ID 1..14), `pomo`→VELOCITA (ID -3..4), `guardia`/`manico`→resistenza al disarmo (0..14, valore=ID). RANGED `corda`→PRECISIONE (1..14: +1…+21), `legamenti`→ATTACK (1..14: +2…+42). SHIELD `metalli`→DIFESA. ARMOR `metalli`→DIFESA, `legamenti`→VELOCITA.
+- Slot (lunghezza dell'array, indici da 0): `metalli`=3, tutti gli altri=1.
+- **Due component NON sono ID ma valori diretti**: `punta[0]` delle MAZZE (peso) e `struttura[0]` delle armi a distanza (durabilità). Il peso nei registry è ricavato dal vecchio bonus (Mazza/Ascia = 40 + 40×bonus%, Spadone = 40×bonus%, 40 = `baseAttack` del Player): valori da bilanciare.
+- Nei registry gli ID 1..14 sono lo **scaglione** (0-10 Common … 40-50 Mythic).
+- Gli scudi usavano `guardia` come scala della DIFESA ma il codice leggeva `metalli`: ora `metalli[0]` (prima la DIFESA degli scudi era 0).
+
+### 30.2 Calcolo e qualità
+Ordine: ID dei component → `statBonusPercent` dell'oggetto → qualità (`affilatezza`/`rifiniture`, ×(1 + 0,25×livello) **solo sui bonus dell'oggetto**) → stato di durabilità → `Player.applySlotBonus()` → `recalculateStats()` (flat × % × moltiplicatore). Danno diretto: `Weapon.baseDamage(atk)` usato da `Ability.offense()` per `NormalAttack` del Player; le altre abilità restano a formula.
+
+### 30.3 Durabilità per tipologia
+- `Item.tipologie` (String[]): l'oggetto perde durabilità solo per azioni di un tipo in lista. Tipi in `items/DamageTypes.java`: 7 elementi (FISICO, LUCE, FUOCO, ACQUA, TERRA, ARIA, FULMINE) + EROSIONE, VELENO, PSICHICO, SANGUINAMENTO, MALEDIZIONE. Default armature e scudi: tutti gli elementi + EROSIONE (non VELENO/PSICHICO/SANGUINAMENTO/MALEDIZIONE). Default armi: solo FISICO.
+- Aggancio: `CombatState.wearEquipment()`, chiamata nel ramo "colpo andato a segno" di `dealDamage()`: -1 ai pezzi del bersaglio (armature e scudo) e all'arma di chi attacca (solo il Player) se il tipo (`DamageTypes.of(abilityElement)`, NONE = FISICO) è nella loro lista; poi `Player.refreshEquipment()`. La parata scala `durability` e ricalcola.
+- **Durabilità scesa ma > 0**: armature e scudi perdono **solo la DIFESA**, in proporzione (`durabilità/massimo`); gli altri bonus restano. Armi: nessun calo.
+- **A 0 (rotto)**: armi e Sai → nessun bonus, `weaponOf()` le ignora (niente danno diretto, disarmo, parata); armature e scudi → nessun bonus assoluto, nessun mitico, ma **tengono gli ID**, quindi i bonus set restano attivi. Riparazione (forgia): non esiste ancora.
+- Non consumano durabilità: danni da status (veleno, sanguinamento…) e i danni che non passano da `dealDamage()`. Quantità fissa: 1 per colpo.
+
+### 30.4 Set: upper e gambe separati (`Armor`, `Player.activeFullID()`)
+- Upper (8 pezzi): `upperID` 1=Guardia, 2=Veggente, 3=Voto. Gambe (4 pezzi): `lowerID` 1=Passo, 2=Ombra + `acceptedUpperIDs[2]` (2 su 3). Registry: Passo accetta Guardia e Voto, Ombra accetta Veggente e Voto (**scelta mia**, da confermare).
+- `fullID(upperID, lowerID)` = upperID×10 + lowerID (Guardia+Passo=11, Voto+Ombra=32).
+- `Player.activeFullID()` ≠ 0 se: 12 slot pieni, 8 upper con lo stesso upperID, 4 gambe con lo stesso lowerID, e le gambe accettano quell'upperID. Pezzi rotti contano. Altrimenti 0. Un set valido sblocca i bonus come prima (`fireRaritySpecialEffects()`/`hasActivePassive()`).
+- Una gamba ha due testi full set: `fullSetOrStyleStub` per `acceptedUpperIDs[0]`, `fullSetStubAlt` per `[1]` (oggi null per le combinazioni con Voto: nessun effetto finché non vengono scritti). `Armor.fullSetStubFor(upperID)` sceglie il testo.
+- Combinazioni valide oggi: 11, 31, 22, 32. Non più valide: Guardia+Ombra e Veggente+Passo.
+
+### 30.5 Loot (`items/LootTable.java`, `items/LootIndex.java`)
+- `CombatState.onVictory()` → `LootTable.roll(monster.level, rng)` → un pezzo (armi, scudi e armature insieme), messaggio "Loot: …" e `CombatState.loot`.
+- Gruppo: 50% stessa fascia di livello del mostro, 35% inferiore, 15% superiore; mai una fascia che parte oltre 10 livelli sopra il mostro; gruppo vuoto → salta e gli altri si rinormalizzano (es. mostro lvl 5: 77% stesso, 23% superiore). Scaglione nel gruppo: peso 0,5^(ordine rarità) (più è rara, meno è probabile). Pezzo nello scaglione: equiprobabile. Livello oltre 50 conta come ultima fascia.
+- `LootIndex.java` è **generato** da `generate_loot_index.py` (elenco degli ID dei 3 registry): rilanciarlo quando i registry cambiano.
+
+### 30.6 Script e come si usano
+- `fix_weapon_registry.py` (già eseguito), `convert_components.py` (eseguito), `convert_sets_corda.py` (set + corda archi), `generate_loot_index.py`. Tutti da root progetto: `python script.py src/items`. Si possono rilanciare senza danni.
+
+### 30.7 Come si fa per…
+- **Dare un bonus a un component**: una riga `table(Family.X, Part.Y, StatType.Z, primoID, valori…)` in `ComponentRegistry`; poi assegnare l'ID agli oggetti (`w.lama[0] = 2;`).
+- **Rinominare un ID**: `rename(Family.MELEE, Part.MANICO, 3, "Manico rifinito");` in fondo al blocco `static`.
+- **Nuovo tipo di danno**: una costante in `DamageTypes` (+ aggiungerla al default se armature/scudi devono consumarsi con quel tipo); poi far restituire il tipo dal punto che infligge il danno.
+- **Nuovo pezzo/gamba**: nel registry impostare `upperID` (upper) oppure `lowerID` + `acceptedUpperIDs` (gambe); poi rilanciare `generate_loot_index.py`.
+
+### 30.8 Verifica e limiti
+Compilazione pulita su tutto il progetto; test con oggetti veri: durabilità per tipologia (veleno non consuma, fuoco sì), DIFESA proporzionale e a 0, rottura arma, `activeFullID()` con 12 pezzi reali (11, 22, 31, 32 validi; 12 e 21 no; elmo diverso, gamba mancante e pezzo rotto verificati), distribuzione del loot su 200.000 estrazioni. **Non testato in-game** (nessun asset grafico nel sandbox); la parata con arma rotta è verificata solo per lettura del codice.
