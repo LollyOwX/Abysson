@@ -109,6 +109,39 @@ public abstract class Item {
         if (durability < 0 || durability > maxDurability) durability = maxDurability;
     }
 
+    // Tipologie di durabilità: l'oggetto perde durabilità SOLO per azioni di un tipo in lista
+    // (vedi DamageTypes). Default impostato dalle sottoclassi.
+    public String[] tipologie = {};
+
+    /** Rotto = durabilità a 0 (non quella ancora da inizializzare, -1). */
+    public boolean isBroken() { return durability == 0; }
+
+    /** Toglie 'amount' di durabilità se 'type' è in tipologie. true se ha consumato qualcosa. */
+    public boolean wear(String type, int amount) {
+        if (durability <= 0 || amount <= 0) return false;
+        for (String t : tipologie) {
+            if (t.equals(type)) {
+                durability = Math.max(0, durability - amount);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Da chiamare in fondo a computeBonusPercent(). Rotto: nessun bonus assoluto (stat ed effetti
+    // dell'oggetto; gli ID di set restano, vedi Player.activeFullID()). Danneggiato: se
+    // scalesDefence, solo DIFESA cala in proporzione alla durabilità; gli altri bonus no.
+    protected void applyDurabilityState(boolean scalesDefence) {
+        if (isBroken()) {
+            clearComputedBonuses();
+            return;
+        }
+        if (scalesDefence && durability < maxDurability) {
+            double ratio = (double) durability / maxDurability;
+            statBonusPercent.computeIfPresent(StatType.DIFESA, (t, v) -> (int) Math.round(v * ratio));
+        }
+    }
+
     // Somma al statBonusPercent il bonus di ogni ID in ids[fromSlot..] per quella famiglia/component.
     protected void addComponentBonus(ComponentRegistry.Family f, ComponentRegistry.Part p, int[] ids, int fromSlot) {
         for (int i = fromSlot; i < ids.length; i++) {

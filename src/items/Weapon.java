@@ -131,6 +131,8 @@ public class Weapon extends Item {
         // Difensive (Scudo/Broquel/Sai) di default in OffHand — "Sai" è letteralmente "spada
         // secondaria". Dual wield/mano diversa: sposta .slot manualmente dopo la creazione.
         this.slot = (subtype.category == WeaponCategory.DIFENSIVE) ? ItemSlot.OffHand : ItemSlot.MainHand;
+        this.tipologie = (family() == ComponentRegistry.Family.SHIELD)
+                ? DamageTypes.defensiveDefault() : new String[]{DamageTypes.FISICO};
     }
 
     public WeaponCategory weaponCategory() {
@@ -178,6 +180,7 @@ public class Weapon extends Item {
      * Spadone: danno = ATK + peso. Tutte le altre armi: ATK.
      */
     public int baseDamage(int atk) {
+        if (isBroken()) return atk;
         if (subtype == WeaponSubtype.SPADONE) return atk + punta[0];
         if (usesWeightDamage()) {
             return (int) Math.round(punta[0] * (1 + statBonusPercent.getOrDefault(StatType.ATTACK, 0) / 100.0));
@@ -188,7 +191,8 @@ public class Weapon extends Item {
     /**
      * "Add components": per la famiglia dell'arma somma ogni component al suo StatType (prima
      * della qualità), poi chiude con applyQualityLevel(affilatezza). Durabilità: 100 per tutte,
-     * struttura[0] per le armi a distanza vere.
+     * struttura[0] per le armi a distanza vere; a 0 l'arma è rotta (nessun bonus), scudi/Sai
+     * danneggiati perdono DIFESA in proporzione.
      */
     @Override
     public void computeBonusPercent() {
@@ -217,5 +221,10 @@ public class Weapon extends Item {
         addComponents(gemme);
         addComponents(incantesimi);
         applyQualityLevel(affilatezza);
+        applyDurabilityState(fam == ComponentRegistry.Family.SHIELD);
+        if (isBroken()) {
+            guardiaBonus = 0;
+            manicoBonus = 0;
+        }
     }
 }

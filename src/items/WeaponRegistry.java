@@ -3498,8 +3498,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco Corto da caccia";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 1;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 1;
+                w.corda[0] = 1;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -3507,8 +3508,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco Corto da caccia";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 1;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 1;
+                w.corda[0] = 1;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -3516,8 +3518,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco Corto da caccia";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 1;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 1;
+                w.corda[0] = 1;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -3525,8 +3528,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco da Battuta da tiratore";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 2;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 2;
+                w.corda[0] = 2;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -3534,8 +3538,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco da Battuta da tiratore";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 2;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 2;
+                w.corda[0] = 2;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -3543,8 +3548,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco da Battuta da tiratore";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 2;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 2;
+                w.corda[0] = 2;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -3552,8 +3558,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco da Caccia di ottima mira";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 3;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 3;
+                w.corda[0] = 3;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni contro nemici senza armatura; +% cadenza di tiro";
                 return w;
@@ -3562,8 +3569,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco da Caccia di ottima mira";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 3;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 3;
+                w.corda[0] = 3;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni da Aria; -% dispersione a lunga distanza";
                 return w;
@@ -3572,8 +3580,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco da Caccia di ottima mira";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 3;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 3;
+                w.corda[0] = 3;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% numero di colpi per turno; -% penalità di danno sui colpi multipli";
                 return w;
@@ -3582,8 +3591,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco Corto da battuta";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 4;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 4;
+                w.corda[0] = 4;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -3591,8 +3601,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco Corto da battuta";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 4;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 4;
+                w.corda[0] = 4;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -3600,8 +3611,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco Corto da battuta";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 4;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 4;
+                w.corda[0] = 4;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -3609,8 +3621,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco Snello di precisione rara";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 5;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 5;
+                w.corda[0] = 5;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni contro nemici senza armatura; +% cadenza di tiro";
                 return w;
@@ -3619,8 +3632,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco Snello di precisione rara";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 5;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 5;
+                w.corda[0] = 5;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni da Aria; -% dispersione a lunga distanza";
                 return w;
@@ -3629,8 +3643,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco Snello di precisione rara";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 5;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 5;
+                w.corda[0] = 5;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% numero di colpi per turno; -% penalità di danno sui colpi multipli";
                 return w;
@@ -3639,8 +3654,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco Ricurvo del Maestro Arciere";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 6;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 6;
+                w.corda[0] = 6;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% danni contro nemici senza armatura; +% cadenza di tiro";
                 w.fullSetOrStyleStub = "[Stile: Tiro Calibrato] STUB — Tiro Rapido: due frecce per turno contro bersagli senza armatura";
@@ -3650,8 +3666,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco Ricurvo del Maestro Arciere";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 6;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 6;
+                w.corda[0] = 6;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% danni da Aria; -% dispersione a lunga distanza";
                 w.fullSetOrStyleStub = "[Stile: Canalizzazione] STUB — Freccia di Vento: il colpo non può essere deviato né bloccato dalla copertura";
@@ -3661,8 +3678,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco Ricurvo del Maestro Arciere";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 6;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 6;
+                w.corda[0] = 6;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% numero di colpi per turno; -% penalità di danno sui colpi multipli";
                 w.fullSetOrStyleStub = "[Stile: Astuzia] STUB — Raffica: ogni colpo a segno nella raffica aggiunge un colpo extra";
@@ -3672,8 +3690,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco da Battuta da frontiera";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 7;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 7;
+                w.corda[0] = 7;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -3681,8 +3700,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco da Battuta da frontiera";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 7;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 7;
+                w.corda[0] = 7;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -3690,8 +3710,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco da Battuta da frontiera";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 7;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 7;
+                w.corda[0] = 7;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -3699,8 +3720,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco da Caccia di manifattura d'arciere";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 8;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 8;
+                w.corda[0] = 8;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni contro nemici senza armatura; +% cadenza di tiro";
                 return w;
@@ -3709,8 +3731,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco da Caccia di manifattura d'arciere";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 8;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 8;
+                w.corda[0] = 8;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni da Aria; -% dispersione a lunga distanza";
                 return w;
@@ -3719,8 +3742,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco da Caccia di manifattura d'arciere";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 8;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 8;
+                w.corda[0] = 8;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% numero di colpi per turno; -% penalità di danno sui colpi multipli";
                 return w;
@@ -3729,8 +3753,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco del Cacciatore del Gran Cecchino";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 9;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 9;
+                w.corda[0] = 9;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% danni contro nemici senza armatura; +% cadenza di tiro";
                 w.fullSetOrStyleStub = "[Stile: Tiro Calibrato] STUB — Tiro Rapido: due frecce per turno contro bersagli senza armatura";
@@ -3740,8 +3765,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco del Cacciatore del Gran Cecchino";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 9;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 9;
+                w.corda[0] = 9;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% danni da Aria; -% dispersione a lunga distanza";
                 w.fullSetOrStyleStub = "[Stile: Canalizzazione] STUB — Freccia di Vento: il colpo non può essere deviato né bloccato dalla copertura";
@@ -3751,8 +3777,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco del Cacciatore del Gran Cecchino";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 9;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 9;
+                w.corda[0] = 9;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% numero di colpi per turno; -% penalità di danno sui colpi multipli";
                 w.fullSetOrStyleStub = "[Stile: Astuzia] STUB — Raffica: ogni colpo a segno nella raffica aggiunge un colpo extra";
@@ -3762,8 +3789,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco del Cacciatore Fantasma";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 10;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 10;
+                w.corda[0] = 10;
                 w.rarity = Rarity.MYTHIC;
                 w.synergyBonusStub   = "+% danni contro nemici senza armatura; +% cadenza di tiro";
                 w.fullSetOrStyleStub = "[Stile: Tiro Calibrato] STUB — Tiro Rapido: due frecce per turno contro bersagli senza armatura";
@@ -3774,8 +3802,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco del Cacciatore Fantasma";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 10;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 10;
+                w.corda[0] = 10;
                 w.rarity = Rarity.MYTHIC;
                 w.synergyBonusStub   = "+% danni da Aria; -% dispersione a lunga distanza";
                 w.fullSetOrStyleStub = "[Stile: Canalizzazione] STUB — Freccia di Vento: il colpo non può essere deviato né bloccato dalla copertura";
@@ -3786,8 +3815,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco del Cacciatore Fantasma";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 10;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 10;
+                w.corda[0] = 10;
                 w.rarity = Rarity.MYTHIC;
                 w.synergyBonusStub   = "+% numero di colpi per turno; -% penalità di danno sui colpi multipli";
                 w.fullSetOrStyleStub = "[Stile: Astuzia] STUB — Raffica: ogni colpo a segno nella raffica aggiunge un colpo extra";
@@ -3798,8 +3828,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco Corto da esploratore";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 11;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 11;
+                w.corda[0] = 11;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -3807,8 +3838,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco Corto da esploratore";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 11;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 11;
+                w.corda[0] = 11;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -3816,8 +3848,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco Corto da esploratore";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 11;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 11;
+                w.corda[0] = 11;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -3825,8 +3858,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco Snello di tiro perfetto";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 12;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 12;
+                w.corda[0] = 12;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni contro nemici senza armatura; +% cadenza di tiro";
                 return w;
@@ -3835,8 +3869,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco Snello di tiro perfetto";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 12;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 12;
+                w.corda[0] = 12;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni da Aria; -% dispersione a lunga distanza";
                 return w;
@@ -3845,8 +3880,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco Snello di tiro perfetto";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 12;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 12;
+                w.corda[0] = 12;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% numero di colpi per turno; -% penalità di danno sui colpi multipli";
                 return w;
@@ -3855,8 +3891,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco Ricurvo dell'Arciere Supremo";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 13;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 13;
+                w.corda[0] = 13;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% danni contro nemici senza armatura; +% cadenza di tiro";
                 w.fullSetOrStyleStub = "[Stile: Tiro Calibrato] STUB — Tiro Rapido: due frecce per turno contro bersagli senza armatura";
@@ -3866,8 +3903,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco Ricurvo dell'Arciere Supremo";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 13;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 13;
+                w.corda[0] = 13;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% danni da Aria; -% dispersione a lunga distanza";
                 w.fullSetOrStyleStub = "[Stile: Canalizzazione] STUB — Freccia di Vento: il colpo non può essere deviato né bloccato dalla copertura";
@@ -3877,8 +3915,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco Ricurvo dell'Arciere Supremo";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 13;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 13;
+                w.corda[0] = 13;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% numero di colpi per turno; -% penalità di danno sui colpi multipli";
                 w.fullSetOrStyleStub = "[Stile: Astuzia] STUB — Raffica: ogni colpo a segno nella raffica aggiunge un colpo extra";
@@ -3888,8 +3927,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco del Cacciatore delle Anime";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 14;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 14;
+                w.corda[0] = 14;
                 w.rarity = Rarity.MYTHIC;
                 w.synergyBonusStub   = "+% danni contro nemici senza armatura; +% cadenza di tiro";
                 w.fullSetOrStyleStub = "[Stile: Tiro Calibrato] STUB — Tiro Rapido: due frecce per turno contro bersagli senza armatura";
@@ -3900,8 +3940,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco del Cacciatore delle Anime";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 14;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 14;
+                w.corda[0] = 14;
                 w.rarity = Rarity.MYTHIC;
                 w.synergyBonusStub   = "+% danni da Aria; -% dispersione a lunga distanza";
                 w.fullSetOrStyleStub = "[Stile: Canalizzazione] STUB — Freccia di Vento: il colpo non può essere deviato né bloccato dalla copertura";
@@ -3912,8 +3953,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_CORTO);
                 w.name = "Arco del Cacciatore delle Anime";
                 w.affilatezza = 1; w.pomo[0] = 3; w.guardia[0] = 0;
-                w.legamenti[0] = 14;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 14;
+                w.corda[0] = 14;
                 w.rarity = Rarity.MYTHIC;
                 w.synergyBonusStub   = "+% numero di colpi per turno; -% penalità di danno sui colpi multipli";
                 w.fullSetOrStyleStub = "[Stile: Astuzia] STUB — Raffica: ogni colpo a segno nella raffica aggiunge un colpo extra";
@@ -3926,8 +3968,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Lungo da caccia";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 1;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 1;
+                w.corda[0] = 1;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -3935,8 +3978,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Lungo da caccia";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 1;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 1;
+                w.corda[0] = 1;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -3944,8 +3988,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Lungo da caccia";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 1;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 1;
+                w.corda[0] = 1;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -3953,8 +3998,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Alto da tiratore";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 2;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 2;
+                w.corda[0] = 2;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -3962,8 +4008,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Alto da tiratore";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 2;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 2;
+                w.corda[0] = 2;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -3971,8 +4018,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Alto da tiratore";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 2;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 2;
+                w.corda[0] = 2;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -3980,8 +4028,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco da Guerra di ottima mira";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 3;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 3;
+                w.corda[0] = 3;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% perforazione contro nemici corazzati; +% danni a lunga gittata";
                 return w;
@@ -3990,8 +4039,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco da Guerra di ottima mira";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 3;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 3;
+                w.corda[0] = 3;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni da Fulmine; +% prob. di innescare Folgore";
                 return w;
@@ -4000,8 +4050,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco da Guerra di ottima mira";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 3;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 3;
+                w.corda[0] = 3;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni per unità di distanza; +% distanza massima utile";
                 return w;
@@ -4010,8 +4061,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Lungo da battuta";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 4;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 4;
+                w.corda[0] = 4;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4019,8 +4071,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Lungo da battuta";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 4;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 4;
+                w.corda[0] = 4;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4028,8 +4081,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Lungo da battuta";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 4;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 4;
+                w.corda[0] = 4;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4037,8 +4091,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Teso di precisione rara";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 5;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 5;
+                w.corda[0] = 5;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% perforazione contro nemici corazzati; +% danni a lunga gittata";
                 return w;
@@ -4047,8 +4102,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Teso di precisione rara";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 5;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 5;
+                w.corda[0] = 5;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni da Fulmine; +% prob. di innescare Folgore";
                 return w;
@@ -4057,8 +4113,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Teso di precisione rara";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 5;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 5;
+                w.corda[0] = 5;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni per unità di distanza; +% distanza massima utile";
                 return w;
@@ -4067,8 +4124,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Composito del Maestro Arciere";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 6;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 6;
+                w.corda[0] = 6;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% perforazione contro nemici corazzati; +% danni a lunga gittata";
                 w.fullSetOrStyleStub = "[Stile: Tiro Calibrato] STUB — Tiro Perforante: il colpo attraversa il bersaglio e colpisce chi sta dietro";
@@ -4078,8 +4136,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Composito del Maestro Arciere";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 6;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 6;
+                w.corda[0] = 6;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% danni da Fulmine; +% prob. di innescare Folgore";
                 w.fullSetOrStyleStub = "[Stile: Canalizzazione] STUB — Saetta: Folgore incatena fino a tre bersagli";
@@ -4089,8 +4148,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Composito del Maestro Arciere";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 6;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 6;
+                w.corda[0] = 6;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% danni per unità di distanza; +% distanza massima utile";
                 w.fullSetOrStyleStub = "[Stile: Astuzia] STUB — Distanza di Sicurezza: alla massima gittata ogni colpo è critico";
@@ -4100,8 +4160,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Alto da frontiera";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 7;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 7;
+                w.corda[0] = 7;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4109,8 +4170,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Alto da frontiera";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 7;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 7;
+                w.corda[0] = 7;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4118,8 +4180,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Alto da frontiera";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 7;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 7;
+                w.corda[0] = 7;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4127,8 +4190,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco da Guerra di manifattura d'arciere";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 8;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 8;
+                w.corda[0] = 8;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% perforazione contro nemici corazzati; +% danni a lunga gittata";
                 return w;
@@ -4137,8 +4201,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco da Guerra di manifattura d'arciere";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 8;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 8;
+                w.corda[0] = 8;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni da Fulmine; +% prob. di innescare Folgore";
                 return w;
@@ -4147,8 +4212,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco da Guerra di manifattura d'arciere";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 8;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 8;
+                w.corda[0] = 8;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni per unità di distanza; +% distanza massima utile";
                 return w;
@@ -4157,8 +4223,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco del Guerriero del Gran Cecchino";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 9;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 9;
+                w.corda[0] = 9;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% perforazione contro nemici corazzati; +% danni a lunga gittata";
                 w.fullSetOrStyleStub = "[Stile: Tiro Calibrato] STUB — Tiro Perforante: il colpo attraversa il bersaglio e colpisce chi sta dietro";
@@ -4168,8 +4235,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco del Guerriero del Gran Cecchino";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 9;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 9;
+                w.corda[0] = 9;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% danni da Fulmine; +% prob. di innescare Folgore";
                 w.fullSetOrStyleStub = "[Stile: Canalizzazione] STUB — Saetta: Folgore incatena fino a tre bersagli";
@@ -4179,8 +4247,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco del Guerriero del Gran Cecchino";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 9;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 9;
+                w.corda[0] = 9;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% danni per unità di distanza; +% distanza massima utile";
                 w.fullSetOrStyleStub = "[Stile: Astuzia] STUB — Distanza di Sicurezza: alla massima gittata ogni colpo è critico";
@@ -4190,8 +4259,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco della Freccia Perduta";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 10;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 10;
+                w.corda[0] = 10;
                 w.rarity = Rarity.MYTHIC;
                 w.synergyBonusStub   = "+% perforazione contro nemici corazzati; +% danni a lunga gittata";
                 w.fullSetOrStyleStub = "[Stile: Tiro Calibrato] STUB — Tiro Perforante: il colpo attraversa il bersaglio e colpisce chi sta dietro";
@@ -4202,8 +4272,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco della Freccia Perduta";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 10;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 10;
+                w.corda[0] = 10;
                 w.rarity = Rarity.MYTHIC;
                 w.synergyBonusStub   = "+% danni da Fulmine; +% prob. di innescare Folgore";
                 w.fullSetOrStyleStub = "[Stile: Canalizzazione] STUB — Saetta: Folgore incatena fino a tre bersagli";
@@ -4214,8 +4285,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco della Freccia Perduta";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 10;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 10;
+                w.corda[0] = 10;
                 w.rarity = Rarity.MYTHIC;
                 w.synergyBonusStub   = "+% danni per unità di distanza; +% distanza massima utile";
                 w.fullSetOrStyleStub = "[Stile: Astuzia] STUB — Distanza di Sicurezza: alla massima gittata ogni colpo è critico";
@@ -4226,8 +4298,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Lungo da esploratore";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 11;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 11;
+                w.corda[0] = 11;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4235,8 +4308,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Lungo da esploratore";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 11;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 11;
+                w.corda[0] = 11;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4244,8 +4318,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Lungo da esploratore";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 11;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 11;
+                w.corda[0] = 11;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4253,8 +4328,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Teso di tiro perfetto";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 12;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 12;
+                w.corda[0] = 12;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% perforazione contro nemici corazzati; +% danni a lunga gittata";
                 return w;
@@ -4263,8 +4339,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Teso di tiro perfetto";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 12;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 12;
+                w.corda[0] = 12;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni da Fulmine; +% prob. di innescare Folgore";
                 return w;
@@ -4273,8 +4350,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Teso di tiro perfetto";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 12;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 12;
+                w.corda[0] = 12;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni per unità di distanza; +% distanza massima utile";
                 return w;
@@ -4283,8 +4361,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Composito dell'Arciere Supremo";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 13;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 13;
+                w.corda[0] = 13;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% perforazione contro nemici corazzati; +% danni a lunga gittata";
                 w.fullSetOrStyleStub = "[Stile: Tiro Calibrato] STUB — Tiro Perforante: il colpo attraversa il bersaglio e colpisce chi sta dietro";
@@ -4294,8 +4373,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Composito dell'Arciere Supremo";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 13;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 13;
+                w.corda[0] = 13;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% danni da Fulmine; +% prob. di innescare Folgore";
                 w.fullSetOrStyleStub = "[Stile: Canalizzazione] STUB — Saetta: Folgore incatena fino a tre bersagli";
@@ -4305,8 +4385,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco Composito dell'Arciere Supremo";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 13;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 13;
+                w.corda[0] = 13;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% danni per unità di distanza; +% distanza massima utile";
                 w.fullSetOrStyleStub = "[Stile: Astuzia] STUB — Distanza di Sicurezza: alla massima gittata ogni colpo è critico";
@@ -4316,8 +4397,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco della Stella Cadente";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 14;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 14;
+                w.corda[0] = 14;
                 w.rarity = Rarity.MYTHIC;
                 w.synergyBonusStub   = "+% perforazione contro nemici corazzati; +% danni a lunga gittata";
                 w.fullSetOrStyleStub = "[Stile: Tiro Calibrato] STUB — Tiro Perforante: il colpo attraversa il bersaglio e colpisce chi sta dietro";
@@ -4328,8 +4410,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco della Stella Cadente";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 14;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 14;
+                w.corda[0] = 14;
                 w.rarity = Rarity.MYTHIC;
                 w.synergyBonusStub   = "+% danni da Fulmine; +% prob. di innescare Folgore";
                 w.fullSetOrStyleStub = "[Stile: Canalizzazione] STUB — Saetta: Folgore incatena fino a tre bersagli";
@@ -4340,8 +4423,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.ARCO_LUNGO);
                 w.name = "Arco della Stella Cadente";
                 w.affilatezza = 1; w.pomo[0] = 1; w.guardia[0] = 0;
-                w.legamenti[0] = 14;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 14;
+                w.corda[0] = 14;
                 w.rarity = Rarity.MYTHIC;
                 w.synergyBonusStub   = "+% danni per unità di distanza; +% distanza massima utile";
                 w.fullSetOrStyleStub = "[Stile: Astuzia] STUB — Distanza di Sicurezza: alla massima gittata ogni colpo è critico";
@@ -4354,8 +4438,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra da caccia";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 1;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 1;
+                w.corda[0] = 1;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4363,8 +4448,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra da caccia";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 1;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 1;
+                w.corda[0] = 1;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4372,8 +4458,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra da caccia";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 1;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 1;
+                w.corda[0] = 1;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4381,8 +4468,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestrino da tiratore";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 2;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 2;
+                w.corda[0] = 2;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4390,8 +4478,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestrino da tiratore";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 2;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 2;
+                w.corda[0] = 2;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4399,8 +4488,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestrino da tiratore";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 2;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 2;
+                w.corda[0] = 2;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4408,8 +4498,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra da Assedio di ottima mira";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 3;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 3;
+                w.corda[0] = 3;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni del colpo precaricato; -% tempo di ricarica";
                 return w;
@@ -4418,8 +4509,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra da Assedio di ottima mira";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 3;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 3;
+                w.corda[0] = 3;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni da Fuoco; +% area dell'incendio generato";
                 return w;
@@ -4428,8 +4520,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra da Assedio di ottima mira";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 3;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 3;
+                w.corda[0] = 3;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% copertura ignorata; +% danni contro bersagli in copertura";
                 return w;
@@ -4438,8 +4531,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra da battuta";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 4;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 4;
+                w.corda[0] = 4;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4447,8 +4541,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra da battuta";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 4;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 4;
+                w.corda[0] = 4;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4456,8 +4551,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra da battuta";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 4;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 4;
+                w.corda[0] = 4;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4465,8 +4561,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra Rinforzata di precisione rara";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 5;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 5;
+                w.corda[0] = 5;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni del colpo precaricato; -% tempo di ricarica";
                 return w;
@@ -4475,8 +4572,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra Rinforzata di precisione rara";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 5;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 5;
+                w.corda[0] = 5;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni da Fuoco; +% area dell'incendio generato";
                 return w;
@@ -4485,8 +4583,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra Rinforzata di precisione rara";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 5;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 5;
+                w.corda[0] = 5;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% copertura ignorata; +% danni contro bersagli in copertura";
                 return w;
@@ -4495,8 +4594,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra a Ripetizione del Maestro Arciere";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 6;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 6;
+                w.corda[0] = 6;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% danni del colpo precaricato; -% tempo di ricarica";
                 w.fullSetOrStyleStub = "[Stile: Tiro Calibrato] STUB — Colpo Pronto: il primo colpo di ogni combattimento è già carico";
@@ -4506,8 +4606,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra a Ripetizione del Maestro Arciere";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 6;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 6;
+                w.corda[0] = 6;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% danni da Fuoco; +% area dell'incendio generato";
                 w.fullSetOrStyleStub = "[Stile: Canalizzazione] STUB — Verretta Incendiaria: il punto colpito resta in fiamme per un round";
@@ -4517,8 +4618,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra a Ripetizione del Maestro Arciere";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 6;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 6;
+                w.corda[0] = 6;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% copertura ignorata; +% danni contro bersagli in copertura";
                 w.fullSetOrStyleStub = "[Stile: Astuzia] STUB — Mira Assoluta: nessun bersaglio può essere coperto o nascosto per te";
@@ -4528,8 +4630,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestrino da frontiera";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 7;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 7;
+                w.corda[0] = 7;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4537,8 +4640,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestrino da frontiera";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 7;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 7;
+                w.corda[0] = 7;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4546,8 +4650,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestrino da frontiera";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 7;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 7;
+                w.corda[0] = 7;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4555,8 +4660,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra da Assedio di manifattura d'arciere";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 8;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 8;
+                w.corda[0] = 8;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni del colpo precaricato; -% tempo di ricarica";
                 return w;
@@ -4565,8 +4671,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra da Assedio di manifattura d'arciere";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 8;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 8;
+                w.corda[0] = 8;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni da Fuoco; +% area dell'incendio generato";
                 return w;
@@ -4575,8 +4682,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra da Assedio di manifattura d'arciere";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 8;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 8;
+                w.corda[0] = 8;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% copertura ignorata; +% danni contro bersagli in copertura";
                 return w;
@@ -4585,8 +4693,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra del Cecchino del Gran Cecchino";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 9;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 9;
+                w.corda[0] = 9;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% danni del colpo precaricato; -% tempo di ricarica";
                 w.fullSetOrStyleStub = "[Stile: Tiro Calibrato] STUB — Colpo Pronto: il primo colpo di ogni combattimento è già carico";
@@ -4596,8 +4705,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra del Cecchino del Gran Cecchino";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 9;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 9;
+                w.corda[0] = 9;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% danni da Fuoco; +% area dell'incendio generato";
                 w.fullSetOrStyleStub = "[Stile: Canalizzazione] STUB — Verretta Incendiaria: il punto colpito resta in fiamme per un round";
@@ -4607,8 +4717,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra del Cecchino del Gran Cecchino";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 9;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 9;
+                w.corda[0] = 9;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% copertura ignorata; +% danni contro bersagli in copertura";
                 w.fullSetOrStyleStub = "[Stile: Astuzia] STUB — Mira Assoluta: nessun bersaglio può essere coperto o nascosto per te";
@@ -4618,8 +4729,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra del Cecchino Sepolto";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 10;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 10;
+                w.corda[0] = 10;
                 w.rarity = Rarity.MYTHIC;
                 w.synergyBonusStub   = "+% danni del colpo precaricato; -% tempo di ricarica";
                 w.fullSetOrStyleStub = "[Stile: Tiro Calibrato] STUB — Colpo Pronto: il primo colpo di ogni combattimento è già carico";
@@ -4630,8 +4742,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra del Cecchino Sepolto";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 10;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 10;
+                w.corda[0] = 10;
                 w.rarity = Rarity.MYTHIC;
                 w.synergyBonusStub   = "+% danni da Fuoco; +% area dell'incendio generato";
                 w.fullSetOrStyleStub = "[Stile: Canalizzazione] STUB — Verretta Incendiaria: il punto colpito resta in fiamme per un round";
@@ -4642,8 +4755,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra del Cecchino Sepolto";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 10;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 10;
+                w.corda[0] = 10;
                 w.rarity = Rarity.MYTHIC;
                 w.synergyBonusStub   = "+% copertura ignorata; +% danni contro bersagli in copertura";
                 w.fullSetOrStyleStub = "[Stile: Astuzia] STUB — Mira Assoluta: nessun bersaglio può essere coperto o nascosto per te";
@@ -4654,8 +4768,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra da esploratore";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 11;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 11;
+                w.corda[0] = 11;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4663,8 +4778,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra da esploratore";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 11;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 11;
+                w.corda[0] = 11;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4672,8 +4788,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra da esploratore";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 11;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 11;
+                w.corda[0] = 11;
                 w.rarity = Rarity.COMMON;
                 return w;
             }
@@ -4681,8 +4798,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra Rinforzata di tiro perfetto";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 12;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 12;
+                w.corda[0] = 12;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni del colpo precaricato; -% tempo di ricarica";
                 return w;
@@ -4691,8 +4809,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra Rinforzata di tiro perfetto";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 12;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 12;
+                w.corda[0] = 12;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% danni da Fuoco; +% area dell'incendio generato";
                 return w;
@@ -4701,8 +4820,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra Rinforzata di tiro perfetto";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 12;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 12;
+                w.corda[0] = 12;
                 w.rarity = Rarity.HIGH_QUALITY;
                 w.synergyBonusStub   = "+% copertura ignorata; +% danni contro bersagli in copertura";
                 return w;
@@ -4711,8 +4831,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra a Ripetizione dell'Arciere Supremo";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 13;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 13;
+                w.corda[0] = 13;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% danni del colpo precaricato; -% tempo di ricarica";
                 w.fullSetOrStyleStub = "[Stile: Tiro Calibrato] STUB — Colpo Pronto: il primo colpo di ogni combattimento è già carico";
@@ -4722,8 +4843,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra a Ripetizione dell'Arciere Supremo";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 13;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 13;
+                w.corda[0] = 13;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% danni da Fuoco; +% area dell'incendio generato";
                 w.fullSetOrStyleStub = "[Stile: Canalizzazione] STUB — Verretta Incendiaria: il punto colpito resta in fiamme per un round";
@@ -4733,8 +4855,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra a Ripetizione dell'Arciere Supremo";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 13;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 13;
+                w.corda[0] = 13;
                 w.rarity = Rarity.MASTERWORK;
                 w.synergyBonusStub   = "+% copertura ignorata; +% danni contro bersagli in copertura";
                 w.fullSetOrStyleStub = "[Stile: Astuzia] STUB — Mira Assoluta: nessun bersaglio può essere coperto o nascosto per te";
@@ -4744,8 +4867,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra del Giudice Silenzioso";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 14;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 14;
+                w.corda[0] = 14;
                 w.rarity = Rarity.MYTHIC;
                 w.synergyBonusStub   = "+% danni del colpo precaricato; -% tempo di ricarica";
                 w.fullSetOrStyleStub = "[Stile: Tiro Calibrato] STUB — Colpo Pronto: il primo colpo di ogni combattimento è già carico";
@@ -4756,8 +4880,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra del Giudice Silenzioso";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 14;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 14;
+                w.corda[0] = 14;
                 w.rarity = Rarity.MYTHIC;
                 w.synergyBonusStub   = "+% danni da Fuoco; +% area dell'incendio generato";
                 w.fullSetOrStyleStub = "[Stile: Canalizzazione] STUB — Verretta Incendiaria: il punto colpito resta in fiamme per un round";
@@ -4768,8 +4893,9 @@ public class WeaponRegistry {
                 Weapon w = new Weapon(WeaponSubtype.BALESTRA);
                 w.name = "Balestra del Giudice Silenzioso";
                 w.affilatezza = 1; w.pomo[0] = -3; w.guardia[0] = 0;
-                w.legamenti[0] = 14;
                 w.struttura[0] = 100;
+                w.legamenti[0] = 14;
+                w.corda[0] = 14;
                 w.rarity = Rarity.MYTHIC;
                 w.synergyBonusStub   = "+% copertura ignorata; +% danni contro bersagli in copertura";
                 w.fullSetOrStyleStub = "[Stile: Astuzia] STUB — Mira Assoluta: nessun bersaglio può essere coperto o nascosto per te";

@@ -101,27 +101,38 @@ public class Player extends Entity {
         };
     }
 
-    // Gruppo di abbinamento per il controllo "set completo da 12" — NON è l'armorSetID esatto
-    // del pezzo (quello resta 1..5, ognuno con il proprio fullSetOrStyleStub): è solo per
-    // decidere se due pezzi "contano" come parte dello stesso set quando li confronti.
-    // Guardia(1) e Passo(4) sono nello stesso gruppo, Veggente(2) e Ombra(5) pure — 3 upper e 2
-    // gambe non si dividono in pari, quindi Voto(3) resta da solo: un Voto completo da 12 pezzi
-    // non può esistere (nessuna gamba condivide il suo gruppo), resta al massimo un set da 8
-    // (solo upper). Indice = armorSetID, valore = gruppo.
-    private static final int[] MATCH_GROUP = {0, 1, 2, 3, 1, 2};
-
-    /** Il gruppo condiviso se TUTTI e 12 gli slot armatura sono pieni E appartengono allo
-     *  stesso gruppo (Guardia+Passo insieme contano come "stesso set" anche se armorSetID è
-     *  1 e 4 — è il gruppo che deve combaciare, non il numero esatto); altrimenti -1. */
-    public int activeArmorMatchGroup() {
-        Integer firstGroup = null;
+    /** fullID del set indossato (Armor.fullID: upperID e lowerID uno dopo l'altro) se i 12 slot
+     *  sono pieni, gli 8 upper hanno lo stesso upperID, le 4 gambe lo stesso lowerID e accettano
+     *  quell'upperID; altrimenti 0. I pezzi rotti contano comunque: tengono i loro ID. */
+    public int activeFullID() {
+        int upper = 0, lower = 0;
+        java.util.List<items.Armor> lowers = new java.util.ArrayList<>();
         for (EquipSlot s : allArmorSlots()) {
-            if (!(s.item instanceof items.Armor a)) return -1;
-            int group = MATCH_GROUP[a.armorSetID];
-            if (firstGroup == null) firstGroup = group;
-            else if (group != firstGroup) return -1;
+            if (!(s.item instanceof items.Armor a)) return 0;
+            if (a.lowerID == 0) {
+                if (a.upperID == 0 || (upper != 0 && upper != a.upperID)) return 0;
+                upper = a.upperID;
+            } else {
+                if (lower != 0 && lower != a.lowerID) return 0;
+                lower = a.lowerID;
+                lowers.add(a);
+            }
         }
-        return firstGroup;
+        if (upper == 0 || lower == 0) return 0;
+        for (items.Armor a : lowers) if (!a.acceptsUpperID(upper)) return 0;
+        return items.Armor.fullID(upper, lower);
+    }
+
+    /** Ricalcola i bonus di ogni pezzo equipaggiato — da chiamare quando cambia la durabilità
+     *  (calo proporzionale della DIFESA, rottura a 0). */
+    public void refreshEquipment() {
+        for (EquipSlot s : allSlots()) {
+            if (s.item == null) continue;
+            applySlotBonus(s);              // toglie i bonus calcolati prima
+            s.item.computeBonusPercent();
+            applySlotBonus(s);              // somma quelli aggiornati
+        }
+        recalculateStats();
     }
 
     public Player(GamePanel gp, KeyHandler KeyH) {

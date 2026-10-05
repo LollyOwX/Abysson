@@ -408,23 +408,23 @@ public class CombatState {
     /**
      * Effetti legati alla rarità, non ai componenti — richiamati dopo i preTurnEffects/
      * postTurnEffects "normali" sopra, stesso timing.
-     *   MITICO   — invariato: attivo SEMPRE, su QUALUNQUE pezzo equipaggiato, per pezzo
-     *              (ognuno il proprio mythicUniqueStub) — indipendente dal set.
-     *   FULL SET — OGNI pezzo d'armatura equipaggiato spara il PROPRIO fullSetOrStyleStub (non
-     *              un bonus condiviso: ognuno ha un testo diverso), MA solo se
-     *              activeArmorMatchGroup() dice che il set è completo — vedi Player: 12 slot,
-     *              confrontati per GRUPPO (Guardia+Passo sono lo stesso gruppo, Veggente+Ombra
-     *              pure — Voto resta da solo, un Voto da 12 pezzi non può esistere).
+     *   MITICO   — attivo su QUALUNQUE pezzo equipaggiato, per pezzo (ognuno il proprio
+     *              mythicUniqueStub), indipendente dal set — ma NON se il pezzo è rotto.
+     *   FULL SET — OGNI pezzo d'armatura equipaggiato spara il PROPRIO testo full set (per le
+     *              gambe, quello per l'upperID indossato — Armor.fullSetStubFor()), MA solo se
+     *              Player.activeFullID() dice che il set è valido: 8 upper con lo stesso
+     *              upperID + 4 gambe con lo stesso lowerID che accettano quell'upperID. Resta
+     *              attivo anche per i pezzi rotti: tengono i loro ID.
      */
     private void fireRaritySpecialEffects(Player p, Entity actor, Entity opponent, SpecialEffect.Timing timing) {
-        boolean setComplete = p.activeArmorMatchGroup() >= 0;
+        int fullID = p.activeFullID();
         for (Item item : p.equippedItems()) {
-            if (item.rarity == Rarity.MYTHIC) {
+            if (item.rarity == Rarity.MYTHIC && !item.isBroken()) {
                 SpecialEffect eff = item.resolveMythicUniqueEffect();
                 if (eff != null && eff.timing() == timing) eff.execute(this, actor, opponent);
             }
-            if (setComplete && item instanceof Armor) {
-                SpecialEffect eff = item.resolveFullSetOrStyleEffect();
+            if (fullID > 0 && item instanceof Armor a) {
+                SpecialEffect eff = SpecialEffectRegistry.get(a.fullSetStubFor(fullID / 10));
                 if (eff != null && eff.timing() == timing) eff.execute(this, actor, opponent);
             }
         }
@@ -440,19 +440,22 @@ public class CombatState {
         return usedOnce.add(key);
     }
 
-    /** true se 'e' ha ORA attivo un effetto — mitico (sempre) o di pieno set (solo se il
-     *  gruppo è completo, vedi Player.activeArmorMatchGroup()) — il cui testo INIZIA con
-     *  'textPrefix'. startsWith invece di equals: da questa sessione i testi Masterwork/Mitico
-     *  hanno un suffisso di livello in coda (es. "(livello Adepto)"), diverso per fascia — vedi
-     *  generate_equip.py. Per query puntuali FUORI dal ciclo di turno (es. "posso essere
-     *  disarmato adesso?"). */
+    /** true se 'e' ha ORA attivo un effetto — mitico (sempre, se il pezzo non è rotto) o di pieno
+     *  set (solo se Player.activeFullID() è valido) — il cui testo INIZIA con 'textPrefix'.
+     *  startsWith invece di equals: i testi Masterwork/Mitico hanno un suffisso di livello in
+     *  coda (es. "(livello Adepto)"), diverso per fascia — vedi generate_equip.py. Per query
+     *  puntuali FUORI dal ciclo di turno (es. "posso essere disarmato adesso?"). */
     boolean hasActivePassive(Entity e, String textPrefix) {
         if (!(e instanceof Player p)) return false;
         for (Item item : p.equippedItems())
-            if (item.rarity == Rarity.MYTHIC && item.mythicUniqueStub != null && item.mythicUniqueStub.startsWith(textPrefix)) return true;
-        if (p.activeArmorMatchGroup() >= 0)
-            for (Item item : p.equippedItems())
-                if (item instanceof Armor && item.fullSetOrStyleStub != null && item.fullSetOrStyleStub.startsWith(textPrefix)) return true;
+            if (item.rarity == Rarity.MYTHIC && !item.isBroken() && item.mythicUniqueStub != null && item.mythicUniqueStub.startsWith(textPrefix)) return true;
+        int fullID = p.activeFullID();
+        if (fullID > 0)
+            for (Item item : p.equippedItems()) {
+                if (!(item instanceof Armor a)) continue;
+                String stub = a.fullSetStubFor(fullID / 10);
+                if (stub != null && stub.startsWith(textPrefix)) return true;
+            }
         return false;
     }
 
@@ -502,11 +505,39 @@ public class CombatState {
     private Weapon weaponOf(Entity e) {
         if (!(e instanceof Player)) return null;
         Item item = ((Player) e).mainHandSlot.item;
-        return (item instanceof Weapon) ? (Weapon) item : null;
+        return (item instanceof Weapon w && !w.isBroken()) ? w : null; // arma rotta = nessun'arma
     }
 
     void dealDamage(Entity attacker, Entity target, String abilityId) {
         dealDamage(attacker, target, abilityId, false);
+    }
+
+    // Durabilità per tipologia (vedi Item.tipologie): su ogni colpo andato a segno perdono 1
+    // punto i pezzi del bersaglio (armatura e scudo) e l'arma di chi attacca (solo il Player)
+    // che hanno 'type' in lista. Dopo il calo i bonus vengono ricalcolati (DIFESA in
+    // proporzione, tutto a 0 se rotto).
+    private void wearEquipment(Entity attacker, Entity target, String type, StringBuilder msg) {
+        if (target instanceof Player p) {
+            for (Item item : p.equippedItems()) {
+                boolean defensive = item instanceof Armor
+                        || (item instanceof Weapon w && w.family() == items.ComponentRegistry.Family.SHIELD);
+                if (defensive && item.wear(type, 1) && item.isBroken()) msg.append("  [").append(item.name).append(" broke!]");
+            }
+            p.refreshEquipment();
+        }
+        if (attacker instanceof Player p) {
+            Weapon w = weaponOf(attacker);
+            if (w != null && w.wear(type, 1)) {
+                if (w.isBroken()) msg.append("  [").append(w.name).append(" broke!]");
+                p.refreshEquipment();
+            }
+        }
+    }
+
+    // Dopo un calo di durabilità dell'arma in parata (resolveParry): ricalcola i bonus e avvisa se si è rotta.
+    private void onWeaponWorn(Weapon w) {
+        gp.player.refreshEquipment();
+        if (w.isBroken()) queueAction(w.name + " broke!");
     }
 
     // forceHit=true: salta il tiro di mira interno, il colpo va sempre a segno — usato dal
@@ -573,6 +604,7 @@ public class CombatState {
                 if (raggioDmg   > 0) msg.append(" + ").append(raggioDmg).append(" (Raggio)");
                 if (reactionDmg > 0) msg.append(" + ").append(reactionDmg).append(" (").append(reaction.name).append(")");
                 if (reaction != Reaction.NONE) msg.append("  ⚡ ").append(reaction.name).append("!");
+                wearEquipment(attacker, target, items.DamageTypes.of(abilityElement), msg);
 
                 // Inondazione: disarmo "immediato" (base 100%, comunque riducibile dalla
                 // Guardia del bersaglio — vedi effectiveDisarmChance) dell'arma (solo il
@@ -755,15 +787,18 @@ public class CombatState {
         if (weakHit) {
             int loss = 8; // placeholder: quanta durabilità toglie un colpo su punto debole
             defWeapon.durability = Math.max(0, defWeapon.durability - loss);
+            onWeaponWorn(defWeapon);
             queueAction(monster.name + " blocks, but you hit a WEAK POINT! -" + loss + " durability");
         } else if (rigidHit) {
             int loss = 2; // placeholder: usura normale di un blocco riuscito
             defWeapon.durability = Math.max(0, defWeapon.durability - loss);
+            onWeaponWorn(defWeapon);
             queueAction(monster.name + " blocks your attack.");
         } else if (defWeapon.staticGuard) {
             // Uno scudo non può mai essere eluso: nessun overlap geometrico forza comunque un
             // blocco rigido, non un colpo passato.
             defWeapon.durability = Math.max(0, defWeapon.durability - 2);
+            onWeaponWorn(defWeapon);
             queueAction(monster.name + " blocks with the shield.");
         } else {
             queueAction("You slip past " + monster.name + "'s guard!");
@@ -829,10 +864,15 @@ public class CombatState {
         turnPhase = COMBAT_OVER;
     }
 
+    // Ultimo drop di onVictory() — non ancora agganciato a un Inventory (Inventory non è collegato
+    // al Player, vedi STATUS.md).
+    public Item loot;
+
     void onVictory() {
-        //TODO premi
         gp.questManager.notify(quest.QuestEventType.KILL, monster.name);
         queueAction("You defeated " + monster.name + "!");
+        loot = items.LootTable.roll(monster.level, new Random());
+        if (loot != null) queueAction("Loot: " + loot.name + " (" + loot.rarity + ")");
     }
     void onDefeat() {
         //TODO penalità
