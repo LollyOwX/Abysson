@@ -71,7 +71,7 @@ public class Entity {
     /** L'arma usabile per parare — solo se equipaggiata E ha canDefend=true, altrimenti null
      *  (niente con cui parare: il minigioco di CombatState forza la schivata in quel caso). */
     public Weapon resolveDefenseWeapon() {
-        return (equippedWeapon != null && equippedWeapon.canDefend) ? equippedWeapon : null;
+        return (equippedWeapon != null && equippedWeapon.canDefend && !equippedWeapon.isUnusable()) ? equippedWeapon : null;
     }
     public int maxLife;
     public int life;

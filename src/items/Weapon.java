@@ -169,6 +169,11 @@ public class Weapon extends Item {
         return ComponentRegistry.Family.MELEE;
     }
 
+    /** Rotta e inutilizzabile: armi e Sai a 0 non si usano più; Scudo/Broquel a 0 perdono solo i bonus. */
+    public boolean isUnusable() {
+        return isBroken() && (family() != ComponentRegistry.Family.SHIELD || subtype == WeaponSubtype.SAI);
+    }
+
     /** MAZZE: punta[0] è il peso, danno diretto invece di un ID. */
     public boolean usesWeightDamage() {
         return subtype.category == WeaponCategory.MAZZE;

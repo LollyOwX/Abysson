@@ -392,16 +392,20 @@ public class CombatState {
     private void firePreTurnEffects(Entity actor) {
         if (!(actor instanceof Player p)) return;
         Entity opponent = opponentOf(actor);
-        for (Item item : p.equippedItems())
+        for (Item item : p.equippedItems()) {
+            if (item.isBroken()) continue; // rotto: nessun effetto
             for (SpecialEffect eff : item.preTurnEffects) eff.execute(this, actor, opponent);
+        }
         fireRaritySpecialEffects(p, actor, opponent, SpecialEffect.Timing.PRE_TURN);
     }
 
     private void firePostTurnEffects(Entity actor) {
         if (!(actor instanceof Player p)) return;
         Entity opponent = opponentOf(actor);
-        for (Item item : p.equippedItems())
+        for (Item item : p.equippedItems()) {
+            if (item.isBroken()) continue; // rotto: nessun effetto
             for (SpecialEffect eff : item.postTurnEffects) eff.execute(this, actor, opponent);
+        }
         fireRaritySpecialEffects(p, actor, opponent, SpecialEffect.Timing.POST_TURN);
     }
 
@@ -534,10 +538,9 @@ public class CombatState {
         }
     }
 
-    // Dopo un calo di durabilità dell'arma in parata (resolveParry): ricalcola i bonus e avvisa se si è rotta.
-    private void onWeaponWorn(Weapon w) {
-        gp.player.refreshEquipment();
-        if (w.isBroken()) queueAction(w.name + " broke!");
+    // Dopo l'usura dell'arma difensiva in parata (resolveParry): avvisa una sola volta, quando tocca 0.
+    private void onWeaponWorn(Weapon w, boolean justBroke) {
+        if (justBroke) queueAction(w.name + (w.isUnusable() ? " broke!" : " is worn out!"));
     }
 
     // forceHit=true: salta il tiro di mira interno, il colpo va sempre a segno — usato dal
@@ -564,8 +567,8 @@ public class CombatState {
         boolean deflected     = ElementSystem.isDeflected(target, abilityId);
 
         double precMult   = ElementSystem.precisionMultiplier(attacker);
-        int hitChance      = (int) (attacker.precision * precMult) - target.evasion;
-        boolean hit        = forceHit || (!rangedBlocked && !deflected && new Random().nextInt(100) < hitChance);
+        double hitChance   = CombatMath.hitChance(attacker.precision * precMult, target.evasion);
+        boolean hit        = forceHit || (!rangedBlocked && !deflected && new Random().nextDouble() < hitChance);
 
         boolean attackerIsPlayer = (attacker == gp.player);
         String attackerLabel = attackerIsPlayer ? "You" : attacker.name;
@@ -786,19 +789,16 @@ public class CombatState {
 
         if (weakHit) {
             int loss = 8; // placeholder: quanta durabilità toglie un colpo su punto debole
-            defWeapon.durability = Math.max(0, defWeapon.durability - loss);
-            onWeaponWorn(defWeapon);
+            onWeaponWorn(defWeapon, defWeapon.lose(loss));
             queueAction(monster.name + " blocks, but you hit a WEAK POINT! -" + loss + " durability");
         } else if (rigidHit) {
             int loss = 2; // placeholder: usura normale di un blocco riuscito
-            defWeapon.durability = Math.max(0, defWeapon.durability - loss);
-            onWeaponWorn(defWeapon);
+            onWeaponWorn(defWeapon, defWeapon.lose(loss));
             queueAction(monster.name + " blocks your attack.");
         } else if (defWeapon.staticGuard) {
             // Uno scudo non può mai essere eluso: nessun overlap geometrico forza comunque un
             // blocco rigido, non un colpo passato.
-            defWeapon.durability = Math.max(0, defWeapon.durability - 2);
-            onWeaponWorn(defWeapon);
+            onWeaponWorn(defWeapon, defWeapon.lose(2));
             queueAction(monster.name + " blocks with the shield.");
         } else {
             queueAction("You slip past " + monster.name + "'s guard!");

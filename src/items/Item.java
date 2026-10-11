@@ -118,7 +118,9 @@ public abstract class Item {
 
     /** Toglie 'amount' di durabilità se 'type' è in tipologie. true se ha consumato qualcosa. */
     public boolean wear(String type, int amount) {
-        if (durability <= 0 || amount <= 0) return false;
+        if (amount <= 0) return false;
+        initDurability();
+        if (durability <= 0) return false;
         for (String t : tipologie) {
             if (t.equals(type)) {
                 durability = Math.max(0, durability - amount);
@@ -126,6 +128,15 @@ public abstract class Item {
             }
         }
         return false;
+    }
+
+    /** Usura da parata: toglie 'amount' senza guardare le tipologie. Inizializza la durabilità se
+     *  l'oggetto non è mai passato da equip (es. l'arma di un mostro). true se ha appena toccato 0. */
+    public boolean lose(int amount) {
+        initDurability();
+        boolean wasWorking = durability > 0;
+        durability = Math.max(0, durability - amount);
+        return wasWorking && durability == 0;
     }
 
     // Da chiamare in fondo a computeBonusPercent(). Rotto: nessun bonus assoluto (stat ed effetti

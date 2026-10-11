@@ -9,13 +9,13 @@ public class Ability {
         int atk = offense(id, user);
         int def = defense(id, target);
         switch (id) {
-            case "NormalAttack": return Math.max(10, atk - def);
-            case "PowerStrike":  return Math.max(10, (atk * 2) - def);
-            case "Thunderbolt":  return Math.max(10, (atk * 2) - def);
-            case "AcquaJet":     return Math.max(10, (atk * 2) - def);
-            case "Earthshock":   return Math.max(10, (atk * 2) - def);
-            case "Fireblade":    return Math.max(10, (atk * 2) - def);
-            case "Lightray":     return Math.max(10, (atk * 2) - def);
+            case "NormalAttack": return CombatMath.mitigate(atk, def, user.level);
+            case "PowerStrike":  return CombatMath.mitigate(atk * 2, def, user.level);
+            case "Thunderbolt":  return CombatMath.mitigate(atk * 2, def, user.level);
+            case "AcquaJet":     return CombatMath.mitigate(atk * 2, def, user.level);
+            case "Earthshock":   return CombatMath.mitigate(atk * 2, def, user.level);
+            case "Fireblade":    return CombatMath.mitigate(atk * 2, def, user.level);
+            case "Lightray":     return CombatMath.mitigate(atk * 2, def, user.level);
             default: System.err.println("Ability non trovata: " + id); return 1;
         }
     }

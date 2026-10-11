@@ -1,4 +1,4 @@
-# Abysson — Status del codice (2026-10-05)
+# Abysson — Status del codice (2026-10-05, dopo 0.19.9)
 
 Questo file va tenuto in `docs/STATUS.md` (o dove preferisci nel repo). Non è generato automaticamente: lo aggiorno io a mano ogni tanto, su richiesta, quando facciamo un blocco di modifiche significativo.
 
@@ -14,6 +14,7 @@ Questo file va tenuto in `docs/STATUS.md` (o dove preferisci nel repo). Non è g
     - *Esempio concreto (19/07)*: spostamento di `CombatState`/`ElementSystem`/`Ability`/`Reaction` in un package `combat` — bastava dire "usa Refactor → Move Class in IntelliJ, aggiorna da solo gli import", invece ho rigenerato e incollato 5 file interi consumando risorse inutilmente. Da evitare.
 - Commenti nel codice: minimi, solo di **sezionamento** (cosa fa quella sezione), niente spiegazioni riga-per-riga — quelle restano in chat.
 - **Verificare sempre il file dopo un patch mirato** (sostituzione di poche righe, non il file intero): il 19/07, durante l'aggiunta di `drawBook()`, una sostituzione ha cancellato per errore la riga della firma di `playMusic()` (il testo da sostituire matchava anche quella riga adiacente). Individuato e corretto subito controllando il file dopo l'edit — ma è un promemoria a **ricontrollare il risultato di ogni patch puntuale**, non solo il bilanciamento delle graffe, prima di consegnare.
+- IMPORTANTE: ricordare SEMPRE di appuntare qui un ragionamento dopo che viene effettuato. Esempio calendario
 
 ## 1. Architettura generale
 
@@ -589,6 +590,9 @@ Gli altri 27 testi "Full Set" (32 totali − 5 scelti) restano SOLO flavor text 
 - [ ] Decidere i bonus di `lama`, `sostegno`, `legamenti` (armi/scudi) e riempire le tabelle in `ComponentRegistry`
 - [ ] Scrivere i testi Full Set per Passo+Voto e Ombra+Voto (`fullSetStubAlt`)
 - [ ] Calcolo PRECISIONE e mitigazione danni % (prossima sessione)
+- [ ] Decidere se uno Scudo/Broquel a durabilità 0 deve ancora poter parare (oggi sì; il Sai no)
+- [ ] Se si rigenerano i registry con `generate_equip.py` (non nel progetto, scrive ancora il formato vecchio): rilanciare in ordine `Fix_Weapon_registry.py`, `convert_components.py`, `convert_sets_corda.py`, `generate_loot_index.py` (cartella `pp/`), oppure aggiornare `generate_equip.py` al formato nuovo
+- [ ] Rimuovere `MaterialRegistry` (non lo usa più nessuno)
 - [ ] Usura per danni da status/veleno/sanguinamento (oggi solo i colpi che passano da `dealDamage()`)
 - [ ] Full Set: valutare se gli altri 27 testi scartati vadano recuperati per qualcos'altro (bonus secondari? scelte alternative per il player?) o restano solo lore
 - [ ] Sistema di crafting/socketing per riempire `metalli[1]`/`[2]` e le gemme sugli oggetti generati
@@ -634,7 +638,9 @@ Ordine: ID dei component → `statBonusPercent` dell'oggetto → qualità (`affi
 - `Item.tipologie` (String[]): l'oggetto perde durabilità solo per azioni di un tipo in lista. Tipi in `items/DamageTypes.java`: 7 elementi (FISICO, LUCE, FUOCO, ACQUA, TERRA, ARIA, FULMINE) + EROSIONE, VELENO, PSICHICO, SANGUINAMENTO, MALEDIZIONE. Default armature e scudi: tutti gli elementi + EROSIONE (non VELENO/PSICHICO/SANGUINAMENTO/MALEDIZIONE). Default armi: solo FISICO.
 - Aggancio: `CombatState.wearEquipment()`, chiamata nel ramo "colpo andato a segno" di `dealDamage()`: -1 ai pezzi del bersaglio (armature e scudo) e all'arma di chi attacca (solo il Player) se il tipo (`DamageTypes.of(abilityElement)`, NONE = FISICO) è nella loro lista; poi `Player.refreshEquipment()`. La parata scala `durability` e ricalcola.
 - **Durabilità scesa ma > 0**: armature e scudi perdono **solo la DIFESA**, in proporzione (`durabilità/massimo`); gli altri bonus restano. Armi: nessun calo.
-- **A 0 (rotto)**: armi e Sai → nessun bonus, `weaponOf()` le ignora (niente danno diretto, disarmo, parata); armature e scudi → nessun bonus assoluto, nessun mitico, ma **tengono gli ID**, quindi i bonus set restano attivi. Riparazione (forgia): non esiste ancora.
+- **A 0 (rotto)**: armi e Sai → nessun bonus, nessun effetto (preTurn/postTurn/mitico), inutilizzabili (`Weapon.isUnusable()`: `weaponOf()` le ignora, un mostro con un Sai rotto non para più). Scudo/Broquel a 0 → perdono solo i bonus (non `isUnusable()`: continuano a parare — **scelta mia**, da confermare). Armature → nessun bonus assoluto, nessun effetto, nessun mitico, ma **tengono gli ID**, quindi i bonus set restano attivi. Riparazione (forgia): non esiste ancora.
+- **Usura da parata**: `Item.lose(amount)` (inizializza la durabilità se l'oggetto non è mai passato da `equip`, come lo scudo del Goblin) e annuncia "broke!" (arma/Sai) o "is worn out!" (scudo) **una sola volta**, quando tocca 0. Bug corretto in 0.19.9: lo scudo del Goblin partiva da durabilità -1 e risultava rotto alla prima parata, con il messaggio ripetuto a ogni parata.
+- La parata di oggi è del **mostro** che para l'attacco del Player (`monster.resolveDefenseWeapon()`): la durabilità consumata lì è quella dell'arma del mostro. La parata del Player (mostro → player) non esiste ancora.
 - Non consumano durabilità: danni da status (veleno, sanguinamento…) e i danni che non passano da `dealDamage()`. Quantità fissa: 1 per colpo.
 
 ### 30.4 Set: upper e gambe separati (`Armor`, `Player.activeFullID()`)
@@ -650,7 +656,7 @@ Ordine: ID dei component → `statBonusPercent` dell'oggetto → qualità (`affi
 - `LootIndex.java` è **generato** da `generate_loot_index.py` (elenco degli ID dei 3 registry): rilanciarlo quando i registry cambiano.
 
 ### 30.6 Script e come si usano
-- `fix_weapon_registry.py` (già eseguito), `convert_components.py` (eseguito), `convert_sets_corda.py` (set + corda archi), `generate_loot_index.py`. Tutti da root progetto: `python script.py src/items`. Si possono rilanciare senza danni.
+- Nella cartella `pp/`: `Fix_Weapon_registry.py`, `convert_components.py`, `convert_sets_corda.py`, `generate_loot_index.py`. Ordine, da root progetto: `python pp/<script>.py src/items` (l'ultimo non prende l'argomento). Si possono rilanciare senza danni. Verificato: partendo dai registry della 0.19.4 la catena riproduce esattamente i registry attuali.
 
 ### 30.7 Come si fa per…
 - **Dare un bonus a un component**: una riga `table(Family.X, Part.Y, StatType.Z, primoID, valori…)` in `ComponentRegistry`; poi assegnare l'ID agli oggetti (`w.lama[0] = 2;`).
@@ -659,4 +665,4 @@ Ordine: ID dei component → `statBonusPercent` dell'oggetto → qualità (`affi
 - **Nuovo pezzo/gamba**: nel registry impostare `upperID` (upper) oppure `lowerID` + `acceptedUpperIDs` (gambe); poi rilanciare `generate_loot_index.py`.
 
 ### 30.8 Verifica e limiti
-Compilazione pulita su tutto il progetto; test con oggetti veri: durabilità per tipologia (veleno non consuma, fuoco sì), DIFESA proporzionale e a 0, rottura arma, `activeFullID()` con 12 pezzi reali (11, 22, 31, 32 validi; 12 e 21 no; elmo diverso, gamba mancante e pezzo rotto verificati), distribuzione del loot su 200.000 estrazioni. **Non testato in-game** (nessun asset grafico nel sandbox); la parata con arma rotta è verificata solo per lettura del codice.
+Compilazione pulita su tutto il progetto; test con oggetti veri: durabilità per tipologia (veleno non consuma, fuoco sì), DIFESA proporzionale e a 0, rottura arma, `activeFullID()` con 12 pezzi reali (11, 22, 31, 32 validi; 12 e 21 no; elmo diverso, gamba mancante e pezzo rotto verificati), distribuzione del loot su 200.000 estrazioni. **Controlli dopo 0.19.8: tutti gli 1120 oggetti risolvono senza ID sconosciuti, equip completo → 20 refresh → tutto tolto riporta le stat al valore da nudo (nessuna deriva). **Non testato in-game** (nessun asset grafico nel sandbox).
