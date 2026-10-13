@@ -7,6 +7,7 @@ import items.Item;
 import items.ItemInfo;
 import items.Precious;
 import items.QuestItem;
+import items.Rarity;
 import items.Resource;
 import items.StatLine;
 import main.Button;
@@ -49,9 +50,9 @@ public class InventoryPage {
     private static final int[] A_X = {99, 98, 100, 96, 96}, A_W = {12, 14, 12, 14, 14};
     private static final int[] B_X = {114, 115, 115, 113, 113}, B_W = {11, 10, 10, 12, 12};
 
-    private static final int STATS_X = 146, STATS_Y = 106, STATS_PITCH = 10, STATS_MAX = 13;
+    private static final int STATS_X = 146, STATS_Y = 106, STATS_PITCH = 10, STATS_MAX = 13, RARITY_STATS_MAX = 8;
     private static final Rectangle DETAIL_BOX = new Rectangle(204, 104, 38, 38);
-    private static final Color INK = new Color(30, 20, 10), CELL = new Color(242, 232, 166);
+    private static final Color INK = new Color(30, 20, 10), CELL = new Color(242, 232, 166), PLATE = new Color(255, 215, 142);
 
     private final GamePanel gp;
     private final UI ui;
@@ -214,8 +215,10 @@ public class InventoryPage {
         switch (zone) {
             case ZONE_GEAR -> {
                 Item it = gearItems().get(index);
-                drawStatRows(ItemInfo.statLines(it), "list_inventory_gear_stats.png");
+                List<StatLine> lines = ItemInfo.statLines(it);
+                drawStatRows(lines, "list_inventory_gear_stats.png");
                 drawImage(ItemInfo.detailPath(it), DETAIL_BOX);
+                drawRarityEffect(it, Math.min(lines.size(), RARITY_STATS_MAX));
             }
             case ZONE_CONSUMABLE -> {
                 Consumable c = inv.consumables.get(index);
@@ -240,6 +243,52 @@ public class InventoryPage {
             text(lines.get(k).label, rect(STATS_X, y, 24, 8), -1, INK);
             text(lines.get(k).valueText(), rect(172, y, 13, 8), 1, INK);
         }
+    }
+
+    // Rarità Masterwork/Mythic: tag sotto le stat (la placca arancio porta il nome dello stile/set,
+    // "Mitico" per i mitici) e, in basso a tutta larghezza, il riquadro con la descrizione degli effetti.
+    private void drawRarityEffect(Item it, int statRows) {
+        boolean mythic = it.rarity == Rarity.MYTHIC;
+        if (!mythic && it.rarity != Rarity.MASTERWORK) return;
+        List<String> stubs = new ArrayList<>();
+        if (it.fullSetOrStyleStub != null) stubs.add(it.fullSetOrStyleStub);
+        if (mythic && it.mythicUniqueStub != null) stubs.add(it.mythicUniqueStub);
+        if (stubs.isEmpty()) return;
+
+        int tagY = STATS_Y + statRows * STATS_PITCH + 3;
+        BufferedImage tag = image(DIR + (mythic ? "tag_mythic.png" : "tag_masterwork.png"));
+        Rectangle tagRect = rect(STATS_X, tagY, 40, 11);
+        if (tag != null) g2.drawImage(tag, tagRect.x, tagRect.y, tagRect.width, tagRect.height, null);
+        Rectangle plate = rect(STATS_X + 19, tagY + 2, 21, 6);
+        g2.setColor(PLATE);
+        g2.fillRect(plate.x, plate.y, plate.width, plate.height);
+        text(mythic ? "Mitico" : stubTag(stubs.get(0)), plate, 0, INK);
+
+        int boxY = Math.max(186, tagY + 14);
+        Rectangle box = rect(145, boxY, 98, 241 - boxY);
+        g2.setColor(CELL);
+        g2.fillRect(box.x + 1, box.y, box.width - 2, box.height);
+        g2.fillRect(box.x, box.y + 1, box.width, box.height - 2);
+        int y = box.y + 3;
+        for (String stub : stubs) {
+            y = wrapped(stubBody(stub), new Rectangle(box.x + 4, y, box.width - 8, box.y + box.height - y), 10.5f) + 3;
+        }
+    }
+
+    // "[Full Set: Guardia] STUB — Elmo Saldo: ..." -> "Guardia"; "[Mitico] ..." -> "Mitico"
+    private static String stubTag(String stub) {
+        int end = stub.indexOf(']');
+        if (!stub.startsWith("[") || end < 0) return "";
+        String label = stub.substring(1, end);
+        int colon = label.indexOf(':');
+        return colon >= 0 ? label.substring(colon + 1).trim() : label.trim();
+    }
+
+    // Toglie "[...]" e "STUB — " dall'inizio
+    private static String stubBody(String stub) {
+        int end = stub.indexOf(']');
+        String body = (stub.startsWith("[") && end >= 0) ? stub.substring(end + 1).trim() : stub;
+        return body.startsWith("STUB — ") ? body.substring("STUB — ".length()) : body;
     }
 
     private void drawEffects(Consumable c) {
@@ -358,8 +407,9 @@ public class InventoryPage {
         g2.fillRect(cell.x, cell.y, cell.width, cell.height);
     }
 
-    private void wrapped(String s, Rectangle box, float size) {
-        if (s == null || s.isEmpty()) return;
+    /** Scrive il testo andando a capo nel riquadro; ritorna la y raggiunta (per impilare altri paragrafi). */
+    private int wrapped(String s, Rectangle box, float size) {
+        if (s == null || s.isEmpty()) return box.y;
         g2.setFont(ui.MaruMonica.deriveFont(Font.PLAIN, size));
         FontMetrics fm = g2.getFontMetrics();
         g2.setColor(INK);
@@ -370,13 +420,14 @@ public class InventoryPage {
             if (fm.stringWidth(trial) > box.width && line.length() > 0) {
                 g2.drawString(line.toString(), box.x, y);
                 y += fm.getHeight();
-                if (y > box.y + box.height) return;
+                if (y > box.y + box.height) return y;
                 line = new StringBuilder(word);
             } else {
                 line = new StringBuilder(trial);
             }
         }
         if (line.length() > 0 && y <= box.y + box.height) g2.drawString(line.toString(), box.x, y);
+        return y;
     }
 
     private static String fit(FontMetrics fm, String s, int maxW) {

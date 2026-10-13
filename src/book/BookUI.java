@@ -26,11 +26,7 @@ public class BookUI {
     private final UI ui;
     private Graphics2D g2;
 
-    // Rettangoli dei 6 bookmark nello spazio immagine originale del libro (272x272, prima dello
-    // scaling a schermo). Misurati confrontando i pixel non trasparenti di book.png con ognuna
-    // delle 6 varianti book_X.png: sono la zona (linguetta) che cambia in ciascuna variante.
-    // Indice = gp.bookindex - 1 (stesso ordine di GamePanel.ZONE_IMAGES: map, quests, skills,
-    // calendar, bestiary, inventory — cioè bookindex_map=1 ... bookindex_inventory=6).
+
     private static final Rectangle[] BOOKMARK_IMAGE_RECTS = {
             new Rectangle(66,  71, 14, 13), // 0 Mappa      (bookindex 1)
             new Rectangle(159, 71, 14, 13), // 1 Quest      (bookindex 2)
@@ -41,12 +37,7 @@ public class BookUI {
     };
     private final Button[] bookmarkButtons = new Button[BOOKMARK_IMAGE_RECTS.length];
 
-    // Rettangoli dei pulsanti sottoargomento (bookzone), per area (indice esterno = bookindex-1,
-    // stesso ordine di BOOKMARK_IMAGE_RECTS sopra). Posizioni PLACEHOLDER, da aggiustare a vista
-    // come per i bookmark. Quanti Rectangle per area deve combaciare con GamePanel.BOOKZONE_COUNT
-    // (mappa=3, quest=5, abilità=5, calendario=2, bestiario=3, inventario=5) — impilati
-    // verticalmente accumulando y (altezza 20 + margine 5), a partire da y=95, sotto alla fascia
-    // dei bookmark (y=70-85 circa).
+
     private static final Rectangle[][] SUBTOPIC_IMAGE_RECTS = {
             { new Rectangle(68, 86, 10, 18), new Rectangle(68, 106, 10, 18), new Rectangle(68, 126, 10, 18) }, // 0 Mappa (3)
             { new Rectangle(161, 86, 10, 10), new Rectangle(161, 98, 10, 10), new Rectangle(161,110,10,10), new Rectangle(161,122,10,10), new Rectangle(161,134,10,10) }, // 1 Quest (5)
@@ -57,10 +48,6 @@ public class BookUI {
     };
     private final Button[][] subtopicButtons = new Button[SUBTOPIC_IMAGE_RECTS.length][];
 
-    // Area di testo per il contenuto dinamico delle pagine (per ora solo l'area Quest) —
-    // spazio immagine originale del libro (272x272, stesso sistema dei rettangoli sopra).
-    // PLACEHOLDER, da aggiustare a vista: nessun'altra area disegna ancora testo, quindi non
-    // c'era un riferimento da cui partire.
     private static final Rectangle PAGE_CONTENT_RECT = new Rectangle(95, 20, 165, 230);
 
     private final InventoryPage inventoryPage;
@@ -74,16 +61,11 @@ public class BookUI {
         this.ui = ui;
         this.inventoryPage = new InventoryPage(gp, ui);
 
-        // Un Button per bookmark: array 0-based -> bookindex 1-based (i+1), il click chiama
-        // sempre selectBookIndex() passandogli il bookindex giusto.
         for (int i = 0; i < bookmarkButtons.length; i++) {
             final int bookindex = i + 1;
             bookmarkButtons[i] = new Button(() -> gp.selectBookIndex(bookindex));
         }
 
-        // Un Button per sottoargomento, per ogni area: il click chiama selectBookZone() con
-        // l'indice giusto (0-based). Restano inattivi (bounds null) finché la loro area non è
-        // quella aperta — vedi draw().
         for (int area = 0; area < subtopicButtons.length; area++) {
             subtopicButtons[area] = new Button[SUBTOPIC_IMAGE_RECTS[area].length];
             for (int z = 0; z < subtopicButtons[area].length; z++) {
@@ -93,10 +75,6 @@ public class BookUI {
         }
     }
 
-    // Disegna il libro sopra al mondo (già disegnato da GamePanel prima di chiamare UI.draw()),
-    // esattamente come UI.drawPauseScreen() disegna "PAUSED" sopra al mondo.
-    // Sfondo: book.png se nessuna area generale è selezionata, altrimenti book_X.png dell'area
-    // attiva (bookmark evidenziato già dentro l'immagine — vedi GamePanel.getCurrentBookImage()).
     public void draw(Graphics2D g2) {
         this.g2 = g2;
 
@@ -113,10 +91,6 @@ public class BookUI {
         if (gp.bookindex == gp.bookindex_quests) drawQuestPageContent(ox, oy, scale);
         if (gp.bookindex == gp.bookindex_inventory) inventoryPage.draw(g2, ox, oy, scale);
 
-        // Bookmark: sempre cliccabili (anche per cambiare area generale mentre se ne sta già
-        // guardando una). I bounds si ricalcolano ogni frame perché seguono lo scaling del libro.
-        // Niente overlay separato sopra: la linguetta evidenziata è già dentro book_X.png
-        // (background sopra) — disegnarla due volte la stirava e sdoppiava a schermo.
         for (int i = 0; i < BOOKMARK_IMAGE_RECTS.length; i++) {
             Rectangle r = BOOKMARK_IMAGE_RECTS[i];
             bookmarkButtons[i].setBounds(
@@ -153,10 +127,6 @@ public class BookUI {
         }
     }
 
-    // ═════════════════════════════════════════════
-    //  Contenuto pagine Quest (bookzone = una quest CONOSCIUTA — vedi QuestManager,
-    //  bookpage 0 = riepilogo, bookpage 1 = lista obiettivi)
-    // ═════════════════════════════════════════════
 
     private void drawQuestPageContent(int ox, int oy, double scale) {
         if (gp.bookzone < 0) return; // nessuna voce selezionata: solo lo sfondo dell'area
@@ -195,9 +165,7 @@ public class BookUI {
         }
     }
 
-    // ═════════════════════════════════════════════
-    //  Input mouse (chiamato da GamePanel, stesso schema di UI.updateMouseHover/handleTitleClick)
-    // ═════════════════════════════════════════════
+
 
     public void handleClick(int x, int y) {
         if (gp.gameState != gp.bookState) return;

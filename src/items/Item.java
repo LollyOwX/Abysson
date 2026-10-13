@@ -53,6 +53,7 @@ public abstract class Item {
     // vedi Weapon.loadRigidZoneFromImage().
     public String itemPath;
     public double weight; // peso mostrato nell'inventario (0 = non impostato)
+    public String id;     // id del registry (es. short_sword_atk_0_10_common): lo imposta LootTable.create()
 
     // ── Modificatori stat ──────────────────────────────────────
     // Percentuale di bonus/malus per statistica (es. taglio=8 -> ATTACK +8%, tradotto da

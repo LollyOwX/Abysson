@@ -475,9 +475,28 @@ public class Player extends Entity {
         }
     }
 
+    /** Un oggetto entra in possesso del Player: va nell'inventario e notifica COLLECT (id del registry, o il nome). */
+    public void obtain(items.Item item) {
+        if (item == null) return;
+        inventory.addGear(item);
+        gp.questManager.notify(quest.QuestEventType.COLLECT, item.id != null ? item.id : item.name);
+    }
+
+    /** Regalo di un NPC o ricompensa: come obtain(), con il messaggio a schermo; equipNow lo indossa subito. */
+    public void receiveItem(items.Item item, boolean equipNow) {
+        if (item == null) return;
+        obtain(item);
+        if (equipNow) equip(item);
+        gp.ui.showMessage("Hai ottenuto: " + item.name + "!");
+    }
+
     public void equip(items.Item item) {
         EquipSlot slot = slotFor(item.slot);
-        if (slot.item != null) applySlotBonus(slot); // toglie prima i bonus del pezzo precedente
+        inventory.gear.remove(item); // se veniva dallo zaino
+        if (slot.item != null) {
+            applySlotBonus(slot); // toglie prima i bonus del pezzo precedente
+            if (slot.item != item) inventory.gear.add(slot.item); // il pezzo sostituito torna nello zaino
+        }
         item.computeBonusPercent(); // "add components": ricalcola i bonus dai campi grezzi + componenti innestati
         slot.item = item;
         applySlotBonus(slot); // poi somma quelli del nuovo pezzo
@@ -500,6 +519,7 @@ public class Player extends Entity {
         EquipSlot slot = slotFor(slotType);
         if (slot.item != null) {
             applySlotBonus(slot);
+            inventory.gear.add(slot.item);
             slot.item = null;
         }
         recalculateStats();

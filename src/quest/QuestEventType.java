@@ -9,6 +9,6 @@ public enum QuestEventType {
     KILL,           // notificato da CombatState.checkVictory()
     TALK,           // notificato da Entity.speak()
     REACH_LOCATION, // notificato da EventHandler — vedi locationEvent()
-    COLLECT,        // NON ANCORA COLLEGATO: nessun sistema di inventario reale esiste ancora
+    COLLECT,        // notificato da Player.obtain(): targetId = id del registry dell'oggetto (es. short_sword_atk_0_10_common)
     CUSTOM          // per obiettivi che non rientrano negli altri tipi — notificare a mano dal punto giusto
 }

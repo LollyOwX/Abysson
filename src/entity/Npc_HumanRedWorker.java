@@ -56,8 +56,7 @@ public class Npc_HumanRedWorker extends Entity {
     public void speak() {
         super.speak();
         if (dialoguesIndex == 6 && !itemGiven) {
-            gp.player.equip(items.WeaponRegistry.get("short_sword_atk_0_10_common"));
-            gp.ui.showMessage("Hai ottenuto: Spada!");
+            gp.player.receiveItem(items.LootTable.create("short_sword_atk_0_10_common"), true);
             itemGiven = true;
         }
         if (dialoguesIndex == 5 && givesQuestId != null) {

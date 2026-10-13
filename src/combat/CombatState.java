@@ -873,7 +873,7 @@ public class CombatState {
         queueAction("You defeated " + monster.name + "!");
         loot = items.LootTable.roll(monster.level, new Random());
         if (loot != null) {
-            gp.player.inventory.addGear(loot);
+            gp.player.obtain(loot);
             queueAction("Loot: " + loot.name + " (" + loot.rarity + ")");
         }
     }

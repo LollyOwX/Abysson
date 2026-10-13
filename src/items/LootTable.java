@@ -106,10 +106,14 @@ public final class LootTable {
 
     /** Crea il pezzo dal suo ID, cercandolo nel registry giusto. */
     public static Item create(String id) {
-        return switch (KIND_OF.get(id)) {
+        Kind kind = KIND_OF.get(id);
+        if (kind == null) return null;
+        Item item = switch (kind) {
             case WEAPON -> WeaponRegistry.get(id);
             case SHIELD -> ShieldRegistry.get(id);
             case ARMOR  -> ArmorRegistry.get(id);
         };
+        if (item != null) item.id = id;
+        return item;
     }
 }
