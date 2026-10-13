@@ -63,9 +63,16 @@ public class BookUI {
     // c'era un riferimento da cui partire.
     private static final Rectangle PAGE_CONTENT_RECT = new Rectangle(95, 20, 165, 230);
 
+    private final InventoryPage inventoryPage;
+
+    public int inventoryPageCount() {
+        return inventoryPage.pageCount();
+    }
+
     public BookUI(GamePanel gp, UI ui) {
         this.gp = gp;
         this.ui = ui;
+        this.inventoryPage = new InventoryPage(gp, ui);
 
         // Un Button per bookmark: array 0-based -> bookindex 1-based (i+1), il click chiama
         // sempre selectBookIndex() passandogli il bookindex giusto.
@@ -104,6 +111,7 @@ public class BookUI {
         g2.drawImage(bg, ox, oy, w, h, null);
 
         if (gp.bookindex == gp.bookindex_quests) drawQuestPageContent(ox, oy, scale);
+        if (gp.bookindex == gp.bookindex_inventory) inventoryPage.draw(g2, ox, oy, scale);
 
         // Bookmark: sempre cliccabili (anche per cambiare area generale mentre se ne sta già
         // guardando una). I bounds si ricalcolano ogni frame perché seguono lo scaling del libro.
@@ -201,5 +209,6 @@ public class BookUI {
                 if (b.click(x, y)) return;
             }
         }
+        if (gp.bookindex == gp.bookindex_inventory) inventoryPage.handleClick(x, y);
     }
 }

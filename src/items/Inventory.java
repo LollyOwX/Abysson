@@ -4,13 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * STUB — solo le due liste, nessuna logica ancora (né aggiunta, né rimozione, né equip-da-qui,
- * né raccolta dal mondo). Tenuto da Player quando si passa a costruirlo davvero.
- *
- * Liste separate come deciso: gli oggetti EQUIPAGGIABILI (Weapon/Armor/Jewelry) e quelli PURI
- * (es. una Key raccolta dal mondo, senza equip) non stanno nella stessa lista.
+ * Tutto ciò che il Player possiede, diviso per zona dell'Inventario nel libro: equipaggiamento
+ * (posseduto ma non indossato — quello indossato lo aggiunge la UI), consumabili, preziosi,
+ * oggetti di quest e risorse.
  */
 public class Inventory {
-    public final List<Item> equippables = new ArrayList<>(); // Weapon/Armor/Jewelry posseduti ma non equipaggiati
-    public final List<String> pureItems  = new ArrayList<>(); // oggetti "puri" per nome (es. "Key") — nessuna quantità/stacking ancora
+    public final List<Item> gear = new ArrayList<>();
+    public final List<Consumable> consumables = new ArrayList<>();
+    public final List<Precious> precious = new ArrayList<>();
+    public final List<QuestItem> questItems = new ArrayList<>();
+    public final List<Resource> resources = new ArrayList<>();
+
+    public void addGear(Item item) {
+        if (item == null) return;
+        item.computeBonusPercent();
+        gear.add(item);
+    }
 }

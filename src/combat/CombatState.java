@@ -872,7 +872,10 @@ public class CombatState {
         gp.questManager.notify(quest.QuestEventType.KILL, monster.name);
         queueAction("You defeated " + monster.name + "!");
         loot = items.LootTable.roll(monster.level, new Random());
-        if (loot != null) queueAction("Loot: " + loot.name + " (" + loot.rarity + ")");
+        if (loot != null) {
+            gp.player.inventory.addGear(loot);
+            queueAction("Loot: " + loot.name + " (" + loot.rarity + ")");
+        }
     }
     void onDefeat() {
         //TODO penalità

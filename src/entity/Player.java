@@ -135,6 +135,8 @@ public class Player extends Entity {
         recalculateStats();
     }
 
+    public final items.Inventory inventory = new items.Inventory();
+
     public Player(GamePanel gp, KeyHandler KeyH) {
         super(gp);
         this.gp = gp;

@@ -97,6 +97,10 @@ public class GamePanel extends JPanel implements Runnable {
 
     java.awt.image.BufferedImage bookImage; // pagina di base, nessuna area generale selezionata
     java.awt.image.BufferedImage[] bookZoneImages = new java.awt.image.BufferedImage[ZONE_COUNT]; // book_map.png, ecc.
+    // Sfondo dell'area Inventario per sottoargomento (bookzone): stesso ordine delle icone del bookmark
+    static final String[] INVENTORY_ZONE_IMAGES = {"gear", "consumable", "quests", "resources", "precious"};
+    java.awt.image.BufferedImage[] bookInventoryImages = new java.awt.image.BufferedImage[INVENTORY_ZONE_IMAGES.length];
+    public final GameCalendar calendar = new GameCalendar();
     public GifPlayer pageTurnPlayer = new GifPlayer();
     public boolean pageTurnActive = false;
 
@@ -129,9 +133,12 @@ public class GamePanel extends JPanel implements Runnable {
         loadBookImage();
     }
     private void loadBookImage() {
-        bookImage = loadImageResource("/ui/book.png");
+        bookImage = loadImageResource("/ui/book_general/book.png");
         for(int i = 0; i < ZONE_COUNT; i++) {
-            bookZoneImages[i] = loadImageResource("/ui/" + ZONE_IMAGES[i]);
+            bookZoneImages[i] = loadImageResource("/ui/book_general/" + ZONE_IMAGES[i]);
+        }
+        for(int i = 0; i < INVENTORY_ZONE_IMAGES.length; i++) {
+            bookInventoryImages[i] = loadImageResource("/ui/book_inventory/book_inventory_" + INVENTORY_ZONE_IMAGES[i] + ".png");
         }
     }
     private java.awt.image.BufferedImage loadImageResource(String path) {
@@ -151,10 +158,19 @@ public class GamePanel extends JPanel implements Runnable {
     // è selezionata, altrimenti la variante book_X.png dell'area attiva (bookmark evidenziato).
     public java.awt.image.BufferedImage getCurrentBookImage() {
         if(bookindex == 0) return bookImage;
+        if(bookindex == bookindex_inventory && bookzone >= 0 && bookzone < bookInventoryImages.length && bookInventoryImages[bookzone] != null) {
+            return bookInventoryImages[bookzone];
+        }
         return bookZoneImages[bookindex - 1] != null ? bookZoneImages[bookindex - 1] : bookImage;
+    }
+    // Pagine dell'area aperta: fisse (MICRO_PAGE_COUNT) tranne l'Inventario, dove dipendono da quante righe ha la zona.
+    public int bookPageCount() {
+        if(bookindex == bookindex_inventory) return ui.book.inventoryPageCount();
+        return MICRO_PAGE_COUNT[bookindex - 1];
     }
     public void setupGame() {
         aSetter.placeEntities();
+        items.InventoryDemo.seed(player.inventory);
         playMusic(0);
         gameState = titleState;
     }
@@ -341,7 +357,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void turnBookPage(int direction) {
         if(bookindex == 0) return; // nessuna area aperta, non ci sono pagine da girare
         int newPage = bookpage + direction;
-        if(newPage < 0 || newPage >= MICRO_PAGE_COUNT[bookindex - 1]) return;
+        if(newPage < 0 || newPage >= bookPageCount()) return;
         startBookTransition(bookindex, bookzone, newPage, direction);
     }
     // Click su un bookmark: salta all'area generale corrispondente (bookindex), resettando voce e pagina.

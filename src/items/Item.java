@@ -52,6 +52,7 @@ public abstract class Item {
     // popolano davvero solo le Difensive (Scudo/Broquel/Sai), le altre armi lo lasciano null —
     // vedi Weapon.loadRigidZoneFromImage().
     public String itemPath;
+    public double weight; // peso mostrato nell'inventario (0 = non impostato)
 
     // ── Modificatori stat ──────────────────────────────────────
     // Percentuale di bonus/malus per statistica (es. taglio=8 -> ATTACK +8%, tradotto da
