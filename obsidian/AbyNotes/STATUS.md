@@ -1,38 +1,92 @@
-# Abysson — Status del codice (2026-10-12, dopo 0.19.10 Inventario)
+# Abysson — Status del codice (2026-10-14, dopo 0.19.11)
 
 Questo file va tenuto in `docs/STATUS.md` (o dove preferisci nel repo). Non è generato automaticamente: lo aggiorno io a mano ogni tanto, su richiesta, quando facciamo un blocco di modifiche significativo.
 
 ---
 
+## 8. Dettagli per Claude (punto d'ingresso: leggere per primo)
 
-## Indice riorganizzato
+*Scritto per una chat Claude che parte da zero, senza la cronologia. (Il vecchio §8 "Quest nel libro + notifiche" ora è §8b.) Il resto del file è il dettaglio per sistema: §0 workflow, §28 riferimento equipaggiamento/combattimento, §30-§35 lavoro recente.*
 
-1. **Essenziali per lavorare sul codice** — workflow, sistemi principali e stato tecnico attuale.
-2. **Ragionamenti e decisioni di design** — principi, vincoli e specifiche da tenere presenti.
-3. **TODO, STUB e limiti aperti** — elenco operativo, incluse le liste aperte dello stato corrente.
-4. **Storico sintetico** — una riga per sessione/versione documentata; non sostituisce lo storico Git.
-5. **Architettura generale** — panoramica e pseudocodifica supersintetica.
-6. **Guide rapide** — procedure operative consultabili senza rileggere i log.
-7. **Archivio dettagliato e resto** — cronologia tecnica conservata con i dettagli originari.
+### 8.1 Il progetto e l'utente
+- **Abysson**: RPG 2D in **Java Swing**, mondo a tile, combattimento a turni con sistema elementale; partito dal tutorial YouTube di RyiSnow ma con sistemi molto custom. Repo **github.com/LollyOwX/Abysson** (branch `main`). Sviluppatore indipendente, lavora da solo; versioni `0.19.x` (ultima pushata: **0.19.11**), commit tipo "0.19.11 Equip - UI".
+- Ambiente dell'utente: **Windows + PowerShell**, **IntelliJ IDEA** (cartella locale `C:\Users\logan\Desktop\DD2D`), JDK 25 (`ms-25.0.3`), Python 3.14. Parla **italiano** (e inglese): rispondi in italiano salvo diversa indicazione. Testi di gioco: combattimento in inglese; libro, quest e UI in italiano.
+- Moduli IntelliJ: `useless/DD2D.iml` (`res` = cartella Resources, `src` = sorgenti, output `out/production/DD2D`). `build.bat` compila soltanto (non copia le risorse).
 
-> **Nota di conservazione:** i riferimenti `§N` dentro i blocchi spostati sono quelli della numerazione originale. Le etichette `ex-§N` permettono di ritrovare la sezione d'origine. Le voci duplicate nelle guide sono copie di consultazione: il testo completo resta anche nel log originale.
+### 8.2 Come vuole lavorare (preferenze esplicite dell'utente)
+- **Spiega ogni modifica passo-passo**, non solo il risultato. Modifiche **circoscritte**: stessa struttura del codice, cambia il minimo.
+- **File completi** quando le modifiche sono interdipendenti; solo i file davvero cambiati. **Diff riga per riga** per modifiche minime. Le modifiche **meccaniche che l'IDE fa da solo** (Move Class, rename) si spiegano a voce.
+- **Commenti nel codice minimi**: solo di sezionamento (cosa fa quella sezione).
+- **Chiedi conferma se hai dubbi, poi risolvi.** Una domanda alla volta, con i default che proporresti. **Non inventare valori di gameplay**: se manca un dato, proponi un default dichiarato e scrivilo come scelta tua.
+- **Dichiara cosa hai verificato** (compilato, test numerici, render headless) e cosa no ("non provato in gioco").
+- **Aggiorna questo STATUS.md** a ogni blocco significativo e **appunta sempre un ragionamento dopo che viene fatto** (regola esplicita dell'utente, vedi riga in §0).
+- Formato risposte: prosa chiara, tabelle solo per dati confrontabili; niente liste quando rifiuti qualcosa.
 
-## 1. Assolutamente essenziali per la struttura del codice
+### 8.3 Come lavorare tecnicamente (sandbox di Claude)
+- **Clona il repo** ogni volta: `git clone https://github.com/LollyOwX/Abysson.git` (github.com è raggiungibile). La sandbox **si azzera tra un messaggio e l'altro**: riclona e reinstalla il JDK (`apt-get update; apt-get install -y openjdk-21-jdk-headless`; il progetto è Java 25 ma compila con 21).
+- Compilare: `find src -name "*.java" > sources.txt; javac -d /tmp/out @sources.txt`. Il repo **contiene `out/` e `bin/`** (output di build, stantii: ignorali, non fidarti di quello che c'è dentro).
+- **`pp/` è nel `.gitignore`**: gli script locali dell'utente (`Fix_Weapon_registry.py`, `convert_components.py`, `convert_sets_corda.py`, `generate_loot_index.py`, `apply_*.py`) **non sono su GitHub**: non li vedi. `generate_equip.py` (generatore dei registry dalla scheda Equip dell'xlsx, solo il primo foglio) **non è nel progetto**.
+- **Test headless**: `java -Djava.awt.headless=true -cp out:res Classe` (la cartella `res` deve essere nel classpath, altrimenti `TileManager` lancia "Resource not found"). `new GamePanel()` funziona headless; per il libro: `gp.gameState = gp.bookState`, disegna su un `BufferedImage` con `gp.ui.book.draw(g2)`, simula i click con `gp.ui.book.handleClick(x, y)` (coordinate schermo), poi **guarda il PNG** con lo strumento di visualizzazione. PIL/numpy/scipy servono per misurare coordinate dalle immagini (template matching esatto sui pixel).
+- **Come consegnare modifiche a file esistenti: script Python, non `.patch`.** I `.patch` sono falliti due volte con "corrupt patch": le righe di contesto fatte di un solo spazio vengono ripulite dagli editor. Si usano script `apply_<cosa>.py` con sostituzioni di testo **esatte**: ogni sostituzione verifica che il testo compaia **una volta sola**, riconosce "già applicato", **non scrive nulla se qualcosa non torna**, gestisce gli a-capo CRLF. L'utente li mette in `pp/` e li lancia dalla root del progetto: `python pp/apply_x.py src` (poi *File > Reload All from Disk*, Ctrl+Alt+Y, e ricompila). Prima di consegnare: provali su una copia pulita del repo (LF e CRLF), rilancia per verificare l'idempotenza, compila. File **nuovi**: consegnali completi (anche in uno zip con la struttura `src/...`).
+- Regola di sicurezza già costata un errore (§0): dopo ogni patch mirata rileggi il risultato.
 
-### 0. Come lavoriamo (workflow) — regole operative (ex-§0)
+### 8.4 Run, build e risorse (trappola già vissuta)
+- In IntelliJ la run configuration deve avere **"Build project" in *Before launch***. Se è disattivato, la cartella di output (`out/production/DD2D`) non riceve le risorse nuove: il libro non disegnava **niente** (nemmeno la pagina iniziale) perché le immagini erano state spostate in `res/ui/book_general/` e `res/ui/book_inventory/` ma nel classpath c'erano solo i vecchi file piatti. In console compare `ERROR: resource not found: /ui/book_general/book.png`. Non era un bug del codice.
+- `main/ResourceStreams` (ripiego opzionale su `res/` con un AVVISO in console, applicato con `apply_resources.py`) esiste ma **non è necessario** se la build è corretta.
+
+### 8.5 Mappa del codice
+- `main`: `GamePanel` (loop, stati, libro: `bookindex/bookzone/bookpage`), `UI`, `KeyHandler`, `Button`, `PaletteSwap`, `GameCalendar`, `AssetSetter`. `entity`: `Entity`, `Player` (slot equip, `inventory`, `obtain()/receiveItem()`), NPC e mostri, `StatType`. `combat`: `CombatState`, `ElementSystem`, `Ability`, `CombatMath`, `SpecialEffect*`. `items`: `Item`, `Weapon`, `Armor`, `Jewelry`, registry generati (`WeaponRegistry`, `ShieldRegistry`, `ArmorRegistry`), `ComponentRegistry`, `DamageTypes`, `LootTable`/`LootIndex`, `Inventory` + `Consumable/Precious/QuestItem/Resource`, `ItemInfo`, `StatLine`. `book`: `BookUI`, `InventoryPage`. `quest`: `Quest*`. Risorse in `res/` (`ui/`, `cinematics/`, ...).
+
+### 8.6 Sintesi dei sistemi (dettagli nei § indicati)
+- **Equipaggiamento** (§25-30): 1120 oggetti generati dalla scheda Equip (672 armi/scudi + 448 armature), rarità COMMON/HIGH_QUALITY/MASTERWORK/MYTHIC a scaglioni (ID 1..14 = fasce di livello 0-10 … 40-50). Ogni oggetto = **component** `nome[slot] = ID` risolti da `ComponentRegistry` per famiglia (MELEE, RANGED, SHIELD, ARMOR) → bonus percentuali su `Item.statBonusPercent`; la qualità (`affilatezza`/`rifiniture`, +25% per livello) scala **solo i bonus dell'oggetto**. `punta[0]` delle MAZZE = peso = danno diretto (Spadone: ATK + peso); `struttura[0]` degli archi = durabilità. `armorSetID` non esiste più: set con `upperID` (1 Guardia, 2 Veggente, 3 Voto), `lowerID` (1 Passo, 2 Ombra) + 2 `acceptedUpperIDs`; set valido se `Player.activeFullID() != 0` (combinazioni 11, 31, 22, 32).
+- **Durabilità** (§30.3): 100 per tutti (archi: `struttura[0]`); si consuma per **tipologia** (`Item.tipologie`, `DamageTypes`); sotto il massimo armature/scudi perdono **solo la DIFESA** in proporzione; a 0 armi e Sai sono rotti e inutilizzabili, scudi e armature perdono i bonus ma **tengono gli ID** (i set restano attivi). Usura da parata: `Item.lose()`.
+- **Loot** (§30.5): `LootTable.roll(livelloMostro)` — 50% stessa fascia, 35% inferiore, 15% superiore (mai oltre +10 livelli), poi più rara = meno probabile, pezzo equiprobabile. `LootIndex` è **generato** (rilanciare lo script quando cambiano i registry).
+- **Formule** (§31, `CombatMath`, scala stat 0..1000): mitigazione `0,90 × DIF/(DIF + 20 + 8×livello attaccante)`; probabilità di colpire `precisione / (100 + elusione)`, poi i mancati ×1,25 (relativo).
+- **Libro / Inventario** (§33-35, `InventoryPage`): 5 zone (bookzone 0 gear, 1 consumabili, 2 quest, 3 risorse, 4 preziosi), righe a sinistra (10 per pagina, click = selezione), dettagli a destra, tag di rarità + riquadro effetto per Masterwork/Mythic, calendario nella pagina Quest. `InventoryDemo.ENABLED = true` riempie l'inventario di dati di prova (metterlo a `false` per partire vuoti).
+- **Oggetti ricevuti** (§35.2): `Player.obtain(item)` / `receiveItem(item, equipNow)` → inventario + evento `COLLECT` con `targetId` = **id del registry** (`Item.id`, impostato da `LootTable.create(id)`). `equip()/unequip()` spostano i pezzi tra slot e `inventory.gear`.
+
+### 8.7 Trappole e cose facili da sbagliare
+- `legamenti` ha significati diversi per famiglia (ARMOR → VELOCITA, RANGED → ATTACK, SHIELD → nessuna tabella ancora). `lama`, `sostegno` e `legamenti` degli scudi non hanno ancora bonus.
+- `Item.durability` vale -1 finché non passa da `computeBonusPercent()` (equip/`addGear`); per l'usura di oggetti mai equipaggiati (es. l'arma di un mostro) usa `lose()`.
+- La parata di oggi è del **mostro** che para l'attacco del Player; il sistema mostro → player non esiste ancora (spec in §5).
+- Il Player ha `level` = 0: nelle formule conta come 1. Le stat base (DIF 20, ATK 40, PRE 100) sono molto sotto la scala 1000 e non crescono col livello.
+- `statMultiplier` non è più popolato da nessun oggetto (resta per buff futuri).
+- `BookUI.PAGE_CONTENT_RECT` (95,20,165,230) è un placeholder che cade **sopra** il libro: la pagina Quest vecchia ne risente; le coordinate vere sono in §34.3. Il "tronco" nelle immagini del libro è un'icona jolly provvisoria.
+- Una quest `COLLECT` avanza solo se è `ACTIVE`. `out/` e `bin/` non vanno modificati né letti come fonte di verità.
+- Dopo ogni rigenerazione dei registry con `generate_equip.py` (scrive ancora il formato vecchio) vanno rilanciati, in ordine, gli script di conversione (§30.6) o va aggiornato il generatore.
+
+### 8.8 Decisioni ancora aperte (da chiedere all'utente, non da assumere)
+- **Calendario**: minuti reali per giorno, mesi per stagione (3 o 1), se combattimento/menu/dialoghi consumano tempo, salto del tempo (§32, §35.5).
+- Bonus di `lama`, `sostegno`, `legamenti` di armi/scudi; uno Scudo/Broquel a durabilità 0 deve ancora parare? (oggi sì; il Sai no).
+- `PRECISION_BASE_MAX` (oggi 100), crescita delle stat per livello, `dodgeChance` del mostro (usa ancora la vecchia sottrazione), caso "precisione/2" del sistema mostro → player.
+- Peso del gear (esiste solo per le MAZZE), icone/immagini dettagliate degli oggetti (`itemPath`, `combatItemPath`: nessuno le imposta), equipaggiare/usare dalla lista dell'Inventario, rimuovere `out/` e `bin/` da git.
+
+### 8.9 Come iniziare una sessione
+1. Chiedi/leggi la versione pushata, **clona** e compila. 2. Leggi questo §8, poi §0 e i § recenti (§30-§35). 3. Per ogni richiesta: riproduci o verifica, modifica nello stile esistente, **testa** (compilazione, test numerici o render headless), consegna file/script con istruzioni passo-passo, aggiorna lo STATUS. 4. Quando cambi qualcosa che questo punto descrive, aggiorna anche qui.
+
+---
+
+## 0. Come lavoriamo (workflow)
 
 - **Spiego sempre ogni modifica passo-passo**, non solo il risultato.
 - **Modifiche circoscritte**: tocco solo quello che serve, mantengo la struttura esistente il più possibile.
 - **File completi vs. spiegazione a voce** — differenziare in base a cosa serve davvero:
     - Se la modifica è **meccanica e un IDE la fa da solo** (es. IntelliJ *Refactor → Move Class* per uno spostamento di package, un rename, un'estrazione automatica) → **spiego a voce cosa fare**, non rigenero/incollo file interi.
     - Se la modifica è **logica** (nuovo comportamento, bugfix, refactor che tocca più punti non meccanici) → do i **file completi**, perché lì serve vedere il codice risultante.
-    - Se la modifica è **logica** ma comprende poche righe (un singolo metodo/un singolo bugfix) do il testo diretto, nella spiegazione a voce
-- Commenti nel codice: minimi, solo di **sezionamento** (cosa fa quella sezione), niente spiegazioni riga-per-riga — quelle restano in chat o qui, nella categoria giusta.
+    - *Esempio concreto (19/07)*: spostamento di `CombatState`/`ElementSystem`/`Ability`/`Reaction` in un package `combat` — bastava dire "usa Refactor → Move Class in IntelliJ, aggiorna da solo gli import", invece ho rigenerato e incollato 5 file interi consumando risorse inutilmente. Da evitare.
+- Commenti nel codice: minimi, solo di **sezionamento** (cosa fa quella sezione), niente spiegazioni riga-per-riga — quelle restano in chat.
 - **Verificare sempre il file dopo un patch mirato** (sostituzione di poche righe, non il file intero): il 19/07, durante l'aggiunta di `drawBook()`, una sostituzione ha cancellato per errore la riga della firma di `playMusic()` (il testo da sostituire matchava anche quella riga adiacente). Individuato e corretto subito controllando il file dopo l'edit — ma è un promemoria a **ricontrollare il risultato di ogni patch puntuale**, non solo il bilanciamento delle graffe, prima di consegnare.
-- IMPORTANTE: ricordare SEMPRE di appuntare qui un ragionamento dopo che viene effettuato. Esempio: il ragionamento calendario
+- IMPORTANTE: ricordare SEMPRE di appuntare qui un ragionamento dopo che viene effettuato. Esempio calendario
 
+## 1. Architettura generale
 
-### 2. Sistemi principali (file responsabili; ex-§2)
+- **Java Swing**, game loop standard (thread + `repaint()`), mondo a tile.
+- Classi core: `GamePanel` (loop, stato di gioco, array entità), `TileManager`, `Entity` (classe base), `Player`, NPC/monster che estendono `Entity`.
+- Stati di gioco (`gp.gameState`): `titleState`, `playState`, `pauseState`, `dialogueState`, `combatState`, `cinematicState` (cinematic GIF, implementato il 19/07 — vedi §2).
+- Segui il tutorial YouTube di RyiSnow come base, ma con sistemi custom molto oltre lo scope del tutorial (combattimento a turni, sistema elementale, palette swap, menu animati).
+- **Package `combat`** (nuovo, 19/07): `CombatState`, `ElementSystem`, `Ability`, `Reaction` vivono ora in `src/combat/`, non più in `src/main/`.
+
+## 2. Sistemi principali
 
 | Sistema | File | Note |
 |---|---|---|
@@ -50,111 +104,7 @@ Questo file va tenuto in `docs/STATUS.md` (o dove preferisci nel repo). Non è g
 | Libro: input — mouse + tastiera | `GamePanel` (`cycleBookIndex()`, `cycleBookZone()`), `KeyHandler` (ramo `bookState`), `UI` (`handleBookClick()`) | Click su un bookmark o su un pulsante sottoargomento (quando visibile) = `selectBookIndex()`/`selectBookZone()` tramite `Button.click()`. Da tastiera: **A/D** = area generale precedente/successiva (`cycleBookIndex`, clamp ai bordi come le pagine, apre la prima/ultima se nessuna è ancora selezionata), **W/S** = sottoargomento precedente/successivo dentro all'area corrente (`cycleBookZone`, limite `BOOKZONE_COUNT[bookindex-1]`, diverso per area), **LEFT/RIGHT** = pagina (`turnBookPage`, limite `MICRO_PAGE_COUNT[bookindex-1]`, diverso per area). Tutti passano da `startBookTransition()`, quindi qualunque cambio (mouse o tastiera) fa sempre l'animazione voltapagina — **verificare che quell'animazione parta davvero a schermo**, era la causa reale di "sembra non funzionare" (vedi riga sopra). **ESC chiude tutto il libro in un colpo solo** (non risale di un livello alla volta) — nota, non ancora richiesto esplicitamente. |
 | Tile mappa: terreno vs speciali | `tile/SpecialTile.java`, `tile/TileManager.java` (`SPECIAL_TILE_BASE`, `loadSpecialTilesUsedInMap()`) | Progettata il 30/07 (discussa con `/llm-council`), applicata al codice il 01/08 dopo il fix del repository — verificata identica al design originale, zero conflitti con la 0.13.8 (`getTileImage()`/`draw()`/`setup()` invariati nel frattempo). **Terreno** (ID 0-25): invariato, eager-load in `getTileImage()` come sempre. **Speciali** (ID ≥ `SPECIAL_TILE_BASE=100`, arredi one-off tipo vasi/decorazioni): enum `SpecialTile` con nome leggibile + `collision`, ID = `SPECIAL_TILE_BASE` + ordinale (l'ordine in cui la voce compare nell'enum) — aggiungere un tile nuovo è una riga sola, mai un numero da tenere a mente. Sezionato a commenti per luogo (`// Casa 1`, `// Casa 2`...) invece di una lista piatta, per restare leggibile quando cresce. Caricamento **lazy**: `loadSpecialTilesUsedInMap()` scansiona `mapTileNum` subito dopo averlo letto in `loadMap()` e chiama `setup()` solo per gli ID usati davvero in quella mappa (mai dentro `draw()` — un `ImageIO.read` lì dentro bloccherebbe il frame, stutter visibile proprio quando il player si avvicina a qualcosa di nuovo). Guard: un ID ≥ `SPECIAL_TILE_BASE` senza voce `SpecialTile` corrispondente stampa un errore chiaro invece di andare in crash o disegnare silenziosamente niente. `tile[]` alzato da 100 a 300 slot (temporaneo, da alzare ancora se `SpecialTile` cresce molto). `mapTileNum`/i `.txt` restano `int[][]` invariati, nessuna migrazione dati richiesta. |
 
-
-### 28. STATO ATTUALE COMPLETO — sistema equipaggiamento/combattimento (riferimento) (ex-§28)
-
-Sezione di riferimento, non un'altra voce di log — consolida come funziona TUTTO oggi dopo le sessioni §24-27+correzioni. Le sezioni precedenti restano come storico di come ci si è arrivati; questa è la fotografia attuale.
-
-#### Catalogo (1120 oggetti)
-`WeaponRegistry`/`ArmorRegistry`/`ShieldRegistry`, generati da script (`generate_equip.py`, non nel progetto) a partire dalla scheda Equip. Id: `{type}_{build}_{levelband}_{tier}` (es. `claymore_atk_30_40_masterwork`). 546 armi (mischia+distanza), 448 armature, 126 Difensive. Ogni `get(id)` crea un'istanza nuova. I 3 Build dello stesso Type condividono le stesse stat grezze — cambia solo `rarity`/G/H/I.
-
-#### Struttura di un Item
-- `rarity` (COMMON/HIGH_QUALITY/MASTERWORK/MYTHIC) + 3 stub testuali cumulativi per tier: `synergyBonusStub`(G, da High Quality), `fullSetOrStyleStub`(H, da Masterwork), `mythicUniqueStub`(I, solo Mythic) — testo preso 1:1 dalla scheda, **non letto da nessuna logica di gioco per il Full Set** (vedi sotto), lo è invece `mythicUniqueStub` via `resolveMythicUniqueEffect()`.
-- `itemPath`/`combatItemPath`: STUB dichiarati "da non toccare", nessun asset.
-- `statBonusPercent` (Map, %) → `Player.applySlotBonus()`. La qualità (`affilatezza`/`rifiniture`, +25% per livello, `Item.QUALITY_STEP`) scala **solo i bonus dell'oggetto** dentro `statBonusPercent`, arrotondati. `statMultiplier` (moltiplicatore sull'intera stat del Player) non è più popolato da nessun oggetto: resta per buff/debuff futuri. Dettagli in §30.
-- `preTurnEffects`/`postTurnEffects`/`activeEffects`: liste di `SpecialEffect` risolte da `gemme[]`/`incantesimi[]`/`rocce[]` via `SpecialEffectRegistry` (mai più un bonus % diretto, sempre un effetto speciale).
-
-#### Componenti per categoria (schema finale)
-- **Armatura** (upper 8 Type + gambe 4 Type): `metalli[3]`(ID somma, → DIFESA) — `legamenti[1]`(ID → VELOCITA) — `sostegno[1]`(ID, **nessuna tabella ancora**). `rifiniture` = livello qualità. Durabilità 100 per tutti, vedi sotto.
-- **Gioielli**: `metalli`(bonus diretto, non ID, → EFFICIENZA) + `legame`(ID → **VITA**, si somma a metalli, non lo sostituisce) + `gemma`/`rocce` (→ SpecialEffect).
-- **Armi da mischia + Coltello da Lancio** (famiglia MELEE): `pomo[1]`(→ VELOCITA) — `manico[1]`(ID → resistenza al disarmo, `manicoBonus`) — `guardia[1]`(ID → resistenza al disarmo, `guardiaBonus`) — `lama[1]`(ID, **nessuna tabella ancora**) — `punta[1]`(→ ATTACK; nelle **MAZZE** `punta[0]` è il **peso diretto**: Mazza Chiodata/Ascia danno = peso, Spadone danno = ATK + peso, vedi `Weapon.baseDamage()`). `taglio`/`contundente`/`peso`/`comboTypes` rimossi.
-- **Armi a distanza vere** (famiglia RANGED: Arco Corto/Lungo, Balestra): `corda[1]`(ID → **PRECISIONE**) — `legamenti[1]`(ID → **ATTACK**) — `struttura[1]`(**non un ID**: durabilità massima diretta, 100 oggi).
-- **Difensive** (famiglia SHIELD: Scudo/Broquel/Sai — gestite come Weapon): `metalli[3]`(→ DIFESA) — `legamenti[1]`(ID, **nessuna tabella ancora**). Gli altri campi di Weapon esistono ma non hanno tabella per questa famiglia: ignorati.
-- **Come si risolvono**: `nomecomponent[slot] = ID`, indici da 0. `ComponentRegistry` ha una tabella per (famiglia, component): ID → nome in gioco, StatType, valore. L'ID 4 di `pomo` non è l'ID 4 di `corda`. Un component senza tabella (o con ID 0) non produce nulla. Slot: `metalli`=3, tutti gli altri=1. Vedi §30.
-
-#### Formula stat
-`finale = flat × pct(type) × moltiplicatore(type)`, i 3 fattori calcolati separatamente poi moltiplicati in quest'ordine — `Player.recalculateStats()`.
-
-#### Resistenza al disarmo
-`CombatState.effectiveDisarmChance(baseChance, target)`: `chance effettiva = baseChance - (guardiaBonus + manicoBonus dell'arma del bersaglio) × 10` (valori risolti da `ComponentRegistry`; ID e valore coincidono, 0..14), clampato a 0. Applicata ai 2 punti reali dove il disarmo scatta (Inondazione, base 100%; `disarmChance` dell'arma attaccante). In più: **immunità totale** (bypassa il calcolo) per 2 Mitici (`Presa Eterna`/Vanbrace, `Mano di Ferro`/Gauntlet) via `CombatState.isDisarmImmune()` — controllo diretto sul testo dell'item, non un `SpecialEffect`.
-
-#### Durabilità — stato reale
-`Item.durability`/`maxDurability`: 100 per tutti gli oggetti, tranne archi e balestre (`struttura[0]`, 100 oggi). Parte da -1 (non inizializzata), si riempie al primo `computeBonusPercent()` (cioè all'`equip()`). Si consuma per **tipologia** (`Item.tipologie`, `DamageTypes`) e nella parata; a 0 l'oggetto è rotto. Regole complete in §30.
-
-#### Sistema SpecialEffect (`combat/SpecialEffect.java` + `SpecialEffectRegistry.java`)
-`Timing{PRE_TURN, POST_TURN, ACTIVE}`. `PRE_TURN`/`POST_TURN` richiamati da `CombatState.beforeTurn()`/`afterTurn()` per il Player (i mostri non hanno equip). `target` nell'`execute()` è sempre il vero avversario (non l'entità stessa) — un effetto "su di sé" ignora `target`, uno offensivo (es. "Eco") lo usa. `ACTIVE` per le abilità (`Ability.getSpecialAction()` delega qui).
-
-#### Sistema Set — upper e gambe SEPARATI (corretto dopo un errore)
-**Superato da §30** (`armorSetID`/`activeArmorMatchGroup()` non esistono più): ora `upperID`/`lowerID`/`acceptedUpperIDs`/`fullID`, controllati da `Player.activeFullID()`. I 5 bonus scelti nella lista qui sotto restano come descrizione dei set:
-- Guardia → Elmo Saldo (reale: primo stordimento annullato 1×/combat)
-- Veggente → Occhio Limpido (reale: immune Accecamento)
-- Voto → Purga Lenta (reale: rimuove il debuff più vecchio a fine round)
-- Passo → Suola Salda (reale: immune Naturalizzazione/Infangato)
-- Ombra → Vuoto (**ancora STUB**, nessun sistema di schivata esiste)
-
-Gli altri 27 testi "Full Set" (32 totali − 5 scelti) restano SOLO flavor text sui pezzi — mai letti a runtime. Mitico invariato: ogni pezzo Mitico spara SEMPRE il proprio `mythicUniqueStub`, indipendente dal set.
-
-
-#### Le sezioni STUB e TODO di questo riferimento sono raccolte nella sezione 3.
-
-
-### 31. Mitigazione danni % e precisione (0.19.10) — `combat/CombatMath.java` (ex-§31)
-
-Tutte le formule e le costanti da tarare sono in `CombatMath`. Le stat sono considerate nella scala **0..1000** (`STAT_MAX`): nelle formule un valore sopra 1000 conta come 1000; le stat stesse non vengono tagliate (`maxLife` base è già 1000).
-
-#### 31.1 Mitigazione danni
-- `mitigazione = MAX_MITIGATION × DIF / (DIF + K)`, con `K = K_BASE + K_PER_LEVEL × livello di chi ATTACCA` (livello 1..100; il Player ha level 0 → conta 1). Costanti: `MAX_MITIGATION` 0,90 — `K_BASE` 20 — `K_PER_LEVEL` 8.
-- Più alta è la DIFESA più mitiga (mai oltre 90%); a parità di DIFESA, un attaccante di livello più alto mitiga meno. Esempi: DIF 20 vs lv 2 → 32%; DIF 100 vs lv 10 → 45%; DIF 500 vs lv 50 → 49%; DIF 1000 vs lv 1 → 87,5%, vs lv 100 → 49,5%.
-- Sostituisce il vecchio `max(10, ATK - DIF)`: ora `danno = max(1, round(ATK × (1 - mitigazione)))`, per tutte le abilità (`Ability.use()`; le abilità da `2×ATK` mitigano il doppio grezzo). Per le abilità elementali la DIFESA è `getElementDefense(e)`.
-- Il calo proporzionale di DIFESA per durabilità (§30.3) agisce a monte: abbassa la DIF, quindi la mitigazione scende con la curva.
-
-#### 31.2 Precisione ed elusione
-- `probabilità di colpire = precisione / precisione massima`, con `precisione massima = PRECISION_BASE_MAX + EVASION_WEIGHT × elusione del bersaglio` (100 e 1,0). L'elusione **non toglie precisione: alza il tetto**.
-- Poi, come ultimo passaggio: `mancare = min(1, (1 - colpire) × MISS_MULTIPLIER)` con `MISS_MULTIPLIER` 1,25 (+25% **relativo**: 33% di base → 41,7%).
-- Conseguenza: se la probabilità di mancare di base è 0 (precisione ≥ 100 + elusione) resta 0 — il +25% relativo non crea mancati dal nulla.
-- La precisione passa prima dai moltiplicatori di stato (`ElementSystem.precisionMultiplier()`: Stordimento, Accecamento, Deviazione). `forceHit` e deviazione/blocco a distanza restano come prima.
-- Esempi: prec 100 vs el 0 → 100%; prec 100 vs el 50 → 58,3%; prec 200 vs el 250 → 46,4%.
-
-#### 31.3 Da sapere
-- `PRECISION_BASE_MAX` = 100 mantiene "precisione 100 = nessun mancato a elusione 0" come oggi. Se il tetto base deve essere 1000, va cambiata la costante **e** alzata la precisione base dei personaggi.
-- Verificato con test numerici (monotonia, limiti, Monte Carlo 1.000.000 di tiri: 50,01% contro 50,00% atteso); non provato in-game.
-
-
-### 34. Inventario nel libro: sistema e UI (0.19.10) (ex-§34)
-
-Implementa §33 sulle immagini in `res/ui/book_inventory/`. File: `book/InventoryPage.java` (UI), `items/Inventory.java`, `items/Consumable|Precious|QuestItem|Resource|StatLine|ItemInfo.java`, `main/GameCalendar.java`, `items/InventoryDemo.java`. Applicato con `apply_inventory.py` (modifica `Item`, `Player`, `CombatState`, `GamePanel`, `BookUI`).
-
-#### 34.1 Dati (`items/Inventory`, `Player.inventory`)
-- `gear` (Item posseduti ma non indossati), `consumables`, `precious`, `questItems`, `resources`. `addGear(item)` calcola i bonus dell'oggetto (`computeBonusPercent()`), quindi stat e durabilità sono pronte.
-- **Gear**: la lista del libro mostra prima gli oggetti **indossati** (nome preceduto da `*`) e poi quelli dell'inventario.
-- `Consumable`: nome, oro, quantità, `gains` (StatLine), `effects` (icona + descrizione breve). `Precious`: valore attuale, quantità, `reputationUp`/`reputationDown` (ratio: 0,15 = 15%), `cities` (nome, valore, colore bandiera ARGB). `QuestItem`: nome, descrizione, `Kind` (ARCH, NICHE, SPECIAL, TODO, WORLD → `res/ui/icon_<tipo>quest.png`), `mustDeliver`, `deliverDay`, `exactDay` (rosso se true, giallo se false), `.due(giorno, esatto)`. `Resource`: nome, valore fisso, quantità, descrizione, icone della catena (`processPrimary` → `processTool` → `processRefined`, `processExtra` in alto) e `usages` (icone dei materiali **finiti**, una per cella).
-- `StatLine`: nome abbreviato (da `StatType`: VIT, ATK, DEF, SPD, EVA, PRE, EFF; gli elementali `FIRE_ATK` → "FIRE-ATK") + `Kind` FLAT / PERCENT / MULTIPLIER = **una riga per ciascuno**. `ItemInfo.statLines(item)`: flat (solo il peso-danno delle MAZZE, "DMG") poi percentuali poi moltiplicatori.
-- `Item.weight` (nuovo, 0 = non impostato). `ItemInfo.weightText`: nelle MAZZE il peso è `punta[0]`, altrimenti `weight` o "-". Durabilità in lista: numero 0..100 senza il segno %, per stare nella cella.
-- `main/GameCalendar`: `day`, `month`, `DAYS_PER_MONTH` = 30.
-- **Loot**: `CombatState.onVictory()` aggiunge il drop a `player.inventory` (`addGear`).
-
-#### 34.2 UI (`book/InventoryPage`)
-- Sottoargomenti (bookzone): **0 gear, 1 consumabili, 2 quest, 3 risorse, 4 preziosi** (ordine delle icone nel bookmark, verificato sulle immagini). Sfondo per zona: `GamePanel.getCurrentBookImage()` usa `book_inventory_<zona>.png`.
-- Pagina sinistra: una riga (`list_inventory_<zona>.png`) per oggetto, **10 righe per pagina** (`ROWS_PER_PAGE`), passo 13 px (`ROW_PITCH`); le pagine sono dinamiche (`GamePanel.bookPageCount()`, ← → per girarle). Click su una riga = selezione (bordo rosso); i dettagli appaiono a destra. Il cambio di zona azzera la selezione.
-- Pagina destra: **gear/consumabili** — righe stat (`list_inventory_*_stats`, una per StatLine), riquadro dettagli (immagine usata in combattimento: `combatItemPath`, altrimenti `itemPath`); i consumabili hanno anche le righe effetto. **Preziosi** — valore attuale, ratio su (faccia verde) e giù (faccia rossa), città scoperte con bandiera ricolorata via `PaletteSwap` (bianco → colore) e iniziali. **Quest** — data `gg/mm`, calendario 6x5 (giorno attuale verde; consegna rossa/gialla; tutto nero se non va consegnato), nome e descrizione. **Risorse** — nome e descrizione a sinistra del bookmark, catena di lavorazione a destra, tabella usi 10x8 sotto (nessun riquadro dettagli).
-- Il testo segnaposto delle celle nome (quest, risorse) e della data viene coperto prima di scrivere.
-
-#### 34.3 Geometria (pixel dell'immagine 272x272, misurati sulle tue immagini)
-- Riga 1 a sinistra: x 31, y 106 (icona 31..39, nome da x 42, celle A e B diverse per zona: costanti `NAME_W`, `A_X/A_W`, `B_X/B_W`). Righe stat: x 146, y 106, passo 10 (cella nome 24, valore 13 a x 172). Riquadro dettagli: (204,104) 38x38. Effetti consumabile: x 144, y 162, passo 9. Preziosi: celle valore (161,97), (161,107), (161,116) 23 px; città da y 169 passo 10 (nome x 157, valore x 228). Quest: etichetta data (156,98) 27x9; calendario: 30 segni 3x2, colonne passo 5, righe y 114 + 5r con x di partenza 154,154,153,152,151; nome (153,156) 37x8; descrizione (145,166) 98x75. Risorse: nome (154,98) 29x6, descrizione (146,107) 37x36, icone catena (202,110), (219,110), (236,110) e (218,93) in alto; tabella: celle 8x8 da (149,169), passo 9, 10 colonne x 8 righe.
-- **Bug trovato**: `GamePanel` caricava ancora `/ui/book.png` e `/ui/book_X.png`, ma le immagini erano state spostate in `res/ui/book_general/`: il libro non si disegnava. Percorsi corretti.
-
-#### 34.4 Dati di prova
-`items/InventoryDemo.ENABLED = true` riempie l'inventario all'avvio (`GamePanel.setupGame()`) con oggetti di esempio; **metterlo a false** per partire vuoti.
-
-#### 34.5 Come si fa per…
-- **Aggiungere un oggetto a una zona**: `player.inventory.consumables.add(new Consumable(...))` (idem per `precious`, `questItems`, `resources`; gear con `addGear`).
-- **Cambiare righe per pagina o passo**: `ROWS_PER_PAGE`, `ROW_PITCH` in `InventoryPage`. **Spostare un elemento**: costanti in cima alla classe e nei metodi `draw*` (coordinate in pixel dell'immagine originale).
-- **Icone**: impostare `itemPath` (e `detailPath`/`combatItemPath`) con un percorso risorsa, es. `/items/spada.png`; le immagini mancanti restano vuote (un solo errore in console per percorso).
-
-
-## 2. Ragionamenti e decisioni di design
-
-### 3. Cose da ricordare (bug pattern ricorrenti + decisioni prese) (ex-§3)
+## 3. Cose da ricordare (bug pattern ricorrenti + decisioni prese)
 
 - **Direzione di default per entità statiche**: `Entity.draw()` usa `"down"` come fallback (non più `"idle_down"`) quando `direction`/`idleDirection` sono `null` — perché gli oggetti statici (Door, Key, Chest, Boots) settano solo `down1`, mai `downIdle1/2`. Se aggiungi un nuovo oggetto statico, **niente panico**: eredita questo fix automaticamente.
 - **Palette swap**: va applicato ad ogni punto che disegna un'immagine, non solo in `Entity.draw()`. Punti attualmente coperti: `Entity.draw()` (ramo normale), `Entity.dyingAnimation()` (blink/morte), `CombatState.drawMonster()`. Se aggiungi un nuovo punto di disegno custom per un'entità con palette, ricorda di applicare `PaletteSwap.getOrCreate(...)` anche lì.
@@ -166,249 +116,9 @@ Implementa §33 sulle immagini in `res/ui/book_inventory/`. File: `book/Inventor
 - **Wrap navigazione menu**: main menu (stato 0) blocca ai bordi (0..3, niente wrap); classe/difficoltà (stati 1/2) fanno wrap risalendo da 0 a 3 ma non ridiscendendo da 3 a 0 — asimmetria del codice originale, mantenuta di proposito per non cambiare comportamento esistente senza che fosse richiesto.
 - **Sentinella "nessuno selezionato" che collide con un valore valido** (bug del 04/08, libro): `bookzone` partiva a `0` sia come default/reset sia come primo sottoargomento valido — cliccare il primo pulsante di un'area chiamava `selectBookZone(0)`, che veniva scartato dal controllo "è diverso da quello attuale?" perché `0 == 0`. Sistemato usando `-1` come sentinella (bookzone è 0-based, quindi 0 è un valore reale — a differenza di `bookindex`, che parte da 1 e può usare `0` come "nessuno" senza conflitti). **Regola generale**: quando un campo ha sia un range di valori validi che parte da 0 SIA bisogno di un valore "non ancora impostato", il sentinella deve stare FUORI dal range valido (es. `-1`), non dentro.
 
+## 4. Come si fa per… (guide rapide)
 
-### Calendar System: principi di design (ex-§4)
-
-#### Calendar System
-1. Critico (blocca progressione, esposizione di lore/zone essenziali per capire il gioco)
-   → Mai davvero perdibile. O non è gated dal calendario affatto, o — se narrativamente ha senso che sia legato a un momento — ha un fallback diegetico: se il giocatore non si presenta nella finestra, un NPC lo raggiunge dopo, o l'evento si "riprogramma" al ciclo successivo con una spiegazione in-fiction (es. "il rituale è stato rimandato per il maltempo"). Il giocatore non deve mai sapere che ha "fallito una finestra" — il gioco si adatta silenziosamente.
-2. Maggiore (quest sostanziose con lore/estetica/aree importanti ma non bloccanti)
-   → Finestre generose e contenuto ciclico dove possibile. Se è legato a una stagione, fallo accadere ogni volta che quella stagione ricorre (con variazioni minori per non farlo sembrare uguale), non una tantum. Questo trasforma "l'ho perso per sempre" in "lo rivedrò tra una stagione" — elimina l'ansia per costruzione, non per avviso.
-3. Flavor (colore, atmosfera, easter egg, ricompensa per l'esplorazione attenta)
-   → Genuinamente perdibile, senza compromessi. Qui la perdibilità è la caratteristica, non il bug — è quello che rende il mondo vivo e premia chi esplora con attenzione. Nessun rimpianto strutturale perché non è mai stato presentato come "importante".
-   Per il "non rompere la quarta parete": sostituisci ogni avviso UI con segnali diegetici in-mondo — un cantastorie/banditore in piazza che annuncia eventi imminenti, un tabellone degli annunci nel villaggio, dialoghi NPC che cambiano progressivamente man mano che una finestra si avvicina ("si dice che la festa sia vicina..." → "è domani!"), o un diario/taccuino del personaggio che si aggiorna da solo con le voci/rumor che il giocatore ha sentito in giro. Chi esplora e parla con la gente ottiene il promemoria nel mondo; chi non lo fa, semplicemente non lo sa — che è esattamente la meccanica che vuoi (l'esplorazione viene premiata, non è un tutorial forzato).
-
----
-
-
-### 32. Calendario — ragionamento (da decidere) (ex-§32)
-
-Nel codice non c'è ancora nessun calendario: nessun giorno/mese/stagione/anno è definito (esiste solo il segnalibro Calendario nel libro, con i sottoargomenti vuoti). I principi di design (quest Critiche mai perdibili, Maggiori che ricorrono a ogni ritorno della stagione, Flavor perdibili, avvisi diegetici) sono nella sezione "Calendar System" più sopra.
-
-#### 32.1 Requisiti
-- Eventi **ogni stagione**, "mancabili", ma il player **non deve aspettare troppo**.
-- Ipotesi dell'utente: **20 minuti reali per giorno di gioco**, stagioni da **30 giorni**.
-
-#### 32.2 Calcolo (20 minuti reali per giorno di gioco)
-| Giorni per stagione | Durata stagione | Durata anno (4 stagioni) |
-|---|---|---|
-| 30 | 10 ore | 40 ore |
-| 15 | 5 ore | 20 ore |
-| 12 | 4 ore | 16 ore |
-| 10 | 3 ore 20 | 13 ore 20 |
-| 7 | 2 ore 20 | 9 ore 20 |
-
-- Un evento legato a una stagione, se perso, torna alla ricorrenza successiva della stessa stagione: con 30 giorni sono **40 ore** di attesa. Una finestra di 3 giorni vale circa 1 ora reale.
-- Valutazione: 30 giorni sono troppi se il player non può far avanzare il tempo (dormire, aspettare); in quel caso l'attesa diventa una sua scelta e vanno bene. Senza salto del tempo: **10-12 giorni per stagione** (evento perso → 13-16 ore).
-
-#### 32.3 Ancora aperto
-- Il tempo scorre anche in combattimento, nei menu e nei dialoghi? Il player può farlo avanzare (dormire/aspettare)?
-- Decisi questi punti: fissare **giorni per mese, mesi per stagione, stagioni per anno** come costanti in un unico punto del codice (come `CombatMath` per le formule) e riportarli qui.
-- Il calendario serve alla pagina Quest dell'Inventario (§33.5): giorno attuale, giorno o scadenza di consegna.
-
-
-### 33. UI del libro — Inventario (struttura decisa dall'utente, 0.19.9) (ex-§33)
-
-Per ora la UI definita comprende **solo l'Inventario**; il resto del libro verrà dopo. Nelle immagini il **tronco** è un'icona "jolly" provvisoria: quando verranno segnate le coordinate di dove vanno le icone, verrà tolto e lasciato vuoto.
-
-#### 33.1 Regole generali
-- Cinque zone: **gear, consumabili, precious, quest, risorse**. Sfondo: `res/ui/book_inventory/book_inventory_<zona>.png` (272x272).
-- **Pagina sinistra = lista**: ogni oggetto dell'inventario crea una nuova riga (immagine-riga `list_inventory_<zona>.png`), riempita con le info generali.
-- **Pagina destra**: per tutte le zone **tranne risorse**, accanto al bookmark va l'**immagine dettagliata** dell'oggetto (quella usata in combattimento). Premendo una riga (deve esistere/essere attiva) i dettagli dell'oggetto appaiono nella facciata destra del libro.
-- **Paginazione**: una pagina contiene un numero fisso di righe; se gli oggetti sono di più si disegna una pagina successiva con quelli in eccesso (es. 10 righe per pagina, 11 oggetti → la pagina 2 ha l'undicesimo).
-
-#### 33.2 Gear (equipaggiamento)
-- **Sinistra**: icona dell'item, nome, peso, durabilità (in %). Una riga per oggetto (`list_inventory_gear`).
-- **Destra**: lista di stat (`list_inventory_gear_stats`): nome abbreviato del valore (es. `FIRE-ATK`) e valore. **Moltiplicatori, valori percentuali e valori flat sono considerati separatamente**: una riga diversa per ciascuno.
-
-#### 33.3 Consumabili
-- **Sinistra**: icona, nome, valore in oro, quantità (`list_inventory_consumable`).
-- **Destra**: nome del valore e valore che si guadagna (nuova riga per ogni valore, `list_inventory_consumable_stats`). Se ha **effetti speciali**, sotto va una riga con a sinistra l'icona dell'effetto speciale e a destra la descrizione breve (`list_inventory_consumable_effects`; la prima riga esiste già, sostituirla o aggiungerla è equivalente: non è un punto critico).
-
-#### 33.4 Precious
-- **Sinistra**: icona, nome, valore, quantità (`list_inventory_precious`).
-- **Destra** (righe fisse, non se ne creano): valore attuale **nella zona geografica attuale** (icona monete); di quanto **aumenta** il valore se sale la reputazione (ratio, icona faccia verde); di quanto **si abbassa** (ratio, icona faccia rossa).
-- **In basso**: le **città scoperte**, con nome della città e valore in quella città. La bandiera a sinistra viene sostituita tramite shader con i colori della bandiera della città, con dentro le iniziali della città. Una nuova riga per città (`list_inventory_precious_reputation`).
-
-#### 33.5 Quest
-- **Sinistra**: icona dell'item, nome, quanto tempo rimane per portarlo (vuoto se non ci sono giorni), icona del tipo di quest dove l'item va portato (`res/ui/icon_<tipo>quest.png`: arch, niche, special, todo, world; 10x10).
-- **Destra**: il **calendario**, con il giorno ATTUALE in **verde**; il giorno di consegna in **ROSSO** se è un giorno preciso, **GIALLO** se si può portare entro il giorno X; tutti i giorni **neri** se l'oggetto non va portato. Sotto, la descrizione dell'item nella storia. Dipende dal Calendar System (§32).
-
-#### 33.6 Risorse
-- **Sinistra**: icona della risorsa, nome, valore (sempre fisso, senza storia delle reputazioni), quantità (`list_inventory_resources`).
-- **Destra**: nessuna immagine dettagliata. A **sinistra del bookmark**: breve descrizione dell'item e come si ottiene. A **destra del bookmark**: come usarlo e come ottenerlo (materiale primario → strumento di lavorazione → materiale rifinito, `list_inventory_resources_process`). **Sotto**: una tabella di tutti gli usi; nelle celle vanno i **materiali finiti** (se per ottenere la staccionata serve legno grezzo → legno rifinito → staccionata, nella tabella va comunque "staccionata").
-
-#### 33.7 Immagini (in `res/ui/book_inventory/`, dimensioni in pixel)
-- Sfondi: `book_inventory_gear/consumable/precious/quests/resources.png` — 272x272.
-- Righe: `list_inventory_gear` 94x8, `list_inventory_gear_stats` 39x8, `list_inventory_consumable` 95x8, `list_inventory_consumable_stats` 39x8, `list_inventory_consumable_effects` 98x7, `list_inventory_precious` 94x8, `list_inventory_precious_reputation` 98x8, `list_inventory_quests` 94x8, `list_inventory_resources` 94x8, `list_inventory_resources_process` 41x8.
-- Altro: `tag_masterwork.png`, `tag_mythic.png` (40x11, presenti nella cartella, uso da definire); icone quest in `res/ui/`.
-
-
-#### Le cose non ancora implementate elencate nella vecchia §33.8 sono nella sezione 3.
-
-## 3. TODO, cose non finite, STUB e limiti noti
-
-### 5. TODO aperti — elenco generale originale (ex-§5)
-
-- [x] ~~"effetti attivi" post-turno ticchettano sul BERSAGLIO quando viene colpito~~ — risolto il 27/08: `CombatState.beforeTurn()`/`afterTurn()` ticchettano ogni entità sul PROPRIO turno (vedi §6).
-- [x] ~~Aggiungere tutti gli effetti delle reazioni~~ — fatto il 27/08, tutte e 26 implementate (vedi §6). Restano STUB dichiarati solo Illuminazione/Vaporizzazione (nessun sistema di occultamento/volo nel gioco).
-- [ ] `queueAction()`/`actionQueue` è una coda semplice (`ArrayDeque<String>`, un messaggio testuale alla volta) — se in futuro serve accodare azioni più ricche (non solo testo: es. un'animazione per messaggio, o più colpi con dati diversi ciascuno), andrà esteso oltre la semplice stringa.
-- [ ] Tradurre in inglese `ElementSystem.java` (nomi `Element`/`StatusEffect`/`displayName`) e `Reaction.java` — al momento restano in italiano nonostante `CombatState.java` sia stato tradotto, quindi si vedono nomi come "Raggio"/"Folgore" mescolati a testo inglese.
-- [ ] `commandNum == 1` ("Load Game") nel main menu è ancora uno stub (`/* ADD LATER */`) — nessun salvataggio implementato.
-- [ ] `Options` (main menu) è uno stub — nessuna schermata opzioni.
-- [ ] `Inventory` e `Minimap` in combattimento sono placeholder (mostrano solo un messaggio).
-- [ ] Il glow PNG per l'hover del menu va creato/importato — fatto ma non funzionante
-- [ ] Verificare che tutti gli altri oggetti statici (Chest, Boots) siano effettivamente istanziati in `AssetSetter` — solo Key e Door sono attivi al momento, **ma segnalati come non funzionanti**: da investigare a fondo (il fix della direzione di default dovrebbe averli sbloccati, ma va confermato in gioco).
-- [ ] Contenuto vero delle pagine del libro: tolto tutto (modello dati `BookEntry`/`unlockedBookZones`, testo placeholder) il 02/08 — da riprogettare da zero quando si è pronti, probabilmente ripartendo da `BookEntry.java` (rimasto nel progetto, non referenziato) o da un approccio diverso.
-- [ ] **Da confermare/bilanciare (27/08)**: `Ability.isRanged()` classifica Thunderbolt/AcquaJet/Lightray come "a distanza" e il resto come mischia — assunzione mia, il gioco non aveva finora questa nozione; verifica che rispecchi il design voluto (usata da Accecamento/Polverizzazione/Deviazione).
-- [ ] **Da bilanciare (27/08)**: durata iniziale della Bruciatura Grave da Esplosione fissata a 5 (valore arbitrario, la formula del danno/rimozione dipende da questo numero — vedi §6). Item.percentBonus dei pezzi esistenti (es. `Sword_Basic_Iron`: +3/-1) ora significano percentuali, non più flat — stesso numero, effetto diverso, da ritarare quando ci sono più item con cui confrontare.
-- [ ] **Correzione stessa sessione (27/08)**: ElementoATK/ElementDEF era stato inizialmente accorpato in una sola coppia di stat per tutti gli elementi — sbagliato, era imprecisione mia. Sistemato subito dopo in una coppia ATK/DEF PER ELEMENTO (FireATK/FireDEF...LightATK/LightDEF, vedi §6.5). Le basi del player partono tutte uguali (40/20 su ognuna) solo perché non c'è ancora differenziazione da equip/level design — da rivedere quando ci sarà.
-- [ ] Posizioni placeholder dei pulsanti sottoargomento (`SUBTOPIC_IMAGE_RECTS` in `UI.java`) da aggiustare a vista, stesso procedimento già fatto per i bookmark (aprire `book_X.png` in un editor di immagini, leggere le coordinate pixel).
-- [ ] `res/maps/world2.txt` esiste ma non è caricato da nessun codice (nessun `loadMap("/maps/world2.txt")` in giro) — usa anche ID tile 26-39, oltre il terreno definito (0-25) e sotto `SPECIAL_TILE_BASE=100`. Se in futuro verrà caricata andrà sistemata (o quegli ID vanno rimappati, o vanno definiti come terreno aggiuntivo in `getTileImage()`).
-- [ ] ESC nel libro chiude tutto in un colpo solo, non risale di un livello alla volta (pagina→voce→area→chiuso) — possibile miglioramento futuro, non richiesto esplicitamente.
-- [ ] Effetti passivi come invisibilità fuori combat — `SpecialEffect`/`CombatState.firePreTurnEffects()`/`firePostTurnEffects()` (vedi §24) coprono solo il ciclo di turno DENTRO un combattimento. Alcuni effetti PASSIVI dovranno valere anche fuori (es. un'invisibilità che ti nasconde dai mostri sulla mappa) — nessun aggancio esiste ancora per quel caso, da decidere quando serve davvero (dipende da come funziona il rilevamento fuori combattimento, non ancora implementato).
-
----
-
-
-### STUB aperti — elenco completo dallo stato corrente (ex-§28)
-
-- **54 testi Armor Full Set/Mitico non scelti/non implementabili** — mancano sanguinamento, maledizione/marchio/drenaggio/silenzio/confusione (l'intero set Voto originario), critici, rallentamento/spinta/schivata/iniziativa/furtività/danno da terreno, rivelazione UI, riflessione proiettili, resource/carica accumulabile, hook "on-heal" centralizzato
-- **`synergyBonusStub`** (colonna G) — non risolto da nessuna logica, mai richiamato
-- **`itemPath`/`combatItemPath`** — nessun asset, dichiarati "da non toccare"
-- **`lama`, `sostegno`, `legamenti` di armi/scudi**: slot presenti ma senza tabella in `ComponentRegistry` — non danno nessun bonus (non sono più durabilità). `manico` ha un effetto (disarmo) ma nessun oggetto lo imposta.
-- **Testi Full Set mancanti per le nuove combinazioni delle gambe**: Passo+Voto e Ombra+Voto (`Armor.fullSetStubAlt` è null → nessun effetto).
-- **Nessun oggetto del catalogo ha più di un metallo/gemma** (`metalli[1]`/`[2]` sempre 0, `gemme[]`/`incantesimi[]`/`rocce[]` vuoti tranne lo starter del player) — crafting/socketing non esiste ancora
-- **`Inventory.java`** resta 2 liste vuote, non agganciato a `Player`
-- **Loot non agganciato a un inventario**: `LootTable` genera il drop (§30) ma `Inventory` non è collegato al Player: resta in `CombatState.loot` + messaggio a schermo.
-
-
-### TODO aperti (oltre a quelli in §5) — stato corrente (ex-§28)
-
-- [ ] Decidere i bonus di `lama`, `sostegno`, `legamenti` (armi/scudi) e riempire le tabelle in `ComponentRegistry`
-- [ ] Scrivere i testi Full Set per Passo+Voto e Ombra+Voto (`fullSetStubAlt`)
-- [x] Calcolo PRECISIONE e mitigazione danni % — fatto, vedi §31
-- [ ] `dodgeChance` del mostro (`CombatState`, schivata nel minigioco: `clamp(evasion - precisione|velocità, 0, 100)`) usa ancora la vecchia sottrazione, non `CombatMath.hitChance()`
-- [ ] Sistema mostro → player: la spec dice "100 - precisione" (o "100 - precisione/2") di mancare di base; oggi tutti i colpi usano `CombatMath.hitChance()`. Il caso "precisione/2" non è implementato (quando vale?)
-- [ ] Scala 0..1000: le stat base del Player (DIF 20, ATK 40, PRE 100) sono molto sotto il tetto e non crescono col livello (il Player non ha un livello: `level` = 0, trattato come 1). Serve decidere la crescita per livello
-- [x] Inventario nel libro: sistema e UI fatti (§34); icone e immagini dettagliate degli oggetti non esistono ancora
-- [ ] UI del libro: definita solo l'Inventario; il resto delle aree verrà dopo
-- [ ] Calendario: fissare giorni per mese/stagione/anno e come scorre il tempo (§32)
-- [ ] Equipaggiare/usare gli oggetti dall'Inventario (oggi il libro li mostra soltanto), consumare i consumabili, raccolta nel mondo (`Player.pickUpObject()` è ancora uno stub)
-- [ ] Icone (`itemPath`) e immagini dettagliate (`combatItemPath`/`detailPath`) per gli oggetti: nessun registry le imposta, quindi le celle icona e il riquadro dettagli restano vuoti
-- [ ] Orologio di gioco: `GameCalendar` ha solo giorno e mese correnti fissi (nessun avanzamento); i mesi sono da 30 giorni come la griglia del calendario nel libro
-- [ ] Decidere se uno Scudo/Broquel a durabilità 0 deve ancora poter parare (oggi sì; il Sai no)
-- [ ] Se si rigenerano i registry con `generate_equip.py` (non nel progetto, scrive ancora il formato vecchio): rilanciare in ordine `Fix_Weapon_registry.py`, `convert_components.py`, `convert_sets_corda.py`, `generate_loot_index.py` (cartella `pp/`), oppure aggiornare `generate_equip.py` al formato nuovo
-- [ ] Rimuovere `MaterialRegistry` (non lo usa più nessuno)
-- [ ] Usura per danni da status/veleno/sanguinamento (oggi solo i colpi che passano da `dealDamage()`)
-- [ ] Full Set: valutare se gli altri 27 testi scartati vadano recuperati per qualcos'altro (bonus secondari? scelte alternative per il player?) o restano solo lore
-- [ ] Sistema di crafting/socketing per riempire `metalli[1]`/`[2]` e le gemme sugli oggetti generati
-
-
-### 33.8 Cose che il codice oggi non ha (da tenere presenti) — UI Inventario (ex-§33.8)
-
-- **Peso** nel gear: nessun oggetto ha un peso (c'è solo `punta[0]` delle MAZZE, che è un danno, e `Armor.weightClass`): serve decidere quale valore mostrare.
-- **Righe stat**: gli oggetti hanno solo bonus percentuali (`statBonusPercent`); `statMultiplier` non è più popolato da nessun oggetto (§30.2) e non ci sono bonus flat (a parte il peso-danno delle MAZZE). I nomi abbreviati si ricavano dagli `StatType` (`FIRE_ATK` → "FIRE-ATK").
-- **Precious**: servono zone geografiche, valori per città, reputazione e città scoperte: nessuno di questi sistemi esiste ancora.
-- **Quest**: il calendario della pagina destra e i "giorni rimasti" richiedono il Calendar System (§32); gli oggetti quest oggi non hanno una scadenza.
-- **Inventario**: collegato al Player in §34 (il loot ci finisce); resta da fare equipaggiare dalla lista.
-- **Geometria** (le coordinate dell'Inventario sono ora misurate sulle immagini, §34.3): in `BookUI`, `PAGE_CONTENT_RECT` (95,20,165,230) è un placeholder che cade **sopra** al libro. Sul vecchio `book_inventory.png` le pagine di pergamena misuravano x 22..133 (sinistra) e 137..249 (destra), y 86..247, con il bookmark dell'Inventario in alto a destra (x ~186..202, y ~86..152): da rimisurare con le immagini nuove prima di segnare le coordinate. La pagina Quest già esistente usa lo stesso rettangolo, quindi il suo testo è fuori posto.
-
-
-### 34.6 Non fatto / da sapere — Inventario (ex-§34.6)
-
-- Equipaggiare o usare dalla lista, tag `tag_masterwork`/`tag_mythic` (uso non descritto), navigazione da tastiera delle righe (solo mouse).
-- Il calendario non avanza: `GameCalendar.day`/`month` sono fissi finché non c'è un orologio di gioco (§32).
-- Il peso esiste solo per le MAZZE e per gli Item con `weight` impostato.
-- Verificato con render headless (768x576) di tutte e 5 le zone con dati di prova, selezione, seconda pagina, bandiere ricolorate e calendario; test di regressione su 1120 oggetti, set e loot → inventario. Non provato in-game (mouse e animazione di pagina).
-
-
-> I log storici nella sezione 7 contengono anche TODO formulati durante le sessioni. Se una voce storica contrasta con lo stato corrente delle sezioni 1 o 3, prevale lo stato corrente; le note storiche restano conservate per contesto.
-
-## 4. Storico sintetico delle sessioni e delle versioni documentate
-
-Il file non riporta un elenco completo di commit Git. Sono indicati come **push** soltanto i casi chiamati esplicitamente così nell'originale; gli altri punti sono sessioni o versioni documentate. Il dettaglio integrale è nella sezione 7 o, per lo stato corrente e le specifiche, nelle sezioni 1–3.
-
-- **ex-§6 · sessione 27/08:** Statistiche/equip percentuale, hook pre/post turno, `SpecialAction` stub e 26 reazioni; ATK/DEF elementale separati per elemento.
-- **ex-§7 · sessione 27/08:** Creato il package `quest/`: eventi, step machine, registry e manager; avvio da dialogo/trigger predisposto e vittorie collegate a KILL.
-- **ex-§8 · sessione 27/08:** Quest visualizzate nel libro e notifiche a schermo per avvio, avanzamento e completamento.
-- **ex-§10 · sessione 27/08:** Aggiunto overload `AssetSetter.place(..., questId)` e notifiche multiple impilate.
-- **ex-§11 · sessione 27/08:** Spostata la scelta del momento di assegnazione della quest dal metodo base `Entity.speak()` alle sottoclassi NPC.
-- **ex-§12 · sessione 27/08:** Definita la struttura dati Weapon/Armor/Jewelry, componenti e slot aggiuntivi.
-- **ex-§13 · sessione 27/08:** Estratta la UI del libro da `UI.java` in `book/BookUI.java`.
-- **ex-§14 · sessione 27/08:** Introdotti 12 tipi di armatura, categorie/sottotipi arma, combo e campi meccanici dedicati.
-- **ex-§15 · sessione 27/08:** Aggiunti registry equipaggiamento e meccaniche di combo, disarmo, stordimento e contrattacco in combattimento.
-- **ex-§16 · sessione 27/08:** Contrattacco trasformato in turno bonus limitato; introdotto lo stub `items/Inventory.java`.
-- **ex-§17 · sessione 27/08:** Implementato `addComponents`/`computeBonusPercent` e creati esempi di Weapon, Armor, Jewelry e Component.
-- **ex-§18 · sessione successiva al push 0.17.1:** Ridisegnate le notifiche con grafica da segnalibro e aggiunto lo stadio `statMultiplier` al calcolo statistiche.
-- **ex-§19 · sessione 27/08:** Aggiornate dimensioni reali degli asset di notifica e corretto l’allineamento verticale di 1 px.
-- **ex-§20 · sessione 27/08:** Aggiunti salto, rampino condizionato, cornici e collinette come elementi di movimento/interazione.
-- **ex-§21 · sessione 27/08:** Confermata l’identità indipendente delle istanze item e introdotto `instanceId`.
-- **ex-§22 · sessione 27/08:** Implementato il minigioco angolare di parata/schivata per l’attacco normale del player.
-- **ex-§23 · sessione 27/08:** Sostituito `defenseWeapon` con `equippedWeapon` e resa la geometria coerente con l’immagine reale.
-- **ex-§24 · sistema item:** Aggiunti rarità, ID materiale e registry degli `SpecialEffect` con fasi PRE_TURN/POST_TURN/ACTIVE.
-- **ex-§25 · catalogo Equip:** Rigenerati i registry con 1120 oggetti del catalogo equipaggiamento.
-- **ex-§26 · set ed effetti:** Aggiunti Full Set reali e de-stub di 10 effetti armatura su 64.
-- **ex-§27 · set/components:** Semplificato il bonus Full Set a un bonus per set e ristrutturato il sistema components.
-- **ex-§29 · correzione set:** Corretto il riconoscimento set per gruppo, mantenendo le varianti per livello e i vincoli armi a una/due mani.
-- **ex-§30 · versioni 0.19.5–0.19.7:** Componenti per famiglia, durabilità per tipologia, set upper/lower e loot.
-- **ex-§31 · versione 0.19.10:** Centralizzate in `combat/CombatMath.java` le formule di mitigazione danni, precisione ed elusione.
-- **ex-§32 · ragionamento calendario:** Formalizzati requisiti, ritmo temporale e questioni ancora aperte per il calendario di gioco.
-- **ex-§33 · specifica 0.19.9:** Definiti i requisiti visivi e informativi delle cinque zone dell’inventario nel libro.
-- **ex-§34 · versione 0.19.10:** Implementati dati/UI dell’inventario nel libro, calendario base, dati demo e integrazione del loot.
-
-## 5. Architettura generale
-
-### 1. Architettura generale — quadro originale (ex-§1)
-
-- **Java Swing**, game loop standard (thread + `repaint()`), mondo a tile.
-- Classi core: `GamePanel` (loop, stato di gioco, array entità), `TileManager`, `Entity` (classe base), `Player`, NPC/monster che estendono `Entity`.
-- Stati di gioco (`gp.gameState`): `titleState`, `playState`, `pauseState`, `dialogueState`, `combatState`, `cinematicState` (cinematic GIF, implementato il 19/07 — vedi §2).
-- Segui il tutorial YouTube di RyiSnow come base, ma con sistemi custom molto oltre lo scope del tutorial (combattimento a turni, sistema elementale, palette swap, menu animati).
-- **Package `combat`** (nuovo, 19/07): `CombatState`, `ElementSystem`, `Ability`, `Reaction` vivono ora in `src/combat/`, non più in `src/main/`.
-
-
-### Pseudocodifica supersintetica dello stato documentato
-
-```text
-AVVIO
-  GamePanel inizializza mondo, entità, UI, quest manager e sistemi di gioco
-  AssetSetter piazza entità/oggetti; i registry definiscono abilità, quest ed equipaggiamento
-  se InventoryDemo è abilitato, popola dati di prova
-
-LOOP
-  thread di gioco -> update() -> repaint()
-  input tastiera/mouse -> handler del gameState corrente
-  draw -> schermata attiva: titolo / mondo / dialogo / pausa / combattimento / cinematic / libro
-
-MONDO E QUEST
-  movimento/collisioni/eventi -> interazione NPC -> dialogo
-  NPC decide in quale punto del dialogo avviare una quest
-  QuestManager avanza solo lo step attivo quando riceve un evento corrispondente
-  vittoria in combattimento -> evento KILL + drop nel Player.inventory
-
-COMBATTIMENTO
-  inizio round -> decideTurnOrder(velocità) -> beforeTurn(attore)
-  se il turno non è saltato -> scelta azione -> dealDamage()/abilità
-  danno -> formule CombatMath + effetti elementali/reazioni + meccaniche arma + SpecialAction
-  afterTurn(attore) -> tick effetti attivi; code messaggi/azioni avanzano in update()
-  round successivo finché non c’è vittoria/sconfitta/fuga
-
-LIBRO E INVENTARIO
-  tasto I -> cinematic apertura -> bookState -> BookUI
-  zona inventario -> lista paginata -> selezione oggetto -> pannello dettagli
-  vittoria -> loot aggiunto all’inventario; equipaggiare/usare dalla lista resta da implementare
-```
-
-> Schema descrittivo derivato da questo STATUS.md, non pseudocodice eseguibile.
-
-## 6. Guide rapide
-
-### 4. Come si fa per… (guide rapide) — contenuto originale, escluso il ragionamento sul calendario (ex-§4)
-
-Le procedure qui sotto sono conservate dal blocco originale e i contenuti non sono stati riscritti.
-
-#### Aggiungere un nuovo mostro
+### Aggiungere un nuovo mostro
 1. Crea `monster/MON_NomeMostro.java` che estende `Entity` (vedi `MON_Goblin.java` come riferimento) — costruttore prende solo `GamePanel gp`.
 2. In `AssetSetter.setMonster()`, aggiungi una riga:
    ```java
@@ -416,33 +126,33 @@ Le procedure qui sotto sono conservate dal blocco originale e i contenuti non so
    ```
 3. Se vuoi una variante di colore, sostituisci `null` con una stringa palette (usa `ColorDump` sullo sprite per i colori esatti).
 
-#### Aggiungere un nuovo effetto testuale (tipo `<shake>`, `<rainbow>`)
+### Aggiungere un nuovo effetto testuale (tipo `<shake>`, `<rainbow>`)
 In `UI.java`, dentro `drawSegmentWord()`:
 1. Aggiungi un nuovo `case "nometag":` nello `switch(tag)` che calcola `offX`/`offY` (o il colore) in funzione di `textAnimTick`.
 2. Se il tag è puramente di colore (niente animazione posizionale), va invece in `applyTagStyle()`.
 3. Aggiorna il commento della lista tag supportati sopra `drawStyledText()`.
 
-#### Aggiungere un nuovo menu (con gli stessi effetti di quelli esistenti)
+### Aggiungere un nuovo menu (con gli stessi effetti di quelli esistenti)
 In `UI.java`:
 1. Aggiungi un nuovo `titleScreenState` (es. `3`) e il relativo ramo in `drawTitleScreen()`.
 2. Calcola `String[] items` e `int[] itemYs`, poi chiama `drawMenuItems(items, itemYs, fontSize)` — ottieni automaticamente slide-in/stagger/float/hover/dimming/glow/punch.
 3. Aggiungi la logica di esecuzione comando nel `switch(screen)` dentro `updatePendingMainMenuCommand()`.
 4. In `KeyHandler.java`, il blocco W/S/ENTER per `titleState` è già generico — non serve toccarlo, a meno che il nuovo schermo non abbia un numero diverso di voci (allora serve una `commandNum` clamp/wrap dedicata).
 
-#### Aggiungere un palette swap a un'entità
+### Aggiungere un palette swap a un'entità
 1. `ColorDump.java` sullo sprite reale → leggi i colori esatti.
 2. In `AssetSetter`, passa la stringa palette a `place(...)`: `"vecchio1>nuovo1,vecchio2>nuovo2"`.
 3. Verifica che il punto di disegno dell'entità applichi `PaletteSwap.getOrCreate(...)` (vedi §3 sopra per i punti già coperti).
 
-#### Spostare classi in un nuovo package (come `combat/`)
+### Spostare classi in un nuovo package (come `combat/`)
 Se è **solo** uno spostamento (nessuna modifica di logica): usa IntelliJ **Refactor → Move Class...** sulle classi interessate — aggiorna da solo tutti gli import nel progetto. Non serve chiedere file interi per questo, basta chiedere conferma che non ci siano effetti collaterali (vedi §0).
 
-#### Riprodurre una cinematic (GIF)
+### Riprodurre una cinematic (GIF)
 1. Metti il file in `res/cinematics/nome.gif`.
 2. Da qualunque punto del codice: `gp.playCinematic("/cinematics/nome.gif");` (one-shot) oppure `gp.playCinematic("/cinematics/nome.gif", true)` per farla ripetere in loop.
 3. Torna automaticamente allo stato di gioco da cui era partita quando finisce (o quando il giocatore preme ENTER/ESC per saltarla).
 
-#### Aggiungere un nuovo stile di testo
+### Aggiungere un nuovo stile di testo
 Nuovo colore (es. <purple>)
 Solo una riga in applyTagStyle() in UI.java:
 javacase "purple": g2.setColor(new Color(180, 80, 255)); break;
@@ -467,117 +177,54 @@ Colore statico → solo applyTagStyle()
 Animazione o effetto per carattere → drawSegmentWord() + aggiungi il tag nell'if
 Non serve toccare il parser — riconosce automaticamente qualsiasi tag scritto nel formato <nome>testo</nome>
 
+### Calendar System
+1. Critico (blocca progressione, esposizione di lore/zone essenziali per capire il gioco)
+   → Mai davvero perdibile. O non è gated dal calendario affatto, o — se narrativamente ha senso che sia legato a un momento — ha un fallback diegetico: se il giocatore non si presenta nella finestra, un NPC lo raggiunge dopo, o l'evento si "riprogramma" al ciclo successivo con una spiegazione in-fiction (es. "il rituale è stato rimandato per il maltempo"). Il giocatore non deve mai sapere che ha "fallito una finestra" — il gioco si adatta silenziosamente.
+2. Maggiore (quest sostanziose con lore/estetica/aree importanti ma non bloccanti)
+   → Finestre generose e contenuto ciclico dove possibile. Se è legato a una stagione, fallo accadere ogni volta che quella stagione ricorre (con variazioni minori per non farlo sembrare uguale), non una tantum. Questo trasforma "l'ho perso per sempre" in "lo rivedrò tra una stagione" — elimina l'ansia per costruzione, non per avviso.
+3. Flavor (colore, atmosfera, easter egg, ricompensa per l'esplorazione attenta)
+   → Genuinamente perdibile, senza compromessi. Qui la perdibilità è la caratteristica, non il bug — è quello che rende il mondo vivo e premia chi esplora con attenzione. Nessun rimpianto strutturale perché non è mai stato presentato come "importante".
+   Per il "non rompere la quarta parete": sostituisci ogni avviso UI con segnali diegetici in-mondo — un cantastorie/banditore in piazza che annuncia eventi imminenti, un tabellone degli annunci nel villaggio, dialoghi NPC che cambiano progressivamente man mano che una finestra si avvicina ("si dice che la festa sia vicina..." → "è domani!"), o un diario/taccuino del personaggio che si aggiorna da solo con le voci/rumor che il giocatore ha sentito in giro. Chi esplora e parla con la gente ottiene il promemoria nel mondo; chi non lo fa, semplicemente non lo sa — che è esattamente la meccanica che vuoi (l'esplorazione viene premiata, non è un tutorial forzato).
 
-### Guida pratica per aggiungere e usare le Quest (ex-§9)
+---
 
-Riferimento autonomo (non un log di sessione): tutto quello che serve per lavorare sul sistema quest senza dover rileggere §6-8. Se qualcosa qui e nei commenti del codice (`QuestRegistry`, `QuestManager`, `EventHandler`) diverge, fidati del codice: questa sezione va tenuta aggiornata a mano quando cambia qualcosa di strutturale.
+## 5. TODO aperti
 
-#### 9.1 Aggiungere una nuova quest
-In `quest/QuestRegistry.get()`, un nuovo `case` con un id univoco:
-```java
-case "old_man_favor":
-    return new Quest(
-            "old_man_favor",
-            "Un favore per il vecchio",
-            "Il vecchio del villaggio ha bisogno di aiuto.",
-            QuestTier.FLAVOR,
-            "OldMan", // NPC che la assegna (solo informativo, non collegato automaticamente — vedi 9.2)
-            List.of(
-                    new QuestStep("Torna a parlare con lui", QuestEventType.TALK, "OldMan"),
-                    new QuestStep("Sconfiggi il Goblin", QuestEventType.KILL, "Goblin", 3) // goalCount=3
-            )
-    );
-```
-- È una **step machine**: gli step si sbloccano in ordine, uno per volta. Un evento che combacerebbe con lo step 2 non fa nulla se la quest è ancora allo step 0.
-- `targetId` deve combaciare **esattamente** con quello che passa chi notifica l'evento (case-sensitive): `monster.name` per KILL (es. `"Goblin"`), `entity.name` dell'NPC per TALK, il `locationId` scelto a mano per REACH_LOCATION.
-- `goalCount` di default è 1 — per "N volte" usa il costruttore a 4 argomenti.
-- Ogni chiamata a `QuestRegistry.get()` crea un'istanza NUOVA (stato mutabile) — non riusarne una condivisa.
+- [x] ~~"effetti attivi" post-turno ticchettano sul BERSAGLIO quando viene colpito~~ — risolto il 27/08: `CombatState.beforeTurn()`/`afterTurn()` ticchettano ogni entità sul PROPRIO turno (vedi §6).
+- [x] ~~Aggiungere tutti gli effetti delle reazioni~~ — fatto il 27/08, tutte e 26 implementate (vedi §6). Restano STUB dichiarati solo Illuminazione/Vaporizzazione (nessun sistema di occultamento/volo nel gioco).
+- [ ] `queueAction()`/`actionQueue` è una coda semplice (`ArrayDeque<String>`, un messaggio testuale alla volta) — se in futuro serve accodare azioni più ricche (non solo testo: es. un'animazione per messaggio, o più colpi con dati diversi ciascuno), andrà esteso oltre la semplice stringa.
+- [ ] Tradurre in inglese `ElementSystem.java` (nomi `Element`/`StatusEffect`/`displayName`) e `Reaction.java` — al momento restano in italiano nonostante `CombatState.java` sia stato tradotto, quindi si vedono nomi come "Raggio"/"Folgore" mescolati a testo inglese.
+- [ ] `commandNum == 1` ("Load Game") nel main menu è ancora uno stub (`/* ADD LATER */`) — nessun salvataggio implementato.
+- [ ] `Options` (main menu) è uno stub — nessuna schermata opzioni.
+- [ ] `Inventory` e `Minimap` in combattimento sono placeholder (mostrano solo un messaggio).
+- [ ] Il glow PNG per l'hover del menu va creato/importato — fatto ma non funzionante
+- [ ] Verificare che tutti gli altri oggetti statici (Chest, Boots) siano effettivamente istanziati in `AssetSetter` — solo Key e Door sono attivi al momento, **ma segnalati come non funzionanti**: da investigare a fondo (il fix della direzione di default dovrebbe averli sbloccati, ma va confermato in gioco).
+- [ ] Contenuto vero delle pagine del libro: tolto tutto (modello dati `BookEntry`/`unlockedBookZones`, testo placeholder) il 02/08 — da riprogettare da zero quando si è pronti, probabilmente ripartendo da `BookEntry.java` (rimasto nel progetto, non referenziato) o da un approccio diverso.
+- [ ] **Da confermare/bilanciare (27/08)**: `Ability.isRanged()` classifica Thunderbolt/AcquaJet/Lightray come "a distanza" e il resto come mischia — assunzione mia, il gioco non aveva finora questa nozione; verifica che rispecchi il design voluto (usata da Accecamento/Polverizzazione/Deviazione).
+- [ ] **Da bilanciare (27/08)**: durata iniziale della Bruciatura Grave da Esplosione fissata a 5 (valore arbitrario, la formula del danno/rimozione dipende da questo numero — vedi §6). Item.percentBonus dei pezzi esistenti (es. `Sword_Basic_Iron`: +3/-1) ora significano percentuali, non più flat — stesso numero, effetto diverso, da ritarare quando ci sono più item con cui confrontare.
+- [ ] **Correzione stessa sessione (27/08)**: ElementoATK/ElementDEF era stato inizialmente accorpato in una sola coppia di stat per tutti gli elementi — sbagliato, era imprecisione mia. Sistemato subito dopo in una coppia ATK/DEF PER ELEMENTO (FireATK/FireDEF...LightATK/LightDEF, vedi §6.5). Le basi del player partono tutte uguali (40/20 su ognuna) solo perché non c'è ancora differenziazione da equip/level design — da rivedere quando ci sarà.
+- [ ] Posizioni placeholder dei pulsanti sottoargomento (`SUBTOPIC_IMAGE_RECTS` in `UI.java`) da aggiustare a vista, stesso procedimento già fatto per i bookmark (aprire `book_X.png` in un editor di immagini, leggere le coordinate pixel).
+- [ ] `res/maps/world2.txt` esiste ma non è caricato da nessun codice (nessun `loadMap("/maps/world2.txt")` in giro) — usa anche ID tile 26-39, oltre il terreno definito (0-25) e sotto `SPECIAL_TILE_BASE=100`. Se in futuro verrà caricata andrà sistemata (o quegli ID vanno rimappati, o vanno definiti come terreno aggiuntivo in `getTileImage()`).
+- [ ] ESC nel libro chiude tutto in un colpo solo, non risale di un livello alla volta (pagina→voce→area→chiuso) — possibile miglioramento futuro, non richiesto esplicitamente.
+- [ ] Effetti passivi come invisibilità fuori combat — `SpecialEffect`/`CombatState.firePreTurnEffects()`/`firePostTurnEffects()` (vedi §24) coprono solo il ciclo di turno DENTRO un combattimento. Alcuni effetti PASSIVI dovranno valere anche fuori (es. un'invisibilità che ti nasconde dai mostri sulla mappa) — nessun aggancio esiste ancora per quel caso, da decidere quando serve davvero (dipende da come funziona il rilevamento fuori combattimento, non ancora implementato).
 
-#### 9.2 Come farla partire
-- **Dialogo NPC**: `Entity.givesQuestId` porta solo il DATO ("quale quest"), impostato in `AssetSetter.place()` (overload a 7 argomenti, `null` = nessuna) o nel costruttore dell'NPC. `Entity.speak()` NON la assegna più da sola: sta alla sottoclasse NPC decidere A QUALE `dialoguesIndex` chiamare `gp.questManager.startQuest(givesQuestId)` — stesso pattern usato per qualunque altro regalo condizionato al dialogo (es. la spada in `Npc_HumanRedWorker`). `startQuest()` resta idempotente, sicuro anche se richiamato più volte.
-- **Trigger di mappa**: in `EventHandler.checkEvent()`, una riga come le altre già presenti (`damagePit`/`healingPool`):
-  ```java
-  questStartEvent(30, 15, "any", "old_man_favor");
-  ```
-  `"any"` = da qualunque direzione; altrimenti `"up"`/`"down"`/`"left"`/`"right"`.
-- **Combattimento**: nessuna azione da fare per KILL, `CombatState.onVictory()` notifica già ogni vittoria.
-- Il campo `giverNpc` in `Quest` è solo testo/riferimento, NON collega automaticamente nulla: l'associazione vera con un NPC è impostare `givesQuestId` su quell'NPC come sopra.
+---
 
-#### 9.3 Tipi di obiettivo (QuestEventType)
-| Tipo | Chi lo notifica | targetId | Stato |
-|---|---|---|---|
-| `KILL` | `CombatState.onVictory()` | `monster.name` | Collegato |
-| `TALK` | `Entity.speak()` (ogni volta che si parla a un NPC) | `entity.name` | Collegato |
-| `REACH_LOCATION` | `EventHandler.locationEvent(col,row,dir,locationId)` — riga da aggiungere in `checkEvent()` | id a piacere | Capacità pronta, nessun punto di mappa la usa ancora |
-| `COLLECT` | — | — | **Non collegato**: nessun inventario reale esiste (`Player.pickUpObject()` è uno stub vuoto). Andrebbe agganciato lì, ma prima serve un sistema oggetti minimo |
-| `CUSTOM` | a mano, dal punto del codice dove serve: `gp.questManager.notify(QuestEventType.CUSTOM, "un_id")` | id a piacere | Per obiettivi troppo specifici per meritare un tipo tutto loro |
-
-#### 9.4 Leggere lo stato di una quest da altrove nel codice
-```java
-Quest q = gp.questManager.getQuestById("old_man_favor"); // null se mai iniziata
-if (q != null && q.state == QuestState.COMPLETED) { /* ... */ }
-if (q != null) {
-    QuestStep step = q.currentStep(); // step attivo, non null se la quest è ACTIVE
-    // step.description, step.currentCount, step.goalCount
-}
-```
-`gp.questManager.getActive()` / `getCompleted()` per le liste intere; `getKnownQuests()` per la lista concatenata (ordine stabile) usata anche dal libro.
-
-#### 9.5 Come il giocatore viene informato
-Automatico, non serve fare nulla in più: `QuestManager` chiama `gp.ui.showMessage()` (banner in alto, ~2 secondi) da solo su avvio quest, avanzamento di step e completamento. Se serve un messaggio diverso da quello di default (es. testo custom invece di "Nuovo obiettivo: <descrizione step>"), va cambiato dentro `QuestManager.notify()`/`startQuest()` — non c'è un modo per personalizzarlo per singola quest al momento.
-
-#### 9.6 Vederla nel libro
-Non serve fare nulla in più: qualunque quest **conosciuta** (attiva o completata — non quelle mai iniziate) compare da sola come bookzone nell'area Quest, nell'ordine `getKnownQuests()`. Limite attuale: **5 slot** (`GamePanel.BOOKZONE_COUNT[1]`). Se `QuestRegistry` arriva ad avere più di 5 quest raggiungibili nella stessa run, vanno alzati insieme:
-1. `GamePanel.BOOKZONE_COUNT` (il valore per l'area quests, indice 1)
-2. Il numero di `Rectangle` in `UI.SUBTOPIC_IMAGE_RECTS[1]` (deve combaciare 1:1)
-
-bookpage 0 = titolo/descrizione/stato, bookpage 1 = lista obiettivi con `[x]`/`[ ]` e progresso. `UI.PAGE_CONTENT_RECT` è la zona di testo — placeholder, da aggiustare a vista sul PNG vero se il testo esce dai margini della pagina disegnata.
-
-#### 9.7 Limiti noti (da non dare per scontato che funzionino)
-- Nessuna persistenza: lo stato quest si perde alla chiusura del gioco (nessun sistema di salvataggio esiste, §5).
-- `QuestState.FAILED` esiste ma non è agganciato a nulla — nessuna quest può "fallire" al momento.
-- `COLLECT` non è collegato (9.3).
-- Un solo esempio reale in `QuestRegistry` (`"goblin_bounty"`) — tutto il resto in questa guida è dimostrato solo in astratto, non testato in gioco con contenuti veri.
-
-
-### Guide da sessione 0.19.5–0.19.7 (copie di consultazione di ex-§30.6–30.7)
-
-#### 30.6 Script e come si usano
-- Nella cartella `pp/`: `Fix_Weapon_registry.py`, `convert_components.py`, `convert_sets_corda.py`, `generate_loot_index.py`. Ordine, da root progetto: `python pp/<script>.py src/items` (l'ultimo non prende l'argomento). Si possono rilanciare senza danni. Verificato: partendo dai registry della 0.19.4 la catena riproduce esattamente i registry attuali.
-
-#### 30.7 Come si fa per…
-- **Dare un bonus a un component**: una riga `table(Family.X, Part.Y, StatType.Z, primoID, valori…)` in `ComponentRegistry`; poi assegnare l'ID agli oggetti (`w.lama[0] = 2;`).
-- **Rinominare un ID**: `rename(Family.MELEE, Part.MANICO, 3, "Manico rifinito");` in fondo al blocco `static`.
-- **Nuovo tipo di danno**: una costante in `DamageTypes` (+ aggiungerla al default se armature/scudi devono consumarsi con quel tipo); poi far restituire il tipo dal punto che infligge il danno.
-- **Nuovo pezzo/gamba**: nel registry impostare `upperID` (upper) oppure `lowerID` + `acceptedUpperIDs` (gambe); poi rilanciare `generate_loot_index.py`.
-
-
-### Inventario: come aggiungere dati e ritoccare la UI (copia di consultazione di ex-§34.5)
-
-#### 34.5 Come si fa per…
-- **Aggiungere un oggetto a una zona**: `player.inventory.consumables.add(new Consumable(...))` (idem per `precious`, `questItems`, `resources`; gear con `addGear`).
-- **Cambiare righe per pagina o passo**: `ROWS_PER_PAGE`, `ROW_PITCH` in `InventoryPage`. **Spostare un elemento**: costanti in cima alla classe e nei metodi `draw*` (coordinate in pixel dell'immagine originale).
-- **Icone**: impostare `itemPath` (e `detailPath`/`combatItemPath`) con un percorso risorsa, es. `/items/spada.png`; le immagini mancanti restano vuote (un solo errore in console per percorso).
-
-
-## 7. Tutto il resto: archivio dettagliato delle sessioni e note tecniche
-
-Questa sezione conserva i resoconti dettagliati delle modifiche così come documentati, perché contengono motivazioni, alternative scartate e dettagli implementativi che non vanno persi. Per lo stato aggiornato consultare le sezioni 1–3; per una panoramica della cronologia consultare la sezione 4.
-
-### [Archivio ex-§6] 6. Sessione 27/08 — Sistema stat/equip, azioni pre/post turno, reazioni complete
+*Fine status — prossimo aggiornamento quando accumuliamo un altro blocco di modifiche.*
+## 6. Sessione 27/08 — Sistema stat/equip, azioni pre/post turno, reazioni complete
 
 Blocco di 4 modifiche correlate, spiegate a fondo in chat lo stesso giorno.
 
-#### 6.1 Azioni tra i turni (pre/post-azione)
+### 6.1 Azioni tra i turni (pre/post-azione)
 Nuovi hook generici in `CombatState`: `beforeTurn(actor, isPlayer)` (richiamato prima che l'attore agisca — ritorna `true` se il turno va saltato, es. Stordimento) e `afterTurn(actor, isPlayer)` (richiamato dopo — ticka gli effetti attivi del portatore, `ElementSystem.processTurnEffects()`). Prima lo stordimento era un caso speciale duplicato in `update()` e in testa a `monsterTurn()`; ora è solo il primo utilizzatore di un meccanismo generico — un futuro "controllo prima di agire" o "tick dopo aver agito" va aggiunto qui, non duplicato nei punti di ingresso del turno. `preTurnChecked` (bool) evita che il 50% di skip di Stordimento venga rivalutato ad ogni frame mentre si aspetta l'input del giocatore.
 
-#### 6.2 Stat: calcStat + equip percentuale
+### 6.2 Stat: calcStat + equip percentuale
 9 statistiche (`entity/StatType.java`): Vita, Attack, ElementoATK, Difesa, ElementDEF, Velocità, Elusione, Precisione, Efficienza. Aggiunte alle esistenti: `elementAttack`/`elementDefense`/`efficiency` su `Entity`. Formula: **stat finale = base flat (in `Player`, `baseX`) × (1 + bonus%/100)**. `Player.calcStat(stat, bonus, statChanged)` — statico, decide se sommare o sottrarre in base allo stato dello SLOT: `Player.EquipSlot` (uno per `MainHand`/`OffHand`/`Chestplate`) porta il proprio `statChanged` privato. **Nota sulla pseudocode originale**: il toggle di `statChanged` va fatto UNA volta per slot dopo aver richiamato `calcStat` per ogni sua statistica non-zero, non ad ogni singola chiamata — altrimenti un item con più stat alternerebbe somma e sottrazione invece di applicarle tutte insieme (bug nella bozza fornita, corretto qui). `Item.statBonusPercent` (Map<StatType,Integer>) sostituisce i vecchi campi flat: stessi numeri di prima (`Sword_Basic_Iron`: +3/-1) ma ora significano percentuali. Corretto anche un bug preesistente: `equip()` non gestiva davvero `OffHand` (finiva sempre nel ramo Chestplate).
 
-#### 6.3 DealDmg esteso + SpecialAction (stub)
+### 6.3 DealDmg esteso + SpecialAction (stub)
 `Ability.use()` ora sceglie da solo Attack/Difesa fisici o ElementoATK/ElementDEF in base all'elemento dell'abilità (`Ability.isElemental()`) — prima tutte le abilità, incluse quelle elementali, usavano sempre Attack/Difesa fisici. Corretto di riflesso un bug di `Lightray` (formula invertita: usava `target.defense*2 - user.attack`). Nuovo `combat/SpecialAction.java` (interfaccia, eseguita da `dealDamage()` dopo il danno se non null) + `Ability.getSpecialAction(id)` — **STUB**, nessuna abilità ne ha ancora una. Qualunque nuova abilità, anche senza danno diretto, deve comunque passare da `dealDamage()` per far scattare reazioni/disarmo/SpecialAction.
 
-#### 6.4 Tutte le 26 reazioni implementate
+### 6.4 Tutte le 26 reazioni implementate
 `Reaction.java` riscritta con un `Builder` (supporta secondo effetto simultaneo, riapplicazione elemento, disarmo — impossibile con i 6 campi posizionali di prima). Tabella completa in `ElementSystem.getReaction()`. Novità/fix degni di nota:
 - **Esplosione**: ora applica DUE effetti (Stordimento 3 + Bruciatura Grave, nuovo `StatusEffect`) invece di un solo marcatore.
 - **Resistenza**: bloccava TUTTI i nuovi effetti; ora blocca solo quelli positivi (bug fix, coerente con la descrizione "impossibilità di ricevere nuovi effetti positivi").
@@ -591,7 +238,7 @@ Nuovi hook generici in `CombatState`: `beforeTurn(actor, isPlayer)` (richiamato 
 - **Illuminazione/Vaporizzazione**: STUB dichiarati — nessun sistema di occultamento/volo a cui agganciarle.
 - **Firenado**: diffusione dell'elemento agli alleati vicini è STUB — il combattimento è 1v1, nessun sistema party.
 
-#### 6.5 Correzione: ATK/DEF elementale spaccato per elemento (stessa sessione, dopo il primo giro)
+### 6.5 Correzione: ATK/DEF elementale spaccato per elemento (stessa sessione, dopo il primo giro)
 Il primo giro di §6.2/6.4 usava una singola coppia `elementAttack`/`elementDefense` per tutti gli elementi — non era quello che si voleva, era una mia semplificazione eccessiva. Corretto:
 - `entity/StatType.java`: da `ELEMENTO_ATK`/`ELEMENT_DEF` unici a 6 coppie, una per elemento — `FIRE_ATK`/`FIRE_DEF`, `WATER_ATK`/`WATER_DEF`, `ELECTRIC_ATK`/`ELECTRIC_DEF`, `EARTH_ATK`/`EARTH_DEF`, `WIND_ATK`/`WIND_DEF`, `LIGHT_ATK`/`LIGHT_DEF`. FISICO/NONE restano su `ATTACK`/`DIFESA` (non hanno una coppia elementale).
 - `Entity.elementAttack`/`elementDefense`: da singolo `int` a `Map<Element,Integer>` (+ getter `getElementAttack(Element)`/`getElementDefense(Element)`, default 0 per elementi non impostati).
@@ -600,10 +247,9 @@ Il primo giro di §6.2/6.4 usava una singola coppia `elementAttack`/`elementDefe
 - Tutte le formule "X\*ATK" delle reazioni (Folgore, Infiammazione, Raggio, Carbonizzazione, Sovraccarico, Tempesta, Ramificazione, Elettrizzazione, Firenado) ora usano lo stat ATK dell'elemento giusto invece del generico — es. Folgore (Fulmine) usa `ElectricATK`, Infiammazione (Fuoco) usa `FireATK`. Sovraccarico/Tempesta (50/50 tra due elementi) usano l'ATK dell'elemento estratto quel tick, quindi il 50/50 ora cambia davvero il numero, non solo l'etichetta come nel primo giro.
 - `MON_Goblin` (usa Thunderbolt/Fulmine): imposta `elementAttack.put(FULMINE, ...)` invece del vecchio campo singolo.
 
+## 7. Sessione 27/08 (continua) — Struttura Quest
 
-### [Archivio ex-§7] 7. Sessione 27/08 (continua) — Struttura Quest
-
-Nuovo package `quest/` (7 file): `QuestEventType` (enum: KILL/TALK/REACH_LOCATION/COLLECT/CUSTOM), `QuestTier` (CRITICO/MAGGIORE/FLAVOR, rispecchia i tier del Calendar System §1), `QuestState` (NOT_STARTED/ACTIVE/COMPLETED/FAILED — FAILED è uno stub non ancora agganciato), `QuestStep` (uno step = descrizione + trigger + target + goal, con `matches()`/`isComplete()`), `Quest` (**step machine**: sequenza di `QuestStep`, uno attivo alla volta — `notify()` avanza solo se l'evento combacia con lo step corrente, non con step futuri o già superati), `QuestRegistry` (dispatcher statico delle definizioni, stesso stile di `combat/Ability.java` — vedi il suo header per "come aggiungere una nuova quest"), `QuestManager` (liste `active`/`completed` separate; correzione fatta nella sessione successiva, vedi §8 — non collegate 1:1 a bookzone come scritto qui inizialmente).
+Nuovo package `quest/` (7 file): `QuestEventType` (enum: KILL/TALK/REACH_LOCATION/COLLECT/CUSTOM), `QuestTier` (CRITICO/MAGGIORE/FLAVOR, rispecchia i tier del Calendar System §1), `QuestState` (NOT_STARTED/ACTIVE/COMPLETED/FAILED — FAILED è uno stub non ancora agganciato), `QuestStep` (uno step = descrizione + trigger + target + goal, con `matches()`/`isComplete()`), `Quest` (**step machine**: sequenza di `QuestStep`, uno attivo alla volta — `notify()` avanza solo se l'evento combacia con lo step corrente, non con step futuri o già superati), `QuestRegistry` (dispatcher statico delle definizioni, stesso stile di `combat/Ability.java` — vedi il suo header per "come aggiungere una nuova quest"), `QuestManager` (liste `active`/`completed` separate; correzione fatta nella sessione successiva, vedi §8b — non collegate 1:1 a bookzone come scritto qui inizialmente).
 
 **Quest ottenibili sia da dialogo NPC che da trigger di mappa, dal primo giro**:
 - Dialogo: nuovo campo `Entity.givesQuestId` (null di default) — se impostato, `speak()` chiama `QuestManager.startQuest()` la prima volta che ci si parla; ad ogni `speak()` notifica anche un evento `TALK` col nome dell'NPC (per step tipo "parla con X").
@@ -617,8 +263,7 @@ Nuovo package `quest/` (7 file): `QuestEventType` (enum: KILL/TALK/REACH_LOCATIO
 - Rendering delle quest nel libro (bookzone Quests) — solo la struttura dati è pronta, la UI resta da fare.
 - Persistenza: nessun sistema di salvataggio esiste ancora (§5) — lo stato delle quest si perde alla chiusura del gioco, come tutto il resto.
 
-
-### [Archivio ex-§8] 8. Sessione 27/08 (continua) — Quest nel libro + notifiche a schermo
+## 8b. Sessione 27/08 (continua) — Quest nel libro + notifiche a schermo
 
 **Correzione rispetto a §7**: avevo scritto lì che `BOOKZONE_COUNT` per l'area Quest fosse 2 (Attive/Completate) — falso, il valore vero nel codice è **5** (il commento in `GamePanel`/`UI` diceva "quest=2" ma sia l'array `BOOKZONE_COUNT` sia i `Rectangle` in `SUBTOPIC_IMAGE_RECTS` per quell'area erano già 5: commento sbagliato, corretto anche quello. Il progetto usa la convenzione "bookzone = singola voce, es. Quest 1/Quest 2" (vedi il commento originale sui 3 livelli in `GamePanel.java`) — quindi **una bookzone = una quest**, non uno stato.
 
@@ -629,12 +274,11 @@ Nuovo package `quest/` (7 file): `QuestEventType` (enum: KILL/TALK/REACH_LOCATIO
 **Come il giocatore viene informato**: prima di questa sessione, **in nessun modo** — `UI.showMessage()`/`messageOn` esistevano già (usati da `Npc_HumanRedWorker` per "Hai ottenuto: Spada!") ma non erano MAI disegnati da nessuna parte: un aggancio morto, bug preesistente non mio. Aggiunto `UI.drawMessage()` (banner in alto, ~2 secondi, richiamato da `draw()` sempre tranne che nel titolo) e ora `QuestManager` lo usa per tre eventi: avvio quest ("Nuova missione: ..."), avanzamento di step ("Nuovo obiettivo: ..."), completamento ("Missione completata: ..."). Di riflesso, questo ha sistemato anche il messaggio della spada, che ora funziona davvero.
 - `QuestManager` tiene ora un riferimento a `GamePanel` (passato nel costruttore, `new QuestManager(this)` in `GamePanel`) per poter chiamare `gp.ui.showMessage()` — stesso pattern di `CombatState`/`EventHandler`/`UI` stesse, che tengono già tutte `gp`.
 
-
-### [Archivio ex-§9] 9. Guida pratica — Aggiungere e usare le Quest
+## 9. Guida pratica — Aggiungere e usare le Quest
 
 Riferimento autonomo (non un log di sessione): tutto quello che serve per lavorare sul sistema quest senza dover rileggere §6-8. Se qualcosa qui e nei commenti del codice (`QuestRegistry`, `QuestManager`, `EventHandler`) diverge, fidati del codice: questa sezione va tenuta aggiornata a mano quando cambia qualcosa di strutturale.
 
-#### 9.1 Aggiungere una nuova quest
+### 9.1 Aggiungere una nuova quest
 In `quest/QuestRegistry.get()`, un nuovo `case` con un id univoco:
 ```java
 case "old_man_favor":
@@ -655,7 +299,7 @@ case "old_man_favor":
 - `goalCount` di default è 1 — per "N volte" usa il costruttore a 4 argomenti.
 - Ogni chiamata a `QuestRegistry.get()` crea un'istanza NUOVA (stato mutabile) — non riusarne una condivisa.
 
-#### 9.2 Come farla partire
+### 9.2 Come farla partire
 - **Dialogo NPC**: `Entity.givesQuestId` porta solo il DATO ("quale quest"), impostato in `AssetSetter.place()` (overload a 7 argomenti, `null` = nessuna) o nel costruttore dell'NPC. `Entity.speak()` NON la assegna più da sola: sta alla sottoclasse NPC decidere A QUALE `dialoguesIndex` chiamare `gp.questManager.startQuest(givesQuestId)` — stesso pattern usato per qualunque altro regalo condizionato al dialogo (es. la spada in `Npc_HumanRedWorker`). `startQuest()` resta idempotente, sicuro anche se richiamato più volte.
 - **Trigger di mappa**: in `EventHandler.checkEvent()`, una riga come le altre già presenti (`damagePit`/`healingPool`):
   ```java
@@ -665,7 +309,7 @@ case "old_man_favor":
 - **Combattimento**: nessuna azione da fare per KILL, `CombatState.onVictory()` notifica già ogni vittoria.
 - Il campo `giverNpc` in `Quest` è solo testo/riferimento, NON collega automaticamente nulla: l'associazione vera con un NPC è impostare `givesQuestId` su quell'NPC come sopra.
 
-#### 9.3 Tipi di obiettivo (QuestEventType)
+### 9.3 Tipi di obiettivo (QuestEventType)
 | Tipo | Chi lo notifica | targetId | Stato |
 |---|---|---|---|
 | `KILL` | `CombatState.onVictory()` | `monster.name` | Collegato |
@@ -674,7 +318,7 @@ case "old_man_favor":
 | `COLLECT` | — | — | **Non collegato**: nessun inventario reale esiste (`Player.pickUpObject()` è uno stub vuoto). Andrebbe agganciato lì, ma prima serve un sistema oggetti minimo |
 | `CUSTOM` | a mano, dal punto del codice dove serve: `gp.questManager.notify(QuestEventType.CUSTOM, "un_id")` | id a piacere | Per obiettivi troppo specifici per meritare un tipo tutto loro |
 
-#### 9.4 Leggere lo stato di una quest da altrove nel codice
+### 9.4 Leggere lo stato di una quest da altrove nel codice
 ```java
 Quest q = gp.questManager.getQuestById("old_man_favor"); // null se mai iniziata
 if (q != null && q.state == QuestState.COMPLETED) { /* ... */ }
@@ -685,39 +329,36 @@ if (q != null) {
 ```
 `gp.questManager.getActive()` / `getCompleted()` per le liste intere; `getKnownQuests()` per la lista concatenata (ordine stabile) usata anche dal libro.
 
-#### 9.5 Come il giocatore viene informato
+### 9.5 Come il giocatore viene informato
 Automatico, non serve fare nulla in più: `QuestManager` chiama `gp.ui.showMessage()` (banner in alto, ~2 secondi) da solo su avvio quest, avanzamento di step e completamento. Se serve un messaggio diverso da quello di default (es. testo custom invece di "Nuovo obiettivo: <descrizione step>"), va cambiato dentro `QuestManager.notify()`/`startQuest()` — non c'è un modo per personalizzarlo per singola quest al momento.
 
-#### 9.6 Vederla nel libro
+### 9.6 Vederla nel libro
 Non serve fare nulla in più: qualunque quest **conosciuta** (attiva o completata — non quelle mai iniziate) compare da sola come bookzone nell'area Quest, nell'ordine `getKnownQuests()`. Limite attuale: **5 slot** (`GamePanel.BOOKZONE_COUNT[1]`). Se `QuestRegistry` arriva ad avere più di 5 quest raggiungibili nella stessa run, vanno alzati insieme:
 1. `GamePanel.BOOKZONE_COUNT` (il valore per l'area quests, indice 1)
 2. Il numero di `Rectangle` in `UI.SUBTOPIC_IMAGE_RECTS[1]` (deve combaciare 1:1)
 
 bookpage 0 = titolo/descrizione/stato, bookpage 1 = lista obiettivi con `[x]`/`[ ]` e progresso. `UI.PAGE_CONTENT_RECT` è la zona di testo — placeholder, da aggiustare a vista sul PNG vero se il testo esce dai margini della pagina disegnata.
 
-#### 9.7 Limiti noti (da non dare per scontato che funzionino)
+### 9.7 Limiti noti (da non dare per scontato che funzionino)
 - Nessuna persistenza: lo stato quest si perde alla chiusura del gioco (nessun sistema di salvataggio esiste, §5).
 - `QuestState.FAILED` esiste ma non è agganciato a nulla — nessuna quest può "fallire" al momento.
 - `COLLECT` non è collegato (9.3).
 - Un solo esempio reale in `QuestRegistry` (`"goblin_bounty"`) — tutto il resto in questa guida è dimostrato solo in astratto, non testato in gioco con contenuti veri.
 
-
-### [Archivio ex-§10] 10. Sessione 27/08 (continua) — Quest da AssetSetter + messaggi impilati
+## 10. Sessione 27/08 (continua) — Quest da AssetSetter + messaggi impilati
 
 **`AssetSetter.place()`**: nuovo overload a 7 argomenti (`..., paletteDef, questId`) — se `questId` è `null` non assegna nessuna quest (comportamento invariato per obj/monster, che continuano a usare la versione a 6 argomenti senza toccarla). `setNpc()` ora collega davvero `Npc_HumanRedWorker` alla quest `"goblin_bounty"` (l'unica reale in `QuestRegistry`) — primo esempio end-to-end funzionante: dialogo che assegna la quest, uccisione del Goblin che la completa, libro che la mostra.
 - **Nota sulla scelta del punto**: l'alternativa (metterlo nel costruttore dell'NPC stesso, `Npc_HumanRedWorker.java`) resta più coerente con come il resto del progetto è scritto (quell'NPC si autoconfigura interamente lì — dialoghi, hitbox...) — qui è stato messo in `AssetSetter` su richiesta esplicita, perché in questo punto si vede a colpo d'occhio insieme a tutti gli altri piazzamenti. Da tenere a mente se in futuro si aggiungono più NPC della stessa classe con quest diverse: quel caso torna a favorire il costruttore.
 
 **`UI`: da singolo messaggio a coda impilata**: prima un secondo `showMessage()` sovrascriveva silenziosamente il primo se ancora a schermo (helper interno, non esposto). Ora `messages` è una lista di box, ognuno con il proprio timer indipendente (~2 secondi) — più messaggi contemporanei si impilano uno sotto l'altro invece di accavallarsi. Con l'NPC attuale la sovrapposizione non capita mai davvero in pratica (`givesQuestId` scatta al primo dialogo, la spada al terzo — momenti diversi), ma resta la protezione generale corretta per quando due notifiche arriveranno sullo stesso frame.
 
-
-### [Archivio ex-§11] 11. Sessione 27/08 (continua) — Assegnazione quest spostata dentro l'NPC
+## 11. Sessione 27/08 (continua) — Assegnazione quest spostata dentro l'NPC
 
 `Entity.speak()` non chiama più `startQuest(givesQuestId)` automaticamente al primo dialogo — restava troppo rigido (un solo momento possibile, sempre il primo click, uguale per ogni NPC). `givesQuestId` ora è solo il dato ("quale quest dare"); OGNI sottoclasse NPC decide da sé A QUALE `dialoguesIndex` chiamare `gp.questManager.startQuest(givesQuestId)`, esattamente come già faceva `Npc_HumanRedWorker` per la spada. `Entity.speak()` continua a notificare `TALK` ad ogni dialogo (invariato — resta generico, serve agli step quest tipo "parla con X").
 
 `Npc_HumanRedWorker`: la quest `"goblin_bounty"` ora parte allo stesso `dialoguesIndex==2` della spada — scelta deliberata (non obbligata) per far vedere, nello stesso identico dialogo, i due box impilati di §10 invece che uno alla volta. Per darla in un punto diverso basta cambiare quel numero nella sua `speak()`.
 
-
-### [Archivio ex-§12] 12. Sessione 27/08 (continua) — Struttura Weapon/Armor/Jewelry (struttura decisa dall'utente)
+## 12. Sessione 27/08 (continua) — Struttura Weapon/Armor/Jewelry (struttura decisa dall'utente)
 
 Struttura dati per i 3 tipi di oggetto, così come descritta esplicitamente (non una mia proposta): `items/ItemCategory.java` (ARMA/ARMATURA/GIOIELLO), `items/Component.java` (slot generico gemma/incantesimo/roccia — porta solo un `id` stringa, nessuna logica), `items/Weapon.java`, `items/Armor.java`, `items/Jewelry.java`.
 
@@ -731,8 +372,7 @@ Struttura dati per i 3 tipi di oggetto, così come descritta esplicitamente (non
 **Nuovi slot su `Item.ItemSlot`/`Player`**: `Head`, `Neck`, `Ring1`, `Ring2`, `Bracelet1`, `Bracelet2` (prima esistevano solo `MainHand`/`OffHand`/`Chestplate`) — necessari per corona/collana/i 2 anelli/i 2 bracciali dei Gioielli. `Player` ha un `EquipSlot` in più per ciascuno (`headSlot`, `neckSlot`, `ring1Slot`, `ring2Slot`, `bracelet1Slot`, `bracelet2Slot`), `slotFor()` aggiornato di conseguenza. Un elmo (`Armor`) potrà in futuro condividere lo slot `Head` con una corona (`Jewelry`) — stesso slot, categorie diverse, corretto: un solo oggetto per zona del corpo, non per categoria.
 - **Limite noto**: anelli e bracciali hanno 2 slot ciascuno ma nessuna logica "equipaggia nel primo slot libero" — `Jewelry` di tipo `ANELLO`/`BRACCIALE` parte sempre su `Ring1`/`Bracelet1`, va spostata a mano su `Ring2`/`Bracelet2` (`item.slot = ItemSlot.Ring2;` prima di chiamare `equip()`) se il primo è già occupato.
 
-
-### [Archivio ex-§13] 13. Sessione 27/08 (continua) — UI del libro estratta in package/classe separati
+## 13. Sessione 27/08 (continua) — UI del libro estratta in package/classe separati
 
 Nuovo package `book/` (1 file, `BookUI.java`) — tutto quello che riguardava SOLO il libro spostato da `UI.java`: i rettangoli di bookmark/sottoargomenti (`BOOKMARK_IMAGE_RECTS`, `SUBTOPIC_IMAGE_RECTS`, `PAGE_CONTENT_RECT`), i `Button` corrispondenti, `draw()` (ex `drawBookScreen()`), `drawQuestPageContent()`, `handleClick()` (ex `handleBookClick()`).
 
@@ -742,8 +382,7 @@ Nuovo package `book/` (1 file, `BookUI.java`) — tutto quello che riguardava SO
 
 Due commenti in `GamePanel.java` che citavano `UI.SUBTOPIC_IMAGE_RECTS` corretti in `book.BookUI.SUBTOPIC_IMAGE_RECTS`.
 
-
-### [Archivio ex-§14] 14. Sessione 27/08 (continua) — Armature reali (12 tipi) + armi con categoria/sottotipo/combo
+## 14. Sessione 27/08 (continua) — Armature reali (12 tipi) + armi con categoria/sottotipo/combo
 
 **Armor**: `ArmorType` non è più una stringa libera — enum chiuso con i 12 tipi reali (HELMET, GORGET, PAULDRON, REREBRACE, COUTER, VANBRACE, GAUNTLET, CUIRASSE, CUISSE, POLEYN, GREAVE, SABATON), mappati 1:1 sui nuovi `ItemSlot`. **`Chestplate` rimosso** (sostituito, come deciso) — nessun riferimento rimasto in tutto il repo. `Item.ItemSlot`/`Player` hanno ora i 10 slot armatura nuovi (`pauldronSlot`...`sabatonSlot`); Helmet/Gorget condividono `Head`/`Neck` con Corona/Collana (Jewelry) — stessa logica già decisa in §12: un solo oggetto per zona del corpo, non per categoria (assunzione mia, non riconfermata esplicitamente in questa sessione, ma coerente con quanto già scritto). Nuovo `Armor.WeightClass` (LEGGERA/MEDIA/PESANTE), usato dalla penetrazione degli archi.
 
@@ -753,8 +392,7 @@ Due commenti in `GamePanel.java` che citavano `UI.SUBTOPIC_IMAGE_RECTS` corretti
 - Nessun numero è popolato per `disarmChance`/`stunChance`/`counterattackChance`/`comboTypes` — non ho valori reali per "quanto" disarma una Frusta o stordisce una Falce, restano a 0/null finché non li imposta chi crea l'istanza vera (un futuro `WeaponRegistry`, stesso pattern di `Ability`/`QuestRegistry`).
 - Nessuna logica in `CombatState` legge ancora questi campi (disarmo su hit, stordimento su hit, contrattacco, combo taglio+contundente, penetrazione per `WeightClass`) — solo la struttura dati, come per tutto il resto della categoria "add components".
 
-
-### [Archivio ex-§15] 15. Sessione 27/08 (continua) — Correzione slot + Registry + meccaniche armi in combattimento
+## 15. Sessione 27/08 (continua) — Correzione slot + Registry + meccaniche armi in combattimento
 
 **Correzione**: Helmet/Gorget erano finiti condivisi con Head/Neck dei Gioielli in §14 nonostante l'intento fosse tenerli separati — in realtà il codice era già corretto (slot dedicati `helmetSlot`/`gorgetSlot`), solo il commento sopra `Armor.java` diceva ancora "condivisi": corretto anche quello. Gioielli/Armi/Armatura restano completamente distaccati, nessuno slot in comune.
 
@@ -770,8 +408,7 @@ Tutte e 4 leggono l'arma equipaggiata in `MainHand` (helper `weaponOf()`, `null`
 
 **Ancora da fare (ordine dato: 2 → 3 → 1, fatti 2 e 3, resta 1)**: l'inventario vero — un contenitore che tenga gli oggetti posseduti-ma-non-equipaggiati, popolato dalla raccolta nel mondo (`Player.pickUpObject()` è ancora uno stub vuoto) e da un menu per equipaggiare da lì. Liste separate confermate: equipaggiabili (Weapon/Armor/Jewelry) e oggetti "puri" (es. una Key) non nella stessa lista.
 
-
-### [Archivio ex-§16] 16. Sessione 27/08 (continua) — Disarmo/Stordimento confermati, Contrattacco ristrutturato, stub Inventory
+## 16. Sessione 27/08 (continua) — Disarmo/Stordimento confermati, Contrattacco ristrutturato, stub Inventory
 
 **Disarmo e Stordimento**: confermato che il design già in campo (base 0, solo l'arma che imposta un valore >0 ha una chance — es. Frusta per disarmo, Falce per stordimento) corrisponde a "0 con bonus flat se l'equip lo permette". Nessuna modifica di codice necessaria.
 
@@ -783,8 +420,7 @@ Tutte e 4 leggono l'arma equipaggiata in `MainHand` (helper `weaponOf()`, `null`
 
 **`items/Inventory.java`** (nuovo) — STUB richiesto: solo le due liste separate (`equippables: List<Item>`, `pureItems: List<String>`), nessuna logica (niente add/remove/equip-da-qui/raccolta). **Non ancora agganciato a `Player`** — nessun campo `Player.inventory` esiste ancora, la prossima sessione su questo tema dovrà collegarlo (più `pickUpObject()`, più un menu vero al posto dello stub "Inventory is empty.").
 
-
-### [Archivio ex-§17] 17. Sessione 27/08 (continua) — Add components implementato + un oggetto per tipologia
+## 17. Sessione 27/08 (continua) — Add components implementato + un oggetto per tipologia
 
 **"Add components" implementato**: `Item.computeBonusPercent()` (no-op di default, così `Sword_Basic_Iron` resta invariata) sovrascritta da `Weapon`/`Armor`/`Jewelry` — ognuna traduce i propri campi grezzi in `statBonusPercent` (letta poi dal sistema di equip già esistente da prima). Richiamata da `Player.equip()` subito prima di applicare i bonus dello slot. Nuovo `Item.addComponents()` (helper condiviso) somma il bonus di ogni componente innestato tramite il nuovo `ComponentRegistry` (dispatcher statico, stesso pattern di Ability/QuestRegistry — 4 componenti di esempio: `ruby_shard`, `haste_rune`, `iron_vein_stone`, `swift_stone`).
 
@@ -797,8 +433,7 @@ Tutte e 4 leggono l'arma equipaggiata in `MainHand` (helper `weaponOf()`, `null`
 
 **Content per testare tutto**: `WeaponRegistry` (16 armi, una per sottotipo), `ArmorRegistry` (12 armature, una per tipo), `JewelryRegistry` (4 gioielli, uno per tipo) — tutti con numeri placeholder di esempio, non un bilanciamento reale. Combo (Mazza chiodata, Ascia), disarmo (Frusta), stordimento (Falce), contrattacco (Coltello da lancio) e penetrazione (i 2 archi) sono popolati sui rispettivi esempi, pronti per essere provati in combattimento (tranne la penetrazione, non collegata — vedi sopra).
 
-
-### [Archivio ex-§18] 18. Sessione 27/08 (continua, dopo il push 0.17.1) — Notifiche a forma di segnalibro + stadio moltiplicatore stat
+## 18. Sessione 27/08 (continua, dopo il push 0.17.1) — Notifiche a forma di segnalibro + stadio moltiplicatore stat
 
 **Notifiche ridisegnate** (`UI.drawMessage()`): via dal box pieno di `drawSubWindwow` — ora usa i nuovi asset `res/ui/notify_bookmark_head.png` (14×17, punta decorativa) e `res/ui/notify_bookmark_body.png` (1×17, ripetuto). Analisi pixel dei due sprite: il bordo DESTRO dell'head combacia esattamente con la colonna del body (stessi colori riga per riga) — quindi l'head va a sinistra con la punta rivolta fuori, il body si ripete verso destra fino a coprire il testo. Larghezza = solo quella necessaria (head + N tile di body, N calcolato dalla larghezza del testo via `FontMetrics`), non un rettangolo pieno.
 - Ancorata in alto a destra (`rightEdge = screenWidth - tileSize/2`, fisso); scorre in entrata da fuori schermo (x = screenWidth) fino alla posizione di riposo in `NOTIFY_SLIDE_FRAMES` (15) frame, con un ease-out cubico. Box e testo si muovono insieme (stesso `offsetX`).
@@ -808,15 +443,13 @@ Tutte e 4 leggono l'arma equipaggiata in `MainHand` (helper `weaponOf()`, `null`
 
 **Piccola modifica alle stat** (`Player.recalculateStats()`): aggiunto un terzo stadio di calcolo dopo flat e percentuale — un moltiplicatore per stat (`statMultiplier`, default 1.0 = nessun effetto). Ordine ora: **stat flat → percentuale → moltiplicatore**. Non ancora popolato da nessuno (nessun buff/debuff temporaneo lo usa ancora) — struttura pronta, comportamento numerico invariato finché qualcosa non ci scrive dentro.
 
-
-### [Archivio ex-§19] 19. Sessione 27/08 (continua) — Asset notifica aggiornati a 20x20/1x20 + fix allineamento 1px
+## 19. Sessione 27/08 (continua) — Asset notifica aggiornati a 20x20/1x20 + fix allineamento 1px
 
 Aggiornato il commento di riferimento alle dimensioni reali dei due sprite (head 20x20, body 1x20) — il calcolo stesso (`headW`/`boxH`) non doveva cambiare, legge già `notifyHead.getWidth()`/`getHeight()` dall'immagine, non valori scritti a mano.
 
 Aggiunto `NOTIFY_HEAD_Y_OFFSET` (-1): nell'asset l'head risulta 1px nativo più in basso del body, disallineandoli quando disegnati alla stessa y. L'head viene ora disegnato con `y + NOTIFY_HEAD_Y_OFFSET * NOTIFY_SCALE`. Se il verso risultasse sbagliato (l'head finisce più in alto invece che allineato), basta cambiare il segno della costante (-1 → 1).
 
-
-### [Archivio ex-§20] 20. Sessione 27/08 (continua) — Salto, Rampino, Cornice, Collinetta
+## 20. Sessione 27/08 (continua) — Salto, Rampino, Cornice, Collinetta
 
 Nuovo movimento oltre gli ostacoli, come discusso: salto sempre disponibile, rampino dietro `Player.hookUnlocked` (di default `false`).
 
@@ -839,8 +472,7 @@ Nuovo movimento oltre gli ostacoli, come discusso: salto sempre disponibile, ram
 
 **Non testabile oggi**: nessuna mappa ha ancora tile `appiglio`/`cornice_*`/`collinetta` piazzate (serve editarle a mano nei file `.txt` delle mappe), e non esistono `world02`/`world03`/`world04` — i link cross-mondo restano solo infrastruttura pronta finché non ci sono altre mappe da collegare.
 
-
-### [Archivio ex-§21] 21. Sessione 27/08 (continua) — Identità item confermata + instanceId
+## 21. Sessione 27/08 (continua) — Identità item confermata + instanceId
 
 Confermato (non è un cambio di comportamento, è già così): `Weapon`/`Armor`/`Jewelry` sono normali oggetti Java, mai deduplicati per tipo. Due spade base create separatamente sono già due istanze indipendenti — modificare `incantesimi[]`/`gemme[]` sull'una non tocca l'altra. Nessun `Registry` mette in cache o riusa un'istanza condivisa, ogni `get()` crea un oggetto nuovo.
 
@@ -848,8 +480,7 @@ Aggiunto solo `Item.instanceId` (long, incrementale, univoco per oggetto creato)
 
 Nota lasciata nel codice per chi costruirà l'inventario vero: gli equipaggiabili vanno sempre in una `List<Item>` di riferimenti (come già `items/Inventory.java`), mai in una mappa "tipo→quantità" — altrimenti si perde quale copia porta quali componenti. Gli oggetti "puri" senza componenti (una Key) possono restare stackati per nome, non hanno questo problema.
 
-
-### [Archivio ex-§22] 22. Sessione 27/08 (continua) — Minigioco angolare parata/schivata (Attacco Normale)
+## 22. Sessione 27/08 (continua) — Minigioco angolare parata/schivata (Attacco Normale)
 
 Implementato per davvero, non solo progettato. Scope confermato: **solo** "Attacca" (NormalAttack) del player passa da qui — le abilità restano su `playerUseAbility()`/`dealDamage()` a formula come prima, `enemy→player` resta un sistema futuro separato (non toccato).
 
@@ -871,8 +502,7 @@ Implementato per davvero, non solo progettato. Scope confermato: **solo** "Attac
 
 **Non fatto, deliberatamente**: nessuna vera arte/hitbox pixel (placeholder rettangoli), nessuna IA vera per la scelta parata/schivata del difensore (70/30 arbitrario), nessun collegamento a `enemy→player` (resta un sistema futuro).
 
-
-### [Archivio ex-§23] 23. Sessione 27/08 (continua) — defenseWeapon → equippedWeapon, geometria da immagine vera
+## 23. Sessione 27/08 (continua) — defenseWeapon → equippedWeapon, geometria da immagine vera
 
 **Rimosso `Entity.defenseWeapon`** (campo dedicato alla sola parata) — sostituito con `Entity.equippedWeapon`, un campo generico ("cosa ha in mano ora", non solo per parare). `resolveDefenseWeapon()` ora controlla `equippedWeapon.canDefend` invece di ritornare un campo separato — un mostro che cambia arma a runtime (riassegnando `equippedWeapon`) aggiorna automaticamente anche cosa può usare per parare, senza bisogno di sincronizzare due campi. `MON_Goblin` aggiornato di conseguenza (`equippedWeapon = ...` invece di `defenseWeapon = ...`). `Player.resolveDefenseWeapon()` resta invariata (deriva da OffHand/MainHand veri, ignora `equippedWeapon`). `CombatState.java` non ha richiesto NESSUNA modifica — chiamava già solo `resolveDefenseWeapon()`, mai il campo direttamente.
 
@@ -882,8 +512,7 @@ Implementato per davvero, non solo progettato. Scope confermato: **solo** "Attac
 
 `Weapon.loadRigidZoneFromImage()` (nuovo metodo) — carica `combatItemPath`, costruisce/cachа l'area rigida tramite `WeaponHitboxBuilder`, la aggiunge a `defenseZones`. Da richiamare esplicitamente (non automatico nel costruttore, dato che i Registry popolano i campi dopo la creazione) — nessun Registry lo richiama ancora, in attesa di asset veri da caricare.
 
-
-### [Archivio ex-§24] 24. Item: Rarità a scaglioni, ID materiale, SpecialEffect globale (PRE_TURN/POST_TURN/ACTIVE)
+## 24. Item: Rarità a scaglioni, ID materiale, SpecialEffect globale (PRE_TURN/POST_TURN/ACTIVE)
 
 Sessione lunga, tocca quasi tutto il pacchetto `items` + il ciclo di turno in `combat/CombatState.java`. Riassunto in ordine di dipendenza.
 
@@ -907,8 +536,7 @@ Sessione lunga, tocca quasi tutto il pacchetto `items` + il ciclo di turno in `c
 
 **Aperto per il prossimo giro**: i 3 resolver di rarità (`resolveFullSetOrStyleEffect()` ecc.) non sono ancora richiamati da nessuna parte — manca la logica "conta i pezzi dello stesso set equipaggiati" che decide QUANDO un bonus di set è attivo. Quando la costruirai, il pattern naturale è: quel check produce un `SpecialEffect` (PRE_TURN o POST_TURN a seconda di cosa fa) che poi passa dagli stessi due hook già pronti in `CombatState` — non serve un terzo punto di aggancio.
 
-
-### [Archivio ex-§25] 25. Catalogo equipaggiamento completo generato dalla scheda Equip (1120 oggetti)
+## 25. Catalogo equipaggiamento completo generato dalla scheda Equip (1120 oggetti)
 
 `WeaponRegistry`/`ArmorRegistry`/`ShieldRegistry` sono stati **rigenerati da zero** con TUTTO il contenuto della scheda Equip — non più ~30 esempi a mano, ma i 1120 oggetti reali (546 armi, 448 armature, 126 Difensive), uno per ogni combinazione Level×Tier×Type×Build. Generato da uno script Python (`generate_equip.py`, non incluso nel progetto — è uno strumento di build una tantum, non codice di gioco) che legge l'xlsx e scrive i 3 file `.java`: **switch scelto sopra un file dati esterno** (discusso con l'utente) per restare coerente con lo stile del resto del progetto — `get(id)` è identico da fuori, quindi migrare a un formato dati in futuro non toccherebbe i chiamanti.
 
@@ -926,8 +554,7 @@ Sessione lunga, tocca quasi tutto il pacchetto `items` + il ciclo di turno in `c
 
 **Aperto per il prossimo giro**: nessun oggetto ha ancora una gemma/incantesimo di serie (tranne il nuovo starter, che ne ha una a scopo dimostrativo) — il catalogo genera solo le stat grezze + gli stub G/H/I, non riempie `gemme[]`/`incantesimi[]`. `affilatezza`/`rifiniture` piatti a 1 ovunque, quindi il moltiplicatore di qualità non differenzia ancora nulla all'interno dello stesso pezzo — se vuoi varianti "logora/pregiata" dello stesso oggetto in futuro, è lì che andrebbe.
 
-
-### [Archivio ex-§26] 26. Full Set reali + de-stub di 10 effetti armatura (10/64)
+## 26. Full Set reali + de-stub di 10 effetti armatura (10/64)
 
 **Meccanismo di rilevamento set** — esattamente come richiesto, senza controllare "1000 case":
 - `Armor.armorSetID` (nuovo campo): 1=Guardia/2=Veggente/3=Voto (upper-body, per Build Defense/Elemental Def/Special Def), 4=Passo/5=Ombra (gambe, Speed/Elusivity). Assegnato dal generatore in base a Type+Build.
@@ -948,8 +575,7 @@ Vedi `combat/SpecialEffectRegistry.java` per l'elenco esatto dei 10 implementati
 
 **Non testato in-game** (il sandbox non ha gli asset grafici reali, `GamePanel` fallisce al costruttore per le tile mancanti) — verificato invece: compilazione pulita, pipeline item→stat (harness precedente), e la logica di `activeArmorSetID()`/`fireRaritySpecialEffects()` per ispezione diretta del codice. Da confermare sulla tua macchina: equipaggia 12 pezzi con lo stesso `armorSetID` e verifica che gli effetti Full Set scattino.
 
-
-### [Archivio ex-§27] 27. Un bonus solo per set + ristrutturazione completa dei "components"
+## 27. Un bonus solo per set + ristrutturazione completa dei "components"
 
 **Full Set semplificato**: un solo bonus scelto per ciascuno dei 5 set (non più uno a pezzo) — `CombatState.SET_BONUS_TEXT[armorSetID]`. Guardia=Elmo Saldo, Veggente=Occhio Limpido, Voto=Purga Lenta (nuovo: rimuove il debuff più vecchio a fine round), Passo=Suola Salda (nuovo: immune a Naturalizzazione/Infangato), Ombra=Vuoto (resta STUB, nessun sistema di schivata esiste). "Presa Ferrea" (era la scelta iniziale per Guardia) scartata, ripristinato "STUB —" sul suo testo — restano solo i 2 Mitici (Presa Eterna/Mano di Ferro) per l'immunità al disarmo, invariati dal set.
 
@@ -969,8 +595,80 @@ Vedi `combat/SpecialEffectRegistry.java` per l'elenco esatto dei 10 implementati
 
 **Ancora aperto**: `manico` (controllo) e `lama` (durabilità) restano ID senza tabella — nessuna stat "controllo"/"durabilità" esiste ancora nel gioco, stesso discorso di `sostegno`(Armor)/`legamenti`(Weapon, distanza+scudi). L'usura durante la parata (`CombatState`, colpo su punto debole/rigido) ora tocca solo `legamenti`, non più anche `metallo` (che è diventato la stat DIFESA, non va più consumato come durabilità).
 
+## 28. STATO ATTUALE COMPLETO — sistema equipaggiamento/combattimento (riferimento)
 
-### [Archivio ex-§29] 29. Correzione set (gruppo, non ID esatto) + varianti per livello + 1-mano/2-mani
+Sezione di riferimento, non un'altra voce di log — consolida come funziona TUTTO oggi dopo le sessioni §24-27+correzioni. Le sezioni precedenti restano come storico di come ci si è arrivati; questa è la fotografia attuale.
+
+### Catalogo (1120 oggetti)
+`WeaponRegistry`/`ArmorRegistry`/`ShieldRegistry`, generati da script (`generate_equip.py`, non nel progetto) a partire dalla scheda Equip. Id: `{type}_{build}_{levelband}_{tier}` (es. `claymore_atk_30_40_masterwork`). 546 armi (mischia+distanza), 448 armature, 126 Difensive. Ogni `get(id)` crea un'istanza nuova. I 3 Build dello stesso Type condividono le stesse stat grezze — cambia solo `rarity`/G/H/I.
+
+### Struttura di un Item
+- `rarity` (COMMON/HIGH_QUALITY/MASTERWORK/MYTHIC) + 3 stub testuali cumulativi per tier: `synergyBonusStub`(G, da High Quality), `fullSetOrStyleStub`(H, da Masterwork), `mythicUniqueStub`(I, solo Mythic) — testo preso 1:1 dalla scheda, **non letto da nessuna logica di gioco per il Full Set** (vedi sotto), lo è invece `mythicUniqueStub` via `resolveMythicUniqueEffect()`.
+- `itemPath`/`combatItemPath`: STUB dichiarati "da non toccare", nessun asset.
+- `statBonusPercent` (Map, %) → `Player.applySlotBonus()`. La qualità (`affilatezza`/`rifiniture`, +25% per livello, `Item.QUALITY_STEP`) scala **solo i bonus dell'oggetto** dentro `statBonusPercent`, arrotondati. `statMultiplier` (moltiplicatore sull'intera stat del Player) non è più popolato da nessun oggetto: resta per buff/debuff futuri. Dettagli in §30.
+- `preTurnEffects`/`postTurnEffects`/`activeEffects`: liste di `SpecialEffect` risolte da `gemme[]`/`incantesimi[]`/`rocce[]` via `SpecialEffectRegistry` (mai più un bonus % diretto, sempre un effetto speciale).
+
+### Componenti per categoria (schema finale)
+- **Armatura** (upper 8 Type + gambe 4 Type): `metalli[3]`(ID somma, → DIFESA) — `legamenti[1]`(ID → VELOCITA) — `sostegno[1]`(ID, **nessuna tabella ancora**). `rifiniture` = livello qualità. Durabilità 100 per tutti, vedi sotto.
+- **Gioielli**: `metalli`(bonus diretto, non ID, → EFFICIENZA) + `legame`(ID → **VITA**, si somma a metalli, non lo sostituisce) + `gemma`/`rocce` (→ SpecialEffect).
+- **Armi da mischia + Coltello da Lancio** (famiglia MELEE): `pomo[1]`(→ VELOCITA) — `manico[1]`(ID → resistenza al disarmo, `manicoBonus`) — `guardia[1]`(ID → resistenza al disarmo, `guardiaBonus`) — `lama[1]`(ID, **nessuna tabella ancora**) — `punta[1]`(→ ATTACK; nelle **MAZZE** `punta[0]` è il **peso diretto**: Mazza Chiodata/Ascia danno = peso, Spadone danno = ATK + peso, vedi `Weapon.baseDamage()`). `taglio`/`contundente`/`peso`/`comboTypes` rimossi.
+- **Armi a distanza vere** (famiglia RANGED: Arco Corto/Lungo, Balestra): `corda[1]`(ID → **PRECISIONE**) — `legamenti[1]`(ID → **ATTACK**) — `struttura[1]`(**non un ID**: durabilità massima diretta, 100 oggi).
+- **Difensive** (famiglia SHIELD: Scudo/Broquel/Sai — gestite come Weapon): `metalli[3]`(→ DIFESA) — `legamenti[1]`(ID, **nessuna tabella ancora**). Gli altri campi di Weapon esistono ma non hanno tabella per questa famiglia: ignorati.
+- **Come si risolvono**: `nomecomponent[slot] = ID`, indici da 0. `ComponentRegistry` ha una tabella per (famiglia, component): ID → nome in gioco, StatType, valore. L'ID 4 di `pomo` non è l'ID 4 di `corda`. Un component senza tabella (o con ID 0) non produce nulla. Slot: `metalli`=3, tutti gli altri=1. Vedi §30.
+
+### Formula stat
+`finale = flat × pct(type) × moltiplicatore(type)`, i 3 fattori calcolati separatamente poi moltiplicati in quest'ordine — `Player.recalculateStats()`.
+
+### Resistenza al disarmo
+`CombatState.effectiveDisarmChance(baseChance, target)`: `chance effettiva = baseChance - (guardiaBonus + manicoBonus dell'arma del bersaglio) × 10` (valori risolti da `ComponentRegistry`; ID e valore coincidono, 0..14), clampato a 0. Applicata ai 2 punti reali dove il disarmo scatta (Inondazione, base 100%; `disarmChance` dell'arma attaccante). In più: **immunità totale** (bypassa il calcolo) per 2 Mitici (`Presa Eterna`/Vanbrace, `Mano di Ferro`/Gauntlet) via `CombatState.isDisarmImmune()` — controllo diretto sul testo dell'item, non un `SpecialEffect`.
+
+### Durabilità — stato reale
+`Item.durability`/`maxDurability`: 100 per tutti gli oggetti, tranne archi e balestre (`struttura[0]`, 100 oggi). Parte da -1 (non inizializzata), si riempie al primo `computeBonusPercent()` (cioè all'`equip()`). Si consuma per **tipologia** (`Item.tipologie`, `DamageTypes`) e nella parata; a 0 l'oggetto è rotto. Regole complete in §30.
+
+### Sistema SpecialEffect (`combat/SpecialEffect.java` + `SpecialEffectRegistry.java`)
+`Timing{PRE_TURN, POST_TURN, ACTIVE}`. `PRE_TURN`/`POST_TURN` richiamati da `CombatState.beforeTurn()`/`afterTurn()` per il Player (i mostri non hanno equip). `target` nell'`execute()` è sempre il vero avversario (non l'entità stessa) — un effetto "su di sé" ignora `target`, uno offensivo (es. "Eco") lo usa. `ACTIVE` per le abilità (`Ability.getSpecialAction()` delega qui).
+
+### Sistema Set — upper e gambe SEPARATI (corretto dopo un errore)
+**Superato da §30** (`armorSetID`/`activeArmorMatchGroup()` non esistono più): ora `upperID`/`lowerID`/`acceptedUpperIDs`/`fullID`, controllati da `Player.activeFullID()`. I 5 bonus scelti nella lista qui sotto restano come descrizione dei set:
+- Guardia → Elmo Saldo (reale: primo stordimento annullato 1×/combat)
+- Veggente → Occhio Limpido (reale: immune Accecamento)
+- Voto → Purga Lenta (reale: rimuove il debuff più vecchio a fine round)
+- Passo → Suola Salda (reale: immune Naturalizzazione/Infangato)
+- Ombra → Vuoto (**ancora STUB**, nessun sistema di schivata esiste)
+
+Gli altri 27 testi "Full Set" (32 totali − 5 scelti) restano SOLO flavor text sui pezzi — mai letti a runtime. Mitico invariato: ogni pezzo Mitico spara SEMPRE il proprio `mythicUniqueStub`, indipendente dal set.
+
+### STUB aperti — elenco completo
+- **54 testi Armor Full Set/Mitico non scelti/non implementabili** — mancano sanguinamento, maledizione/marchio/drenaggio/silenzio/confusione (l'intero set Voto originario), critici, rallentamento/spinta/schivata/iniziativa/furtività/danno da terreno, rivelazione UI, riflessione proiettili, resource/carica accumulabile, hook "on-heal" centralizzato
+- **`synergyBonusStub`** (colonna G) — non risolto da nessuna logica, mai richiamato
+- **`itemPath`/`combatItemPath`** — nessun asset, dichiarati "da non toccare"
+- **`lama`, `sostegno`, `legamenti` di armi/scudi**: slot presenti ma senza tabella in `ComponentRegistry` — non danno nessun bonus (non sono più durabilità). `manico` ha un effetto (disarmo) ma nessun oggetto lo imposta.
+- **Testi Full Set mancanti per le nuove combinazioni delle gambe**: Passo+Voto e Ombra+Voto (`Armor.fullSetStubAlt` è null → nessun effetto).
+- **Nessun oggetto del catalogo ha più di un metallo/gemma** (`metalli[1]`/`[2]` sempre 0, `gemme[]`/`incantesimi[]`/`rocce[]` vuoti tranne lo starter del player) — crafting/socketing non esiste ancora
+- **`Inventory.java`** resta 2 liste vuote, non agganciato a `Player`
+- **Loot non agganciato a un inventario**: `LootTable` genera il drop (§30) ma `Inventory` non è collegato al Player: resta in `CombatState.loot` + messaggio a schermo.
+
+### TODO aperti (oltre a quelli in §5)
+- [ ] Decidere i bonus di `lama`, `sostegno`, `legamenti` (armi/scudi) e riempire le tabelle in `ComponentRegistry`
+- [ ] Scrivere i testi Full Set per Passo+Voto e Ombra+Voto (`fullSetStubAlt`)
+- [x] Calcolo PRECISIONE e mitigazione danni % — fatto, vedi §31
+- [ ] `dodgeChance` del mostro (`CombatState`, schivata nel minigioco: `clamp(evasion - precisione|velocità, 0, 100)`) usa ancora la vecchia sottrazione, non `CombatMath.hitChance()`
+- [ ] Sistema mostro → player: la spec dice "100 - precisione" (o "100 - precisione/2") di mancare di base; oggi tutti i colpi usano `CombatMath.hitChance()`. Il caso "precisione/2" non è implementato (quando vale?)
+- [ ] Scala 0..1000: le stat base del Player (DIF 20, ATK 40, PRE 100) sono molto sotto il tetto e non crescono col livello (il Player non ha un livello: `level` = 0, trattato come 1). Serve decidere la crescita per livello
+- [x] Inventario nel libro: sistema e UI fatti (§34); icone e immagini dettagliate degli oggetti non esistono ancora
+- [ ] UI del libro: definita solo l'Inventario; il resto delle aree verrà dopo
+- [ ] Calendario: fissare giorni per mese/stagione/anno e come scorre il tempo (§32)
+- [ ] Equipaggiare/usare gli oggetti dall'Inventario (oggi il libro li mostra soltanto), consumare i consumabili, raccolta nel mondo (`Player.pickUpObject()` è ancora uno stub)
+- [ ] Icone (`itemPath`) e immagini dettagliate (`combatItemPath`/`detailPath`) per gli oggetti: nessun registry le imposta, quindi le celle icona e il riquadro dettagli restano vuoti
+- [ ] Orologio di gioco: `GameCalendar` ha solo giorno e mese correnti fissi (nessun avanzamento); i mesi sono da 30 giorni come la griglia del calendario nel libro. Proposta di funzionamento in discussione (§35.4)
+- [ ] Decidere se uno Scudo/Broquel a durabilità 0 deve ancora poter parare (oggi sì; il Sai no)
+- [ ] Se si rigenerano i registry con `generate_equip.py` (non nel progetto, scrive ancora il formato vecchio): rilanciare in ordine `Fix_Weapon_registry.py`, `convert_components.py`, `convert_sets_corda.py`, `generate_loot_index.py` (cartella `pp/`), oppure aggiornare `generate_equip.py` al formato nuovo
+- [ ] Rimuovere `MaterialRegistry` (non lo usa più nessuno)
+- [ ] Usura per danni da status/veleno/sanguinamento (oggi solo i colpi che passano da `dealDamage()`)
+- [ ] Full Set: valutare se gli altri 27 testi scartati vadano recuperati per qualcos'altro (bonus secondari? scelte alternative per il player?) o restano solo lore
+- [ ] Sistema di crafting/socketing per riempire `metalli[1]`/`[2]` e le gemme sugli oggetti generati
+
+## 29. Correzione set (gruppo, non ID esatto) + varianti per livello + 1-mano/2-mani
 
 > Il meccanismo dei set descritto qui (`armorSetID`, `MATCH_GROUP`, `activeArmorMatchGroup()`) è stato **sostituito in §30**. Restano validi varianti per livello e vincolo 1-mano/2-mani.
 
@@ -993,10 +691,9 @@ Vedi `combat/SpecialEffectRegistry.java` per l'elenco esatto dei 10 implementati
 
 **Non testato in-game** (stesso limite del sandbox, nessun asset grafico) — verificato: compilazione pulita, 1120/1120 id, testo che varia per fascia e si risolve comunque, `full_set_texts.txt` generato correttamente. Il vincolo 1-mano/2-mani è verificato solo per lettura del codice (richiede un `Player` vero per un test end-to-end).
 
+## 30. Sessione 0.19.5-0.19.7 — Component per famiglia, durabilità per tipologia, set upper/lower, loot
 
-### [Archivio ex-§30] 30. Sessione 0.19.5-0.19.7 — Component per famiglia, durabilità per tipologia, set upper/lower, loot
-
-#### 30.1 Component: `nome[slot] = ID`, tabelle per famiglia (`items/ComponentRegistry.java`)
+### 30.1 Component: `nome[slot] = ID`, tabelle per famiglia (`items/ComponentRegistry.java`)
 - Quattro famiglie: **MELEE** (SPADE/MAZZE/LANCE + Coltello da Lancio), **RANGED** (Arco Corto/Lungo, Balestra), **SHIELD** (Scudo/Broquel/Sai), **ARMOR**. `Weapon.family()` la ricava dal sottotipo.
 - Ogni tabella è (famiglia, component) → ID → `Entry(nome, StatType, valore)`. I valori di partenza sono quelli delle vecchie tabelle di `MaterialRegistry` (che oggi non usa più nessuno: si può togliere). I nomi sono segnaposto ("Punta 3"); solo `manico[0]=3` ha un nome vero ("Manico rifinito").
 - Tabelle oggi: MELEE `punta`→ATTACK (ID 1..14), `pomo`→VELOCITA (ID -3..4), `guardia`/`manico`→resistenza al disarmo (0..14, valore=ID). RANGED `corda`→PRECISIONE (1..14: +1…+21), `legamenti`→ATTACK (1..14: +2…+42). SHIELD `metalli`→DIFESA. ARMOR `metalli`→DIFESA, `legamenti`→VELOCITA.
@@ -1005,10 +702,10 @@ Vedi `combat/SpecialEffectRegistry.java` per l'elenco esatto dei 10 implementati
 - Nei registry gli ID 1..14 sono lo **scaglione** (0-10 Common … 40-50 Mythic).
 - Gli scudi usavano `guardia` come scala della DIFESA ma il codice leggeva `metalli`: ora `metalli[0]` (prima la DIFESA degli scudi era 0).
 
-#### 30.2 Calcolo e qualità
+### 30.2 Calcolo e qualità
 Ordine: ID dei component → `statBonusPercent` dell'oggetto → qualità (`affilatezza`/`rifiniture`, ×(1 + 0,25×livello) **solo sui bonus dell'oggetto**) → stato di durabilità → `Player.applySlotBonus()` → `recalculateStats()` (flat × % × moltiplicatore). Danno diretto: `Weapon.baseDamage(atk)` usato da `Ability.offense()` per `NormalAttack` del Player; le altre abilità restano a formula.
 
-#### 30.3 Durabilità per tipologia
+### 30.3 Durabilità per tipologia
 - `Item.tipologie` (String[]): l'oggetto perde durabilità solo per azioni di un tipo in lista. Tipi in `items/DamageTypes.java`: 7 elementi (FISICO, LUCE, FUOCO, ACQUA, TERRA, ARIA, FULMINE) + EROSIONE, VELENO, PSICHICO, SANGUINAMENTO, MALEDIZIONE. Default armature e scudi: tutti gli elementi + EROSIONE (non VELENO/PSICHICO/SANGUINAMENTO/MALEDIZIONE). Default armi: solo FISICO.
 - Aggancio: `CombatState.wearEquipment()`, chiamata nel ramo "colpo andato a segno" di `dealDamage()`: -1 ai pezzi del bersaglio (armature e scudo) e all'arma di chi attacca (solo il Player) se il tipo (`DamageTypes.of(abilityElement)`, NONE = FISICO) è nella loro lista; poi `Player.refreshEquipment()`. La parata scala `durability` e ricalcola.
 - **Durabilità scesa ma > 0**: armature e scudi perdono **solo la DIFESA**, in proporzione (`durabilità/massimo`); gli altri bonus restano. Armi: nessun calo.
@@ -1017,31 +714,184 @@ Ordine: ID dei component → `statBonusPercent` dell'oggetto → qualità (`affi
 - La parata di oggi è del **mostro** che para l'attacco del Player (`monster.resolveDefenseWeapon()`): la durabilità consumata lì è quella dell'arma del mostro. La parata del Player (mostro → player) non esiste ancora.
 - Non consumano durabilità: danni da status (veleno, sanguinamento…) e i danni che non passano da `dealDamage()`. Quantità fissa: 1 per colpo.
 
-#### 30.4 Set: upper e gambe separati (`Armor`, `Player.activeFullID()`)
+### 30.4 Set: upper e gambe separati (`Armor`, `Player.activeFullID()`)
 - Upper (8 pezzi): `upperID` 1=Guardia, 2=Veggente, 3=Voto. Gambe (4 pezzi): `lowerID` 1=Passo, 2=Ombra + `acceptedUpperIDs[2]` (2 su 3). Registry: Passo accetta Guardia e Voto, Ombra accetta Veggente e Voto (**scelta mia**, da confermare).
 - `fullID(upperID, lowerID)` = upperID×10 + lowerID (Guardia+Passo=11, Voto+Ombra=32).
 - `Player.activeFullID()` ≠ 0 se: 12 slot pieni, 8 upper con lo stesso upperID, 4 gambe con lo stesso lowerID, e le gambe accettano quell'upperID. Pezzi rotti contano. Altrimenti 0. Un set valido sblocca i bonus come prima (`fireRaritySpecialEffects()`/`hasActivePassive()`).
 - Una gamba ha due testi full set: `fullSetOrStyleStub` per `acceptedUpperIDs[0]`, `fullSetStubAlt` per `[1]` (oggi null per le combinazioni con Voto: nessun effetto finché non vengono scritti). `Armor.fullSetStubFor(upperID)` sceglie il testo.
 - Combinazioni valide oggi: 11, 31, 22, 32. Non più valide: Guardia+Ombra e Veggente+Passo.
 
-#### 30.5 Loot (`items/LootTable.java`, `items/LootIndex.java`)
+### 30.5 Loot (`items/LootTable.java`, `items/LootIndex.java`)
 - `CombatState.onVictory()` → `LootTable.roll(monster.level, rng)` → un pezzo (armi, scudi e armature insieme), messaggio "Loot: …" e `CombatState.loot`.
 - Gruppo: 50% stessa fascia di livello del mostro, 35% inferiore, 15% superiore; mai una fascia che parte oltre 10 livelli sopra il mostro; gruppo vuoto → salta e gli altri si rinormalizzano (es. mostro lvl 5: 77% stesso, 23% superiore). Scaglione nel gruppo: peso 0,5^(ordine rarità) (più è rara, meno è probabile). Pezzo nello scaglione: equiprobabile. Livello oltre 50 conta come ultima fascia.
 - `LootIndex.java` è **generato** da `generate_loot_index.py` (elenco degli ID dei 3 registry): rilanciarlo quando i registry cambiano.
 
-#### 30.6 Script e come si usano
+### 30.6 Script e come si usano
 - Nella cartella `pp/`: `Fix_Weapon_registry.py`, `convert_components.py`, `convert_sets_corda.py`, `generate_loot_index.py`. Ordine, da root progetto: `python pp/<script>.py src/items` (l'ultimo non prende l'argomento). Si possono rilanciare senza danni. Verificato: partendo dai registry della 0.19.4 la catena riproduce esattamente i registry attuali.
 
-#### 30.7 Come si fa per…
+### 30.7 Come si fa per…
 - **Dare un bonus a un component**: una riga `table(Family.X, Part.Y, StatType.Z, primoID, valori…)` in `ComponentRegistry`; poi assegnare l'ID agli oggetti (`w.lama[0] = 2;`).
 - **Rinominare un ID**: `rename(Family.MELEE, Part.MANICO, 3, "Manico rifinito");` in fondo al blocco `static`.
 - **Nuovo tipo di danno**: una costante in `DamageTypes` (+ aggiungerla al default se armature/scudi devono consumarsi con quel tipo); poi far restituire il tipo dal punto che infligge il danno.
 - **Nuovo pezzo/gamba**: nel registry impostare `upperID` (upper) oppure `lowerID` + `acceptedUpperIDs` (gambe); poi rilanciare `generate_loot_index.py`.
 
-#### 30.8 Verifica e limiti
+### 30.8 Verifica e limiti
 Compilazione pulita su tutto il progetto; test con oggetti veri: durabilità per tipologia (veleno non consuma, fuoco sì), DIFESA proporzionale e a 0, rottura arma, `activeFullID()` con 12 pezzi reali (11, 22, 31, 32 validi; 12 e 21 no; elmo diverso, gamba mancante e pezzo rotto verificati), distribuzione del loot su 200.000 estrazioni. **Controlli dopo 0.19.8: tutti gli 1120 oggetti risolvono senza ID sconosciuti, equip completo → 20 refresh → tutto tolto riporta le stat al valore da nudo (nessuna deriva). **Non testato in-game** (nessun asset grafico nel sandbox).
 
+## 31. Mitigazione danni % e precisione (0.19.10) — `combat/CombatMath.java`
 
-### Nota originaria di fine status
+Tutte le formule e le costanti da tarare sono in `CombatMath`. Le stat sono considerate nella scala **0..1000** (`STAT_MAX`): nelle formule un valore sopra 1000 conta come 1000; le stat stesse non vengono tagliate (`maxLife` base è già 1000).
 
-*Fine status — prossimo aggiornamento quando accumuliamo un altro blocco di modifiche.*
+### 31.1 Mitigazione danni
+- `mitigazione = MAX_MITIGATION × DIF / (DIF + K)`, con `K = K_BASE + K_PER_LEVEL × livello di chi ATTACCA` (livello 1..100; il Player ha level 0 → conta 1). Costanti: `MAX_MITIGATION` 0,90 — `K_BASE` 20 — `K_PER_LEVEL` 8.
+- Più alta è la DIFESA più mitiga (mai oltre 90%); a parità di DIFESA, un attaccante di livello più alto mitiga meno. Esempi: DIF 20 vs lv 2 → 32%; DIF 100 vs lv 10 → 45%; DIF 500 vs lv 50 → 49%; DIF 1000 vs lv 1 → 87,5%, vs lv 100 → 49,5%.
+- Sostituisce il vecchio `max(10, ATK - DIF)`: ora `danno = max(1, round(ATK × (1 - mitigazione)))`, per tutte le abilità (`Ability.use()`; le abilità da `2×ATK` mitigano il doppio grezzo). Per le abilità elementali la DIFESA è `getElementDefense(e)`.
+- Il calo proporzionale di DIFESA per durabilità (§30.3) agisce a monte: abbassa la DIF, quindi la mitigazione scende con la curva.
+
+### 31.2 Precisione ed elusione
+- `probabilità di colpire = precisione / precisione massima`, con `precisione massima = PRECISION_BASE_MAX + EVASION_WEIGHT × elusione del bersaglio` (100 e 1,0). L'elusione **non toglie precisione: alza il tetto**.
+- Poi, come ultimo passaggio: `mancare = min(1, (1 - colpire) × MISS_MULTIPLIER)` con `MISS_MULTIPLIER` 1,25 (+25% **relativo**: 33% di base → 41,7%).
+- Conseguenza: se la probabilità di mancare di base è 0 (precisione ≥ 100 + elusione) resta 0 — il +25% relativo non crea mancati dal nulla.
+- La precisione passa prima dai moltiplicatori di stato (`ElementSystem.precisionMultiplier()`: Stordimento, Accecamento, Deviazione). `forceHit` e deviazione/blocco a distanza restano come prima.
+- Esempi: prec 100 vs el 0 → 100%; prec 100 vs el 50 → 58,3%; prec 200 vs el 250 → 46,4%.
+
+### 31.3 Da sapere
+- `PRECISION_BASE_MAX` = 100 mantiene "precisione 100 = nessun mancato a elusione 0" come oggi. Se il tetto base deve essere 1000, va cambiata la costante **e** alzata la precisione base dei personaggi.
+- Verificato con test numerici (monotonia, limiti, Monte Carlo 1.000.000 di tiri: 50,01% contro 50,00% atteso); non provato in-game.
+
+## 32. Calendario — ragionamento (da decidere)
+
+Nel codice non c'è ancora nessun calendario: nessun giorno/mese/stagione/anno è definito (esiste solo il segnalibro Calendario nel libro, con i sottoargomenti vuoti). I principi di design (quest Critiche mai perdibili, Maggiori che ricorrono a ogni ritorno della stagione, Flavor perdibili, avvisi diegetici) sono nella sezione "Calendar System" più sopra.
+
+### 32.1 Requisiti
+- Eventi **ogni stagione**, "mancabili", ma il player **non deve aspettare troppo**.
+- Ipotesi dell'utente: **20 minuti reali per giorno di gioco**, stagioni da **30 giorni**.
+
+### 32.2 Calcolo (20 minuti reali per giorno di gioco)
+| Giorni per stagione | Durata stagione | Durata anno (4 stagioni) |
+|---|---|---|
+| 30 | 10 ore | 40 ore |
+| 15 | 5 ore | 20 ore |
+| 12 | 4 ore | 16 ore |
+| 10 | 3 ore 20 | 13 ore 20 |
+| 7 | 2 ore 20 | 9 ore 20 |
+
+- Un evento legato a una stagione, se perso, torna alla ricorrenza successiva della stessa stagione: con 30 giorni sono **40 ore** di attesa. Una finestra di 3 giorni vale circa 1 ora reale.
+- Valutazione: 30 giorni sono troppi se il player non può far avanzare il tempo (dormire, aspettare); in quel caso l'attesa diventa una sua scelta e vanno bene. Senza salto del tempo: **10-12 giorni per stagione** (evento perso → 13-16 ore).
+
+### 32.3 Ancora aperto
+- Il tempo scorre anche in combattimento, nei menu e nei dialoghi? Il player può farlo avanzare (dormire/aspettare)?
+- Decisi questi punti: fissare **giorni per mese, mesi per stagione, stagioni per anno** come costanti in un unico punto del codice (come `CombatMath` per le formule) e riportarli qui.
+- Il calendario serve alla pagina Quest dell'Inventario (§33.5): giorno attuale, giorno o scadenza di consegna.
+
+## 33. UI del libro — Inventario (struttura decisa dall'utente, 0.19.9)
+
+Per ora la UI definita comprende **solo l'Inventario**; il resto del libro verrà dopo. Nelle immagini il **tronco** è un'icona "jolly" provvisoria: quando verranno segnate le coordinate di dove vanno le icone, verrà tolto e lasciato vuoto.
+
+### 33.1 Regole generali
+- Cinque zone: **gear, consumabili, precious, quest, risorse**. Sfondo: `res/ui/book_inventory/book_inventory_<zona>.png` (272x272).
+- **Pagina sinistra = lista**: ogni oggetto dell'inventario crea una nuova riga (immagine-riga `list_inventory_<zona>.png`), riempita con le info generali.
+- **Pagina destra**: per tutte le zone **tranne risorse**, accanto al bookmark va l'**immagine dettagliata** dell'oggetto (quella usata in combattimento). Premendo una riga (deve esistere/essere attiva) i dettagli dell'oggetto appaiono nella facciata destra del libro.
+- **Paginazione**: una pagina contiene un numero fisso di righe; se gli oggetti sono di più si disegna una pagina successiva con quelli in eccesso (es. 10 righe per pagina, 11 oggetti → la pagina 2 ha l'undicesimo).
+
+### 33.2 Gear (equipaggiamento)
+- **Sinistra**: icona dell'item, nome, peso, durabilità (in %). Una riga per oggetto (`list_inventory_gear`).
+- **Destra**: lista di stat (`list_inventory_gear_stats`): nome abbreviato del valore (es. `FIRE-ATK`) e valore. **Moltiplicatori, valori percentuali e valori flat sono considerati separatamente**: una riga diversa per ciascuno.
+
+### 33.3 Consumabili
+- **Sinistra**: icona, nome, valore in oro, quantità (`list_inventory_consumable`).
+- **Destra**: nome del valore e valore che si guadagna (nuova riga per ogni valore, `list_inventory_consumable_stats`). Se ha **effetti speciali**, sotto va una riga con a sinistra l'icona dell'effetto speciale e a destra la descrizione breve (`list_inventory_consumable_effects`; la prima riga esiste già, sostituirla o aggiungerla è equivalente: non è un punto critico).
+
+### 33.4 Precious
+- **Sinistra**: icona, nome, valore, quantità (`list_inventory_precious`).
+- **Destra** (righe fisse, non se ne creano): valore attuale **nella zona geografica attuale** (icona monete); di quanto **aumenta** il valore se sale la reputazione (ratio, icona faccia verde); di quanto **si abbassa** (ratio, icona faccia rossa).
+- **In basso**: le **città scoperte**, con nome della città e valore in quella città. La bandiera a sinistra viene sostituita tramite shader con i colori della bandiera della città, con dentro le iniziali della città. Una nuova riga per città (`list_inventory_precious_reputation`).
+
+### 33.5 Quest
+- **Sinistra**: icona dell'item, nome, quanto tempo rimane per portarlo (vuoto se non ci sono giorni), icona del tipo di quest dove l'item va portato (`res/ui/icon_<tipo>quest.png`: arch, niche, special, todo, world; 10x10).
+- **Destra**: il **calendario**, con il giorno ATTUALE in **verde**; il giorno di consegna in **ROSSO** se è un giorno preciso, **GIALLO** se si può portare entro il giorno X; tutti i giorni **neri** se l'oggetto non va portato. Sotto, la descrizione dell'item nella storia. Dipende dal Calendar System (§32).
+
+### 33.6 Risorse
+- **Sinistra**: icona della risorsa, nome, valore (sempre fisso, senza storia delle reputazioni), quantità (`list_inventory_resources`).
+- **Destra**: nessuna immagine dettagliata. A **sinistra del bookmark**: breve descrizione dell'item e come si ottiene. A **destra del bookmark**: come usarlo e come ottenerlo (materiale primario → strumento di lavorazione → materiale rifinito, `list_inventory_resources_process`). **Sotto**: una tabella di tutti gli usi; nelle celle vanno i **materiali finiti** (se per ottenere la staccionata serve legno grezzo → legno rifinito → staccionata, nella tabella va comunque "staccionata").
+
+### 33.7 Immagini (in `res/ui/book_inventory/`, dimensioni in pixel)
+- Sfondi: `book_inventory_gear/consumable/precious/quests/resources.png` — 272x272.
+- Righe: `list_inventory_gear` 94x8, `list_inventory_gear_stats` 39x8, `list_inventory_consumable` 95x8, `list_inventory_consumable_stats` 39x8, `list_inventory_consumable_effects` 98x7, `list_inventory_precious` 94x8, `list_inventory_precious_reputation` 98x8, `list_inventory_quests` 94x8, `list_inventory_resources` 94x8, `list_inventory_resources_process` 41x8.
+- Altro: `tag_masterwork.png`, `tag_mythic.png` (40x11, presenti nella cartella, uso da definire); icone quest in `res/ui/`.
+
+### 33.8 Cose che il codice oggi non ha (da tenere presenti)
+- **Peso** nel gear: nessun oggetto ha un peso (c'è solo `punta[0]` delle MAZZE, che è un danno, e `Armor.weightClass`): serve decidere quale valore mostrare.
+- **Righe stat**: gli oggetti hanno solo bonus percentuali (`statBonusPercent`); `statMultiplier` non è più popolato da nessun oggetto (§30.2) e non ci sono bonus flat (a parte il peso-danno delle MAZZE). I nomi abbreviati si ricavano dagli `StatType` (`FIRE_ATK` → "FIRE-ATK").
+- **Precious**: servono zone geografiche, valori per città, reputazione e città scoperte: nessuno di questi sistemi esiste ancora.
+- **Quest**: il calendario della pagina destra e i "giorni rimasti" richiedono il Calendar System (§32); gli oggetti quest oggi non hanno una scadenza.
+- **Inventario**: collegato al Player in §34 (il loot ci finisce); resta da fare equipaggiare dalla lista.
+- **Geometria** (le coordinate dell'Inventario sono ora misurate sulle immagini, §34.3): in `BookUI`, `PAGE_CONTENT_RECT` (95,20,165,230) è un placeholder che cade **sopra** al libro. Sul vecchio `book_inventory.png` le pagine di pergamena misuravano x 22..133 (sinistra) e 137..249 (destra), y 86..247, con il bookmark dell'Inventario in alto a destra (x ~186..202, y ~86..152): da rimisurare con le immagini nuove prima di segnare le coordinate. La pagina Quest già esistente usa lo stesso rettangolo, quindi il suo testo è fuori posto.
+
+## 34. Inventario nel libro: sistema e UI (0.19.10)
+
+Implementa §33 sulle immagini in `res/ui/book_inventory/`. File: `book/InventoryPage.java` (UI), `items/Inventory.java`, `items/Consumable|Precious|QuestItem|Resource|StatLine|ItemInfo.java`, `main/GameCalendar.java`, `items/InventoryDemo.java`. Applicato con `apply_inventory.py` (modifica `Item`, `Player`, `CombatState`, `GamePanel`, `BookUI`).
+
+### 34.1 Dati (`items/Inventory`, `Player.inventory`)
+- `gear` (Item posseduti ma non indossati), `consumables`, `precious`, `questItems`, `resources`. `addGear(item)` calcola i bonus dell'oggetto (`computeBonusPercent()`), quindi stat e durabilità sono pronte.
+- **Gear**: la lista del libro mostra prima gli oggetti **indossati** (nome preceduto da `*`) e poi quelli dell'inventario.
+- `Consumable`: nome, oro, quantità, `gains` (StatLine), `effects` (icona + descrizione breve). `Precious`: valore attuale, quantità, `reputationUp`/`reputationDown` (ratio: 0,15 = 15%), `cities` (nome, valore, colore bandiera ARGB). `QuestItem`: nome, descrizione, `Kind` (ARCH, NICHE, SPECIAL, TODO, WORLD → `res/ui/icon_<tipo>quest.png`), `mustDeliver`, `deliverDay`, `exactDay` (rosso se true, giallo se false), `.due(giorno, esatto)`. `Resource`: nome, valore fisso, quantità, descrizione, icone della catena (`processPrimary` → `processTool` → `processRefined`, `processExtra` in alto) e `usages` (icone dei materiali **finiti**, una per cella).
+- `StatLine`: nome abbreviato (da `StatType`: VIT, ATK, DEF, SPD, EVA, PRE, EFF; gli elementali `FIRE_ATK` → "FIRE-ATK") + `Kind` FLAT / PERCENT / MULTIPLIER = **una riga per ciascuno**. `ItemInfo.statLines(item)`: flat (solo il peso-danno delle MAZZE, "DMG") poi percentuali poi moltiplicatori.
+- `Item.weight` (nuovo, 0 = non impostato). `ItemInfo.weightText`: nelle MAZZE il peso è `punta[0]`, altrimenti `weight` o "-". Durabilità in lista: numero 0..100 senza il segno %, per stare nella cella.
+- `main/GameCalendar`: `day`, `month`, `DAYS_PER_MONTH` = 30.
+- **Loot**: `CombatState.onVictory()` aggiunge il drop a `player.inventory` (`addGear`).
+
+### 34.2 UI (`book/InventoryPage`)
+- Sottoargomenti (bookzone): **0 gear, 1 consumabili, 2 quest, 3 risorse, 4 preziosi** (ordine delle icone nel bookmark, verificato sulle immagini). Sfondo per zona: `GamePanel.getCurrentBookImage()` usa `book_inventory_<zona>.png`.
+- Pagina sinistra: una riga (`list_inventory_<zona>.png`) per oggetto, **10 righe per pagina** (`ROWS_PER_PAGE`), passo 13 px (`ROW_PITCH`); le pagine sono dinamiche (`GamePanel.bookPageCount()`, ← → per girarle). Click su una riga = selezione (bordo rosso); i dettagli appaiono a destra. Il cambio di zona azzera la selezione.
+- Pagina destra: **gear/consumabili** — righe stat (`list_inventory_*_stats`, una per StatLine), riquadro dettagli (immagine usata in combattimento: `combatItemPath`, altrimenti `itemPath`); i consumabili hanno anche le righe effetto. **Preziosi** — valore attuale, ratio su (faccia verde) e giù (faccia rossa), città scoperte con bandiera ricolorata via `PaletteSwap` (bianco → colore) e iniziali. **Quest** — data `gg/mm`, calendario 6x5 (giorno attuale verde; consegna rossa/gialla; tutto nero se non va consegnato), nome e descrizione. **Risorse** — nome e descrizione a sinistra del bookmark, catena di lavorazione a destra, tabella usi 10x8 sotto (nessun riquadro dettagli).
+- Il testo segnaposto delle celle nome (quest, risorse) e della data viene coperto prima di scrivere.
+
+### 34.3 Geometria (pixel dell'immagine 272x272, misurati sulle tue immagini)
+- Riga 1 a sinistra: x 31, y 106 (icona 31..39, nome da x 42, celle A e B diverse per zona: costanti `NAME_W`, `A_X/A_W`, `B_X/B_W`). Righe stat: x 146, y 106, passo 10 (cella nome 24, valore 13 a x 172). Riquadro dettagli: (204,104) 38x38. Effetti consumabile: x 144, y 162, passo 9. Preziosi: celle valore (161,97), (161,107), (161,116) 23 px; città da y 169 passo 10 (nome x 157, valore x 228). Quest: etichetta data (156,98) 27x9; calendario: 30 segni 3x2, colonne passo 5, righe y 114 + 5r con x di partenza 154,154,153,152,151; nome (153,156) 37x8; descrizione (145,166) 98x75. Risorse: nome (154,98) 29x6, descrizione (146,107) 37x36, icone catena (202,110), (219,110), (236,110) e (218,93) in alto; tabella: celle 8x8 da (149,169), passo 9, 10 colonne x 8 righe.
+- **Bug trovato**: `GamePanel` caricava ancora `/ui/book.png` e `/ui/book_X.png`, ma le immagini erano state spostate in `res/ui/book_general/`: il libro non si disegnava. Percorsi corretti.
+
+### 34.4 Dati di prova
+`items/InventoryDemo.ENABLED = true` riempie l'inventario all'avvio (`GamePanel.setupGame()`) con oggetti di esempio; **metterlo a false** per partire vuoti.
+
+### 34.5 Come si fa per…
+- **Aggiungere un oggetto a una zona**: `player.inventory.consumables.add(new Consumable(...))` (idem per `precious`, `questItems`, `resources`; gear con `addGear`).
+- **Cambiare righe per pagina o passo**: `ROWS_PER_PAGE`, `ROW_PITCH` in `InventoryPage`. **Spostare un elemento**: costanti in cima alla classe e nei metodi `draw*` (coordinate in pixel dell'immagine originale).
+- **Icone**: impostare `itemPath` (e `detailPath`/`combatItemPath`) con un percorso risorsa, es. `/items/spada.png`; le immagini mancanti restano vuote (un solo errore in console per percorso).
+
+### 34.6 Non fatto / da sapere
+- Equipaggiare o usare dalla lista, navigazione da tastiera delle righe (solo mouse). I tag di rarità sono in §35.
+- Il calendario non avanza: `GameCalendar.day`/`month` sono fissi finché non c'è un orologio di gioco (§32).
+- Il peso esiste solo per le MAZZE e per gli Item con `weight` impostato.
+- Verificato con render headless (768x576) di tutte e 5 le zone con dati di prova, selezione, seconda pagina, bandiere ricolorate e calendario; test di regressione su 1120 oggetti, set e loot → inventario. Non provato in-game (mouse e animazione di pagina).
+
+## 35. Tag di rarità, oggetti ricevuti e proposta calendario (0.19.11)
+
+### 35.1 Tag di rarità nel dettaglio gear (`InventoryPage.drawRarityEffect`)
+- Solo oggetti **Masterwork** e **Mythic** (gli altri non hanno tag). Pagina destra: il **tag** (`tag_masterwork.png` / `tag_mythic.png`, 40x11) sotto le righe stat (massimo 8 righe stat quando c'è un tag); la placca arancio del tag porta il nome dello stile/set (es. "Assalto", "Guardia") o "Mitico"; in basso, a tutta larghezza (x 145..243, da y 186), il **riquadro con la descrizione dell'effetto**.
+- Testi: Masterwork → `fullSetOrStyleStub`; Mythic → `fullSetOrStyleStub` + `mythicUniqueStub` come due paragrafi. Dal testo si tolgono `[Tag]` e `STUB — `; il nome sulla placca è la parte dopo i due punti dell'etichetta ("[Full Set: Guardia]" → "Guardia").
+- Per le gambe si mostra il testo principale (`fullSetOrStyleStub`); il testo alternativo col Voto (`fullSetStubAlt`) oggi è vuoto.
+
+### 35.2 Oggetti ricevuti (hook)
+- `Player.obtain(item)`: l'oggetto entra in `inventory.gear` e notifica `QuestEventType.COLLECT` con `targetId` = **id del registry** (nuovo campo `Item.id`, impostato da `LootTable.create(id)`, es. `short_sword_atk_0_10_common`). `Player.receiveItem(item, equipNow)`: come `obtain()` + messaggio "Hai ottenuto: <nome>!" + equip opzionale.
+- Prima l'NPC (`Npc_HumanRedWorker`) equipaggiava la spada direttamente: non risultava posseduta né veniva notificata (COLLECT non era collegato). Ora usa `receiveItem(LootTable.create(...), true)`; il messaggio mostra il nome vero dell'oggetto.
+- Loot di fine combattimento: `CombatState.onVictory()` passa da `obtain()`.
+- `Player.equip()` toglie l'oggetto dallo zaino e rimette nello zaino il pezzo sostituito (anche quello liberato dalla regola 1-mano/2-mani); `unequip()` manda il pezzo nello zaino. La durabilità resta quella dell'istanza.
+- Per una quest "ottieni X": step `new QuestStep("...", QuestEventType.COLLECT, "<id registry>")`.
+
+### 35.3 Come si fa per…
+- **Far ricevere un oggetto da un NPC o come ricompensa**: `gp.player.receiveItem(items.LootTable.create("<id>"), false)` (true per indossarlo subito).
+
+### 35.4 Libro che non disegnava niente: causa e ripiego opzionale
+- Causa reale: la run configuration di IntelliJ aveva **"Build project" disattivato in *Before launch***, quindi `out/production/DD2D/ui/` conteneva ancora solo i vecchi file piatti e mancavano `ui/book_general/` e `ui/book_inventory/`. `GamePanel` stampava `ERROR: resource not found: /ui/book_general/book.png` e `BookUI.draw()` non disegnava nulla. Riattivato "Build project": risolto.
+- Ripiego **opzionale** (`main/ResourceStreams`, `apply_resources.py`): prima il classpath, poi `res/` (se il gioco parte dalla root), con un `AVVISO` una volta per file. Non serve se la build è corretta.
+
+### 35.5 Calendario — proposta (da confermare con l'utente)
+Contesto: la griglia del libro ha **30 giorni per mese** (6 x 5) e l'etichetta `gg/mm`; l'utente vuole **eventi ogni stagione, "mancabili", ma senza far aspettare troppo** il player; aveva ipotizzato 20 minuti reali per giorno e stagioni da 30 giorni (= 10 ore a stagione, 40 ore l'anno: troppo). Inconsistenza da chiarire: se la stagione è 1 mese l'anno ha 4 mesi e l'etichetta `17/05` non esiste.
+- **Struttura proposta**: 12 mesi x 30 giorni = 360 giorni; 4 stagioni da 3 mesi (90 giorni).
+- **Orologio**: 1 giorno = **3 minuti** di gioco attivo (mese 1h30, stagione 4h30, anno 18h). Alternative: 2 min → stagione 3h, anno 12h; 5 min → 7h30 e 30h. Gira **solo in esplorazione**; fermo in libro, menu, dialoghi, combattimento.
+- **Salto del tempo**: letto/locanda → mattino dopo; "aspetta N giorni" in punti precisi (es. bacheche). Rende l'attesa una scelta.
+- **Eventi** (`CalendarEvent`, registry stile `QuestRegistry`): finestra (inizio + durata, 5-10 giorni = 15-30 minuti reali) + `repeatEveryDays`. **Critiche**: non scadono mai (la finestra resta aperta finché non le compi). **Maggiori**: ripetizione ogni 45 giorni (2 volte a stagione, ritorno dopo ~2h15 se perse). **Flavor**: perdibili, ritorno annuale. Avvisi **diegetici** (bacheche, NPC, cantastorie); nel libro compare solo ciò che hai scoperto.
+- **Quest**: `QuestItem.deliverDay` diventa una data assoluta (giorni totali); i "giorni rimasti" sono la differenza di giorni assoluti; la pagina Quest mostra il mese corrente e, se la scadenza è in un altro mese, i giorni rimasti nella cella.
+- **Codice (dopo conferma)**: `GameCalendar` con `totalDays` + contatore di tick, `update()` chiamato dal ciclo in esplorazione, `dateLabel()` `gg/mm`, listener `onNewDay`/`onNewSeason`; `CalendarEvent` + registry. Un solo numero basta anche per il salvataggio.
+- **Da decidere**: minuti per giorno, mesi per stagione (3 o 1), se combattimento e menu consumano tempo, se esiste il salto del tempo. L'utente applicherà modifiche e le comunicherà.
