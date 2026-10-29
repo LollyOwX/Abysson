@@ -24,18 +24,18 @@ Questo file va tenuto in `docs/STATUS.md` (o dove preferisci nel repo). Non è g
 
 ### 8.3 Come lavorare tecnicamente (sandbox di Claude)
 - **Clona il repo** ogni volta: `git clone https://github.com/LollyOwX/Abysson.git` (github.com è raggiungibile). La sandbox **si azzera tra un messaggio e l'altro**: riclona e reinstalla il JDK (`apt-get update; apt-get install -y openjdk-21-jdk-headless`; il progetto è Java 25 ma compila con 21).
-- Compilare: `find src -name "*.java" > sources.txt; javac -d /tmp/out @sources.txt`. Il repo **contiene `out/` e `bin/`** (output di build, stantii: ignorali, non fidarti di quello che c'è dentro).
-- **`pp/` è nel `.gitignore`**: gli script locali dell'utente (`Fix_Weapon_registry.py`, `convert_components.py`, `convert_sets_corda.py`, `generate_loot_index.py`, `apply_*.py`) **non sono su GitHub**: non li vedi. `generate_equip.py` (generatore dei registry dalla scheda Equip dell'xlsx, solo il primo foglio) **non è nel progetto**.
+- Compilare: `find src -name "*.java" > sources.txt; javac -d /tmp/out @sources.txt`. Il repo **contiene `out` e `bin/`** (output di build, stantii: ignorali, non fidarti di quello che c'è dentro).
+- **`pp` è nel `.gitignore`**: gli script locali dell'utente (`Fix_Weapon_registry.py`, `convert_components.py`, `convert_sets_corda.py`, `generate_loot_index.py`, `apply_*.py`) **non sono su GitHub**: non li vedi. `generate_equip.py` (generatore dei registry dalla scheda Equip dell'xlsx, solo il primo foglio) **non è nel progetto**.
 - **Test headless**: `java -Djava.awt.headless=true -cp out:res Classe` (la cartella `res` deve essere nel classpath, altrimenti `TileManager` lancia "Resource not found"). `new GamePanel()` funziona headless; per il libro: `gp.gameState = gp.bookState`, disegna su un `BufferedImage` con `gp.ui.book.draw(g2)`, simula i click con `gp.ui.book.handleClick(x, y)` (coordinate schermo), poi **guarda il PNG** con lo strumento di visualizzazione. PIL/numpy/scipy servono per misurare coordinate dalle immagini (template matching esatto sui pixel).
-- **Come consegnare modifiche a file esistenti: script Python, non `.patch`.** I `.patch` sono falliti due volte con "corrupt patch": le righe di contesto fatte di un solo spazio vengono ripulite dagli editor. Si usano script `apply_<cosa>.py` con sostituzioni di testo **esatte**: ogni sostituzione verifica che il testo compaia **una volta sola**, riconosce "già applicato", **non scrive nulla se qualcosa non torna**, gestisce gli a-capo CRLF. L'utente li mette in `pp/` e li lancia dalla root del progetto: `python pp/apply_x.py src` (poi *File > Reload All from Disk*, Ctrl+Alt+Y, e ricompila). Prima di consegnare: provali su una copia pulita del repo (LF e CRLF), rilancia per verificare l'idempotenza, compila. File **nuovi**: consegnali completi (anche in uno zip con la struttura `src/...`).
+- **Come consegnare modifiche a file esistenti: script Python, non `.patch`.** I `.patch` sono falliti due volte con "corrupt patch": le righe di contesto fatte di un solo spazio vengono ripulite dagli editor. Si usano script `apply_<cosa>.py` con sostituzioni di testo **esatte**: ogni sostituzione verifica che il testo compaia **una volta sola**, riconosce "già applicato", **non scrive nulla se qualcosa non torna**, gestisce gli a-capo CRLF. L'utente li mette in `pp` e li lancia dalla root del progetto: `python pp/apply_x.py src` (poi *File > Reload All from Disk*, Ctrl+Alt+Y, e ricompila). Prima di consegnare: provali su una copia pulita del repo (LF e CRLF), rilancia per verificare l'idempotenza, compila. File **nuovi**: consegnali completi (anche in uno zip con la struttura `src/...`).
 - Regola di sicurezza già costata un errore (§0): dopo ogni patch mirata rileggi il risultato.
 
 ### 8.4 Run, build e risorse (trappola già vissuta)
 - In IntelliJ la run configuration deve avere **"Build project" in *Before launch***. Se è disattivato, la cartella di output (`out/production/DD2D`) non riceve le risorse nuove: il libro non disegnava **niente** (nemmeno la pagina iniziale) perché le immagini erano state spostate in `res/ui/book_general/` e `res/ui/book_inventory/` ma nel classpath c'erano solo i vecchi file piatti. In console compare `ERROR: resource not found: /ui/book_general/book.png`. Non era un bug del codice.
-- `main/ResourceStreams` (ripiego opzionale su `res/` con un AVVISO in console, applicato con `apply_resources.py`) esiste ma **non è necessario** se la build è corretta.
+- `main/ResourceStreams` (ripiego opzionale su `res` con un AVVISO in console, applicato con `apply_resources.py`) esiste ma **non è necessario** se la build è corretta.
 
 ### 8.5 Mappa del codice
-- `main`: `GamePanel` (loop, stati, libro: `bookindex/bookzone/bookpage`), `UI`, `KeyHandler`, `Button`, `PaletteSwap`, `GameCalendar`, `AssetSetter`. `entity`: `Entity`, `Player` (slot equip, `inventory`, `obtain()/receiveItem()`), NPC e mostri, `StatType`. `combat`: `CombatState`, `ElementSystem`, `Ability`, `CombatMath`, `SpecialEffect*`. `items`: `Item`, `Weapon`, `Armor`, `Jewelry`, registry generati (`WeaponRegistry`, `ShieldRegistry`, `ArmorRegistry`), `ComponentRegistry`, `DamageTypes`, `LootTable`/`LootIndex`, `Inventory` + `Consumable/Precious/QuestItem/Resource`, `ItemInfo`, `StatLine`. `book`: `BookUI`, `InventoryPage`. `quest`: `Quest*`. Risorse in `res/` (`ui/`, `cinematics/`, ...).
+- `main`: `GamePanel` (loop, stati, libro: `bookindex/bookzone/bookpage`), `UI`, `KeyHandler`, `Button`, `PaletteSwap`, `GameCalendar`, `AssetSetter`. `entity`: `Entity`, `Player` (slot equip, `inventory`, `obtain()/receiveItem()`), NPC e mostri, `StatType`. `combat`: `CombatState`, `ElementSystem`, `Ability`, `CombatMath`, `SpecialEffect*`. `items`: `Item`, `Weapon`, `Armor`, `Jewelry`, registry generati (`WeaponRegistry`, `ShieldRegistry`, `ArmorRegistry`), `ComponentRegistry`, `DamageTypes`, `LootTable`/`LootIndex`, `Inventory` + `Consumable/Precious/QuestItem/Resource`, `ItemInfo`, `StatLine`. `book`: `BookUI`, `InventoryPage`. `quest`: `Quest*`. Risorse in `res` (`ui/`, `cinematics/`, ...).
 
 ### 8.6 Sintesi dei sistemi (dettagli nei § indicati)
 - **Equipaggiamento** (§25-30): 1120 oggetti generati dalla scheda Equip (672 armi/scudi + 448 armature), rarità COMMON/HIGH_QUALITY/MASTERWORK/MYTHIC a scaglioni (ID 1..14 = fasce di livello 0-10 … 40-50). Ogni oggetto = **component** `nome[slot] = ID` risolti da `ComponentRegistry` per famiglia (MELEE, RANGED, SHIELD, ARMOR) → bonus percentuali su `Item.statBonusPercent`; la qualità (`affilatezza`/`rifiniture`, +25% per livello) scala **solo i bonus dell'oggetto**. `punta[0]` delle MAZZE = peso = danno diretto (Spadone: ATK + peso); `struttura[0]` degli archi = durabilità. `armorSetID` non esiste più: set con `upperID` (1 Guardia, 2 Veggente, 3 Voto), `lowerID` (1 Passo, 2 Ombra) + 2 `acceptedUpperIDs`; set valido se `Player.activeFullID() != 0` (combinazioni 11, 31, 22, 32).
@@ -52,14 +52,14 @@ Questo file va tenuto in `docs/STATUS.md` (o dove preferisci nel repo). Non è g
 - Il Player ha `level` = 0: nelle formule conta come 1. Le stat base (DIF 20, ATK 40, PRE 100) sono molto sotto la scala 1000 e non crescono col livello.
 - `statMultiplier` non è più popolato da nessun oggetto (resta per buff futuri).
 - `BookUI.PAGE_CONTENT_RECT` (95,20,165,230) è un placeholder che cade **sopra** il libro: la pagina Quest vecchia ne risente; le coordinate vere sono in §34.3. Il "tronco" nelle immagini del libro è un'icona jolly provvisoria.
-- Una quest `COLLECT` avanza solo se è `ACTIVE`. `out/` e `bin/` non vanno modificati né letti come fonte di verità.
+- Una quest `COLLECT` avanza solo se è `ACTIVE`. `out` e `bin/` non vanno modificati né letti come fonte di verità.
 - Dopo ogni rigenerazione dei registry con `generate_equip.py` (scrive ancora il formato vecchio) vanno rilanciati, in ordine, gli script di conversione (§30.6) o va aggiornato il generatore.
 
 ### 8.8 Decisioni ancora aperte (da chiedere all'utente, non da assumere)
 - **Calendario**: minuti reali per giorno, mesi per stagione (3 o 1), se combattimento/menu/dialoghi consumano tempo, salto del tempo (§32, §35.5).
 - Bonus di `lama`, `sostegno`, `legamenti` di armi/scudi; uno Scudo/Broquel a durabilità 0 deve ancora parare? (oggi sì; il Sai no).
 - `PRECISION_BASE_MAX` (oggi 100), crescita delle stat per livello, `dodgeChance` del mostro (usa ancora la vecchia sottrazione), caso "precisione/2" del sistema mostro → player.
-- Peso del gear (esiste solo per le MAZZE), icone/immagini dettagliate degli oggetti (`itemPath`, `combatItemPath`: nessuno le imposta), equipaggiare/usare dalla lista dell'Inventario, rimuovere `out/` e `bin/` da git.
+- Peso del gear (esiste solo per le MAZZE), icone/immagini dettagliate degli oggetti (`itemPath`, `combatItemPath`: nessuno le imposta), equipaggiare/usare dalla lista dell'Inventario, rimuovere `out` e `bin/` da git.
 
 ### 8.9 Come iniziare una sessione
 1. Chiedi/leggi la versione pushata, **clona** e compila. 2. Leggi questo §8, poi §0 e i § recenti (§30-§35). 3. Per ogni richiesta: riproduci o verifica, modifica nello stile esistente, **testa** (compilazione, test numerici o render headless), consegna file/script con istruzioni passo-passo, aggiorna lo STATUS. 4. Quando cambi qualcosa che questo punto descrive, aggiorna anche qui.
@@ -84,7 +84,7 @@ Questo file va tenuto in `docs/STATUS.md` (o dove preferisci nel repo). Non è g
 - Classi core: `GamePanel` (loop, stato di gioco, array entità), `TileManager`, `Entity` (classe base), `Player`, NPC/monster che estendono `Entity`.
 - Stati di gioco (`gp.gameState`): `titleState`, `playState`, `pauseState`, `dialogueState`, `combatState`, `cinematicState` (cinematic GIF, implementato il 19/07 — vedi §2).
 - Segui il tutorial YouTube di RyiSnow come base, ma con sistemi custom molto oltre lo scope del tutorial (combattimento a turni, sistema elementale, palette swap, menu animati).
-- **Package `combat`** (nuovo, 19/07): `CombatState`, `ElementSystem`, `Ability`, `Reaction` vivono ora in `src/combat/`, non più in `src/main/`.
+- **Package `combat`** (nuovo, 19/07): `CombatState`, `ElementSystem`, `Ability`, `Reaction` vivono ora in `src/combat`, non più in `src/main/`.
 
 ## 2. Sistemi principali
 
@@ -282,17 +282,17 @@ Riferimento autonomo (non un log di sessione): tutto quello che serve per lavora
 In `quest/QuestRegistry.get()`, un nuovo `case` con un id univoco:
 ```java
 case "old_man_favor":
-    return new Quest(
+        return new Quest(
             "old_man_favor",
-            "Un favore per il vecchio",
-            "Il vecchio del villaggio ha bisogno di aiuto.",
+                    "Un favore per il vecchio",
+                    "Il vecchio del villaggio ha bisogno di aiuto.",
             QuestTier.FLAVOR,
             "OldMan", // NPC che la assegna (solo informativo, non collegato automaticamente — vedi 9.2)
             List.of(
                     new QuestStep("Torna a parlare con lui", QuestEventType.TALK, "OldMan"),
                     new QuestStep("Sconfiggi il Goblin", QuestEventType.KILL, "Goblin", 3) // goalCount=3
             )
-    );
+                    );
 ```
 - È una **step machine**: gli step si sbloccano in ordine, uno per volta. Un evento che combacerebbe con lo step 2 non fa nulla se la quest è ancora allo step 0.
 - `targetId` deve combaciare **esattamente** con quello che passa chi notifica l'evento (case-sensitive): `monster.name` per KILL (es. `"Goblin"`), `entity.name` dell'NPC per TALK, il `locationId` scelto a mano per REACH_LOCATION.
@@ -322,9 +322,9 @@ case "old_man_favor":
 ```java
 Quest q = gp.questManager.getQuestById("old_man_favor"); // null se mai iniziata
 if (q != null && q.state == QuestState.COMPLETED) { /* ... */ }
-if (q != null) {
-    QuestStep step = q.currentStep(); // step attivo, non null se la quest è ACTIVE
-    // step.description, step.currentCount, step.goalCount
+        if (q != null) {
+QuestStep step = q.currentStep(); // step attivo, non null se la quest è ACTIVE
+// step.description, step.currentCount, step.goalCount
 }
 ```
 `gp.questManager.getActive()` / `getCompleted()` per le liste intere; `getKnownQuests()` per la lista concatenata (ordine stabile) usata anche dal libro.
@@ -662,7 +662,7 @@ Gli altri 27 testi "Full Set" (32 totali − 5 scelti) restano SOLO flavor text 
 - [ ] Icone (`itemPath`) e immagini dettagliate (`combatItemPath`/`detailPath`) per gli oggetti: nessun registry le imposta, quindi le celle icona e il riquadro dettagli restano vuoti
 - [ ] Orologio di gioco: `GameCalendar` ha solo giorno e mese correnti fissi (nessun avanzamento); i mesi sono da 30 giorni come la griglia del calendario nel libro. Proposta di funzionamento in discussione (§35.4)
 - [ ] Decidere se uno Scudo/Broquel a durabilità 0 deve ancora poter parare (oggi sì; il Sai no)
-- [ ] Se si rigenerano i registry con `generate_equip.py` (non nel progetto, scrive ancora il formato vecchio): rilanciare in ordine `Fix_Weapon_registry.py`, `convert_components.py`, `convert_sets_corda.py`, `generate_loot_index.py` (cartella `pp/`), oppure aggiornare `generate_equip.py` al formato nuovo
+- [ ] Se si rigenerano i registry con `generate_equip.py` (non nel progetto, scrive ancora il formato vecchio): rilanciare in ordine `Fix_Weapon_registry.py`, `convert_components.py`, `convert_sets_corda.py`, `generate_loot_index.py` (cartella `pp`), oppure aggiornare `generate_equip.py` al formato nuovo
 - [ ] Rimuovere `MaterialRegistry` (non lo usa più nessuno)
 - [ ] Usura per danni da status/veleno/sanguinamento (oggi solo i colpi che passano da `dealDamage()`)
 - [ ] Full Set: valutare se gli altri 27 testi scartati vadano recuperati per qualcos'altro (bonus secondari? scelte alternative per il player?) o restano solo lore
@@ -727,7 +727,7 @@ Ordine: ID dei component → `statBonusPercent` dell'oggetto → qualità (`affi
 - `LootIndex.java` è **generato** da `generate_loot_index.py` (elenco degli ID dei 3 registry): rilanciarlo quando i registry cambiano.
 
 ### 30.6 Script e come si usano
-- Nella cartella `pp/`: `Fix_Weapon_registry.py`, `convert_components.py`, `convert_sets_corda.py`, `generate_loot_index.py`. Ordine, da root progetto: `python pp/<script>.py src/items` (l'ultimo non prende l'argomento). Si possono rilanciare senza danni. Verificato: partendo dai registry della 0.19.4 la catena riproduce esattamente i registry attuali.
+- Nella cartella `pp`: `Fix_Weapon_registry.py`, `convert_components.py`, `convert_sets_corda.py`, `generate_loot_index.py`. Ordine, da root progetto: `python pp/<script>.py src/items` (l'ultimo non prende l'argomento). Si possono rilanciare senza danni. Verificato: partendo dai registry della 0.19.4 la catena riproduce esattamente i registry attuali.
 
 ### 30.7 Come si fa per…
 - **Dare un bonus a un component**: una riga `table(Family.X, Part.Y, StatType.Z, primoID, valori…)` in `ComponentRegistry`; poi assegnare l'ID agli oggetti (`w.lama[0] = 2;`).
@@ -815,10 +815,10 @@ Per ora la UI definita comprende **solo l'Inventario**; il resto del libro verr�
 - **Sinistra**: icona della risorsa, nome, valore (sempre fisso, senza storia delle reputazioni), quantità (`list_inventory_resources`).
 - **Destra**: nessuna immagine dettagliata. A **sinistra del bookmark**: breve descrizione dell'item e come si ottiene. A **destra del bookmark**: come usarlo e come ottenerlo (materiale primario → strumento di lavorazione → materiale rifinito, `list_inventory_resources_process`). **Sotto**: una tabella di tutti gli usi; nelle celle vanno i **materiali finiti** (se per ottenere la staccionata serve legno grezzo → legno rifinito → staccionata, nella tabella va comunque "staccionata").
 
-### 33.7 Immagini (in `res/ui/book_inventory/`, dimensioni in pixel)
+### 33.7 Immagini (in `res/ui/book_inventory`, dimensioni in pixel)
 - Sfondi: `book_inventory_gear/consumable/precious/quests/resources.png` — 272x272.
 - Righe: `list_inventory_gear` 94x8, `list_inventory_gear_stats` 39x8, `list_inventory_consumable` 95x8, `list_inventory_consumable_stats` 39x8, `list_inventory_consumable_effects` 98x7, `list_inventory_precious` 94x8, `list_inventory_precious_reputation` 98x8, `list_inventory_quests` 94x8, `list_inventory_resources` 94x8, `list_inventory_resources_process` 41x8.
-- Altro: `tag_masterwork.png`, `tag_mythic.png` (40x11, presenti nella cartella, uso da definire); icone quest in `res/ui/`.
+- Altro: `tag_masterwork.png`, `tag_mythic.png` (40x11, presenti nella cartella, uso da definire); icone quest in `res/ui`.
 
 ### 33.8 Cose che il codice oggi non ha (da tenere presenti)
 - **Peso** nel gear: nessun oggetto ha un peso (c'è solo `punta[0]` delle MAZZE, che è un danno, e `Armor.weightClass`): serve decidere quale valore mostrare.
@@ -830,7 +830,7 @@ Per ora la UI definita comprende **solo l'Inventario**; il resto del libro verr�
 
 ## 34. Inventario nel libro: sistema e UI (0.19.10)
 
-Implementa §33 sulle immagini in `res/ui/book_inventory/`. File: `book/InventoryPage.java` (UI), `items/Inventory.java`, `items/Consumable|Precious|QuestItem|Resource|StatLine|ItemInfo.java`, `main/GameCalendar.java`, `items/InventoryDemo.java`. Applicato con `apply_inventory.py` (modifica `Item`, `Player`, `CombatState`, `GamePanel`, `BookUI`).
+Implementa §33 sulle immagini in `res/ui/book_inventory`. File: `book/InventoryPage.java` (UI), `items/Inventory.java`, `items/Consumable|Precious|QuestItem|Resource|StatLine|ItemInfo.java`, `main/GameCalendar.java`, `items/InventoryDemo.java`. Applicato con `apply_inventory.py` (modifica `Item`, `Player`, `CombatState`, `GamePanel`, `BookUI`).
 
 ### 34.1 Dati (`items/Inventory`, `Player.inventory`)
 - `gear` (Item posseduti ma non indossati), `consumables`, `precious`, `questItems`, `resources`. `addGear(item)` calcola i bonus dell'oggetto (`computeBonusPercent()`), quindi stat e durabilità sono pronte.
@@ -849,7 +849,7 @@ Implementa §33 sulle immagini in `res/ui/book_inventory/`. File: `book/Inventor
 
 ### 34.3 Geometria (pixel dell'immagine 272x272, misurati sulle tue immagini)
 - Riga 1 a sinistra: x 31, y 106 (icona 31..39, nome da x 42, celle A e B diverse per zona: costanti `NAME_W`, `A_X/A_W`, `B_X/B_W`). Righe stat: x 146, y 106, passo 10 (cella nome 24, valore 13 a x 172). Riquadro dettagli: (204,104) 38x38. Effetti consumabile: x 144, y 162, passo 9. Preziosi: celle valore (161,97), (161,107), (161,116) 23 px; città da y 169 passo 10 (nome x 157, valore x 228). Quest: etichetta data (156,98) 27x9; calendario: 30 segni 3x2, colonne passo 5, righe y 114 + 5r con x di partenza 154,154,153,152,151; nome (153,156) 37x8; descrizione (145,166) 98x75. Risorse: nome (154,98) 29x6, descrizione (146,107) 37x36, icone catena (202,110), (219,110), (236,110) e (218,93) in alto; tabella: celle 8x8 da (149,169), passo 9, 10 colonne x 8 righe.
-- **Bug trovato**: `GamePanel` caricava ancora `/ui/book.png` e `/ui/book_X.png`, ma le immagini erano state spostate in `res/ui/book_general/`: il libro non si disegnava. Percorsi corretti.
+- **Bug trovato**: `GamePanel` caricava ancora `/ui/book.png` e `/ui/book_X.png`, ma le immagini erano state spostate in `res/ui/book_general`: il libro non si disegnava. Percorsi corretti.
 
 ### 34.4 Dati di prova
 `items/InventoryDemo.ENABLED = true` riempie l'inventario all'avvio (`GamePanel.setupGame()`) con oggetti di esempio; **metterlo a false** per partire vuoti.
@@ -883,8 +883,8 @@ Implementa §33 sulle immagini in `res/ui/book_inventory/`. File: `book/Inventor
 - **Far ricevere un oggetto da un NPC o come ricompensa**: `gp.player.receiveItem(items.LootTable.create("<id>"), false)` (true per indossarlo subito).
 
 ### 35.4 Libro che non disegnava niente: causa e ripiego opzionale
-- Causa reale: la run configuration di IntelliJ aveva **"Build project" disattivato in *Before launch***, quindi `out/production/DD2D/ui/` conteneva ancora solo i vecchi file piatti e mancavano `ui/book_general/` e `ui/book_inventory/`. `GamePanel` stampava `ERROR: resource not found: /ui/book_general/book.png` e `BookUI.draw()` non disegnava nulla. Riattivato "Build project": risolto.
-- Ripiego **opzionale** (`main/ResourceStreams`, `apply_resources.py`): prima il classpath, poi `res/` (se il gioco parte dalla root), con un `AVVISO` una volta per file. Non serve se la build è corretta.
+- Causa reale: la run configuration di IntelliJ aveva **"Build project" disattivato in *Before launch***, quindi `out/production/DD2D/ui` conteneva ancora solo i vecchi file piatti e mancavano `ui/book_general/` e `ui/book_inventory/`. `GamePanel` stampava `ERROR: resource not found: /ui/book_general/book.png` e `BookUI.draw()` non disegnava nulla. Riattivato "Build project": risolto.
+- Ripiego **opzionale** (`main/ResourceStreams`, `apply_resources.py`): prima il classpath, poi `res` (se il gioco parte dalla root), con un `AVVISO` una volta per file. Non serve se la build è corretta.
 
 ### 35.5 Calendario — proposta (da confermare con l'utente)
 Contesto: la griglia del libro ha **30 giorni per mese** (6 x 5) e l'etichetta `gg/mm`; l'utente vuole **eventi ogni stagione, "mancabili", ma senza far aspettare troppo** il player; aveva ipotizzato 20 minuti reali per giorno e stagioni da 30 giorni (= 10 ore a stagione, 40 ore l'anno: troppo). Inconsistenza da chiarire: se la stagione è 1 mese l'anno ha 4 mesi e l'etichetta `17/05` non esiste.
