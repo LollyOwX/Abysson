@@ -1,0 +1,20 @@
+# Zone di mappa che notificano REACH_LOCATION alle quest (e opzionalmente ne avviano una).
+# Una zona per riga:
+#   idZona = world,colX,rowY                          (una sola tile)
+#   idZona = world,colX,rowY .. colX,rowY             (rettangolo di tile, angoli opposti inclusi)
+#   idZona = world,colX,rowY .. colX,rowY start idQuest   (all'ingresso avvia anche la quest)
+#
+# L'evento scatta all'INGRESSO nella zona (di nuovo se esci e rientri). La quest viene avviata
+# prima della notifica, quindi il suo primo step può già ascoltare la zona che l'ha avviata.
+# idZona è il target di "require/continue REACH_LOCATION <idZona>" nei file di res/quests/.
+#
+# Se due zone si sovrappongono e si entra in entrambe nello stesso istante, scattano nell'ordine
+# del file: metti prima la più generale (es. libreria) e dopo quella interna (libreria_fondo).
+#
+# Esempio (commentato finché non ci sono zone reali sulla mappa):
+# villaggio = world01,col20,row20 .. col40,row35 start esempio_mistero
+# libreria = world01,col30,row10 .. col35,row14
+# libreria_fondo = world01,col30,row10 .. col35,row11
+# casa = world01,col40,row40 .. col43,row43
+# casa_interno = world01,col41,row41 .. col42,row42
+# scantinato = world01,col31,row16

@@ -5,7 +5,6 @@ import main.GamePanel;
 import main.UI;
 import quest.Quest;
 import quest.QuestState;
-import quest.QuestStep;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -151,15 +150,12 @@ public class BookUI {
             g2.drawString("Stato: " + stateLabel, x, y + 28 + 80);
         } else {
             int textY = y + 28;
-            for (int i = 0; i < q.steps.size(); i++) {
-                QuestStep step = q.steps.get(i);
-                boolean done = i < q.currentStepIndex || q.state == QuestState.COMPLETED;
-                boolean current = i == q.currentStepIndex && q.state == QuestState.ACTIVE;
-                String marker = done ? "[x] " : (current ? "[ ] " : "    ");
-                String progress = (current && step.goalCount > 1)
-                        ? " (" + step.currentCount + "/" + step.goalCount + ")" : "";
+            for (int i = 0; i < q.history.size(); i++) {
+                boolean current = i == q.history.size() - 1 && q.state == QuestState.ACTIVE;
+                String marker = current ? "[ ] " : "[x] ";
+                String progress = current ? q.progressText() : "";
                 g2.setColor(Color.black);
-                ui.drawStyledText(marker + step.description + progress, x, textY, w);
+                ui.drawStyledText(marker + q.history.get(i).text + progress, x, textY, w);
                 textY += 32;
             }
         }

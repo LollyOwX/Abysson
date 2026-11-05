@@ -1,0 +1,48 @@
+# Quest di esempio: mostra i 3 tipi di branch con id segnaposto (nessun NPC/zona reale la usa)
+#
+# Intestazione:   title: / description: / tier: (CRITICO, MAGGIORE, FLAVOR) / giver:
+# Situazione:     step X.Y: testo      (X = step principale, Y = situazione attuale; senza branch = finale)
+# Branch:         branch <id> <FAST|IMPORTANT|COINCIDENT> [AND|OR] -> X.Y
+# Condizioni:     require|continue <KILL|TALK|REACH_LOCATION|COLLECT|CUSTOM> <target> [xN]
+#
+# IMPORTANT:           completato il require, prende subito priorità e porta a X.Y
+# FAST / COINCIDENT:   completato il require resta tutto com'è (Y invariata); solo quando si completa
+#                      la continue prende priorità e porta a X.Y. COINCIDENT ammette più require (AND/OR)
+# Scelta dopo un gate: due branch COINCIDENT con gli stessi require e continue diverse
+#
+# REACH_LOCATION: il target è l'id di una zona di res/maps/locations.txt (scatta all'ingresso nella zona)
+
+title: Scopri il mistero
+description: Qualcosa non va nel villaggio.
+tier: MAGGIORE
+
+step 1.0: Arrivi al villaggio
+  branch arrivo IMPORTANT -> 1.1
+    require REACH_LOCATION villaggio
+
+step 1.1: Indaga sul villaggio
+  # COINCIDENT OR: parlare con npc_1 o npc_2 sblocca la casa; entrarci dà priorità
+  branch casa COINCIDENT OR -> 2.0
+    require TALK npc_1
+    require TALK npc_2
+    continue REACH_LOCATION casa
+
+  # IMPORTANT: entrare nella libreria dà subito priorità, qualunque cosa sia stata fatta prima
+  branch biblioteca IMPORTANT -> 3.0
+    require REACH_LOCATION libreria
+
+step 2.0: Esplora la casa
+  branch casa_finita IMPORTANT -> 4.0
+    require REACH_LOCATION casa_interno
+
+step 3.0: Esplora la libreria
+  branch libreria_finita IMPORTANT -> 3.1
+    require REACH_LOCATION libreria_fondo
+
+step 3.1: Scendi nello scantinato della biblioteca
+  branch scantinato_raggiunto IMPORTANT -> 5.0
+    require REACH_LOCATION scantinato
+
+step 4.0: Hai esplorato la casa
+
+step 5.0: Hai esplorato lo scantinato

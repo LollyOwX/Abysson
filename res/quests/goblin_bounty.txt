@@ -1,0 +1,10 @@
+title: Taglia sul Goblin
+description: Un goblin infesta i dintorni del villaggio.
+tier: FLAVOR
+giver: Villager
+
+step 1.0: Sconfiggi il Goblin
+  branch goblin IMPORTANT -> 2.0
+    require KILL Goblin
+
+step 2.0: Goblin sconfitto

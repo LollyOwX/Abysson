@@ -12,7 +12,7 @@ import java.util.List;
  * una per stato: bookzone 0 = la prima quest conosciuta, bookzone 1 = la seconda, ecc. Uno slot
  * senza quest assegnata resta vuoto (vedi UI.drawQuestPageContent()). Il cap di 5 va alzato
  * (insieme al numero di Rectangle in UI.SUBTOPIC_IMAGE_RECTS per quell'area) se in
- * QuestRegistry finiscono per esistere più di 5 quest raggiungibili in una run.
+ * QuestLoader finiscono per esistere più di 5 quest raggiungibili in una run.
  */
 public class QuestManager {
     private final GamePanel gp;
@@ -51,10 +51,11 @@ public class QuestManager {
      */
     public void startQuest(String id) {
         if (getQuestById(id) != null) return;
-        Quest quest = QuestRegistry.get(id);
+        Quest quest = QuestLoader.load(id);
         if (quest == null) return;
-        quest.state = QuestState.ACTIVE;
-        active.add(quest);
+        quest.start();
+        if (quest.state == QuestState.COMPLETED) completed.add(quest);
+        else active.add(quest);
         gp.ui.showMessage("Nuova missione: " + quest.title);
     }
 
@@ -67,7 +68,8 @@ public class QuestManager {
     public void notify(QuestEventType type, String targetId) {
         for (int i = active.size() - 1; i >= 0; i--) {
             Quest quest = active.get(i);
-            int stepBefore = quest.currentStepIndex;
+            int stepBefore = quest.step;
+            int microBefore = quest.micro;
             boolean changed = quest.notify(type, targetId);
             if (!changed) continue;
 
@@ -75,9 +77,9 @@ public class QuestManager {
                 active.remove(i);
                 completed.add(quest);
                 gp.ui.showMessage("Missione completata: " + quest.title);
-            } else if (quest.currentStepIndex != stepBefore) {
-                QuestStep next = quest.currentStep();
-                if (next != null) gp.ui.showMessage("Nuovo obiettivo: " + next.description);
+            } else if (quest.step != stepBefore || quest.micro != microBefore) {
+                Quest.Step next = quest.currentStep();
+                if (next != null) gp.ui.showMessage("Nuovo obiettivo: " + next.text);
             }
         }
     }

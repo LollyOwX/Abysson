@@ -1,6 +1,9 @@
 package main;
 
 import java.awt.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class EventHandler {
 
@@ -9,6 +12,10 @@ public class EventHandler {
 
     int previousEventX, previousEventY;
     boolean canTouchEvent = true;
+
+    List<LocationZone> zones = LocationZone.load();
+    Set<LocationZone> insideZones = new HashSet<>();
+    String zonesWorld = "";
 
     public EventHandler(GamePanel gp) {
         this.gp = gp;
@@ -34,6 +41,8 @@ public class EventHandler {
     }
 
     public void checkEvent() {
+        checkLocations();
+
         int xDistance = (int)Math.abs(gp.player.worldX - previousEventX);
         int yDistance = (int)Math.abs(gp.player.worldY - previousEventY);
         int distance = Math.max(xDistance, yDistance);
@@ -83,22 +92,24 @@ public class EventHandler {
         }
     }
 
-    // ── Quest: trigger di mappa ────────────────────────────────────
-    // Capacità pronta, non ancora richiamata da checkEvent(): nessuna mappa ha ancora un
-    // punto/quest reale a cui agganciarle. Per usarle, aggiungi una riga in checkEvent() come
-    // per damagePit/healingPool, es.: questStartEvent(30, 15, "any", "goblin_bounty");
+    // ── Quest: zone di mappa ───────────────────────────────────────
 
-    /** Avvia una quest quando il giocatore tocca (col,row) da reqDirection ("any" = qualsiasi). */
-    public void questStartEvent(int col, int row, String reqDirection, String questId) {
-        if (hit(col, row, reqDirection)) {
-            gp.questManager.startQuest(questId);
+    public void checkLocations() {
+        if (!gp.currentWorld.equals(zonesWorld)) {
+            insideZones.clear();
+            zonesWorld = gp.currentWorld;
         }
-    }
+        int col = (int) ((gp.player.worldX + gp.player.solidAreaDefaultX + gp.player.solidArea.width / 2.0) / gp.tileSize);
+        int row = (int) ((gp.player.worldY + gp.player.solidAreaDefaultY + gp.player.solidArea.height / 2.0) / gp.tileSize);
 
-    /** Notifica un obiettivo REACH_LOCATION quando il giocatore tocca (col,row). */
-    public void locationEvent(int col, int row, String reqDirection, String locationId) {
-        if (hit(col, row, reqDirection)) {
-            gp.questManager.notify(quest.QuestEventType.REACH_LOCATION, locationId);
+        for (LocationZone z : zones) {
+            boolean inside = z.contains(gp.currentWorld, col, row);
+            if (!inside) {
+                insideZones.remove(z);
+            } else if (insideZones.add(z)) {
+                if (z.startQuestId != null) gp.questManager.startQuest(z.startQuestId);
+                gp.questManager.notify(quest.QuestEventType.REACH_LOCATION, z.id);
+            }
         }
     }
 }
