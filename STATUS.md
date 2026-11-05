@@ -1,4 +1,4 @@
-# Abysson — Status del codice (2026-10-14, dopo 0.19.11)
+# Abysson — Status del codice (2026-11-05, dopo 0.19.11)
 
 Questo file va tenuto in `docs/STATUS.md` (o dove preferisci nel repo). Non è generato automaticamente: lo aggiorno io a mano ogni tanto, su richiesta, quando facciamo un blocco di modifiche significativo.
 
@@ -6,7 +6,7 @@ Questo file va tenuto in `docs/STATUS.md` (o dove preferisci nel repo). Non è g
 
 ## 8. Dettagli per Claude (punto d'ingresso: leggere per primo)
 
-*Scritto per una chat Claude che parte da zero, senza la cronologia. (Il vecchio §8 "Quest nel libro + notifiche" ora è §8b.) Il resto del file è il dettaglio per sistema: §0 workflow, §28 riferimento equipaggiamento/combattimento, §30-§35 lavoro recente.*
+*Scritto per una chat Claude che parte da zero, senza la cronologia. (Il vecchio §8 "Quest nel libro + notifiche" ora è §8b.) Il resto del file è il dettaglio per sistema: §0 workflow, §28 riferimento equipaggiamento/combattimento, §30-§36 lavoro recente.*
 
 ### 8.1 Il progetto e l'utente
 - **Abysson**: RPG 2D in **Java Swing**, mondo a tile, combattimento a turni con sistema elementale; partito dal tutorial YouTube di RyiSnow ma con sistemi molto custom. Repo **github.com/LollyOwX/Abysson** (branch `main`). Sviluppatore indipendente, lavora da solo; versioni `0.19.x` (ultima pushata: **0.19.11**), commit tipo "0.19.11 Equip - UI".
@@ -57,12 +57,13 @@ Questo file va tenuto in `docs/STATUS.md` (o dove preferisci nel repo). Non è g
 
 ### 8.8 Decisioni ancora aperte (da chiedere all'utente, non da assumere)
 - **Calendario**: minuti reali per giorno, mesi per stagione (3 o 1), se combattimento/menu/dialoghi consumano tempo, salto del tempo (§32, §35.5).
+- **RNG dei tiri di caratteristica**: Marble-sack o Equilibratore (o nessuno dei due), nulla deciso né implementato (§36).
 - Bonus di `lama`, `sostegno`, `legamenti` di armi/scudi; uno Scudo/Broquel a durabilità 0 deve ancora parare? (oggi sì; il Sai no).
 - `PRECISION_BASE_MAX` (oggi 100), crescita delle stat per livello, `dodgeChance` del mostro (usa ancora la vecchia sottrazione), caso "precisione/2" del sistema mostro → player.
 - Peso del gear (esiste solo per le MAZZE), icone/immagini dettagliate degli oggetti (`itemPath`, `combatItemPath`: nessuno le imposta), equipaggiare/usare dalla lista dell'Inventario, rimuovere `out` e `bin/` da git.
 
 ### 8.9 Come iniziare una sessione
-1. Chiedi/leggi la versione pushata, **clona** e compila. 2. Leggi questo §8, poi §0 e i § recenti (§30-§35). 3. Per ogni richiesta: riproduci o verifica, modifica nello stile esistente, **testa** (compilazione, test numerici o render headless), consegna file/script con istruzioni passo-passo, aggiorna lo STATUS. 4. Quando cambi qualcosa che questo punto descrive, aggiorna anche qui.
+1. Chiedi/leggi la versione pushata, **clona** e compila. 2. Leggi questo §8, poi §0 e i § recenti (§30-§36). 3. Per ogni richiesta: riproduci o verifica, modifica nello stile esistente, **testa** (compilazione, test numerici o render headless), consegna file/script con istruzioni passo-passo, aggiorna lo STATUS. 4. Quando cambi qualcosa che questo punto descrive, aggiorna anche qui.
 
 ---
 
@@ -895,3 +896,29 @@ Contesto: la griglia del libro ha **30 giorni per mese** (6 x 5) e l'etichetta `
 - **Quest**: `QuestItem.deliverDay` diventa una data assoluta (giorni totali); i "giorni rimasti" sono la differenza di giorni assoluti; la pagina Quest mostra il mese corrente e, se la scadenza è in un altro mese, i giorni rimasti nella cella.
 - **Codice (dopo conferma)**: `GameCalendar` con `totalDays` + contatore di tick, `update()` chiamato dal ciclo in esplorazione, `dateLabel()` `gg/mm`, listener `onNewDay`/`onNewSeason`; `CalendarEvent` + registry. Un solo numero basta anche per il salvataggio.
 - **Da decidere**: minuti per giorno, mesi per stagione (3 o 1), se combattimento e menu consumano tempo, se esiste il salto del tempo. L'utente applicherà modifiche e le comunicherà.
+
+## 36. RNG dei tiri di caratteristica — ragionamento (da decidere)
+
+Nessuna delle due meccaniche è nel codice: questo § raccoglie il confronto fatto con il consiglio (5 pareri indipendenti, revisione incrociata, sintesi). Non è una decisione.
+
+### 36.1 Le due meccaniche (come descritte dall'utente)
+- **Marble-sack**: il numero scelto dal random viene reso una frazione e non può essere riscelto, dando ogni volta risultati diversi. Finché la probabilità desiderata (in frazione) non avviene, il sacco non viene riempito.
+  - Lettura da confermare: estrazione senza reinserimento, es. 25% = 1 biglia su 4, sacco rimesso a nuovo ogni 4 estrazioni (come il 7-bag di Tetris). Cosa faccia scattare il riempimento va fissato.
+- **Equilibratore**: a ogni tiro di caratteristica si ottiene un punteggio P, con O = risultato ottenuto e N = minimo necessario per passare: `P += O - N`.
+  - P < 0: si tira un random tra 0 e -100; se il risultato è maggiore di P si aggiunge P ponderato (M) con `M = O × P / 100`, arrotondato per eccesso.
+  - P > 0: si tira un random tra 0 e 100; se il risultato è minore di P si sottrae P ponderato (M) con la stessa formula, arrotondato per difetto.
+  - Da chiarire: a cosa si aggiunge/sottrae M (presumibilmente a O).
+
+### 36.2 Esito del confronto
+- **Dove concordano i pareri**: il Marble-sack è molto più semplice da specificare, implementare e testare (deterministico nella convergenza, adatto a test unitari). L'Equilibratore ha più complessità: stato persistente P, due rami con arrotondamenti diversi, comportamento probabilistico difficile da riprodurre in debug. Entrambi sono ancora sotto-specificati.
+- **Dove si scontrano**: (1) Marble-sack: rischio di "contare le biglie" e prevedere gli esiti a fine sacco, trascurabile finché lo stato resta interno e invisibile al giocatore. (2) Equilibratore: potenziale come "pacing dinamico" della difficoltà contro il rischio anti-skill (chi ottimizza il build viene penalizzato da P positivo, e la percezione di equità cala).
+- **Punti ciechi emersi**: (1) i due sistemi risolvono problemi diversi: il Marble-sack riduce la varianza a breve termine (serie fortunate/sfortunate), l'Equilibratore corregge lo scarto cumulativo lungo tutta la partita (rubber-banding). (2) Entrambi aggiungono stato nascosto che andrà salvato (oggi non esiste salvataggio, vedi §5: "Load Game" è uno stub). (3) Manca lo scope di P: globale, per personaggio o per singola caratteristica; mancano anche reset e limiti.
+- **Raccomandazione del consiglio** (non decisa dall'utente): usare il Marble-sack come utility generica e riusabile (tiri di caratteristica, ma anche loot e spawn). Mettere in pausa l'Equilibratore; eventualmente riprenderlo come assist ristretto (es. solo boss) se il playtest mostra un problema reale.
+- **Primo passo suggerito**: fissare per iscritto un esempio numerico concreto del Marble-sack (granularità, trigger di riempimento) prima di scrivere codice.
+
+### 36.3 Ancora aperto
+- Qual è il problema da risolvere: serie di tiri sfortunati (varianza) o deriva cumulativa lungo la partita?
+- Marble-sack: granularità della frazione, quando il sacco si riempie, se il sacco è uno per caratteristica, per soglia N o globale.
+- Equilibratore: scope di P, reset, limiti (clamp) su P, a cosa si applica M, arrotondamenti.
+- Salvataggio dello stato nascosto (sacco o P) quando verrà implementato il salvataggio.
+- Se si implementa: costanti e formule in un unico punto, come `CombatMath` (§31).
