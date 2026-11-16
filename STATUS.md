@@ -20,6 +20,7 @@ Questo file va tenuto in `docs/STATUS.md` (o dove preferisci nel repo). Non è g
 - **Chiedi conferma se hai dubbi, poi risolvi.** Una domanda alla volta, con i default che proporresti. **Non inventare valori di gameplay**: se manca un dato, proponi un default dichiarato e scrivilo come scelta tua.
 - **Dichiara cosa hai verificato** (compilato, test numerici, render headless) e cosa no ("non provato in gioco").
 - **Aggiorna questo STATUS.md** a ogni blocco significativo e **appunta sempre un ragionamento dopo che viene fatto** (regola esplicita dell'utente, vedi riga in §0).
+- Alle domande di design/approccio ("come potrei fare?") rispondi con **snippet mirati, non codice completo**, e metti il ragionamento qui (§0, esempio §38).
 - Formato risposte: prosa chiara, tabelle solo per dati confrontabili; niente liste quando rifiuti qualcosa.
 
 ### 8.3 Come lavorare tecnicamente (sandbox di Claude)
@@ -77,6 +78,7 @@ Questo file va tenuto in `docs/STATUS.md` (o dove preferisci nel repo). Non è g
     - *Esempio concreto (19/07)*: spostamento di `CombatState`/`ElementSystem`/`Ability`/`Reaction` in un package `combat` — bastava dire "usa Refactor → Move Class in IntelliJ, aggiorna da solo gli import", invece ho rigenerato e incollato 5 file interi consumando risorse inutilmente. Da evitare.
 - Commenti nel codice: minimi, solo di **sezionamento** (cosa fa quella sezione), niente spiegazioni riga-per-riga — quelle restano in chat.
 - **Verificare sempre il file dopo un patch mirato** (sostituzione di poche righe, non il file intero): il 19/07, durante l'aggiunta di `drawBook()`, una sostituzione ha cancellato per errore la riga della firma di `playMusic()` (il testo da sostituire matchava anche quella riga adiacente). Individuato e corretto subito controllando il file dopo l'edit — ma è un promemoria a **ricontrollare il risultato di ogni patch puntuale**, non solo il bilanciamento delle graffe, prima di consegnare.
+- **Domande di design ("come potrei fare…?")** (regola dell'utente, 06/11): rispondo con **spiegazione + snippet mirati, mai il codice completo**, e riporto il ragionamento in questo STATUS.md. Il codice completo arriva solo quando l'utente chiede di implementare. Esempio: §38.
 - IMPORTANTE: ricordare SEMPRE di appuntare qui un ragionamento dopo che viene effettuato. Esempio calendario
 
 ## 1. Architettura generale
@@ -250,6 +252,8 @@ Il primo giro di §6.2/6.4 usava una singola coppia `elementAttack`/`elementDefe
 
 ## 7. Sessione 27/08 (continua) — Struttura Quest
 
+> **Superato dal §37**: la struttura quest (`QuestStep`/`QuestRegistry`/step machine lineare) è stata sostituita da file in `res/quests/` con situazioni `X.Y` e branch. Questo paragrafo resta come storico.
+
 Nuovo package `quest/` (7 file): `QuestEventType` (enum: KILL/TALK/REACH_LOCATION/COLLECT/CUSTOM), `QuestTier` (CRITICO/MAGGIORE/FLAVOR, rispecchia i tier del Calendar System §1), `QuestState` (NOT_STARTED/ACTIVE/COMPLETED/FAILED — FAILED è uno stub non ancora agganciato), `QuestStep` (uno step = descrizione + trigger + target + goal, con `matches()`/`isComplete()`), `Quest` (**step machine**: sequenza di `QuestStep`, uno attivo alla volta — `notify()` avanza solo se l'evento combacia con lo step corrente, non con step futuri o già superati), `QuestRegistry` (dispatcher statico delle definizioni, stesso stile di `combat/Ability.java` — vedi il suo header per "come aggiungere una nuova quest"), `QuestManager` (liste `active`/`completed` separate; correzione fatta nella sessione successiva, vedi §8b — non collegate 1:1 a bookzone come scritto qui inizialmente).
 
 **Quest ottenibili sia da dialogo NPC che da trigger di mappa, dal primo giro**:
@@ -266,6 +270,8 @@ Nuovo package `quest/` (7 file): `QuestEventType` (enum: KILL/TALK/REACH_LOCATIO
 
 ## 8b. Sessione 27/08 (continua) — Quest nel libro + notifiche a schermo
 
+> **Aggiornato dal §37**: la pagina 1 del libro ora elenca `Quest.history` (le situazioni attraversate), non più `steps`.
+
 **Correzione rispetto a §7**: avevo scritto lì che `BOOKZONE_COUNT` per l'area Quest fosse 2 (Attive/Completate) — falso, il valore vero nel codice è **5** (il commento in `GamePanel`/`UI` diceva "quest=2" ma sia l'array `BOOKZONE_COUNT` sia i `Rectangle` in `SUBTOPIC_IMAGE_RECTS` per quell'area erano già 5: commento sbagliato, corretto anche quello. Il progetto usa la convenzione "bookzone = singola voce, es. Quest 1/Quest 2" (vedi il commento originale sui 3 livelli in `GamePanel.java`) — quindi **una bookzone = una quest**, non uno stato.
 
 - `QuestManager.getKnownQuests()`: lista concatenata active+completed (ordine stabile) — bookzone *N* mostra la N-esima quest conosciuta dal giocatore (non tutte quelle esistenti in `QuestRegistry`: una quest mai iniziata non compare, niente spoiler). Cap a 5 slot per ora (come `BOOKZONE_COUNT`); da alzare (lì + i `Rectangle` corrispondenti in `UI.SUBTOPIC_IMAGE_RECTS`) se `QuestRegistry` supera le 5 quest raggiungibili in una run.
@@ -275,76 +281,87 @@ Nuovo package `quest/` (7 file): `QuestEventType` (enum: KILL/TALK/REACH_LOCATIO
 **Come il giocatore viene informato**: prima di questa sessione, **in nessun modo** — `UI.showMessage()`/`messageOn` esistevano già (usati da `Npc_HumanRedWorker` per "Hai ottenuto: Spada!") ma non erano MAI disegnati da nessuna parte: un aggancio morto, bug preesistente non mio. Aggiunto `UI.drawMessage()` (banner in alto, ~2 secondi, richiamato da `draw()` sempre tranne che nel titolo) e ora `QuestManager` lo usa per tre eventi: avvio quest ("Nuova missione: ..."), avanzamento di step ("Nuovo obiettivo: ..."), completamento ("Missione completata: ..."). Di riflesso, questo ha sistemato anche il messaggio della spada, che ora funziona davvero.
 - `QuestManager` tiene ora un riferimento a `GamePanel` (passato nel costruttore, `new QuestManager(this)` in `GamePanel`) per poter chiamare `gp.ui.showMessage()` — stesso pattern di `CombatState`/`EventHandler`/`UI` stesse, che tengono già tutte `gp`.
 
-## 9. Guida pratica — Aggiungere e usare le Quest
+## 9. Guida pratica — Aggiungere e usare le Quest (sistema v2: file in `res/quests/`)
 
-Riferimento autonomo (non un log di sessione): tutto quello che serve per lavorare sul sistema quest senza dover rileggere §6-8. Se qualcosa qui e nei commenti del codice (`QuestRegistry`, `QuestManager`, `EventHandler`) diverge, fidati del codice: questa sezione va tenuta aggiornata a mano quando cambia qualcosa di strutturale.
+Riferimento autonomo: tutto quello che serve per lavorare sulle quest. Se qui e nel codice (`Quest`, `QuestLoader`, `QuestManager`, `EventHandler`) c'è divergenza, fidati del codice.
 
-### 9.1 Aggiungere una nuova quest
-In `quest/QuestRegistry.get()`, un nuovo `case` con un id univoco:
-```java
-case "old_man_favor":
-        return new Quest(
-            "old_man_favor",
-                    "Un favore per il vecchio",
-                    "Il vecchio del villaggio ha bisogno di aiuto.",
-            QuestTier.FLAVOR,
-            "OldMan", // NPC che la assegna (solo informativo, non collegato automaticamente — vedi 9.2)
-            List.of(
-                    new QuestStep("Torna a parlare con lui", QuestEventType.TALK, "OldMan"),
-                    new QuestStep("Sconfiggi il Goblin", QuestEventType.KILL, "Goblin", 3) // goalCount=3
-            )
-                    );
+### 9.1 Modello
+- Una quest è un insieme di **situazioni** `X.Y`: **X** = step principale (la storia avanza cambiando X), **Y** = situazione attuale dentro lo step (il progresso, non "con chi hai parlato"). Il salvataggio (STUB: solo `Quest.saveKey()`) è `nomequest.X.Y`, dove `nomequest` = nome del file.
+- Ogni situazione ha dei **branch** (uscite). Quando un branch **prende priorità** la quest passa alla sua situazione di arrivo e gli altri branch della situazione di partenza smettono di contare: non si retrocede. Una situazione **senza branch è un finale**: al suo ingresso la quest si completa (la chiave dice quale finale).
+- **IMPORTANT**: completato il `require`, prende subito priorità.
+- **FAST**: completato il `require` non cambia nulla (nemmeno Y); solo quando poi si completa la `continue` prende priorità. Una `continue` fatta prima del requisito non conta.
+- **COINCIDENT**: come FAST ma con più `require` combinati in AND oppure OR. Per una scelta dopo un gate: due branch COINCIDENT con gli stessi `require` e `continue` diverse.
+- Se nello stesso evento scattano più branch vince un IMPORTANT su un FAST/COINCIDENT, a parità l'ordine del file.
+
+### 9.2 Formato del file (`res/quests/<id>.txt`, UTF-8)
 ```
-- È una **step machine**: gli step si sbloccano in ordine, uno per volta. Un evento che combacerebbe con lo step 2 non fa nulla se la quest è ancora allo step 0.
-- `targetId` deve combaciare **esattamente** con quello che passa chi notifica l'evento (case-sensitive): `monster.name` per KILL (es. `"Goblin"`), `entity.name` dell'NPC per TALK, il `locationId` scelto a mano per REACH_LOCATION.
-- `goalCount` di default è 1 — per "N volte" usa il costruttore a 4 argomenti.
-- Ogni chiamata a `QuestRegistry.get()` crea un'istanza NUOVA (stato mutabile) — non riusarne una condivisa.
+title: Scopri il mistero
+description: Qualcosa non va nel villaggio.
+tier: MAGGIORE                      # CRITICO | MAGGIORE | FLAVOR (default FLAVOR)
+giver: Villager                     # opzionale, solo informativo
 
-### 9.2 Come farla partire
-- **Dialogo NPC**: `Entity.givesQuestId` porta solo il DATO ("quale quest"), impostato in `AssetSetter.place()` (overload a 7 argomenti, `null` = nessuna) o nel costruttore dell'NPC. `Entity.speak()` NON la assegna più da sola: sta alla sottoclasse NPC decidere A QUALE `dialoguesIndex` chiamare `gp.questManager.startQuest(givesQuestId)` — stesso pattern usato per qualunque altro regalo condizionato al dialogo (es. la spada in `Npc_HumanRedWorker`). `startQuest()` resta idempotente, sicuro anche se richiamato più volte.
-- **Trigger di mappa**: in `EventHandler.checkEvent()`, una riga come le altre già presenti (`damagePit`/`healingPool`):
-  ```java
-  questStartEvent(30, 15, "any", "old_man_favor");
-  ```
-  `"any"` = da qualunque direzione; altrimenti `"up"`/`"down"`/`"left"`/`"right"`.
-- **Combattimento**: nessuna azione da fare per KILL, `CombatState.onVictory()` notifica già ogni vittoria.
-- Il campo `giverNpc` in `Quest` è solo testo/riferimento, NON collega automaticamente nulla: l'associazione vera con un NPC è impostare `givesQuestId` su quell'NPC come sopra.
+step 1.0: Arrivi al villaggio
+  branch arrivo IMPORTANT -> 1.1
+    require REACH_LOCATION villaggio
+step 1.1: Indaga sul villaggio
+  branch casa COINCIDENT OR -> 2.0
+    require TALK npc_1
+    require TALK npc_2
+    continue REACH_LOCATION casa
+step 2.0: Esplora la casa
+```
+- `branch <id> <IMPORTANT|FAST|COINCIDENT> [AND|OR] -> X.Y` (`-> X` = `X.0`); `require|continue <EVENTO> <target> [xN]` (`xN` = N volte). Righe con `#` e vuote ignorate; l'indentazione è solo estetica.
+- La prima situazione del file è quella di partenza. Id e target senza spazi. `targetId` combacia esattamente (case-sensitive) con ciò che passa chi notifica (§9.5).
+- Errori di formato: messaggio in console con numero di riga, la quest non si carica. Avvisi (non bloccanti): più `require` fuori da COINCIDENT, `continue` su IMPORTANT, arrivo non definito o non successivo.
+- `res/quests/esempio_mistero.txt` contiene la legenda e un esempio con tutti e tre i tipi (id segnaposto, nessuna zona/NPC reale lo avvia). `goblin_bounty.txt` è la quest reale assegnata dall'NPC.
+- Ogni `QuestLoader.load(id)` crea un'istanza NUOVA (stato mutabile).
 
-### 9.3 Tipi di obiettivo (QuestEventType)
+### 9.3 Come farla partire
+- **Dialogo NPC**: invariato (§10-§11): `Entity.givesQuestId` porta l'id (= nome file), la sottoclasse NPC chiama `gp.questManager.startQuest(givesQuestId)` al `dialoguesIndex` giusto. Idempotente.
+- **Zona di mappa**: riga con `start idQuest` in `res/maps/locations.txt` (9.4).
+
+### 9.4 Zone di mappa (`res/maps/locations.txt`, caricato da `main/LocationZone`)
+```
+libreria  = world01,col30,row10 .. col35,row14
+casa      = world01,col40,row40
+villaggio = world01,col20,row20 .. col40,row35 start esempio_mistero
+```
+- Una riga per zona: tile singola o rettangolo (angoli opposti inclusi). `idZona` è il target dei `REACH_LOCATION` nei file quest.
+- `EventHandler.checkLocations()` (chiamato all'inizio di `checkEvent()`, quindi solo mentre il player si muove) usa la tile al centro della `solidArea` del player. L'evento scatta all'**ingresso** nella zona; uscendo e rientrando scatta di nuovo (così una visita fatta prima che la quest ascolti non si perde). Cambiando `currentWorld` lo stato "dentro" si azzera; le zone valgono solo per il loro mondo.
+- Obiettivi tipo "ha esplorato X" si fanno con una zona interna (es. `libreria_fondo`) e `require REACH_LOCATION libreria_fondo`, senza eventi `CUSTOM`. Se si entra in più zone nello stesso istante scattano nell'ordine del file: metti prima la più generale.
+- Con `start`, la quest viene avviata **prima** della notifica: il suo primo step può già ascoltare la zona che l'ha avviata.
+- Il file è fornito **vuoto** (solo legenda ed esempio commentato): nessuna mappa ha ancora coordinate reali per libreria/villaggio/ecc.
+- Sostituisce `EventHandler.locationEvent()`/`questStartEvent()` (rimossi: non ridefinivano lo scatto per ingresso e notificavano a ogni frame).
+
+### 9.5 Tipi di obiettivo (QuestEventType)
 | Tipo | Chi lo notifica | targetId | Stato |
 |---|---|---|---|
-| `KILL` | `CombatState.onVictory()` | `monster.name` | Collegato |
-| `TALK` | `Entity.speak()` (ogni volta che si parla a un NPC) | `entity.name` | Collegato |
-| `REACH_LOCATION` | `EventHandler.locationEvent(col,row,dir,locationId)` — riga da aggiungere in `checkEvent()` | id a piacere | Capacità pronta, nessun punto di mappa la usa ancora |
-| `COLLECT` | — | — | **Non collegato**: nessun inventario reale esiste (`Player.pickUpObject()` è uno stub vuoto). Andrebbe agganciato lì, ma prima serve un sistema oggetti minimo |
-| `CUSTOM` | a mano, dal punto del codice dove serve: `gp.questManager.notify(QuestEventType.CUSTOM, "un_id")` | id a piacere | Per obiettivi troppo specifici per meritare un tipo tutto loro |
+| `KILL` | `CombatState` (vittoria) | `monster.name` | Collegato |
+| `TALK` | `Entity.speak()` | `entity.name` | Collegato |
+| `REACH_LOCATION` | `EventHandler.checkLocations()` | `idZona` di `locations.txt` | Collegato (nessuna zona reale ancora) |
+| `COLLECT` | `Player.obtain()` | `Item.id` del registry | Collegato (§35.2) |
+| `CUSTOM` | a mano: `gp.questManager.notify(QuestEventType.CUSTOM, "un_id")` | id a piacere | Per obiettivi senza un tipo loro |
 
-### 9.4 Leggere lo stato di una quest da altrove nel codice
+### 9.6 Leggere lo stato da altrove
 ```java
-Quest q = gp.questManager.getQuestById("old_man_favor"); // null se mai iniziata
+Quest q = gp.questManager.getQuestById("goblin_bounty"); // null se mai iniziata
 if (q != null && q.state == QuestState.COMPLETED) { /* ... */ }
-        if (q != null) {
-QuestStep step = q.currentStep(); // step attivo, non null se la quest è ACTIVE
-// step.description, step.currentCount, step.goalCount
-}
+// q.step (X), q.micro (Y), q.currentStep().text, q.history, q.saveKey()
 ```
-`gp.questManager.getActive()` / `getCompleted()` per le liste intere; `getKnownQuests()` per la lista concatenata (ordine stabile) usata anche dal libro.
+`getActive()` / `getCompleted()` / `getKnownQuests()` come prima.
 
-### 9.5 Come il giocatore viene informato
-Automatico, non serve fare nulla in più: `QuestManager` chiama `gp.ui.showMessage()` (banner in alto, ~2 secondi) da solo su avvio quest, avanzamento di step e completamento. Se serve un messaggio diverso da quello di default (es. testo custom invece di "Nuovo obiettivo: <descrizione step>"), va cambiato dentro `QuestManager.notify()`/`startQuest()` — non c'è un modo per personalizzarlo per singola quest al momento.
+### 9.7 Messaggi a schermo
+`QuestManager` mostra da solo "Nuova missione", "Nuovo obiettivo: <testo della nuova situazione>" (solo quando cambia X o Y: l'armarsi di un FAST/COINCIDENT non cambia Y e non mostra nulla) e "Missione completata".
 
-### 9.6 Vederla nel libro
-Non serve fare nulla in più: qualunque quest **conosciuta** (attiva o completata — non quelle mai iniziate) compare da sola come bookzone nell'area Quest, nell'ordine `getKnownQuests()`. Limite attuale: **5 slot** (`GamePanel.BOOKZONE_COUNT[1]`). Se `QuestRegistry` arriva ad avere più di 5 quest raggiungibili nella stessa run, vanno alzati insieme:
-1. `GamePanel.BOOKZONE_COUNT` (il valore per l'area quests, indice 1)
-2. Il numero di `Rectangle` in `UI.SUBTOPIC_IMAGE_RECTS[1]` (deve combaciare 1:1)
+### 9.8 Nel libro
+Ogni quest conosciuta compare da sola come bookzone (limite 5, vedi `GamePanel.BOOKZONE_COUNT[1]` e `UI.SUBTOPIC_IMAGE_RECTS[1]`). Pagina 0: titolo, descrizione, stato. Pagina 1: `Quest.history` con `[x]` per le situazioni passate, `[ ]` per l'attuale (con `(n/N)` se ha un solo obiettivo contato, `Quest.progressText()`), tutto `[x]` a quest completata (finale compreso).
 
-bookpage 0 = titolo/descrizione/stato, bookpage 1 = lista obiettivi con `[x]`/`[ ]` e progresso. `UI.PAGE_CONTENT_RECT` è la zona di testo — placeholder, da aggiustare a vista sul PNG vero se il testo esce dai margini della pagina disegnata.
-
-### 9.7 Limiti noti (da non dare per scontato che funzionino)
-- Nessuna persistenza: lo stato quest si perde alla chiusura del gioco (nessun sistema di salvataggio esiste, §5).
-- `QuestState.FAILED` esiste ma non è agganciato a nulla — nessuna quest può "fallire" al momento.
-- `COLLECT` non è collegato (9.3).
-- Un solo esempio reale in `QuestRegistry` (`"goblin_bounty"`) — tutto il resto in questa guida è dimostrato solo in astratto, non testato in gioco con contenuti veri.
+### 9.9 Limiti noti
+- Nessuna persistenza: `saveKey()` produce solo la stringa `nome.X.Y`; per ripristinare davvero servirebbero anche contatori e condizioni già soddisfatte (non inclusi in X.Y).
+- `QuestState.FAILED` non è agganciato a nulla.
+- Condizioni solo piatte (AND oppure OR per branch): niente annidamenti tipo `A AND (B OR C)`.
+- Nessun evento di fine cinematica o simili: va notificato come `CUSTOM` dal punto giusto.
+- Solo `goblin_bounty` è una quest reale; il resto è dimostrato con `esempio_mistero` e con test headless, non in gioco con contenuti veri.
 
 ## 10. Sessione 27/08 (continua) — Quest da AssetSetter + messaggi impilati
 
@@ -397,7 +414,7 @@ Due commenti in `GamePanel.java` che citavano `UI.SUBTOPIC_IMAGE_RECTS` corretti
 
 **Correzione**: Helmet/Gorget erano finiti condivisi con Head/Neck dei Gioielli in §14 nonostante l'intento fosse tenerli separati — in realtà il codice era già corretto (slot dedicati `helmetSlot`/`gorgetSlot`), solo il commento sopra `Armor.java` diceva ancora "condivisi": corretto anche quello. Gioielli/Armi/Armatura restano completamente distaccati, nessuno slot in comune.
 
-**`WeaponRegistry`/`ArmorRegistry`/`JewelryRegistry`** (nuovi, in `items/`) — stesso pattern statico di `Ability`/`QuestRegistry`. Un solo esempio reale per categoria (`"short_sword_basic"`, `"cuirasse_basic"`, `"iron_ring_basic"`) con numeri placeholder — nessun bilanciamento reale dato, solo per provare che l'impianto giri.
+**`WeaponRegistry`/`ArmorRegistry`/`JewelryRegistry`** (nuovi, in `items/`) — stesso pattern statico di `Ability`. Un solo esempio reale per categoria (`"short_sword_basic"`, `"cuirasse_basic"`, `"iron_ring_basic"`) con numeri placeholder — nessun bilanciamento reale dato, solo per provare che l'impianto giri.
 
 **Meccaniche armi ora vive in `CombatState.dealDamage()`**, automatiche su ogni colpo andato a segno (come deciso):
 - **Combo** (`Weapon.comboTypes`): il bonus si somma al danno già inflitto (es. Mazza chiodata: `punta + contundente`).
@@ -878,7 +895,7 @@ Implementa §33 sulle immagini in `res/ui/book_inventory`. File: `book/Inventory
 - Prima l'NPC (`Npc_HumanRedWorker`) equipaggiava la spada direttamente: non risultava posseduta né veniva notificata (COLLECT non era collegato). Ora usa `receiveItem(LootTable.create(...), true)`; il messaggio mostra il nome vero dell'oggetto.
 - Loot di fine combattimento: `CombatState.onVictory()` passa da `obtain()`.
 - `Player.equip()` toglie l'oggetto dallo zaino e rimette nello zaino il pezzo sostituito (anche quello liberato dalla regola 1-mano/2-mani); `unequip()` manda il pezzo nello zaino. La durabilità resta quella dell'istanza.
-- Per una quest "ottieni X": step `new QuestStep("...", QuestEventType.COLLECT, "<id registry>")`.
+- Per una quest "ottieni X": condizione `require COLLECT <id registry>` in un branch del file quest (vedi §9).
 
 ### 35.3 Come si fa per…
 - **Far ricevere un oggetto da un NPC o come ricompensa**: `gp.player.receiveItem(items.LootTable.create("<id>"), false)` (true per indossarlo subito).
@@ -892,7 +909,7 @@ Contesto: la griglia del libro ha **30 giorni per mese** (6 x 5) e l'etichetta `
 - **Struttura proposta**: 12 mesi x 30 giorni = 360 giorni; 4 stagioni da 3 mesi (90 giorni).
 - **Orologio**: 1 giorno = **3 minuti** di gioco attivo (mese 1h30, stagione 4h30, anno 18h). Alternative: 2 min → stagione 3h, anno 12h; 5 min → 7h30 e 30h. Gira **solo in esplorazione**; fermo in libro, menu, dialoghi, combattimento.
 - **Salto del tempo**: letto/locanda → mattino dopo; "aspetta N giorni" in punti precisi (es. bacheche). Rende l'attesa una scelta.
-- **Eventi** (`CalendarEvent`, registry stile `QuestRegistry`): finestra (inizio + durata, 5-10 giorni = 15-30 minuti reali) + `repeatEveryDays`. **Critiche**: non scadono mai (la finestra resta aperta finché non le compi). **Maggiori**: ripetizione ogni 45 giorni (2 volte a stagione, ritorno dopo ~2h15 se perse). **Flavor**: perdibili, ritorno annuale. Avvisi **diegetici** (bacheche, NPC, cantastorie); nel libro compare solo ciò che hai scoperto.
+- **Eventi** (`CalendarEvent`, registry stile `Ability`): finestra (inizio + durata, 5-10 giorni = 15-30 minuti reali) + `repeatEveryDays`. **Critiche**: non scadono mai (la finestra resta aperta finché non le compi). **Maggiori**: ripetizione ogni 45 giorni (2 volte a stagione, ritorno dopo ~2h15 se perse). **Flavor**: perdibili, ritorno annuale. Avvisi **diegetici** (bacheche, NPC, cantastorie); nel libro compare solo ciò che hai scoperto.
 - **Quest**: `QuestItem.deliverDay` diventa una data assoluta (giorni totali); i "giorni rimasti" sono la differenza di giorni assoluti; la pagina Quest mostra il mese corrente e, se la scadenza è in un altro mese, i giorni rimasti nella cella.
 - **Codice (dopo conferma)**: `GameCalendar` con `totalDays` + contatore di tick, `update()` chiamato dal ciclo in esplorazione, `dateLabel()` `gg/mm`, listener `onNewDay`/`onNewSeason`; `CalendarEvent` + registry. Un solo numero basta anche per il salvataggio.
 - **Da decidere**: minuti per giorno, mesi per stagione (3 o 1), se combattimento e menu consumano tempo, se esiste il salto del tempo. L'utente applicherà modifiche e le comunicherà.
@@ -922,3 +939,326 @@ Nessuna delle due meccaniche è nel codice: questo § raccoglie il confronto fat
 - Equilibratore: scope di P, reset, limiti (clamp) su P, a cosa si applica M, arrotondamenti.
 - Salvataggio dello stato nascosto (sacco o P) quando verrà implementato il salvataggio.
 - Se si implementa: costanti e formule in un unico punto, come `CombatMath` (§31).
+
+---
+## 37. Quest v2: situazioni X.Y, branch, zone di mappa (0.20.1)
+
+### 37.1 Cosa è cambiato
+- Il package `quest/` ora ha `Quest` (nuovo: situazioni `X.Y`, branch, `history`), `QuestBranch`, `QuestBranchType` (FAST/IMPORTANT/COINCIDENT), `QuestCondition`, `QuestLoader` (legge `res/quests/<id>.txt`). **Da eliminare a mano**: `QuestStep.java` e `QuestRegistry.java` (le quest sono file, non più `case`); se restano, la build fallisce con "constructor Quest cannot be applied" in `QuestRegistry.java`. `QuestEventType`/`QuestTier`/`QuestState` restano (solo commenti aggiornati).
+- `QuestManager`: usa `QuestLoader.load()` + `Quest.start()`; avanzamento rilevato confrontando `step`/`micro` prima e dopo `notify()`.
+- `BookUI.drawQuestPageContent()`: la pagina 1 scorre `q.history` invece di `q.steps`.
+- Nuovo `main/LocationZone` + `res/maps/locations.txt`; `EventHandler.checkLocations()` (da `checkEvent()`) notifica `REACH_LOCATION` all'ingresso nella zona e può avviare una quest. `locationEvent()`/`questStartEvent()` rimossi.
+- `goblin_bounty` migrata in `res/quests/goblin_bounty.txt` (stesso comportamento: la uccisione del Goblin la completa; il libro mostra in più la riga finale "Goblin sconfitto").
+
+### 37.2 Decisioni di design (dall'utente)
+- Y = situazione ATTUALE, non chi hai incontrato; la storia avanza solo cambiando X. Nessuna Y assegnata a mano sulle condizioni.
+- IMPORTANT: priorità appena completato il requisito (nell'esempio "inizia a esplorare la libreria", cioè l'ingresso). FAST/COINCIDENT: il requisito non cambia Y, serve la continuazione.
+- Gli eventi di luogo, compresi "ha esplorato X", passano dall'event manager (`EventHandler`), non da `CUSTOM` a mano.
+
+### 37.3 Verifica
+Compilazione dell'intero albero (come `build.bat`) dopo l'eliminazione di `QuestStep`/`QuestRegistry`; 23 scenari sul motore (`esempio_mistero` + quest di prova con gate AND a due continuazioni e FAST + file malformati) e un test d'integrazione headless con `GamePanel` reale: ingresso in zona avvia e avanza la quest, nessuna doppia notifica restando nella zona, rientro che non riavvia, zone di un altro mondo ignorate, zone sovrapposte in ordine di file, `goblin_bounty` da file. Non provato in una partita vera (nessuna zona reale sulla mappa).
+
+### 37.4 TODO / da decidere
+- Definire le zone reali (`locations.txt`) quando ci sono libreria/villaggio/ecc. sulla mappa.
+- Salvataggio vero (contatori + condizioni soddisfatte, oltre a `nome.X.Y`).
+- Commento stantio in `Entity.givesQuestId` ("id di QuestRegistry"): ora è il nome del file in `res/quests/`.
+
+---
+## 38. Mondo generato da seed + Perlin noise — progetto (da implementare)
+
+> **Approccio superato dal §39 (14/11)**: l'utente ha chiesto di cambiare approccio (noise per cella -> varianti grafiche low/medium/high, senza cambiare gli id delle tile). Restano validi di questo § la classe `PerlinNoise` in `tile/`, il `SeedCreator` (38.3), gli accorgimenti sul reticolo di Perlin (`scale` non tonda, offset) e le misure. Il resto (numero casuale per cella, controllo vicini, tabella `tile_variants.txt`) non serve più.
+
+Nessuna riga di codice è nel progetto: questo § raccoglie la spiegazione data in chat (06-12/11) con gli snippet, per la prossima sessione. Gli snippet e le misure sono stati provati in test a parte (value noise sulla vera `world01.txt`, poi il `PerlinNoise` dell'utente su 50x50).
+
+### 38.1 Decisioni dell'utente
+- **Stesso seed = stesso mondo**: nessun `Math.random()`; il numero casuale per cella è un hash di `(seed, col, row)`.
+- **"Seed creator" ricavato dai numeri della matrice**: nessun header e nessuna modifica alla struttura del file né della matrice, così funziona anche per mappe generate in futuro (dungeon casuali: stesso `mix` sulla loro matrice).
+- **Noisemap = il generatore Perlin dell'utente** (`PerlinNoise`: permutazione di 256 valori mescolata con `new Random(seed)`, rumore 2D "improved", somma di ottave). Il suo `main` che scrive un PNG diventa uno strumento di debug.
+- **Scopo della soglia 0,80**: evitare che una cella al centro di un terreno orientato verso +1 diventi ≈ -1 per colpa del random. Si risolve con un **controllo sui vicini** (§38.5), che sostituisce la soglia 0,80 (può restare come extra).
+- A ogni caricamento la tile cambia in base a `numero casuale × peso`; i pesi vanno da -1 a +1.
+- Le spiegazioni indicano **dove va ogni pezzo e perché**, non solo "X si fa così".
+- **Seed dai numeri della matrice: confermato (13/11)**; l'utente accetta che modificare una tile rimescoli le varianti.
+- **Nessuna normalizzazione** dei pesi (decisione del 12/11, vedi 38.4). **Parametri del Perlin**: l'utente si fida dei valori di partenza (38.4, spiegati in parole in 38.10).
+
+### 38.2 Dove va ogni pezzo (flusso di `TileManager.loadMap()`)
+```
+loadMap(path)                                         [TileManager, esiste già]
+ ├─ legge le righe -> mapTileNum, e per ogni numero    [TileManager: 1 riga in più nel ciclo]
+ │     h = SeedCreator.mix(h, valore)
+ ├─ seed = SeedCreator.finish(h, colonneLette, righeLette)   [SeedCreator, nuova]
+ ├─ WorldGenerator.apply(mapTileNum, seed, colonneLette, righeLette)   [WorldGenerator, nuova]
+ │     per ogni cella con varianti: peso Perlin -> casuale (hash) -> controllo vicini -> scrive la variante
+ └─ loadSpecialTilesUsedInMap()                        [TileManager, invariato]
+```
+- **`TileManager.loadMap()`**: unico punto che conosce file e matrice; accumula l'hash mentre legge e chiama il generatore. Nessuna logica di rumore.
+- **`tile/SeedCreator`** (nuova, piccola): `mix` e chiusura dell'hash; riusabile dai dungeon generati (`fromMatrix`).
+- **`tile/PerlinNoise`** (la classe dell'utente, spostata in un file a sé nel package `tile`): `noise(x, y)` deterministico per seed.
+- **`tile/WorldGenerator`** (nuova): campionamento delle ottave (`weight`), tendenza dei vicini, applicazione. Non sa nulla di file né di `GamePanel`.
+- **`res/maps/tile_variants.txt`** (dato): una riga per tile base con le varianti. Nuove tile (id 26-99) registrate in `getTileImage()`; l'erba è animata, quindi le sue varianti usano `setupAnimated`.
+- **Prima di `loadSpecialTilesUsedInMap()`**: il generatore tocca solo id < 100; le varianti sono tile normali già caricate da `getTileImage()`.
+
+### 38.3 Seed creator (snippet)
+```java
+static long mix(long h, int v) {                 // in loadMap(), per ogni numero letto
+    h ^= v + 0x9E3779B97F4A7C15L + (h << 6) + (h >>> 2);
+    h *= 0xFF51AFD7ED558CCDL;
+    return h ^ (h >>> 32);
+}
+long h = 1469598103934665603L;                   // prima del ciclo di lettura
+h = mix(h, value);                               // nel ciclo, dopo parseInt
+long seed = mix(mix(h, colsRead), rowsRead);     // finish()
+```
+- L'hash si calcola sulla matrice **originale** (prima delle varianti) e **mentre si legge**, non sull'array intero: `mapTileNum` non viene azzerata tra un load e l'altro e `world2.txt` ha 30 righe con 44-46 colonne, quindi le celle non lette contengono il mondo precedente e farebbero dipendere il seed dall'ordine di caricamento.
+- Provato: stessa matrice -> stesso seed.
+- **Conseguenza**: modificare **una sola tile** cambia il seed e quindi la distribuzione delle varianti (misurato: ~33% delle celle cambia esito). Se non è accettabile, nell'hash entrano solo larghezza/altezza (o un id del mondo).
+
+### 38.4 Il Perlin dell'utente: cosa va bene e cosa cambia per il gioco (misurato su 50x50)
+- **Va bene**: deterministico (stesso seed -> stessi valori, seed diverso -> valori diversi); `new Random(seed)` accetta qualsiasi `long`, quindi l'hash del seed creator va bene.
+- **`scale` e dimensioni**: nel generatore `scale = 100` è pensato per 800 pixel. Su 50 tile equivale a una sola chiazza quasi piatta (misurato: valori da -1,21 a 0,00). Per i tile `scale` è la dimensione delle chiazze **in tile**: circa 10-15 (provato 12,7).
+- **Zeri del reticolo**: il Perlin vale esattamente 0 sui punti interi del reticolo. Campionando a coordinate intere con `scale = 8`, le ottave 4 e 5 (frequenze 8 e 16) valgono 0 in **tutte** le 2500 celle (la 3 in 1405); anche a `col + 0.5` l'ottava 5 resta a 0. Rimedio: `scale` non tonda (non potenza di 2) e un offset costante non "bello" (es. 0,37): con `scale = 12,7` e offset 0,37 gli zeri esatti scendono a circa 0-5 celle per ottava.
+- **Normalizzazione: decisione dell'utente = nessuna.** Sommando le ottave senza dividere per le ampiezze (3 ottave, `persistence 0,5`) il generatore dà già valori tra circa -1,1 e +0,9, cioè la scala voluta per i pesi: il min-max sulla mappa cambierebbe quasi nulla. Basta un `clamp` a [-1,+1] (i valori sforano di poco). Cosa **non** fare: dividere per la somma delle ampiezze, che schiaccia i pesi (la soglia 0,8 non scatterebbe quasi mai). Misurato su 30 seed, 50x50: `|w| > 0,80` in 0-3,7% delle celle e zona polarizzata (`|t| >= 0,5`) in 9-22%; su 200x200 i valori si stabilizzano (1,3-2,0% e 12-15%). Su mappe piccole la variabilità tra seed è alta.
+- **Conseguenza**: i pesi restano una **funzione pura** di `(seed, col, row)`: niente primo passo, niente array con bordo, niente min/max. La tendenza dei vicini si calcola chiamando `weight()` 9 volte (misurato: ~6 ms per una mappa 50x50, ~28 ms per 200x200).
+- **Il numero casuale per cella non è Perlin**: il Perlin è liscio (celle vicine simili); il casuale deve essere indipendente cella per cella: resta `hash(seed ^ sale, col, row)`.
+- Parametri di partenza (da tarare guardando il PNG): `scale 12,7`, 3 ottave, `persistence 0,5`, `lacunarity 2`, offset 0,37.
+```java
+double sx = (col + OFFSET) / scale, sy = (row + OFFSET) / scale;   // OFFSET = 0.37
+double amp = 1, freq = 1, h = 0;
+for (int i = 0; i < octaves; i++) {
+    h += noise.noise(sx * freq, sy * freq) * amp;                  // come nel generatore
+    amp *= persistence; freq *= lacunarity;
+}
+double w = Math.max(-1, Math.min(1, h));                           // peso in [-1,+1], nessuna normalizzazione
+```
+
+### 38.5 Controllo vicini (snippet)
+La "tendenza" del terreno è la media dei pesi della cella e degli 8 vicini, calcolata al volo con `weight()` (funzione pura, vale anche fuori mappa: nessun controllo sui limiti):
+```java
+double t = 0;
+for (int dx = -1; dx <= 1; dx++)
+    for (int dy = -1; dy <= 1; dy++) t += weight(col + dx, row + dy);
+t /= 9;
+// dopo p = r * w[c][r]:
+if (Math.abs(t) >= 0.50 && Math.signum(p) != Math.signum(t)) continue;   // incoerente col terreno: resta uguale
+```
+- **Perché la sola soglia 0,80 non basta**: `r` ha segno, quindi in zona polarizzata (`|t| >= 0,5`) il segno di `p` è opposto al terreno in circa il **51%** dei casi, qualunque sia `|w|` (value noise su `world01`: 275 celle su 535; Perlin senza normalizzazione, 50x50, 30 seed: 45-53% delle celle polarizzate, che sono il 9-22% del totale). La soglia 0,80 tocca solo le celle con `|w|` alto e lascia passare per esempio `w = 0,79`, `r = -1`.
+- Con il controllo vicini le celle incoerenti restano com'erano; in zona polarizzata la variante può avere solo il segno del terreno.
+- Alternative: ripiegare il segno invece di scartare (`p = Math.abs(r) * w`), oppure `r` non negativo (nessun ribaltamento per costruzione, ma `|p| <= |w|`).
+
+### 38.6 Regola completa e dati
+```java
+double r = hash(seed ^ 0x5DEECE66DL, col, row);           // -1..+1, ripetibile, indipendente dall'ordine
+double p = r * w;
+int[] v = VARIANTS[id];                                   // es. erba -> {0, 26, 27}; null = non toccare
+if (v == null) continue;
+// controllo vicini (38.5)
+if (p >  0.30) id = v[1]; else if (p < -0.30) id = v[2];  // soglie da tarare
+mapTileNum[col][row] = id;
+```
+- Soglie sul prodotto: `|r × w| > 0,30` scatta nel 10-19% delle celle secondo il seed (Perlin senza normalizzazione, 3 ottave, 50x50); `r × w` si concentra vicino a 0, quindi la soglia controlla direttamente quante tile cambiano.
+
+### 38.7 Cosa non toccare
+Tile speciali (id >= 100), bordi hand-placed di acqua/sabbia (id 6-25: spezzerebbero le coste), celle di `tile_links`, zone di `res/maps/locations.txt`, punti di spawn di NPC/mostri/oggetti. Prima iterazione sicura: solo varianti con lo **stesso `collision`** della tile base (nessun sentiero bloccato).
+
+### 38.8 Stato lavori (file completi consegnati il 14/11, da applicare al progetto)
+| Passo | Dove | Stato |
+|---|---|---|
+| Seed creator (`mix`, `finish`) | `tile/SeedCreator` + 1 riga in `loadMap()` | Da fare |
+| `PerlinNoise` in `tile/` | file a sé, dalla classe dell'utente | Da fare (classe già scritta dall'utente) |
+| `weight(col,row)` + casuale per cella + controllo vicini + variante | `tile/WorldGenerator` | Da fare |
+| Tabella varianti | `res/maps/tile_variants.txt` + asset nuovi 26-99 | Da fare (servono le immagini) |
+| Chiamata nel caricamento | `TileManager.loadMap()` | Da fare |
+| Strumento di debug: PNG della noisemap sul mondo vero | `NoiseMapGenerator` adattato | Facoltativo |
+
+### 38.9 Aperto
+- Quali varianti per l'erba (id 26, 27...) e se le immagini esistono già: senza asset non si può partire dal gioco, solo dal prototipo con tile segnaposto.
+- Famiglie di tile e varianti (quali asset nuovi servono), soglie su `p` e `t`, `scale`/ottave.
+- Scartare o ripiegare il segno nelle celle incoerenti (38.5).
+
+### 38.10 Spiegazione in parole (richiesta dell'utente, 12/11)
+- **Perlin, i parametri**: immagina tre fogli trasparenti di colline sovrapposti. `scale` = larghezza in tile delle colline più grandi (12,7: chiazze di terreno larghe una dozzina di tile; più alto = chiazze più larghe). `octaves` = quanti fogli (3: grandi, medie, piccole). `lacunarity` = di quanto si restringe ogni foglio rispetto al precedente (2 = metà larghezza). `persistence` = quanto è alto ogni foglio rispetto al precedente (0,5 = metà altezza, quindi i dettagli fini sono discreti). `OFFSET` = piccolo spostamento del punto di lettura per non finire sui punti del reticolo dove il Perlin vale esattamente 0.
+- **Seed dai numeri della matrice**: l'hash prende tutti i numeri del file mappa e ne ricava un solo `long`. Stesso file -> stesso seed -> stesso mondo. Un buon hash cambia completamente se cambia anche un solo numero (effetto valanga): se modifichi **una** tile nel file, il seed è un altro, la noisemap è un'altra e le varianti si ridistribuiscono (misurato: ~33% delle celle cambia esito). Quindi mentre disegni la mappa, ogni modifica rimescola dove compaiono le varianti; a mappa finita il mondo è stabile. Alternative se disturba: hash di sola larghezza e altezza (stabile alle modifiche, ma due mappe della stessa taglia avrebbero lo stesso disegno) o un seed scritto a mano nel file (che l'utente non vuole per non cambiare la struttura).
+
+### 38.11 Guida all'implementazione passo per passo (13/11)
+Prototipo provato in una **copia di lavoro** del repo (non nel progetto): compila e, su `world01`, funziona come descritto. Risultati: due caricamenti danno la stessa matrice; cambia solo l'erba (id 0) e solo in id di variante; con le soglie di partenza varia il 10,5% delle celle d'erba (5,2% `plus`, 5,3% `minus`); nessuna cella incoerente col terreno; la `collision` di ogni cella resta invariata; cambiare una tile cambia il seed.
+
+**Passo 0 — asset e id.** Servono le immagini delle varianti, registrate in `TileManager.getTileImage()` con id 26-99 **prima** della `loadMap()` (il costruttore chiama già `getTileImage()` e poi `loadMap()`). `draw()` fa `tile[tileNum]` senza controlli: un id usato ma non registrato dà `NullPointerException`. Le varianti d'erba usano `setupAnimated(26, new String[]{...}, false, 45)` (stessa velocità dell'erba, così restano sincronizzate perché il frame dipende dal tick globale).
+
+**Passo 1 — `src/tile/PerlinNoise.java`.** La classe `PerlinNoise` del generatore dell'utente, con `package tile;` in testa e senza il `main`/PNG. Resta identica: costruttore con seed, `noise(x, y)`, `fade`, `lerp`, `grad`.
+
+**Passo 2 — `src/tile/SeedCreator.java`.** `START` (valore iniziale), `mix(h, v)` e `finish(h, cellsRead)` (§38.3). Separata da `WorldGenerator` perché i futuri dungeon generati la riusano con la loro matrice.
+
+**Passo 3 — `TileManager.loadMap()`: tre modifiche minime** (l'hash va fatto qui perché solo qui si sa cosa è stato letto davvero):
+```diff
+     public void loadMap(String filePath) {
++        long h = SeedCreator.START;
++        int cellsRead = 0;
+         try {
+ ...
+                     mapTileNum[col][row] = Integer.parseInt(numbers[col]);
++                    h = SeedCreator.mix(h, mapTileNum[col][row]);
++                    cellsRead++;
+                     col++;
+ ...
+         }
++        WorldGenerator.apply(mapTileNum, tile, SeedCreator.finish(h, cellsRead), cellsRead, gp.maxWorldCol);
+         loadSpecialTilesUsedInMap();
+     }
+```
+- `h` e `cellsRead` si dichiarano **prima del `try`**: se la lettura va in eccezione (come oggi con `world2.txt`, che ha righe con meno colonne o righe mancanti) restano visibili dopo il `catch` e il generatore lavora solo sulle celle lette. Il caricamento che si interrompe è un comportamento già esistente, indipendente da questo lavoro.
+- L'hash è calcolato sui valori **originali**, prima che `apply()` li modifichi. `loadMap()` gira all'avvio e a ogni `changeWorld()`: il risultato è lo stesso per lo stesso mondo.
+
+**Passo 4 — `res/maps/tile_variants.txt`** (dato, nello stile di `tile_links.txt`/`locations.txt`):
+```
+# base plus=<id> minus=<id>      (plus se p > soglia, minus se p < -soglia; ne basta una)
+0 plus=26 minus=27
+```
+Caricato una volta (pigro) da `WorldGenerator`. Alla lettura si controlla che le tile esistano, che nessun id sia >= 100 e che la variante abbia lo **stesso `collision`** della base: se no, errore chiaro in console e riga ignorata. Così nessun sentiero si blocca e non servono liste di celle protette: si toccano solo gli id elencati qui (le tile di acqua/sabbia 2-25, i muri e gli speciali non sono in tabella).
+
+**Passo 5 — `src/tile/WorldGenerator.java`.** Costanti (`SCALE 12,7`, `OCTAVES 3`, `PERSISTENCE 0,5`, `LACUNARITY 2`, `OFFSET 0,37`, `POLARIZED 0,50`, `THRESHOLD 0,30`, `SALT`) e quattro funzioni:
+- `weight(noise, col, row)`: il campionamento delle ottave di 38.4, con clamp a [-1,+1].
+- `tendency(noise, col, row)`: media di `weight` sulla cella e sugli 8 vicini (38.5).
+- `hash(seed, x, y)`: il numero casuale per cella.
+- `apply(map, tile, seed, cellsRead, maxCol)`:
+```java
+PerlinNoise noise = new PerlinNoise(seed);
+for (int idx = 0; idx < cellsRead; idx++) {                 // stesso ordine di lettura: righe, poi colonne
+    int col = idx % maxCol, row = idx / maxCol;
+    int[] v = variants.get(map[col][row]);                  // null = tile non variabile: salta
+    if (v == null) continue;
+    double p = hash(seed ^ SALT, col, row) * weight(noise, col, row);
+    double t = tendency(noise, col, row);
+    if (Math.abs(t) >= POLARIZED && Math.signum(p) != Math.signum(t)) continue;   // incoerente: resta uguale
+    if (p > THRESHOLD && v[0] >= 0) map[col][row] = v[0];
+    else if (p < -THRESHOLD && v[1] >= 0) map[col][row] = v[1];
+}
+```
+- Si può scrivere **sul posto** nella matrice senza copia perché la regola non guarda gli id dei vicini: usa solo i pesi (funzione pura di seed e coordinate), e ogni cella viene scritta una volta sola. Quindi l'ordine di scansione non cambia il risultato.
+- `cellsRead` limita il ciclo alle celle lette; `idx % maxCol` e `idx / maxCol` ricostruiscono colonna e riga perché la lettura è per righe.
+
+**Passo 6 — verifica.** (a) Caricare due volte lo stesso mondo e confrontare `mapTileNum` con `Arrays.deepEquals`; (b) controllare che le uniche celle cambiate abbiano id base in tabella; (c) contare le celle variate (con le soglie di partenza ~10% dell'erba su `world01`) e tarare `THRESHOLD`/`SCALE` a occhio; (d) facoltativo: adattare `NoiseMapGenerator` per scrivere un PNG dei pesi sul mondo vero e confrontarlo col gioco.
+
+**Passo 7 — limiti da ricordare.** Modificare una tile della mappa rimescola le varianti (accettato). `world2.txt` oggi non si carica per intero (righe corte): il generatore agisce sulle celle lette. Il generatore varia solo la tile base elencata in tabella; per variare anche altre tile basta una riga in più, senza toccare il codice.
+
+### 38.12 File completi consegnati (14/11)
+Dopo la guida a snippet l'utente ha scritto "non sto capendo, dammi i file completi così li posso studiare": consegnati i file interi (la regola "solo snippet" vale finché non viene chiesto il codice).
+- Nuovi: `src/tile/PerlinNoise.java` (la classe dell'utente, identica, con `package tile;` e `public`), `src/tile/SeedCreator.java`, `src/tile/WorldGenerator.java`, `res/maps/tile_variants.txt`.
+- Modificato: `src/tile/TileManager.java` — **7 righe aggiunte**, nessuna tolta: 2 righe in `getTileImage()` (tile segnaposto 26 = `earth`, 27 = `sand`, da sostituire con le immagini vere), 2 dichiarazioni prima del `try` in `loadMap()`, 2 righe nel ciclo di lettura (hash e contatore), 1 chiamata a `WorldGenerator.apply(...)` prima di `loadSpecialTilesUsedInMap()`.
+- **Con i segnaposto attivi** (`0 plus=26 minus=27`) nel gioco l'erba mostra chiazze di terra e di sabbia: serve a vedere la noisemap in azione. Per disattivare basta commentare la riga in `tile_variants.txt`.
+- Anteprima (`anteprima_noisemap.png`): mappa originale, pesi del Perlin e risultato affiancati, sul seed ricavato da `world01`.
+- Verifica sui file finali (recompilazione dell'intero repo + test headless): stessa matrice a ogni caricamento; cambia solo l'erba; 126 celle `plus` e 129 `minus` su 2442 d'erba; nessuna cella incoerente col terreno; `collision` invariata; cambiare una tile cambia il seed.
+- Se l'utente ha modifiche locali a `TileManager.java`, applicare solo le 7 righe sopra invece di sostituire il file.
+
+---
+## 39. Noise per cella e varianti grafiche low/medium/high — approccio attuale (14/11)
+
+### 39.1 Idea dell'utente (cambio di approccio)
+- Il Perlin produce **valori numerici** per una mappa di dimensione "raggiungibile" (invece di stampare un PNG).
+- I numeri si **assegnano alla variabile `noise` di ogni tile** (cella).
+- In base al valore la cella ha una variante **low / medium / high**.
+- La variante decide quale immagine si disegna: stesso path della tile + `"_" + variante`, cercata in `res/tiles/` (es. `grass_an1_low.png`).
+
+### 39.2 Differenze rispetto al §38
+| | §38 (superato) | §39 (attuale) |
+|---|---|---|
+| Cosa cambia | l'**id** della tile in `mapTileNum` | solo l'**immagine** disegnata |
+| Numero casuale per cella | sì (hash) | no: il Perlin è liscio, niente sbalzi |
+| Controllo vicini / soglia 0,80 | sì | non servono |
+| Tabella varianti, id 26-99 | sì | no: nomi file `_low/_medium/_high` |
+| Collision, spawn, `tile_links`, zone, speciali | da proteggere | **non toccati** (stesso id, stesso `Tile`) |
+| Limite | — | la variante è solo grafica (non può cambiare cosa è la tile) |
+
+### 39.3 Dove va ogni pezzo
+```
+TileManager.loadMap(path)
+ ├─ legge la matrice -> mapTileNum                                  (invariato)
+ ├─ mapNoise = NoiseField.generate(seed, maxWorldCol, maxWorldRow)   [NoiseField, nuova: il generatore senza PNG]
+ ├─ mapVariant[c][r] = NoiseField.band(mapNoise[c][r])               [0 low, 1 medium, 2 high]
+ └─ loadSpecialTilesUsedInMap()                                     (invariato)
+TileManager.setup()/setupAnimated(): oltre all'immagine base cercano path+"_low/_medium/_high"   [+ campi in Tile]
+TileManager.draw(): v = mapVariant[col][row]; img = tile.imageFor(v) / tile.frameFor(v, frame)
+```
+- **Perché matrici parallele e non dentro `Tile`**: `tile[id]` è la tabella dei *tipi* (un solo oggetto per id, condiviso da tutte le celle); il noise appartiene alla **cella** `(col,row)`. Quindi `mapNoise[col][row]` (valore) e `mapVariant[col][row]` (0/1/2, calcolato una volta al caricamento, non a ogni frame).
+- `tile/PerlinNoise.java`: la classe dell'utente con `package tile;` e senza il `main`.
+
+### 39.4 Dal generatore dell'utente a `NoiseField` (cosa cambia)
+- `width/height` diventano `cols/rows` (`gp.maxWorldCol/Row`); spariscono `BufferedImage`, `ImageIO`, `Color`, `main`, il ciclo di normalizzazione.
+- `scale`: non 100 (pensato per 800 pixel) ma circa **lato/4** (50 tile -> 12,7). Non una potenza di 2 e con `OFFSET = 0,37` nel campionamento, per evitare gli zeri esatti del reticolo di Perlin (§38.4).
+- 3 ottave (con 5 su 50 tile l'ottava più fine è larga meno di una tile e dà puntini).
+- **Come si sceglie `scale`** (domanda dell'utente, 15/11): `scale` è la larghezza **in tile** delle chiazze più grandi (distanza tra i punti del reticolo di Perlin alla prima ottava). **Non dipende dalla dimensione della mappa**, che è solo la finestra su cui si campiona: il numero di chiazze lungo il lato è circa `lato / scale`. La regola "lato/4" serviva solo a ottenere ~4 chiazze per lato; su 100 tile darebbe 25,7. Criterio pratico: una schermata mostra **16x12 tile** (768x576 px con `tileSize 48`), quindi `scale 8` = 2 chiazze per schermata (molto movimentato), `15` = circa una per schermata (equilibrato), `25,7` = chiazze più grandi della schermata (transizioni lente), `50` o più = quasi non si nota camminando. Tenere un valore non tondo (e `OFFSET` 0,37, §38.4). Confronto visivo su 100x100: `scale_confronto.png` (scale 8, 15, 25,7, 50, 100).
+```java
+double sampleX = ((x + OFFSET) / scale) * frequency;     // + OFFSET: unica differenza nel ciclo
+double sampleY = ((y + OFFSET) / scale) * frequency;
+// ... stesso ciclo delle ottave; alla fine: noiseValues[x][y] = noiseHeight;  e  return noiseValues;
+static int band(double n) { return n < -0.20 ? Tile.LOW : (n > 0.20 ? Tile.HIGH : Tile.MEDIUM); }
+```
+- **Soglie** (misurate su 30 seed, 50x50, 3 ottave, valore grezzo senza normalizzare; il valore sta tra circa -1,15 e +0,9): `±0,20` -> low 17-36%, medium 37-52%, high 21-40%; `±0,25` -> 14-31 / 45-61 / 16-34. Con il min-max [0,1] del generatore e soglie 1/3 e 2/3 le quote sono meno stabili (low 7-35%, medium 52-66%). Per quote **garantite** a ogni seed: soglie per percentile (ordinare i valori e prendere il 30° e il 70°).
+
+### 39.5 Immagini delle varianti
+- Naming: `grass_an1` -> `grass_an1_low.png`, `grass_an1_medium.png`, `grass_an1_high.png` (per le animate, per **ogni frame**).
+- Le varianti sono **opzionali**: se un file non esiste la tile usa l'immagine base (nessuna eccezione). Una tile senza nessuna variante (muro, albero...) si disegna sempre uguale.
+- In `Tile` (campi e due metodi di fallback) e in `setup()`/`setupAnimated()` (dopo le immagini base, tre tentativi di caricamento con `loadOptional(path + Tile.VARIANT_SUFFIX[v])`, scalate con `scaleImage` come le altre):
+```java
+public BufferedImage[] variantImage;  public BufferedImage[][] variantFrames;   // [variante][frame]
+public BufferedImage imageFor(int v)       { return variantImage != null && variantImage[v] != null ? variantImage[v] : image; }
+public BufferedImage frameFor(int v, int f) { return variantFrames != null && variantFrames[v] != null && variantFrames[v][f] != null ? variantFrames[v][f] : frames[f]; }
+```
+- In `draw()` si cambiano solo le due righe che scelgono l'immagine (`img = t.frames[frameIndex]` -> `img = t.frameFor(v, frameIndex)` e `img = t.image` -> `img = t.imageFor(v)`), con `int v = mapVariant[worldCol][worldRow];` prima.
+
+### 39.6 `loadMap()` e seed
+```java
+mapNoise = NoiseField.generate(seed, gp.maxWorldCol, gp.maxWorldRow);
+for (int c = 0; c < gp.maxWorldCol; c++)
+    for (int r = 0; r < gp.maxWorldRow; r++) mapVariant[c][r] = (byte) NoiseField.band(mapNoise[c][r]);
+```
+- Va prima di `loadSpecialTilesUsedInMap()`; `mapNoise`/`mapVariant` si allocano nel costruttore accanto a `mapTileNum`. Gira all'avvio e a ogni `changeWorld()`.
+- **Seed**: per iniziare una costante (123456L, come nel generatore); poi `SeedCreator` come deciso in 38.3 (hash dei numeri della matrice, accumulato in `loadMap()` mentre si legge; modificare una tile rimescola le chiazze).
+
+### 39.7 Dimensione della mappa ("numero raggiungibile")
+- Generare i valori è economico (misurato, 3 ottave / 5 ottave): 200x200 ~1 / 6 ms; 400x400 ~5 / 10 ms; 800x800 ~22 / 40 ms.
+- I limiti reali sono altri: il **file della matrice** deve contenere `cols x rows` numeri (oggi `world01` ne ha 2500) e `TileManager.draw()` scorre **tutte** le celle a ogni frame (con il culling dentro il ciclo): a 800x800 sono 640.000 iterazioni per frame. Comodo: 100x100 - 200x200. `maxWorldCol/Row` sono costanti in `GamePanel` (oggi 50).
+
+### 39.8 Verifica (prototipo in copia di lavoro, non nel progetto)
+Compila; `world01` (50x50): low 25%, medium 47%, high 28%, valori da -1,15 a 0,88; due caricamenti danno gli stessi valori; con varianti di prova (erba più scura/più chiara, medium assente) la variante high/low differisce dal frame base e `medium` ripiega sul base; una tile senza varianti (muro) resta uguale; `draw()` su un'immagine funziona e mostra chiazze lisce; la collision non cambia.
+
+### 39.9 Stato lavori (nulla ancora nel progetto)
+| Passo | Dove | Stato |
+|---|---|---|
+| `PerlinNoise` in `tile/` | file a sé, dalla classe dell'utente | Da fare |
+| `NoiseField` (`generate`, `band`) | `src/tile/NoiseField.java` | Da fare |
+| `mapNoise`, `mapVariant` + riempimento | `TileManager` (costruttore, `loadMap`) | Da fare |
+| Varianti in `Tile` + caricamento opzionale | `Tile`, `TileManager.setup/setupAnimated` | Da fare |
+| Scelta dell'immagine nel disegno | `TileManager.draw()` | Da fare |
+| Immagini `_low/_medium/_high` | `res/tiles/` | Da fare (servono gli asset) |
+| Seed dalla matrice | `SeedCreator` + 3 righe in `loadMap` | Dopo (all'inizio costante) |
+
+### 39.10 Aperto
+- Dimensione del mondo (oggi 50x50): quale "numero raggiungibile" si vuole (39.7).
+- Quali tile avranno varianti (solo l'erba all'inizio?) e se le immagini esistono già.
+- Soglie fisse o per percentile; `scale` (lato/4) e ottave da tarare a occhio.
+
+---
+## 40. Mappa di prova 100x100 con tutte le tile (15/11)
+
+Mappa generata con uno script a parte (non fa parte del progetto) a partire dalle tile esistenti (id 0-25; nessuna tile speciale), file `res/maps/world100.txt` (100 righe, 100 numeri per riga, stesso formato di `world01.txt`).
+
+### 40.1 Regole degli autotile dedotte dalle immagini (valgono per ogni mappa)
+Nomi e lati delle tile di bordo, verificati leggendo i pixel e confrontandoli con lo stagno 3x3 di `world01`:
+- **Acqua (id 2 = interno).** Il bordo è una riva d'erba disegnata **sui lati rivolti verso la terra**. Per una cella d'acqua si guardano i 4 vicini ortogonali (N, E, S, O): terra a N+E = 6 (`rightUp`), S+E = 7 (`rightDown`), N+O = 8 (`leftUp`), S+O = 9 (`leftDown`); terra solo a E = 10 (`centerRight`), solo O = 11 (`centerLeft`), solo N = 12 (`centerUp`), solo S = 13 (`centerDown`).
+- **Angoli interni dell'acqua** (id 14-17, "island"): nessun vicino ortogonale è terra, ma lo è **una diagonale**: terra a SO = 14, a NO = 15, a SE = 16, a NE = 17. Hanno `collision = true` come tutte le tile d'acqua (6-17).
+- **Sabbia (id 5 = interno).** I bordi (18-25) hanno l'**erba sui lati esterni**: lati scoperti N+E = 18, S+E = 19, N+O = 20, S+O = 21; solo E = 22, solo O = 23, solo N = 24, solo S = 25. Non esistono angoli interni per la sabbia: vanno evitati (nel generatore una cella di sabbia con 3 lati scoperti o con due lati opposti scoperti viene tolta).
+- **Cosa non si può disegnare con queste 13 tile d'acqua**: canali larghi 1 tile, penisole di 1 tile, due diagonali di terra sulla stessa cella. Il generatore toglie le celle d'acqua che cadono in questi casi.
+- La "terra" per i bordi dell'acqua è **qualsiasi tile non acqua** (erba, sabbia, muro, albero...). Per la sabbia, i vicini acqua non richiedono bordo.
+
+### 40.2 Contenuto della mappa
+- **Corte di partenza** (colonne 17-29, righe 10-23): muri in pietra con varco a (23,10) per `OBJ_Door`, stagno 3x3 a (18-20, 11-13) come in `world01`, vialetto di terra e piazzale dove stanno player (23,21), NPC (21,21), goblin (22-24,22) e chiave (28,22). Le coordinate fisse di `AssetSetter` e `Player.setDefaultValues()` cadono su tile camminabili.
+- **Sentieri di terra** larghi 2 tile con curve dal varco: verso il villaggio, il lago ovest-sud, le rovine e una radura con altare (muro 2x2) nel bosco ovest.
+- **Villaggio** al centro: piazza con fontana (stagno 3x3) e 4 case di muro con porta e pavimento di terra.
+- **Lago grande** a nord-est con isola (alberi e sabbia), **lago** a sud-ovest, **laghetto** a est, spiagge, **rovine** a sud-est (recinto spezzato, colonne, piazzale), dune, foreste dense con cornice di alberi lungo il bordo e boschetti sparsi.
+- Conteggi (id: celle): erba 4193, muro 185, acqua 757 + bordi, terra 814, albero 3104, sabbia 323 + bordi. Celle camminabili 5610, raggiungibili dal player a porta aperta 5545 (le 65 non raggiungibili sono l'isola, voluta).
+
+### 40.3 Come provarla (3 modifiche) e limite
+1. Copiare `world100.txt` in `res/maps/`.
+2. `GamePanel`: `maxWorldCol` e `maxWorldRow` da 50 a 100 (sono `final`).
+3. `TileManager` (costruttore): `loadMap("/maps/world01.txt")` -> `loadMap("/maps/world100.txt")`.
+- **Limite**: `loadMap()` legge `maxWorldCol` numeri per riga, quindi con le costanti a 100 `world01.txt` e `world2.txt` (50 colonne) **non si caricano più** (eccezione). Per tenere mondi di dimensioni diverse servirebbe una dimensione per mondo (larghezza/altezza lette dal file o da una tabella) e rimuovere `final`/costanti globali: modifica più grande, da decidere.
+- Verifica (copia di lavoro con costanti a 100): `loadMap` carica la matrice identica al file, tutti gli id usati sono registrati, gli spawn sono su tile senza collisione, `TileManager.draw()` funziona.

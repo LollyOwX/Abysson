@@ -14,11 +14,8 @@ public class TileManager {
     GamePanel gp;
     public Tile[] tile;
     public int[][] mapTileNum;
-
     static final int SPECIAL_TILE_BASE = 100;
-
-    // Contatore globale per le animazioni — avanza ogni frame di gioco
-    private int animationTick = 0;
+    private int animationTick = 0; // Contatore globale per le animazioni, avanza ogni frame di gioco
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
@@ -107,6 +104,8 @@ public class TileManager {
 
     public void loadMap(String filePath) {
         try {
+            long seed = hashCode();
+            NoiseField field = new NoiseField(seed, 12.0, 4, 0.5, 2.0, -0.15, 0.15);
             InputStream is = getClass().getResourceAsStream(filePath);
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
             int col = 0, row = 0;
@@ -118,6 +117,7 @@ public class TileManager {
                     col++;
                 }
                 if (col == gp.maxWorldCol) { col = 0; row++; }
+                NoiseField.Height h = field.height(col, row);
             }
             br.close();
         } catch (Exception e) {
@@ -134,9 +134,6 @@ public class TileManager {
                 if (id >= SPECIAL_TILE_BASE && tile[id] == null) {
                     int ordinal = id - SPECIAL_TILE_BASE;
                     if (ordinal >= specials.length) {
-                        // ID scritto a mano nella mappa .txt che non corrisponde a nessuna voce
-                        // di SpecialTile — probabile refuso. Meglio un errore chiaro qui che un
-                        // crash generico più giù, o peggio un tile silenziosamente non disegnato.
                         System.err.println("ERROR: tile speciale " + id + " non esiste in SpecialTile (max valido: "
                                 + (SPECIAL_TILE_BASE + specials.length - 1) + ")");
                         continue;
@@ -144,6 +141,7 @@ public class TileManager {
                     SpecialTile special = specials[ordinal];
                     setup(id, special.name(), special.collision);
                 }
+                //
             }
         }
     }

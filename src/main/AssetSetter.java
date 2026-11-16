@@ -28,7 +28,6 @@ void place(Entity[] array, int index, Supplier<Entity> factory, int col, int row
 	}
 
 	public void placeEntities() {
-		place(gp.obj, 0, () -> new OBJ_Door(gp), 23, 10, null);
 		place(gp.obj, 1, () -> new OBJ_Key(gp), 28, 22, null);
 		place(gp.npc, 3, () -> new Npc_HumanRedWorker(gp), 21, 21, null, "goblin_bounty");
 		place(gp.monster, 0, () -> new monster.MON_Goblin(gp), 22, 22, null);
