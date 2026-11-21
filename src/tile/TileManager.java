@@ -14,6 +14,7 @@ public class TileManager {
     GamePanel gp;
     public Tile[] tile;
     public int[][] mapTileNum;
+    public NoiseField.Height[][] mapHeight;
     static final int SPECIAL_TILE_BASE = 100;
     private int animationTick = 0; // Contatore globale per le animazioni, avanza ogni frame di gioco
 
@@ -21,6 +22,7 @@ public class TileManager {
         this.gp = gp;
         tile = new Tile[300]; // ~26 tile di terreno + margine per gli special (SPECIAL_TILE_BASE=100)
         mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
+        mapHeight = new NoiseField.Height[gp.maxWorldCol][gp.maxWorldRow];
         getTileImage();
         loadMap("/maps/world01.txt");
     }
@@ -103,9 +105,8 @@ public class TileManager {
     }
 
     public void loadMap(String filePath) {
+        long h = SeedCreator.START;
         try {
-            long seed = hashCode();
-            NoiseField field = new NoiseField(seed, 12.0, 4, 0.5, 2.0, -0.15, 0.15);
             InputStream is = getClass().getResourceAsStream(filePath);
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
             int col = 0, row = 0;
@@ -114,15 +115,19 @@ public class TileManager {
                 while (col < gp.maxWorldCol) {
                     String[] numbers = line.split(" ");
                     mapTileNum[col][row] = Integer.parseInt(numbers[col]);
+                    h = SeedCreator.mix(h, mapTileNum[col][row]);
+                    cellsRead++;
                     col++;
                 }
                 if (col == gp.maxWorldCol) { col = 0; row++; }
-                NoiseField.Height h = field.height(col, row);
             }
             br.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        long seed = SeedCreator.finish(h, cellsRead);
+        NoiseField field = new NoiseField(seed, 12.0, 4, 0.5, 2.0, -0.15, 0.15);
+        for (int c = 0; c < gp.maxWorldCol; c++) for (int r = 0; r < gp.maxWorldRow; r++) mapHeight[c][r] = field.height(c, r);
         loadSpecialTilesUsedInMap();
     }
 
