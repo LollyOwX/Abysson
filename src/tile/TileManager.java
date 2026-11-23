@@ -1,12 +1,13 @@
 package tile;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import javax.imageio.ImageIO;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import main.GamePanel;
 import main.UtilityTool;
 
@@ -16,62 +17,53 @@ public class TileManager {
     public int[][] mapTileNum;
     public NoiseField.Height[][] mapHeight;
     static final int SPECIAL_TILE_BASE = 100;
-    private int animationTick = 0; // Contatore globale per le animazioni, avanza ogni frame di gioco
+    private static final SpecialTile[] SPECIALS = SpecialTile.values();
+    private final UtilityTool uTool = new UtilityTool();
+    private int animationTick = 0;
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
-        tile = new Tile[300]; // ~26 tile di terreno + margine per gli special (SPECIAL_TILE_BASE=100)
+        tile = new Tile[300];
         mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
         mapHeight = new NoiseField.Height[gp.maxWorldCol][gp.maxWorldRow];
         getTileImage();
         loadMap("/maps/world01.txt");
     }
 
-    public void setup(int index, String imagePath, boolean collision) {
-        UtilityTool uTool = new UtilityTool();
+    // ── Caricamento immagini ──────────────────────────────────
+
+    private BufferedImage loadImage(String imagePath) {
         String fullPath = "/tiles/" + imagePath + ".png";
-        String altPath  = "tiles/"  + imagePath + ".png";
-        try (InputStream is = getClass().getResourceAsStream(fullPath) != null
-                ? getClass().getResourceAsStream(fullPath)
-                : Thread.currentThread().getContextClassLoader().getResourceAsStream(altPath)) {
-            if (is == null) throw new IllegalArgumentException("Resource not found: " + fullPath);
-            tile[index] = new Tile();
-            tile[index].image = ImageIO.read(is);
-            if (tile[index].image == null) throw new IOException("ImageIO returned null: " + fullPath);
-            tile[index].image = uTool.scaleImage(tile[index].image, gp.tileSize, gp.tileSize);
-            tile[index].collision = collision;
+        InputStream found = getClass().getResourceAsStream(fullPath);
+        if (found == null) found = Thread.currentThread().getContextClassLoader().getResourceAsStream("tiles/" + imagePath + ".png");
+        if (found == null) throw new IllegalArgumentException("Resource not found: " + fullPath);
+        try (InputStream is = found) {
+            BufferedImage img = ImageIO.read(is);
+            if (img == null) throw new IOException("ImageIO returned null: " + fullPath);
+            return uTool.scaleImage(img, gp.tileSize, gp.tileSize);
         } catch (IOException e) {
             throw new RuntimeException("Failed to load tile: " + fullPath, e);
         }
     }
 
-
-    public void setupAnimated(int index, String[] imagePaths, boolean collision, int frameSpeed) {
-        UtilityTool uTool = new UtilityTool();
-        tile[index] = new Tile();
-        tile[index].collision  = collision;
-        tile[index].animated   = true;
-        tile[index].frameCount = imagePaths.length;
-        tile[index].frameSpeed = frameSpeed;
-        tile[index].frames     = new BufferedImage[imagePaths.length];
-
-        for (int i = 0; i < imagePaths.length; i++) {
-            String fullPath = "/tiles/" + imagePaths[i] + ".png";
-            String altPath  = "tiles/"  + imagePaths[i] + ".png";
-            try (InputStream is = getClass().getResourceAsStream(fullPath) != null
-                    ? getClass().getResourceAsStream(fullPath) : Thread.currentThread().getContextClassLoader().getResourceAsStream(altPath)) {
-                if (is == null) throw new IllegalArgumentException("Resource not found: " + fullPath);
-                BufferedImage img = ImageIO.read(is);
-                if (img == null) throw new IOException("ImageIO returned null: " + fullPath);
-                tile[index].frames[i] = uTool.scaleImage(img, gp.tileSize, gp.tileSize);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to load animated tile: " + fullPath, e);
-            }
-        }
-        // image punta al primo frame come fallback
-        tile[index].image = tile[index].frames[0];
+    public void setup(int index, String imagePath, boolean collision) {
+        Tile t = new Tile();
+        t.image = loadImage(imagePath);
+        t.collision = collision;
+        tile[index] = t;
     }
 
+    public void setupAnimated(int index, String[] imagePaths, boolean collision, int frameSpeed) {
+        Tile t = new Tile();
+        t.collision  = collision;
+        t.animated   = true;
+        t.frameCount = imagePaths.length;
+        t.frameSpeed = frameSpeed;
+        t.frames     = new BufferedImage[imagePaths.length];
+        for (int i = 0; i < imagePaths.length; i++) t.frames[i] = loadImage(imagePaths[i]);
+        t.image = t.frames[0];
+        tile[index] = t;
+    }
 
     public void getTileImage() {
         setupAnimated(0,  new String[]{"grass_an1", "grass_an2", "grass_an3"}, false, 45);
@@ -101,98 +93,89 @@ public class TileManager {
         setup(24, "sand_centerUp",        false);
         setup(25, "sand_centerDown",      false);
 
-        // setupAnimated(2, new String[]{"water_1","water_2","water_3"}, true, 15);
+        Arrays.fill(tile, SPECIAL_TILE_BASE, tile.length, null);
+        loadSpecialTilesUsedInMap();
     }
 
+    // ── Caricamento mappa ─────────────────────────────────────
+
     public void loadMap(String filePath) {
+        for (int[] column : mapTileNum) Arrays.fill(column, 0);
         long h = SeedCreator.START;
-        try {
-            InputStream is = getClass().getResourceAsStream(filePath);
+        int cellsRead = 0;
+        int row = 0, col = 0;
+        try (InputStream is = getClass().getResourceAsStream(filePath)) {
+            if (is == null) throw new IOException("mappa non trovata");
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            int col = 0, row = 0;
-            while (col < gp.maxWorldCol && row < gp.maxWorldRow) {
+            for (row = 0; row < gp.maxWorldRow; row++) {
                 String line = br.readLine();
-                while (col < gp.maxWorldCol) {
-                    String[] numbers = line.split(" ");
-                    mapTileNum[col][row] = Integer.parseInt(numbers[col]);
-                    h = SeedCreator.mix(h, mapTileNum[col][row]);
+                if (line == null) break;
+                String[] numbers = line.trim().split("\\s+");
+                for (col = 0; col < gp.maxWorldCol && col < numbers.length; col++) {
+                    int id = Integer.parseInt(numbers[col]);
+                    mapTileNum[col][row] = id;
+                    h = SeedCreator.mix(h, id);
                     cellsRead++;
-                    col++;
                 }
-                if (col == gp.maxWorldCol) { col = 0; row++; }
             }
-            br.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException | NumberFormatException e) {
+            System.err.println("ERROR: " + filePath + " (riga " + (row + 1) + ", colonna " + (col + 1) + "): " + e.getMessage());
         }
-        long seed = SeedCreator.finish(h, cellsRead);
-        NoiseField field = new NoiseField(seed, 12.0, 4, 0.5, 2.0, -0.15, 0.15);
+        int cells = gp.maxWorldCol * gp.maxWorldRow;
+        if (cellsRead < cells) System.err.println("WARNING: " + filePath + " ha " + cellsRead + " celle su " + cells + ", le altre restano id 0");
+
+        NoiseField field = new NoiseField(SeedCreator.finish(h, cellsRead), 12.0, 4, 0.5, 2.0, -0.30, 0.30);
         for (int c = 0; c < gp.maxWorldCol; c++) for (int r = 0; r < gp.maxWorldRow; r++) mapHeight[c][r] = field.height(c, r);
         loadSpecialTilesUsedInMap();
     }
 
     private void loadSpecialTilesUsedInMap() {
-        SpecialTile[] specials = SpecialTile.values();
         for (int col = 0; col < gp.maxWorldCol; col++) {
             for (int row = 0; row < gp.maxWorldRow; row++) {
                 int id = mapTileNum[col][row];
-                if (id >= SPECIAL_TILE_BASE && tile[id] == null) {
-                    int ordinal = id - SPECIAL_TILE_BASE;
-                    if (ordinal >= specials.length) {
-                        System.err.println("ERROR: tile speciale " + id + " non esiste in SpecialTile (max valido: "
-                                + (SPECIAL_TILE_BASE + specials.length - 1) + ")");
-                        continue;
-                    }
-                    SpecialTile special = specials[ordinal];
-                    setup(id, special.name(), special.collision);
+                if (id >= 0 && id < tile.length && tile[id] != null) continue;
+                int ordinal = id - SPECIAL_TILE_BASE;
+                if (id >= SPECIAL_TILE_BASE && id < tile.length && ordinal < SPECIALS.length) {
+                    setup(id, SPECIALS[ordinal].name(), SPECIALS[ordinal].collision);
+                    continue;
                 }
-                //
+                System.err.println("ERROR: tile " + id + " in (" + col + "," + row + ") non esiste, sostituita con 0");
+                mapTileNum[col][row] = 0;
             }
         }
     }
 
-    /** Ritorna la SpecialTile piazzata a (col,row), o null se non è una tile speciale (terreno
-     *  normale) o se la posizione è fuori mappa. Usata da CollisionChecker per rampino/salto. */
     public SpecialTile getSpecialTileAt(int col, int row) {
         if (col < 0 || row < 0 || col >= gp.maxWorldCol || row >= gp.maxWorldRow) return null;
-        int id = mapTileNum[col][row];
-        if (id < SPECIAL_TILE_BASE) return null;
-        int ordinal = id - SPECIAL_TILE_BASE;
-        SpecialTile[] specials = SpecialTile.values();
-        if (ordinal < 0 || ordinal >= specials.length) return null;
-        return specials[ordinal];
+        int ordinal = mapTileNum[col][row] - SPECIAL_TILE_BASE;
+        return ordinal >= 0 && ordinal < SPECIALS.length ? SPECIALS[ordinal] : null;
     }
 
+    // ── Disegno ───────────────────────────────────────────────
+
     public void draw(Graphics2D g2) {
-        // Avanza il contatore animazione ad ogni frame
         animationTick++;
+        int ts = gp.tileSize;
+        double leftX   = gp.player.worldX - gp.player.screenX;
+        double topY    = gp.player.worldY - gp.player.screenY;
+        double rightX  = gp.player.worldX + gp.player.screenX;
+        double bottomY = gp.player.worldY + gp.player.screenY;
+        int firstCol = Math.max(0, (int) Math.floor(leftX / ts));
+        int lastCol  = Math.min(gp.maxWorldCol - 1, (int) Math.ceil(rightX / ts));
+        int firstRow = Math.max(0, (int) Math.floor(topY / ts));
+        int lastRow  = Math.min(gp.maxWorldRow - 1, (int) Math.ceil(bottomY / ts));
 
-        int worldCol = 0, worldRow = 0;
-        while (worldCol < gp.maxWorldCol && worldRow < gp.maxWorldRow) {
-            int tileNum = mapTileNum[worldCol][worldRow];
-            int worldX  = worldCol * gp.tileSize;
-            int worldY  = worldRow * gp.tileSize;
-            double screenX = worldX - gp.player.worldX + gp.player.screenX;
-            double screenY = worldY - gp.player.worldY + gp.player.screenY;
-
-            // Frustum culling — disegna solo le tile visibili
-            if (worldX + gp.tileSize > gp.player.worldX - gp.player.screenX &&
-                    worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
-                    worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
-                    worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
-                Tile t = tile[tileNum];
-                BufferedImage img;
+        for (int row = firstRow; row <= lastRow; row++) {
+            for (int col = firstCol; col <= lastCol; col++) {
+                Tile t = tile[mapTileNum[col][row]];
+                BufferedImage img = t.image;
                 if (t.animated && t.frames != null && t.frameCount > 0) {
-                    // Sceglie il frame corrente in base al tick globale
-                    int frameIndex = (animationTick / t.frameSpeed) % t.frameCount;
-                    img = t.frames[frameIndex];
-                } else {
-                    img = t.image;
+                    img = t.frames[(animationTick / t.frameSpeed) % t.frameCount];
                 }
-                g2.drawImage(img, (int) screenX, (int) screenY, null);
+                int screenX = (int) (col * ts - gp.player.worldX + gp.player.screenX);
+                int screenY = (int) (row * ts - gp.player.worldY + gp.player.screenY);
+                g2.drawImage(img, screenX, screenY, null);
             }
-            worldCol++;
-            if (worldCol == gp.maxWorldCol) { worldCol = 0; worldRow++; }
         }
     }
 }

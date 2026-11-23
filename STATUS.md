@@ -1,4 +1,4 @@
-# Abysson — Status del codice (2026-11-05, dopo 0.19.11)
+# Abysson — Status del codice (2026-11-21, dopo 0.21.2 + fix tile)
 
 Questo file va tenuto in `docs/STATUS.md` (o dove preferisci nel repo). Non è generato automaticamente: lo aggiorno io a mano ogni tanto, su richiesta, quando facciamo un blocco di modifiche significativo.
 
@@ -1262,3 +1262,40 @@ Nomi e lati delle tile di bordo, verificati leggendo i pixel e confrontandoli co
 3. `TileManager` (costruttore): `loadMap("/maps/world01.txt")` -> `loadMap("/maps/world100.txt")`.
 - **Limite**: `loadMap()` legge `maxWorldCol` numeri per riga, quindi con le costanti a 100 `world01.txt` e `world2.txt` (50 colonne) **non si caricano più** (eccezione). Per tenere mondi di dimensioni diverse servirebbe una dimensione per mondo (larghezza/altezza lette dal file o da una tabella) e rimuovere `final`/costanti globali: modifica più grande, da decidere.
 - Verifica (copia di lavoro con costanti a 100): `loadMap` carica la matrice identica al file, tutti gli id usati sono registrati, gli spawn sono su tile senza collisione, `TileManager.draw()` funziona.
+---
+## 41. Controllo 0.20.1 / 0.21.x, fix SeedCreator e riscrittura del package `tile/` (21/11)
+
+### 41.1 Cosa mancava nei commit
+- **0.20.1** (3 commit con lo stesso messaggio: `a829177` codice+risorse, `c1f1484` STATUS.md, `52a27d5` pulizia). Contenuto completo rispetto al §37, **tranne** la cancellazione di `QuestStep.java` e `QuestRegistry.java`: i tre commit non compilano (`QuestRegistry.java:26`). Risolto dalla 0.21.0, che li elimina. `52a27d5` cancella anche `build.bat`, `build.log`, `full_set_texts.txt` (da confermare che fosse voluto).
+- **0.21.2**: non compila. Mancano `src/tile/SeedCreator.java` (mai aggiunto a git), la dichiarazione di `cellsRead` in `loadMap()` e le tre variabili locali di `NoiseField.value()` (`amplitude`, `frequency`, `noiseHeight`). La 0.21.1 non esiste come commit.
+- `world100.txt` non serve più: il contenuto è in `res/maps/world01.txt` (100x100) e `GamePanel.maxWorldCol/Row` sono già 100. Il §40.3 è superato.
+
+### 41.2 Cosa cambia nel package `tile/` (file consegnati)
+| File | Cosa |
+|---|---|
+| `SeedCreator.java` (nuovo) | `START`, `mix(h, v)`, `finish(h, cellsRead)` come da §38.3; riusabile dai dungeon generati |
+| `PerlinNoise.java` (nuovo) | la classe già esistente, spostata in un file suo e resa `public` (era dentro `NoiseMapGenerator.java`) |
+| `NoiseField.java` | `value()` ritrova le sue variabili; `height()` usa i campi `lowLimit/highLimit` invece di ±0,30 scritti a mano |
+| `TileManager.java` | riscritto sullo stesso scheletro (stessi campi e metodi pubblici) |
+| `NoiseMapGenerator.java` | **da cancellare a mano**: mai chiamata, `extends GamePanel`, `Double.MIN_VALUE` sbagliato |
+
+`TileManager`, punto per punto:
+- `loadImage()`: unico punto che apre e chiude il PNG; `setup()` e `setupAnimated()` lo usano (prima il file veniva aperto due volte e il primo stream non si chiudeva).
+- `getTileImage()`: in fondo azzera le tile speciali (id >= 100) e le ricarica, così lo zoom le ridimensiona.
+- `loadMap()`: azzera `mapTileNum` prima di leggere, tollera righe/colonne mancanti (celle = 0 + WARNING con il numero di celle lette), segnala riga e colonna di un valore non numerico, calcola il seed con `SeedCreator` solo sulle celle realmente lette.
+- `loadSpecialTilesUsedInMap()`: un id senza tile (26-99, >= 300, negativo, speciale fuori enum) viene sostituito con 0 e segnalato, quindi `tile[id]` non è mai null per `draw()` e `CollisionChecker`.
+- `draw()`: calcola prima il rettangolo di colonne/righe visibili e scorre solo quelle (verificato uguale al vecchio culling su 200 milioni di controlli).
+- Soglie altezza: `NoiseField` ora legge i valori passati in `loadMap()`. Ho messo **-0,30 / 0,30** (quelli che avevi scritto a mano in `height()`); per cambiare la distribuzione low/medium/high si cambiano solo questi due numeri.
+
+### 41.3 Come si fa per...
+- **Nuova tile di terreno**: una riga `setup(id, "nome", collisione)` in `getTileImage()` con id 26-99 + il PNG in `res/tiles/`.
+- **Nuova tile speciale**: una voce in `SpecialTile` (l'id è 100 + posizione nell'enum, quindi aggiungere sempre in fondo) + `res/tiles/<nome>.png`. Nessun PNG oggi esiste per le 10 voci attuali.
+- **Nuova mappa**: file in `res/maps/` con al più 100x100 numeri; le celle mancanti restano erba.
+
+### 41.4 TODO emersi dall'audit (non applicati)
+- `CollisionChecker.checkTile`: nessun controllo sui bordi (usare `isTileCollisionAt`, che li ha già) + `try/catch` finale vuoto.
+- `WeaponRegistry.get()` è al 78% del limite JVM di 64 KB per metodo (51.322 byte), `ArmorRegistry.get()` al 65%: spezzare per categoria o passare a dati in `res/`.
+- `tile_links.txt` sta in `src/tile/` ma `TileLinkRegistry` lo cerca in `/maps/`: spostarlo in `res/maps/`.
+- Creare i PNG delle 10 tile speciali (o `git add` se sono solo sul PC).
+- `mapHeight` è calcolata ma nessuno la usa: manca il passo che sceglie l'immagine in base a LOW/MEDIUM/HIGH.
+- `git rm -r --cached out .idea`: 332 file di build e file IDE (chat zencoder comprese) sono ancora tracciati.
