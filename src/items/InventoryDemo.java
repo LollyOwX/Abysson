@@ -16,9 +16,9 @@ public final class InventoryDemo {
 
         for (String key : new String[]{"mace_atk_20_30_masterwork", "claymore_atk_40_50_mythic", "short_bow_precision_10_20",
                 "shield_defense_20_30_masterwork", "helmet_defense_0_10_common"}) {
-            String id = find(LootIndex.WEAPONS, key);
-            if (id == null) id = find(LootIndex.SHIELDS, key);
-            if (id == null) id = find(LootIndex.ARMORS, key);
+            String id = find(WeaponRegistry.ids(), key);
+            if (id == null) id = find(ShieldRegistry.ids(), key);
+            if (id == null) id = find(ArmorRegistry.ids(), key);
             if (id != null) inv.addGear(LootTable.create(id));
         }
 

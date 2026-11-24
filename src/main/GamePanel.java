@@ -219,6 +219,8 @@ public class GamePanel extends JPanel implements Runnable {
                 update();
                 repaint();
                 delta--;
+            } else {
+                try { Thread.sleep(1); } catch (InterruptedException e) { return; }
             }
 
             if(timer >= 1000000000) {
@@ -229,7 +231,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void update() {
         if(gameState == playState) {
             player.update();
-            for(int i = 0; i < obj.length; i++) {
+            for(int i = 0; i < npc.length; i++) {
                 if(npc[i] != null) {
                     npc[i].update();
                 }
@@ -290,7 +292,6 @@ public class GamePanel extends JPanel implements Runnable {
     }
     private void drawWorld(Graphics2D g2) {
         tileM.draw(g2);
-        player.draw(g2);
         //add entites to list
         entityList.add(player);
         for(int i = 0; i < npc.length; i++) {

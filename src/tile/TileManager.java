@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import javax.imageio.ImageIO;
 import main.GamePanel;
 import main.UtilityTool;
@@ -19,6 +21,7 @@ public class TileManager {
     static final int SPECIAL_TILE_BASE = 100;
     private static final SpecialTile[] SPECIALS = SpecialTile.values();
     private final UtilityTool uTool = new UtilityTool();
+    private final Map<String, BufferedImage> sourceImages = new HashMap<>();
     private int animationTick = 0;
 
     public TileManager(GamePanel gp) {
@@ -33,6 +36,15 @@ public class TileManager {
     // ── Caricamento immagini ──────────────────────────────────
 
     private BufferedImage loadImage(String imagePath) {
+        BufferedImage img = sourceImages.get(imagePath);
+        if (img == null) {
+            img = readImage(imagePath);
+            sourceImages.put(imagePath, img);
+        }
+        return uTool.scaleImage(img, gp.tileSize, gp.tileSize);
+    }
+
+    private BufferedImage readImage(String imagePath) {
         String fullPath = "/tiles/" + imagePath + ".png";
         InputStream found = getClass().getResourceAsStream(fullPath);
         if (found == null) found = Thread.currentThread().getContextClassLoader().getResourceAsStream("tiles/" + imagePath + ".png");
@@ -40,7 +52,7 @@ public class TileManager {
         try (InputStream is = found) {
             BufferedImage img = ImageIO.read(is);
             if (img == null) throw new IOException("ImageIO returned null: " + fullPath);
-            return uTool.scaleImage(img, gp.tileSize, gp.tileSize);
+            return img;
         } catch (IOException e) {
             throw new RuntimeException("Failed to load tile: " + fullPath, e);
         }

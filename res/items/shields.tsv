@@ -1,0 +1,127 @@
+id	subtype	name	affilatezza	pomo	metalli	rarity	synergy	fullSet	mythic
+shield_defense_0_10_common	SCUDO	Scudo da scudiero	1	-2	1	COMMON			
+shield_elemental_def_0_10_common	SCUDO	Scudo da scudiero	1	-2	1	COMMON			
+shield_special_def_0_10_common	SCUDO	Scudo da scudiero	1	-2	1	COMMON			
+shield_defense_10_20_common	SCUDO	Scudetto da guardia	1	-2	2	COMMON			
+shield_elemental_def_10_20_common	SCUDO	Scudetto da guardia	1	-2	2	COMMON			
+shield_special_def_10_20_common	SCUDO	Scudetto da guardia	1	-2	2	COMMON			
+shield_defense_10_20_high_quality	SCUDO	Targa di solida fattura	1	-2	3	HIGH_QUALITY	+% copertura; -% penalità di velocità dello scudo pesante		
+shield_elemental_def_10_20_high_quality	SCUDO	Targa di solida fattura	1	-2	3	HIGH_QUALITY	+% danno elementale assorbito; +% quantità convertita in risorsa		
+shield_special_def_10_20_high_quality	SCUDO	Targa di solida fattura	1	-2	3	HIGH_QUALITY	+% prob. di annullamento; +% effetti annullabili per combattimento		
+shield_defense_20_30_common	SCUDO	Scudo da sentinella	1	-2	4	COMMON			
+shield_elemental_def_20_30_common	SCUDO	Scudo da sentinella	1	-2	4	COMMON			
+shield_special_def_20_30_common	SCUDO	Scudo da sentinella	1	-2	4	COMMON			
+shield_defense_20_30_high_quality	SCUDO	Scudo Rinforzato di buona guardia	1	-2	5	HIGH_QUALITY	+% copertura; -% penalità di velocità dello scudo pesante		
+shield_elemental_def_20_30_high_quality	SCUDO	Scudo Rinforzato di buona guardia	1	-2	5	HIGH_QUALITY	+% danno elementale assorbito; +% quantità convertita in risorsa		
+shield_special_def_20_30_high_quality	SCUDO	Scudo Rinforzato di buona guardia	1	-2	5	HIGH_QUALITY	+% prob. di annullamento; +% effetti annullabili per combattimento		
+shield_defense_20_30_masterwork	SCUDO	Scudo Torre del Maestro Scudiero	1	-2	6	MASTERWORK	+% copertura; -% penalità di velocità dello scudo pesante	[Full Set: Guardia] STUB — Torre: puoi coprire anche un alleato senza perdere il turno	
+shield_elemental_def_20_30_masterwork	SCUDO	Scudo Torre del Maestro Scudiero	1	-2	6	MASTERWORK	+% danno elementale assorbito; +% quantità convertita in risorsa	[Full Set: Veggente] STUB — Specchio Elementale: l'elemento assorbito diventa il tuo prossimo attacco	
+shield_special_def_20_30_masterwork	SCUDO	Scudo Torre del Maestro Scudiero	1	-2	6	MASTERWORK	+% prob. di annullamento; +% effetti annullabili per combattimento	[Full Set: Voto] STUB — Egida: il primo effetto di stato di ogni combattimento viene sempre annullato	
+shield_defense_30_40_common	SCUDO	Scudetto da presidio	1	-2	7	COMMON			
+shield_elemental_def_30_40_common	SCUDO	Scudetto da presidio	1	-2	7	COMMON			
+shield_special_def_30_40_common	SCUDO	Scudetto da presidio	1	-2	7	COMMON			
+shield_defense_30_40_high_quality	SCUDO	Targa di manifattura da assedio	1	-2	8	HIGH_QUALITY	+% copertura; -% penalità di velocità dello scudo pesante		
+shield_elemental_def_30_40_high_quality	SCUDO	Targa di manifattura da assedio	1	-2	8	HIGH_QUALITY	+% danno elementale assorbito; +% quantità convertita in risorsa		
+shield_special_def_30_40_high_quality	SCUDO	Targa di manifattura da assedio	1	-2	8	HIGH_QUALITY	+% prob. di annullamento; +% effetti annullabili per combattimento		
+shield_defense_30_40_masterwork	SCUDO	Scudo del Baluardo del Gran Difensore	1	-2	9	MASTERWORK	+% copertura; -% penalità di velocità dello scudo pesante	[Full Set: Guardia] STUB — Torre: puoi coprire anche un alleato senza perdere il turno	
+shield_elemental_def_30_40_masterwork	SCUDO	Scudo del Baluardo del Gran Difensore	1	-2	9	MASTERWORK	+% danno elementale assorbito; +% quantità convertita in risorsa	[Full Set: Veggente] STUB — Specchio Elementale: l'elemento assorbito diventa il tuo prossimo attacco	
+shield_special_def_30_40_masterwork	SCUDO	Scudo del Baluardo del Gran Difensore	1	-2	9	MASTERWORK	+% prob. di annullamento; +% effetti annullabili per combattimento	[Full Set: Voto] STUB — Egida: il primo effetto di stato di ogni combattimento viene sempre annullato	
+shield_defense_30_40_mythic	SCUDO	Scudo del Baluardo Caduto	1	-2	10	MYTHIC	+% copertura; -% penalità di velocità dello scudo pesante	[Full Set: Guardia] STUB — Torre: puoi coprire anche un alleato senza perdere il turno	[Mitico] STUB — Bastione: puoi coprire tutti gli alleati contemporaneamente senza perdere il turno
+shield_elemental_def_30_40_mythic	SCUDO	Scudo del Baluardo Caduto	1	-2	10	MYTHIC	+% danno elementale assorbito; +% quantità convertita in risorsa	[Full Set: Veggente] STUB — Specchio Elementale: l'elemento assorbito diventa il tuo prossimo attacco	[Mitico] STUB — Specchio Infinito: ogni attacco elementale assorbito diventa un attacco, non solo il prossimo
+shield_special_def_30_40_mythic	SCUDO	Scudo del Baluardo Caduto	1	-2	10	MYTHIC	+% prob. di annullamento; +% effetti annullabili per combattimento	[Full Set: Voto] STUB — Egida: il primo effetto di stato di ogni combattimento viene sempre annullato	[Mitico] STUB — Egida Suprema: ogni effetto di stato negativo viene annullato automaticamente
+shield_defense_40_50_common	SCUDO	Scudo da milizia	1	-2	11	COMMON			
+shield_elemental_def_40_50_common	SCUDO	Scudo da milizia	1	-2	11	COMMON			
+shield_special_def_40_50_common	SCUDO	Scudo da milizia	1	-2	11	COMMON			
+shield_defense_40_50_high_quality	SCUDO	Scudo Rinforzato di ferrea guardia	1	-2	12	HIGH_QUALITY	+% copertura; -% penalità di velocità dello scudo pesante		
+shield_elemental_def_40_50_high_quality	SCUDO	Scudo Rinforzato di ferrea guardia	1	-2	12	HIGH_QUALITY	+% danno elementale assorbito; +% quantità convertita in risorsa		
+shield_special_def_40_50_high_quality	SCUDO	Scudo Rinforzato di ferrea guardia	1	-2	12	HIGH_QUALITY	+% prob. di annullamento; +% effetti annullabili per combattimento		
+shield_defense_40_50_masterwork	SCUDO	Scudo Torre del Guardiano Supremo	1	-2	13	MASTERWORK	+% copertura; -% penalità di velocità dello scudo pesante	[Full Set: Guardia] STUB — Torre: puoi coprire anche un alleato senza perdere il turno	
+shield_elemental_def_40_50_masterwork	SCUDO	Scudo Torre del Guardiano Supremo	1	-2	13	MASTERWORK	+% danno elementale assorbito; +% quantità convertita in risorsa	[Full Set: Veggente] STUB — Specchio Elementale: l'elemento assorbito diventa il tuo prossimo attacco	
+shield_special_def_40_50_masterwork	SCUDO	Scudo Torre del Guardiano Supremo	1	-2	13	MASTERWORK	+% prob. di annullamento; +% effetti annullabili per combattimento	[Full Set: Voto] STUB — Egida: il primo effetto di stato di ogni combattimento viene sempre annullato	
+shield_defense_40_50_mythic	SCUDO	Scudo del Baluardo Eterno	1	-2	14	MYTHIC	+% copertura; -% penalità di velocità dello scudo pesante	[Full Set: Guardia] STUB — Torre: puoi coprire anche un alleato senza perdere il turno	[Mitico] STUB — Bastione: puoi coprire tutti gli alleati contemporaneamente senza perdere il turno
+shield_elemental_def_40_50_mythic	SCUDO	Scudo del Baluardo Eterno	1	-2	14	MYTHIC	+% danno elementale assorbito; +% quantità convertita in risorsa	[Full Set: Veggente] STUB — Specchio Elementale: l'elemento assorbito diventa il tuo prossimo attacco	[Mitico] STUB — Specchio Infinito: ogni attacco elementale assorbito diventa un attacco, non solo il prossimo
+shield_special_def_40_50_mythic	SCUDO	Scudo del Baluardo Eterno	1	-2	14	MYTHIC	+% prob. di annullamento; +% effetti annullabili per combattimento	[Full Set: Voto] STUB — Egida: il primo effetto di stato di ogni combattimento viene sempre annullato	[Mitico] STUB — Egida Suprema: ogni effetto di stato negativo viene annullato automaticamente
+broquel_defense_0_10_common	BROQUEL	Broquel da scudiero	1	2	1	COMMON			
+broquel_elemental_def_0_10_common	BROQUEL	Broquel da scudiero	1	2	1	COMMON			
+broquel_special_def_0_10_common	BROQUEL	Broquel da scudiero	1	2	1	COMMON			
+broquel_defense_10_20_common	BROQUEL	Rotellino da guardia	1	2	2	COMMON			
+broquel_elemental_def_10_20_common	BROQUEL	Rotellino da guardia	1	2	2	COMMON			
+broquel_special_def_10_20_common	BROQUEL	Rotellino da guardia	1	2	2	COMMON			
+broquel_defense_10_20_high_quality	BROQUEL	Rotella di solida fattura	1	2	3	HIGH_QUALITY	+% agilità in parata; -% finestra di recupero dopo la parata		
+broquel_elemental_def_10_20_high_quality	BROQUEL	Rotella di solida fattura	1	2	3	HIGH_QUALITY	-% durata degli effetti elementali; +% prob. di scrollarli anticipatamente		
+broquel_special_def_10_20_high_quality	BROQUEL	Rotella di solida fattura	1	2	3	HIGH_QUALITY	+% finestra di parata perfetta; +% risorsa recuperata su parata perfetta		
+broquel_defense_20_30_common	BROQUEL	Broquel da sentinella	1	2	4	COMMON			
+broquel_elemental_def_20_30_common	BROQUEL	Broquel da sentinella	1	2	4	COMMON			
+broquel_special_def_20_30_common	BROQUEL	Broquel da sentinella	1	2	4	COMMON			
+broquel_defense_20_30_high_quality	BROQUEL	Broquel Rinforzato di buona guardia	1	2	5	HIGH_QUALITY	+% agilità in parata; -% finestra di recupero dopo la parata		
+broquel_elemental_def_20_30_high_quality	BROQUEL	Broquel Rinforzato di buona guardia	1	2	5	HIGH_QUALITY	-% durata degli effetti elementali; +% prob. di scrollarli anticipatamente		
+broquel_special_def_20_30_high_quality	BROQUEL	Broquel Rinforzato di buona guardia	1	2	5	HIGH_QUALITY	+% finestra di parata perfetta; +% risorsa recuperata su parata perfetta		
+broquel_defense_20_30_masterwork	BROQUEL	Brocchiero del Maestro Scudiero	1	2	6	MASTERWORK	+% agilità in parata; -% finestra di recupero dopo la parata	[Full Set: Guardia] STUB — Parata Leggera: parare non consuma il turno	
+broquel_elemental_def_20_30_masterwork	BROQUEL	Brocchiero del Maestro Scudiero	1	2	6	MASTERWORK	-% durata degli effetti elementali; +% prob. di scrollarli anticipatamente	[Full Set: Veggente] STUB — Scarico Rapido: puoi trasferire un effetto elementale attivo al nemico	
+broquel_special_def_20_30_masterwork	BROQUEL	Brocchiero del Maestro Scudiero	1	2	6	MASTERWORK	+% finestra di parata perfetta; +% risorsa recuperata su parata perfetta	[Full Set: Voto] STUB — Tempo Esatto: una parata perfetta annulla completamente il round del nemico	
+broquel_defense_30_40_common	BROQUEL	Rotellino da presidio	1	2	7	COMMON			
+broquel_elemental_def_30_40_common	BROQUEL	Rotellino da presidio	1	2	7	COMMON			
+broquel_special_def_30_40_common	BROQUEL	Rotellino da presidio	1	2	7	COMMON			
+broquel_defense_30_40_high_quality	BROQUEL	Rotella di manifattura da assedio	1	2	8	HIGH_QUALITY	+% agilità in parata; -% finestra di recupero dopo la parata		
+broquel_elemental_def_30_40_high_quality	BROQUEL	Rotella di manifattura da assedio	1	2	8	HIGH_QUALITY	-% durata degli effetti elementali; +% prob. di scrollarli anticipatamente		
+broquel_special_def_30_40_high_quality	BROQUEL	Rotella di manifattura da assedio	1	2	8	HIGH_QUALITY	+% finestra di parata perfetta; +% risorsa recuperata su parata perfetta		
+broquel_defense_30_40_masterwork	BROQUEL	Broquel del Duellante del Gran Difensore	1	2	9	MASTERWORK	+% agilità in parata; -% finestra di recupero dopo la parata	[Full Set: Guardia] STUB — Parata Leggera: parare non consuma il turno	
+broquel_elemental_def_30_40_masterwork	BROQUEL	Broquel del Duellante del Gran Difensore	1	2	9	MASTERWORK	-% durata degli effetti elementali; +% prob. di scrollarli anticipatamente	[Full Set: Veggente] STUB — Scarico Rapido: puoi trasferire un effetto elementale attivo al nemico	
+broquel_special_def_30_40_masterwork	BROQUEL	Broquel del Duellante del Gran Difensore	1	2	9	MASTERWORK	+% finestra di parata perfetta; +% risorsa recuperata su parata perfetta	[Full Set: Voto] STUB — Tempo Esatto: una parata perfetta annulla completamente il round del nemico	
+broquel_defense_30_40_mythic	BROQUEL	Broquel del Duellante Esiliato	1	2	10	MYTHIC	+% agilità in parata; -% finestra di recupero dopo la parata	[Full Set: Guardia] STUB — Parata Leggera: parare non consuma il turno	[Mitico] STUB — Parata Perpetua: puoi parare un numero illimitato di volte per round
+broquel_elemental_def_30_40_mythic	BROQUEL	Broquel del Duellante Esiliato	1	2	10	MYTHIC	-% durata degli effetti elementali; +% prob. di scrollarli anticipatamente	[Full Set: Veggente] STUB — Scarico Rapido: puoi trasferire un effetto elementale attivo al nemico	[Mitico] STUB — Scarico Totale: puoi trasferire ogni effetto elementale attivo, non solo uno
+broquel_special_def_30_40_mythic	BROQUEL	Broquel del Duellante Esiliato	1	2	10	MYTHIC	+% finestra di parata perfetta; +% risorsa recuperata su parata perfetta	[Full Set: Voto] STUB — Tempo Esatto: una parata perfetta annulla completamente il round del nemico	[Mitico] STUB — Tempo Fermo: ogni parata è considerata perfetta
+broquel_defense_40_50_common	BROQUEL	Broquel da milizia	1	2	11	COMMON			
+broquel_elemental_def_40_50_common	BROQUEL	Broquel da milizia	1	2	11	COMMON			
+broquel_special_def_40_50_common	BROQUEL	Broquel da milizia	1	2	11	COMMON			
+broquel_defense_40_50_high_quality	BROQUEL	Broquel Rinforzato di ferrea guardia	1	2	12	HIGH_QUALITY	+% agilità in parata; -% finestra di recupero dopo la parata		
+broquel_elemental_def_40_50_high_quality	BROQUEL	Broquel Rinforzato di ferrea guardia	1	2	12	HIGH_QUALITY	-% durata degli effetti elementali; +% prob. di scrollarli anticipatamente		
+broquel_special_def_40_50_high_quality	BROQUEL	Broquel Rinforzato di ferrea guardia	1	2	12	HIGH_QUALITY	+% finestra di parata perfetta; +% risorsa recuperata su parata perfetta		
+broquel_defense_40_50_masterwork	BROQUEL	Brocchiero del Guardiano Supremo	1	2	13	MASTERWORK	+% agilità in parata; -% finestra di recupero dopo la parata	[Full Set: Guardia] STUB — Parata Leggera: parare non consuma il turno	
+broquel_elemental_def_40_50_masterwork	BROQUEL	Brocchiero del Guardiano Supremo	1	2	13	MASTERWORK	-% durata degli effetti elementali; +% prob. di scrollarli anticipatamente	[Full Set: Veggente] STUB — Scarico Rapido: puoi trasferire un effetto elementale attivo al nemico	
+broquel_special_def_40_50_masterwork	BROQUEL	Brocchiero del Guardiano Supremo	1	2	13	MASTERWORK	+% finestra di parata perfetta; +% risorsa recuperata su parata perfetta	[Full Set: Voto] STUB — Tempo Esatto: una parata perfetta annulla completamente il round del nemico	
+broquel_defense_40_50_mythic	BROQUEL	Broquel del Duellante Immortale	1	2	14	MYTHIC	+% agilità in parata; -% finestra di recupero dopo la parata	[Full Set: Guardia] STUB — Parata Leggera: parare non consuma il turno	[Mitico] STUB — Parata Perpetua: puoi parare un numero illimitato di volte per round
+broquel_elemental_def_40_50_mythic	BROQUEL	Broquel del Duellante Immortale	1	2	14	MYTHIC	-% durata degli effetti elementali; +% prob. di scrollarli anticipatamente	[Full Set: Veggente] STUB — Scarico Rapido: puoi trasferire un effetto elementale attivo al nemico	[Mitico] STUB — Scarico Totale: puoi trasferire ogni effetto elementale attivo, non solo uno
+broquel_special_def_40_50_mythic	BROQUEL	Broquel del Duellante Immortale	1	2	14	MYTHIC	+% finestra di parata perfetta; +% risorsa recuperata su parata perfetta	[Full Set: Voto] STUB — Tempo Esatto: una parata perfetta annulla completamente il round del nemico	[Mitico] STUB — Tempo Fermo: ogni parata è considerata perfetta
+sai_defense_0_10_common	SAI	Sai da scudiero	1	2	1	COMMON			
+sai_elemental_def_0_10_common	SAI	Sai da scudiero	1	2	1	COMMON			
+sai_special_def_0_10_common	SAI	Sai da scudiero	1	2	1	COMMON			
+sai_defense_10_20_common	SAI	Pugnale a Uncino da guardia	1	2	2	COMMON			
+sai_elemental_def_10_20_common	SAI	Pugnale a Uncino da guardia	1	2	2	COMMON			
+sai_special_def_10_20_common	SAI	Pugnale a Uncino da guardia	1	2	2	COMMON			
+sai_defense_10_20_high_quality	SAI	Pugnale a Forcella di solida fattura	1	2	3	HIGH_QUALITY	+% protezione istantanea dai danni taglienti		
+sai_elemental_def_10_20_high_quality	SAI	Pugnale a Forcella di solida fattura	1	2	3	HIGH_QUALITY	+% danno elementale riflesso; +% prob. di riflettere anche l'effetto		
+sai_special_def_10_20_high_quality	SAI	Pugnale a Forcella di solida fattura	1	2	3	HIGH_QUALITY	+% prob. di disarmo su parata; +% durata del disarmo		
+sai_defense_20_30_common	SAI	Sai da sentinella	1	2	4	COMMON			
+sai_elemental_def_20_30_common	SAI	Sai da sentinella	1	2	4	COMMON			
+sai_special_def_20_30_common	SAI	Sai da sentinella	1	2	4	COMMON			
+sai_defense_20_30_high_quality	SAI	Sai Ricurvo di buona guardia	1	2	5	HIGH_QUALITY	+% protezione istantanea dai danni taglienti		
+sai_elemental_def_20_30_high_quality	SAI	Sai Ricurvo di buona guardia	1	2	5	HIGH_QUALITY	+% danno elementale riflesso; +% prob. di riflettere anche l'effetto		
+sai_special_def_20_30_high_quality	SAI	Sai Ricurvo di buona guardia	1	2	5	HIGH_QUALITY	+% prob. di disarmo su parata; +% durata del disarmo		
+sai_defense_20_30_masterwork	SAI	Sai da Duello del Maestro Scudiero	1	2	6	MASTERWORK	+% protezione istantanea dai danni taglienti	[Full Set: Guardia] STUB — Blocco Istantaneo: puoi parare anche fuori dal tuo turno	
+sai_elemental_def_20_30_masterwork	SAI	Sai da Duello del Maestro Scudiero	1	2	6	MASTERWORK	+% danno elementale riflesso; +% prob. di riflettere anche l'effetto	[Full Set: Veggente] STUB — Ritorno: l'elemento riflesso innesca la reazione sul nemico, non su di te	
+sai_special_def_20_30_masterwork	SAI	Sai da Duello del Maestro Scudiero	1	2	6	MASTERWORK	+% prob. di disarmo su parata; +% durata del disarmo	[Full Set: Voto] STUB — Presa Rubata: disarmando il nemico puoi impugnare tu la sua arma	
+sai_defense_30_40_common	SAI	Pugnale a Uncino da presidio	1	2	7	COMMON			
+sai_elemental_def_30_40_common	SAI	Pugnale a Uncino da presidio	1	2	7	COMMON			
+sai_special_def_30_40_common	SAI	Pugnale a Uncino da presidio	1	2	7	COMMON			
+sai_defense_30_40_high_quality	SAI	Pugnale a Forcella di manifattura da assedio	1	2	8	HIGH_QUALITY	+% protezione istantanea dai danni taglienti		
+sai_elemental_def_30_40_high_quality	SAI	Pugnale a Forcella di manifattura da assedio	1	2	8	HIGH_QUALITY	+% danno elementale riflesso; +% prob. di riflettere anche l'effetto		
+sai_special_def_30_40_high_quality	SAI	Pugnale a Forcella di manifattura da assedio	1	2	8	HIGH_QUALITY	+% prob. di disarmo su parata; +% durata del disarmo		
+sai_defense_30_40_masterwork	SAI	Sai del Maestro del Gran Difensore	1	2	9	MASTERWORK	+% protezione istantanea dai danni taglienti	[Full Set: Guardia] STUB — Blocco Istantaneo: puoi parare anche fuori dal tuo turno	
+sai_elemental_def_30_40_masterwork	SAI	Sai del Maestro del Gran Difensore	1	2	9	MASTERWORK	+% danno elementale riflesso; +% prob. di riflettere anche l'effetto	[Full Set: Veggente] STUB — Ritorno: l'elemento riflesso innesca la reazione sul nemico, non su di te	
+sai_special_def_30_40_masterwork	SAI	Sai del Maestro del Gran Difensore	1	2	9	MASTERWORK	+% prob. di disarmo su parata; +% durata del disarmo	[Full Set: Voto] STUB — Presa Rubata: disarmando il nemico puoi impugnare tu la sua arma	
+sai_defense_30_40_mythic	SAI	Sai del Serpente Silenzioso	1	2	10	MYTHIC	+% protezione istantanea dai danni taglienti	[Full Set: Guardia] STUB — Blocco Istantaneo: puoi parare anche fuori dal tuo turno	[Mitico] STUB — Blocco Costante: puoi parare più volte fuori dal tuo turno, non solo una
+sai_elemental_def_30_40_mythic	SAI	Sai del Serpente Silenzioso	1	2	10	MYTHIC	+% danno elementale riflesso; +% prob. di riflettere anche l'effetto	[Full Set: Veggente] STUB — Ritorno: l'elemento riflesso innesca la reazione sul nemico, non su di te	[Mitico] STUB — Ritorno Totale: rifletti sempre sia il danno che l'effetto elementale, senza probabilità
+sai_special_def_30_40_mythic	SAI	Sai del Serpente Silenzioso	1	2	10	MYTHIC	+% prob. di disarmo su parata; +% durata del disarmo	[Full Set: Voto] STUB — Presa Rubata: disarmando il nemico puoi impugnare tu la sua arma	[Mitico] STUB — Presa Definitiva: disarmando il nemico, la sua arma sparisce dal combattimento
+sai_defense_40_50_common	SAI	Sai da milizia	1	2	11	COMMON			
+sai_elemental_def_40_50_common	SAI	Sai da milizia	1	2	11	COMMON			
+sai_special_def_40_50_common	SAI	Sai da milizia	1	2	11	COMMON			
+sai_defense_40_50_high_quality	SAI	Sai Ricurvo di ferrea guardia	1	2	12	HIGH_QUALITY	+% protezione istantanea dai danni taglienti		
+sai_elemental_def_40_50_high_quality	SAI	Sai Ricurvo di ferrea guardia	1	2	12	HIGH_QUALITY	+% danno elementale riflesso; +% prob. di riflettere anche l'effetto		
+sai_special_def_40_50_high_quality	SAI	Sai Ricurvo di ferrea guardia	1	2	12	HIGH_QUALITY	+% prob. di disarmo su parata; +% durata del disarmo		
+sai_defense_40_50_masterwork	SAI	Sai da Duello del Guardiano Supremo	1	2	13	MASTERWORK	+% protezione istantanea dai danni taglienti	[Full Set: Guardia] STUB — Blocco Istantaneo: puoi parare anche fuori dal tuo turno	
+sai_elemental_def_40_50_masterwork	SAI	Sai da Duello del Guardiano Supremo	1	2	13	MASTERWORK	+% danno elementale riflesso; +% prob. di riflettere anche l'effetto	[Full Set: Veggente] STUB — Ritorno: l'elemento riflesso innesca la reazione sul nemico, non su di te	
+sai_special_def_40_50_masterwork	SAI	Sai da Duello del Guardiano Supremo	1	2	13	MASTERWORK	+% prob. di disarmo su parata; +% durata del disarmo	[Full Set: Voto] STUB — Presa Rubata: disarmando il nemico puoi impugnare tu la sua arma	
+sai_defense_40_50_mythic	SAI	Sai del Serpente Ancestrale	1	2	14	MYTHIC	+% protezione istantanea dai danni taglienti	[Full Set: Guardia] STUB — Blocco Istantaneo: puoi parare anche fuori dal tuo turno	[Mitico] STUB — Blocco Costante: puoi parare più volte fuori dal tuo turno, non solo una
+sai_elemental_def_40_50_mythic	SAI	Sai del Serpente Ancestrale	1	2	14	MYTHIC	+% danno elementale riflesso; +% prob. di riflettere anche l'effetto	[Full Set: Veggente] STUB — Ritorno: l'elemento riflesso innesca la reazione sul nemico, non su di te	[Mitico] STUB — Ritorno Totale: rifletti sempre sia il danno che l'effetto elementale, senza probabilità
+sai_special_def_40_50_mythic	SAI	Sai del Serpente Ancestrale	1	2	14	MYTHIC	+% prob. di disarmo su parata; +% durata del disarmo	[Full Set: Voto] STUB — Presa Rubata: disarmando il nemico puoi impugnare tu la sua arma	[Mitico] STUB — Presa Definitiva: disarmando il nemico, la sua arma sparisce dal combattimento

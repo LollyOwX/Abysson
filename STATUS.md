@@ -1,4 +1,4 @@
-# Abysson — Status del codice (2026-11-21, dopo 0.21.2 + fix tile)
+# Abysson — Status del codice (2026-11-23, dopo 0.21.3 + ristrutturazione item)
 
 Questo file va tenuto in `docs/STATUS.md` (o dove preferisci nel repo). Non è generato automaticamente: lo aggiorno io a mano ogni tanto, su richiesta, quando facciamo un blocco di modifiche significativo.
 
@@ -1299,3 +1299,43 @@ Nomi e lati delle tile di bordo, verificati leggendo i pixel e confrontandoli co
 - Creare i PNG delle 10 tile speciali (o `git add` se sono solo sul PC).
 - `mapHeight` è calcolata ma nessuno la usa: manca il passo che sceglie l'immagine in base a LOW/MEDIUM/HIGH.
 - `git rm -r --cached out .idea`: 332 file di build e file IDE (chat zencoder comprese) sono ancora tracciati.
+---
+## 42. Audit completo 0.21.3 e ristrutturazione degli item (23/11)
+
+### 42.1 Perché
+`WeaponRegistry.get()` era un solo `switch` da 51.322 byte di bytecode (limite JVM: 65.535 per metodo), `ArmorRegistry.get()` da 42.417: ~250 armi in più e la build si rompeva con "code too large". In più ogni id esisteva due volte (nel `switch` e in `LootIndex`, rigenerato a mano con `generate_loot_index.py`). Le 1120 voci erano in realtà dati: 52 forme di istruzione diverse per le armi, 48 per le armature, 12 per gli scudi, tutte del tipo "campo = valore".
+
+### 42.2 Come è fatto ora
+```
+res/items/weapons.tsv   546 righe   id, subtype, name, affilatezza, pomo, guardia, punta, corda, struttura, legamenti, rarity, synergy, fullSet, mythic
+res/items/armors.tsv    448 righe   id, type, weight, name, rifiniture, legamenti, metalli, upperID, lowerID, accepted0, accepted1, rarity, synergy, fullSet, mythic
+res/items/shields.tsv   126 righe   id, subtype, name, affilatezza, pomo, metalli, rarity, synergy, fullSet, mythic
+items/ItemTable         legge un .tsv (prima riga = nomi colonna, TAB come separatore, cella vuota = campo non impostato)
+items/WeaponRegistry, ArmorRegistry, ShieldRegistry   restano con lo stesso get(id) ma costruiscono l'oggetto dalla riga; in più ids()
+items/ItemCheck         strumento da lanciare a mano (main): costruisce tutti gli oggetti e segnala righe sbagliate
+```
+- `LootIndex` non esiste più: `LootTable` e `InventoryDemo` leggono gli id da `XRegistry.ids()` (stesso ordine di prima, quindi stesse estrazioni a parità di seed).
+- Le zone di parata degli scudi (identiche per sottotipo in tutte le 126 righe) stanno in `ShieldRegistry` (3 casi), non nella tabella.
+- La rarità è nell'id (`..._30_40_mythic`) **e** nella colonna `rarity`: `ItemCheck` controlla che coincidano.
+- Costo: ~65 ms in più alla prima lettura del loot (lettura di 213 KB di testo) e ~1,4 MB di heap.
+
+### 42.3 Verifica
+Tutti i 1120 oggetti costruiti dal vecchio codice e dalle tabelle e confrontati campo per campo (anche i bonus di `computeBonusPercent()`): 0 differenze, con prova negativa che il confronto rileva le differenze. 300.000 estrazioni di loot con lo stesso seed: stesso risultato. Il gioco headless (300 frame, combattimento, libro) gira come prima.
+
+### 42.4 Come si fa per...
+- **Nuova arma/armatura/scudo**: una riga nuova nel `.tsv` giusto (id = `<tipo>_<build>_<livMin>_<livMax>_<rarità>`), poi lanciare `ItemCheck`.
+- **Nuovo campo** (es. `peso`): una colonna nel `.tsv` (anche vuota) + una riga nel `get()` del registry (`r.into(w.peso, 0, "peso")` o `w.x = r.num("x")`).
+- **Modificare le tabelle**: editor di testo o foglio di calcolo esportato come TSV *senza virgolette*; nessun carattere TAB dentro i testi.
+- Lo script `pp/generate_loot_index.py` non serve più; se la scheda Equip va rigenerata, lo script deve produrre i `.tsv` invece del Java.
+
+### 42.5 Altri fix di questo giro (in `fix-minori.patch`)
+`CollisionChecker.checkTile` controlla i bordi; `Sound` non va più in crash senza scheda audio e chiude i clip degli effetti; `GamePanel.run()` dorme 1 ms quando non c'è un frame da fare (CPU 97% -> 2% di un core); `player.draw()` non è più chiamato due volte; `update()` scorre `npc.length`. `TileManager` tiene in cache le immagini originali (zoom: 16,6 -> 2,5 ms a chiamata).
+
+### 42.6 TODO aperti
+- Zoom (frecce su/giù): NPC, mostri e oggetti non cambiano posizione né dimensione (verificato: NPC colonna 21 -> 18). Decidere se completarlo o togliere i due tasti.
+- Spostare `src/tile/tile_links.txt` in `res/maps/` (`TileLinkRegistry` lo cerca lì).
+- Creare i PNG delle 10 tile speciali (`res/tiles/<nome>.png`).
+- `mapHeight` è calcolata ma non usata dal disegno.
+- `git rm -r --cached out .idea pp` e aggiungere `.idea/` al `.gitignore`.
+- `UI`: i 6 font si caricano senza chiudere gli stream e un font mancante dà NullPointerException (ne manca uno = niente UI).
+- `world2.txt`: id 26-39 inesistenti e 51 colonne; non è raggiungibile (nessun link).

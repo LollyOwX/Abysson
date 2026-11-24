@@ -1,0 +1,449 @@
+id	type	weight	name	rifiniture	legamenti	metalli	upperID	lowerID	accepted0	accepted1	rarity	synergy	fullSet	mythic
+helmet_defense_0_10_common	HELMET	LEGGERA	Cappuccio di cuoio	1	2	1	1				COMMON			
+helmet_elemental_def_0_10_common	HELMET	LEGGERA	Cappuccio a punta del mago	1	2	1	2				COMMON			
+helmet_special_def_0_10_common	HELMET	LEGGERA	Cappuccio del prete	1	2	1	3				COMMON			
+helmet_defense_10_20_common	HELMET	LEGGERA	Cappuccio di cuoio grezzo	1	2	2	1				COMMON			
+helmet_elemental_def_10_20_common	HELMET	LEGGERA	Cappuccio dell'apprendista	1	2	2	2				COMMON			
+helmet_special_def_10_20_common	HELMET	LEGGERA	Cappuccio del chierico	1	2	2	3				COMMON			
+helmet_defense_10_20_high_quality	HELMET	LEGGERA	Cuffia di cuoio rinforzato	1	2	3	1				HIGH_QUALITY	+% difesa da impatto; -% durata dello stordimento subito		
+helmet_elemental_def_10_20_high_quality	HELMET	LEGGERA	Cuffia dell'apprendista incantato	1	2	3	2				HIGH_QUALITY	+% resistenza a Luce; -% durata di Raggio		
+helmet_special_def_10_20_high_quality	HELMET	LEGGERA	Cuffia del chierico devoto	1	2	3	3				HIGH_QUALITY	+% resistenza al controllo; +% prob. di agire comunque se confuso		
+helmet_defense_20_30_common	HELMET	LEGGERA	Cappuccio di pelle indurita	1	2	4	1				COMMON			
+helmet_elemental_def_20_30_common	HELMET	LEGGERA	Cappuccio dello stregone	1	2	4	2				COMMON			
+helmet_special_def_20_30_common	HELMET	LEGGERA	Cappuccio del monaco	1	2	4	3				COMMON			
+helmet_defense_20_30_high_quality	HELMET	LEGGERA	Cuffia di pelle borchiata	1	2	5	1				HIGH_QUALITY	+% difesa da impatto; -% durata dello stordimento subito		
+helmet_elemental_def_20_30_high_quality	HELMET	LEGGERA	Cuffia dello stregone runico	1	2	5	2				HIGH_QUALITY	+% resistenza a Luce; -% durata di Raggio		
+helmet_special_def_20_30_high_quality	HELMET	LEGGERA	Cuffia del monaco consacrato	1	2	5	3				HIGH_QUALITY	+% resistenza al controllo; +% prob. di agire comunque se confuso		
+helmet_defense_20_30_masterwork	HELMET	LEGGERA	Elmetto del Conciapelli	1	2	6	1				MASTERWORK	+% difesa da impatto; -% durata dello stordimento subito	[Full Set: Guardia] Elmo Saldo: il primo stordimento di ogni combattimento viene annullato (livello Iniziato)	
+helmet_elemental_def_20_30_masterwork	HELMET	LEGGERA	Elmetto dell'Arcano Maestro	1	2	6	2				MASTERWORK	+% resistenza a Luce; -% durata di Raggio	[Full Set: Veggente] Occhio Limpido: immune all'accecamento, vedi le debolezze elementali del nemico (livello Iniziato)	
+helmet_special_def_20_30_masterwork	HELMET	LEGGERA	Elmetto del Sommo Sacerdote	1	2	6	3				MASTERWORK	+% resistenza al controllo; +% prob. di agire comunque se confuso	[Full Set: Voto] STUB — Mente Intatta: gli effetti che ti fanno perdere il turno vengono riflessi sul lanciatore (livello Iniziato)	
+helmet_defense_30_40_common	HELMET	LEGGERA	Cappuccio di cuoio bollito	1	2	7	1				COMMON			
+helmet_elemental_def_30_40_common	HELMET	LEGGERA	Cappuccio del veggente	1	2	7	2				COMMON			
+helmet_special_def_30_40_common	HELMET	LEGGERA	Cappuccio dell'eremita	1	2	7	3				COMMON			
+helmet_defense_30_40_high_quality	HELMET	LEGGERA	Cuffia di cuoio bollito rinforzato	1	2	8	1				HIGH_QUALITY	+% difesa da impatto; -% durata dello stordimento subito		
+helmet_elemental_def_30_40_high_quality	HELMET	LEGGERA	Cuffia del veggente sigillato	1	2	8	2				HIGH_QUALITY	+% resistenza a Luce; -% durata di Raggio		
+helmet_special_def_30_40_high_quality	HELMET	LEGGERA	Cuffia dell'eremita venerato	1	2	8	3				HIGH_QUALITY	+% resistenza al controllo; +% prob. di agire comunque se confuso		
+helmet_defense_30_40_masterwork	HELMET	LEGGERA	Elmetto del Maestro Conciapelli	1	2	9	1				MASTERWORK	+% difesa da impatto; -% durata dello stordimento subito	[Full Set: Guardia] Elmo Saldo: il primo stordimento di ogni combattimento viene annullato (livello Adepto)	
+helmet_elemental_def_30_40_masterwork	HELMET	LEGGERA	Elmetto dell'Arcimago	1	2	9	2				MASTERWORK	+% resistenza a Luce; -% durata di Raggio	[Full Set: Veggente] Occhio Limpido: immune all'accecamento, vedi le debolezze elementali del nemico (livello Adepto)	
+helmet_special_def_30_40_masterwork	HELMET	LEGGERA	Elmetto del Patriarca	1	2	9	3				MASTERWORK	+% resistenza al controllo; +% prob. di agire comunque se confuso	[Full Set: Voto] STUB — Mente Intatta: gli effetti che ti fanno perdere il turno vengono riflessi sul lanciatore (livello Adepto)	
+helmet_defense_30_40_mythic	HELMET	LEGGERA	Elmo del Lupo Ombra	1	2	10	1				MYTHIC	+% difesa da impatto; -% durata dello stordimento subito	[Full Set: Guardia] Elmo Saldo: il primo stordimento di ogni combattimento viene annullato (livello Adepto)	[Mitico] STUB — Vista del Custode: vedi sempre la barra vita esatta e le resistenze del nemico (livello Ascendente)
+helmet_elemental_def_30_40_mythic	HELMET	LEGGERA	Elmo dell'Occhio Arcano	1	2	10	2				MYTHIC	+% resistenza a Luce; -% durata di Raggio	[Full Set: Veggente] Occhio Limpido: immune all'accecamento, vedi le debolezze elementali del nemico (livello Adepto)	[Mitico] STUB — Terzo Occhio: prevedi la prossima mossa del nemico una volta per combattimento (livello Ascendente)
+helmet_special_def_30_40_mythic	HELMET	LEGGERA	Elmo della Luce Eterna	1	2	10	3				MYTHIC	+% resistenza al controllo; +% prob. di agire comunque se confuso	[Full Set: Voto] STUB — Mente Intatta: gli effetti che ti fanno perdere il turno vengono riflessi sul lanciatore (livello Adepto)	[Mitico] STUB — Calma Assoluta: immune a paura e disperazione, qualunque sia la fonte (livello Ascendente)
+helmet_defense_40_50_common	HELMET	LEGGERA	Cappuccio di pelle di bestia	1	2	11	1				COMMON			
+helmet_elemental_def_40_50_common	HELMET	LEGGERA	Cappuccio dell'oracolo	1	2	11	2				COMMON			
+helmet_special_def_40_50_common	HELMET	LEGGERA	Cappuccio del pellegrino	1	2	11	3				COMMON			
+helmet_defense_40_50_high_quality	HELMET	LEGGERA	Cuffia di pelle di bestia temprata	1	2	12	1				HIGH_QUALITY	+% difesa da impatto; -% durata dello stordimento subito		
+helmet_elemental_def_40_50_high_quality	HELMET	LEGGERA	Cuffia dell'oracolo custodito	1	2	12	2				HIGH_QUALITY	+% resistenza a Luce; -% durata di Raggio		
+helmet_special_def_40_50_high_quality	HELMET	LEGGERA	Cuffia del pellegrino redento	1	2	12	3				HIGH_QUALITY	+% resistenza al controllo; +% prob. di agire comunque se confuso		
+helmet_defense_40_50_masterwork	HELMET	LEGGERA	Elmetto del Cacciatore Leggendario	1	2	13	1				MASTERWORK	+% difesa da impatto; -% durata dello stordimento subito	[Full Set: Guardia] Elmo Saldo: il primo stordimento di ogni combattimento viene annullato (livello Maestro)	
+helmet_elemental_def_40_50_masterwork	HELMET	LEGGERA	Elmetto del Gran Tessitore di Magia	1	2	13	2				MASTERWORK	+% resistenza a Luce; -% durata di Raggio	[Full Set: Veggente] Occhio Limpido: immune all'accecamento, vedi le debolezze elementali del nemico (livello Maestro)	
+helmet_special_def_40_50_masterwork	HELMET	LEGGERA	Elmetto del Profeta Sacro	1	2	13	3				MASTERWORK	+% resistenza al controllo; +% prob. di agire comunque se confuso	[Full Set: Voto] STUB — Mente Intatta: gli effetti che ti fanno perdere il turno vengono riflessi sul lanciatore (livello Maestro)	
+helmet_defense_40_50_mythic	HELMET	LEGGERA	Elmo dell'Ultimo Custode	1	2	14	1				MYTHIC	+% difesa da impatto; -% durata dello stordimento subito	[Full Set: Guardia] Elmo Saldo: il primo stordimento di ogni combattimento viene annullato (livello Maestro)	[Mitico] STUB — Vista del Custode: vedi sempre la barra vita esatta e le resistenze del nemico (livello Trascendente)
+helmet_elemental_def_40_50_mythic	HELMET	LEGGERA	Elmo del Velo Infinito	1	2	14	2				MYTHIC	+% resistenza a Luce; -% durata di Raggio	[Full Set: Veggente] Occhio Limpido: immune all'accecamento, vedi le debolezze elementali del nemico (livello Maestro)	[Mitico] STUB — Terzo Occhio: prevedi la prossima mossa del nemico una volta per combattimento (livello Trascendente)
+helmet_special_def_40_50_mythic	HELMET	LEGGERA	Elmo della Grazia Divina	1	2	14	3				MYTHIC	+% resistenza al controllo; +% prob. di agire comunque se confuso	[Full Set: Voto] STUB — Mente Intatta: gli effetti che ti fanno perdere il turno vengono riflessi sul lanciatore (livello Maestro)	[Mitico] STUB — Calma Assoluta: immune a paura e disperazione, qualunque sia la fonte (livello Trascendente)
+gorget_defense_0_10_common	GORGET	LEGGERA	Collare di cuoio	1	1	1	1				COMMON			
+gorget_elemental_def_0_10_common	GORGET	LEGGERA	Collare a punta del mago	1	1	1	2				COMMON			
+gorget_special_def_0_10_common	GORGET	LEGGERA	Collare del prete	1	1	1	3				COMMON			
+gorget_defense_10_20_common	GORGET	LEGGERA	Collare di cuoio grezzo	1	1	2	1				COMMON			
+gorget_elemental_def_10_20_common	GORGET	LEGGERA	Collare dell'apprendista	1	1	2	2				COMMON			
+gorget_special_def_10_20_common	GORGET	LEGGERA	Collare del chierico	1	1	2	3				COMMON			
+gorget_defense_10_20_high_quality	GORGET	LEGGERA	Gorgiera di cuoio rinforzato	1	1	3	1				HIGH_QUALITY	+% difesa al collo; -% danni da sanguinamento subiti		
+gorget_elemental_def_10_20_high_quality	GORGET	LEGGERA	Gorgiera dell'apprendista incantato	1	1	3	2				HIGH_QUALITY	+% resistenza a Fuoco; -% durata di Infiammazione		
+gorget_special_def_10_20_high_quality	GORGET	LEGGERA	Gorgiera del chierico devoto	1	1	3	3				HIGH_QUALITY	+% resistenza al silenzio; -% costo abilità mentre sei silenziato		
+gorget_defense_20_30_common	GORGET	LEGGERA	Collare di pelle indurita	1	1	4	1				COMMON			
+gorget_elemental_def_20_30_common	GORGET	LEGGERA	Collare dello stregone	1	1	4	2				COMMON			
+gorget_special_def_20_30_common	GORGET	LEGGERA	Collare del monaco	1	1	4	3				COMMON			
+gorget_defense_20_30_high_quality	GORGET	LEGGERA	Gorgiera di pelle borchiata	1	1	5	1				HIGH_QUALITY	+% difesa al collo; -% danni da sanguinamento subiti		
+gorget_elemental_def_20_30_high_quality	GORGET	LEGGERA	Gorgiera dello stregone runico	1	1	5	2				HIGH_QUALITY	+% resistenza a Fuoco; -% durata di Infiammazione		
+gorget_special_def_20_30_high_quality	GORGET	LEGGERA	Gorgiera del monaco consacrato	1	1	5	3				HIGH_QUALITY	+% resistenza al silenzio; -% costo abilità mentre sei silenziato		
+gorget_defense_20_30_masterwork	GORGET	LEGGERA	Barbozza del Conciapelli	1	1	6	1				MASTERWORK	+% difesa al collo; -% danni da sanguinamento subiti	[Full Set: Guardia] STUB — Gola Serrata: il sanguinamento non può essere riapplicato finché è attivo (livello Iniziato)	
+gorget_elemental_def_20_30_masterwork	GORGET	LEGGERA	Barbozza dell'Arcano Maestro	1	1	6	2				MASTERWORK	+% resistenza a Fuoco; -% durata di Infiammazione	[Full Set: Veggente] Respiro di Brace: curi invece di subire danni la prima volta che ti Infiammi (livello Iniziato)	
+gorget_special_def_20_30_masterwork	GORGET	LEGGERA	Barbozza del Sommo Sacerdote	1	1	6	3				MASTERWORK	+% resistenza al silenzio; -% costo abilità mentre sei silenziato	[Full Set: Voto] STUB — Voce Inflessibile: puoi usare una abilità anche durante il silenzio, una volta per combattimento (livello Iniziato)	
+gorget_defense_30_40_common	GORGET	LEGGERA	Collare di cuoio bollito	1	1	7	1				COMMON			
+gorget_elemental_def_30_40_common	GORGET	LEGGERA	Collare del veggente	1	1	7	2				COMMON			
+gorget_special_def_30_40_common	GORGET	LEGGERA	Collare dell'eremita	1	1	7	3				COMMON			
+gorget_defense_30_40_high_quality	GORGET	LEGGERA	Gorgiera di cuoio bollito rinforzato	1	1	8	1				HIGH_QUALITY	+% difesa al collo; -% danni da sanguinamento subiti		
+gorget_elemental_def_30_40_high_quality	GORGET	LEGGERA	Gorgiera del veggente sigillato	1	1	8	2				HIGH_QUALITY	+% resistenza a Fuoco; -% durata di Infiammazione		
+gorget_special_def_30_40_high_quality	GORGET	LEGGERA	Gorgiera dell'eremita venerato	1	1	8	3				HIGH_QUALITY	+% resistenza al silenzio; -% costo abilità mentre sei silenziato		
+gorget_defense_30_40_masterwork	GORGET	LEGGERA	Barbozza del Maestro Conciapelli	1	1	9	1				MASTERWORK	+% difesa al collo; -% danni da sanguinamento subiti	[Full Set: Guardia] STUB — Gola Serrata: il sanguinamento non può essere riapplicato finché è attivo (livello Adepto)	
+gorget_elemental_def_30_40_masterwork	GORGET	LEGGERA	Barbozza dell'Arcimago	1	1	9	2				MASTERWORK	+% resistenza a Fuoco; -% durata di Infiammazione	[Full Set: Veggente] Respiro di Brace: curi invece di subire danni la prima volta che ti Infiammi (livello Adepto)	
+gorget_special_def_30_40_masterwork	GORGET	LEGGERA	Barbozza del Patriarca	1	1	9	3				MASTERWORK	+% resistenza al silenzio; -% costo abilità mentre sei silenziato	[Full Set: Voto] STUB — Voce Inflessibile: puoi usare una abilità anche durante il silenzio, una volta per combattimento (livello Adepto)	
+gorget_defense_30_40_mythic	GORGET	LEGGERA	Gola d'Acciaio del Lupo Ombra	1	1	10	1				MYTHIC	+% difesa al collo; -% danni da sanguinamento subiti	[Full Set: Guardia] STUB — Gola Serrata: il sanguinamento non può essere riapplicato finché è attivo (livello Adepto)	[Mitico] STUB — Respiro Eterno: immune al soffocamento e alle abilità che ignorano la difesa al collo (livello Ascendente)
+gorget_elemental_def_30_40_mythic	GORGET	LEGGERA	Gola d'Acciaio dell'Occhio Arcano	1	1	10	2				MYTHIC	+% resistenza a Fuoco; -% durata di Infiammazione	[Full Set: Veggente] Respiro di Brace: curi invece di subire danni la prima volta che ti Infiammi (livello Adepto)	[Mitico] STUB — Cenere Viva: ogni volta che ti curi, infliggi danno da Fuoco a chi ti è vicino (livello Ascendente)
+gorget_special_def_30_40_mythic	GORGET	LEGGERA	Gola d'Acciaio della Luce Eterna	1	1	10	3				MYTHIC	+% resistenza al silenzio; -% costo abilità mentre sei silenziato	[Full Set: Voto] STUB — Voce Inflessibile: puoi usare una abilità anche durante il silenzio, una volta per combattimento (livello Adepto)	[Mitico] STUB — Giuramento Muto: le tue abilità non possono mai essere bloccate o interrotte (livello Ascendente)
+gorget_defense_40_50_common	GORGET	LEGGERA	Collare di pelle di bestia	1	1	11	1				COMMON			
+gorget_elemental_def_40_50_common	GORGET	LEGGERA	Collare dell'oracolo	1	1	11	2				COMMON			
+gorget_special_def_40_50_common	GORGET	LEGGERA	Collare del pellegrino	1	1	11	3				COMMON			
+gorget_defense_40_50_high_quality	GORGET	LEGGERA	Gorgiera di pelle di bestia temprata	1	1	12	1				HIGH_QUALITY	+% difesa al collo; -% danni da sanguinamento subiti		
+gorget_elemental_def_40_50_high_quality	GORGET	LEGGERA	Gorgiera dell'oracolo custodito	1	1	12	2				HIGH_QUALITY	+% resistenza a Fuoco; -% durata di Infiammazione		
+gorget_special_def_40_50_high_quality	GORGET	LEGGERA	Gorgiera del pellegrino redento	1	1	12	3				HIGH_QUALITY	+% resistenza al silenzio; -% costo abilità mentre sei silenziato		
+gorget_defense_40_50_masterwork	GORGET	LEGGERA	Barbozza del Cacciatore Leggendario	1	1	13	1				MASTERWORK	+% difesa al collo; -% danni da sanguinamento subiti	[Full Set: Guardia] STUB — Gola Serrata: il sanguinamento non può essere riapplicato finché è attivo (livello Maestro)	
+gorget_elemental_def_40_50_masterwork	GORGET	LEGGERA	Barbozza del Gran Tessitore di Magia	1	1	13	2				MASTERWORK	+% resistenza a Fuoco; -% durata di Infiammazione	[Full Set: Veggente] Respiro di Brace: curi invece di subire danni la prima volta che ti Infiammi (livello Maestro)	
+gorget_special_def_40_50_masterwork	GORGET	LEGGERA	Barbozza del Profeta Sacro	1	1	13	3				MASTERWORK	+% resistenza al silenzio; -% costo abilità mentre sei silenziato	[Full Set: Voto] STUB — Voce Inflessibile: puoi usare una abilità anche durante il silenzio, una volta per combattimento (livello Maestro)	
+gorget_defense_40_50_mythic	GORGET	LEGGERA	Gola d'Acciaio dell'Ultimo Custode	1	1	14	1				MYTHIC	+% difesa al collo; -% danni da sanguinamento subiti	[Full Set: Guardia] STUB — Gola Serrata: il sanguinamento non può essere riapplicato finché è attivo (livello Maestro)	[Mitico] STUB — Respiro Eterno: immune al soffocamento e alle abilità che ignorano la difesa al collo (livello Trascendente)
+gorget_elemental_def_40_50_mythic	GORGET	LEGGERA	Gola d'Acciaio del Velo Infinito	1	1	14	2				MYTHIC	+% resistenza a Fuoco; -% durata di Infiammazione	[Full Set: Veggente] Respiro di Brace: curi invece di subire danni la prima volta che ti Infiammi (livello Maestro)	[Mitico] STUB — Cenere Viva: ogni volta che ti curi, infliggi danno da Fuoco a chi ti è vicino (livello Trascendente)
+gorget_special_def_40_50_mythic	GORGET	LEGGERA	Gola d'Acciaio della Grazia Divina	1	1	14	3				MYTHIC	+% resistenza al silenzio; -% costo abilità mentre sei silenziato	[Full Set: Voto] STUB — Voce Inflessibile: puoi usare una abilità anche durante il silenzio, una volta per combattimento (livello Maestro)	[Mitico] STUB — Giuramento Muto: le tue abilità non possono mai essere bloccate o interrotte (livello Trascendente)
+pauldron_defense_0_10_common	PAULDRON	MEDIA	Spallina di cuoio	1	1	1	1				COMMON			
+pauldron_elemental_def_0_10_common	PAULDRON	MEDIA	Spallina a punta del mago	1	1	1	2				COMMON			
+pauldron_special_def_0_10_common	PAULDRON	MEDIA	Spallina del prete	1	1	1	3				COMMON			
+pauldron_defense_10_20_common	PAULDRON	MEDIA	Spallina di cuoio grezzo	1	1	2	1				COMMON			
+pauldron_elemental_def_10_20_common	PAULDRON	MEDIA	Spallina dell'apprendista	1	1	2	2				COMMON			
+pauldron_special_def_10_20_common	PAULDRON	MEDIA	Spallina del chierico	1	1	2	3				COMMON			
+pauldron_defense_10_20_high_quality	PAULDRON	MEDIA	Spalliera di cuoio rinforzato	1	1	3	1				HIGH_QUALITY	+% difesa dalle prese; -% prob. di essere disarmato		
+pauldron_elemental_def_10_20_high_quality	PAULDRON	MEDIA	Spalliera dell'apprendista incantato	1	1	3	2				HIGH_QUALITY	+% resistenza a Fulmine; -% durata di Scossa		
+pauldron_special_def_10_20_high_quality	PAULDRON	MEDIA	Spalliera del chierico devoto	1	1	3	3				HIGH_QUALITY	+% resistenza alle maledizioni; -% durata dei marchi subiti		
+pauldron_defense_20_30_common	PAULDRON	MEDIA	Spallina di pelle indurita	1	1	4	1				COMMON			
+pauldron_elemental_def_20_30_common	PAULDRON	MEDIA	Spallina dello stregone	1	1	4	2				COMMON			
+pauldron_special_def_20_30_common	PAULDRON	MEDIA	Spallina del monaco	1	1	4	3				COMMON			
+pauldron_defense_20_30_high_quality	PAULDRON	MEDIA	Spalliera di pelle borchiata	1	1	5	1				HIGH_QUALITY	+% difesa dalle prese; -% prob. di essere disarmato		
+pauldron_elemental_def_20_30_high_quality	PAULDRON	MEDIA	Spalliera dello stregone runico	1	1	5	2				HIGH_QUALITY	+% resistenza a Fulmine; -% durata di Scossa		
+pauldron_special_def_20_30_high_quality	PAULDRON	MEDIA	Spalliera del monaco consacrato	1	1	5	3				HIGH_QUALITY	+% resistenza alle maledizioni; -% durata dei marchi subiti		
+pauldron_defense_20_30_masterwork	PAULDRON	MEDIA	Spallaccio del Conciapelli	1	1	6	1				MASTERWORK	+% difesa dalle prese; -% prob. di essere disarmato	[Full Set: Guardia] STUB — Spalla d'Acciaio: chi tenta di disarmarti subisce contraccolpo (livello Iniziato)	
+pauldron_elemental_def_20_30_masterwork	PAULDRON	MEDIA	Spallaccio dell'Arcano Maestro	1	1	6	2				MASTERWORK	+% resistenza a Fulmine; -% durata di Scossa	[Full Set: Veggente] Parafulmine: la Scossa subita si scarica sul nemico più vicino (livello Iniziato)	
+pauldron_special_def_20_30_masterwork	PAULDRON	MEDIA	Spallaccio del Sommo Sacerdote	1	1	6	3				MASTERWORK	+% resistenza alle maledizioni; -% durata dei marchi subiti	[Full Set: Voto] STUB — Spalla Consacrata: una maledizione a tua scelta viene dissolta a fine round (livello Iniziato)	
+pauldron_defense_30_40_common	PAULDRON	MEDIA	Spallina di cuoio bollito	1	1	7	1				COMMON			
+pauldron_elemental_def_30_40_common	PAULDRON	MEDIA	Spallina del veggente	1	1	7	2				COMMON			
+pauldron_special_def_30_40_common	PAULDRON	MEDIA	Spallina dell'eremita	1	1	7	3				COMMON			
+pauldron_defense_30_40_high_quality	PAULDRON	MEDIA	Spalliera di cuoio bollito rinforzato	1	1	8	1				HIGH_QUALITY	+% difesa dalle prese; -% prob. di essere disarmato		
+pauldron_elemental_def_30_40_high_quality	PAULDRON	MEDIA	Spalliera del veggente sigillato	1	1	8	2				HIGH_QUALITY	+% resistenza a Fulmine; -% durata di Scossa		
+pauldron_special_def_30_40_high_quality	PAULDRON	MEDIA	Spalliera dell'eremita venerato	1	1	8	3				HIGH_QUALITY	+% resistenza alle maledizioni; -% durata dei marchi subiti		
+pauldron_defense_30_40_masterwork	PAULDRON	MEDIA	Spallaccio del Maestro Conciapelli	1	1	9	1				MASTERWORK	+% difesa dalle prese; -% prob. di essere disarmato	[Full Set: Guardia] STUB — Spalla d'Acciaio: chi tenta di disarmarti subisce contraccolpo (livello Adepto)	
+pauldron_elemental_def_30_40_masterwork	PAULDRON	MEDIA	Spallaccio dell'Arcimago	1	1	9	2				MASTERWORK	+% resistenza a Fulmine; -% durata di Scossa	[Full Set: Veggente] Parafulmine: la Scossa subita si scarica sul nemico più vicino (livello Adepto)	
+pauldron_special_def_30_40_masterwork	PAULDRON	MEDIA	Spallaccio del Patriarca	1	1	9	3				MASTERWORK	+% resistenza alle maledizioni; -% durata dei marchi subiti	[Full Set: Voto] STUB — Spalla Consacrata: una maledizione a tua scelta viene dissolta a fine round (livello Adepto)	
+pauldron_defense_30_40_mythic	PAULDRON	MEDIA	Spallare d'Arme del Lupo Ombra	1	1	10	1				MYTHIC	+% difesa dalle prese; -% prob. di essere disarmato	[Full Set: Guardia] STUB — Spalla d'Acciaio: chi tenta di disarmarti subisce contraccolpo (livello Adepto)	[Mitico] STUB — Spalla del Titano: non puoi essere disarmato in nessuna circostanza (livello Ascendente)
+pauldron_elemental_def_30_40_mythic	PAULDRON	MEDIA	Spallare d'Arme dell'Occhio Arcano	1	1	10	2				MYTHIC	+% resistenza a Fulmine; -% durata di Scossa	[Full Set: Veggente] Parafulmine: la Scossa subita si scarica sul nemico più vicino (livello Adepto)	[Mitico] STUB — Tempesta Latente: accumuli carica passivamente ogni round, da scaricare a piacere (livello Ascendente)
+pauldron_special_def_30_40_mythic	PAULDRON	MEDIA	Spallare d'Arme della Luce Eterna	1	1	10	3				MYTHIC	+% resistenza alle maledizioni; -% durata dei marchi subiti	[Full Set: Voto] STUB — Spalla Consacrata: una maledizione a tua scelta viene dissolta a fine round (livello Adepto)	[Mitico] STUB — Manto Sacro: sei immune a maledizioni e marchi per l'intero combattimento (livello Ascendente)
+pauldron_defense_40_50_common	PAULDRON	MEDIA	Spallina di pelle di bestia	1	1	11	1				COMMON			
+pauldron_elemental_def_40_50_common	PAULDRON	MEDIA	Spallina dell'oracolo	1	1	11	2				COMMON			
+pauldron_special_def_40_50_common	PAULDRON	MEDIA	Spallina del pellegrino	1	1	11	3				COMMON			
+pauldron_defense_40_50_high_quality	PAULDRON	MEDIA	Spalliera di pelle di bestia temprata	1	1	12	1				HIGH_QUALITY	+% difesa dalle prese; -% prob. di essere disarmato		
+pauldron_elemental_def_40_50_high_quality	PAULDRON	MEDIA	Spalliera dell'oracolo custodito	1	1	12	2				HIGH_QUALITY	+% resistenza a Fulmine; -% durata di Scossa		
+pauldron_special_def_40_50_high_quality	PAULDRON	MEDIA	Spalliera del pellegrino redento	1	1	12	3				HIGH_QUALITY	+% resistenza alle maledizioni; -% durata dei marchi subiti		
+pauldron_defense_40_50_masterwork	PAULDRON	MEDIA	Spallaccio del Cacciatore Leggendario	1	1	13	1				MASTERWORK	+% difesa dalle prese; -% prob. di essere disarmato	[Full Set: Guardia] STUB — Spalla d'Acciaio: chi tenta di disarmarti subisce contraccolpo (livello Maestro)	
+pauldron_elemental_def_40_50_masterwork	PAULDRON	MEDIA	Spallaccio del Gran Tessitore di Magia	1	1	13	2				MASTERWORK	+% resistenza a Fulmine; -% durata di Scossa	[Full Set: Veggente] Parafulmine: la Scossa subita si scarica sul nemico più vicino (livello Maestro)	
+pauldron_special_def_40_50_masterwork	PAULDRON	MEDIA	Spallaccio del Profeta Sacro	1	1	13	3				MASTERWORK	+% resistenza alle maledizioni; -% durata dei marchi subiti	[Full Set: Voto] STUB — Spalla Consacrata: una maledizione a tua scelta viene dissolta a fine round (livello Maestro)	
+pauldron_defense_40_50_mythic	PAULDRON	MEDIA	Spallare d'Arme dell'Ultimo Custode	1	1	14	1				MYTHIC	+% difesa dalle prese; -% prob. di essere disarmato	[Full Set: Guardia] STUB — Spalla d'Acciaio: chi tenta di disarmarti subisce contraccolpo (livello Maestro)	[Mitico] STUB — Spalla del Titano: non puoi essere disarmato in nessuna circostanza (livello Trascendente)
+pauldron_elemental_def_40_50_mythic	PAULDRON	MEDIA	Spallare d'Arme del Velo Infinito	1	1	14	2				MYTHIC	+% resistenza a Fulmine; -% durata di Scossa	[Full Set: Veggente] Parafulmine: la Scossa subita si scarica sul nemico più vicino (livello Maestro)	[Mitico] STUB — Tempesta Latente: accumuli carica passivamente ogni round, da scaricare a piacere (livello Trascendente)
+pauldron_special_def_40_50_mythic	PAULDRON	MEDIA	Spallare d'Arme della Grazia Divina	1	1	14	3				MYTHIC	+% resistenza alle maledizioni; -% durata dei marchi subiti	[Full Set: Voto] STUB — Spalla Consacrata: una maledizione a tua scelta viene dissolta a fine round (livello Maestro)	[Mitico] STUB — Manto Sacro: sei immune a maledizioni e marchi per l'intero combattimento (livello Trascendente)
+rerebrace_defense_0_10_common	REREBRACE	MEDIA	Bracciale di cuoio	1	1	1	1				COMMON			
+rerebrace_elemental_def_0_10_common	REREBRACE	MEDIA	Bracciale a punta del mago	1	1	1	2				COMMON			
+rerebrace_special_def_0_10_common	REREBRACE	MEDIA	Bracciale del prete	1	1	1	3				COMMON			
+rerebrace_defense_10_20_common	REREBRACE	MEDIA	Bracciale di cuoio grezzo	1	1	2	1				COMMON			
+rerebrace_elemental_def_10_20_common	REREBRACE	MEDIA	Bracciale dell'apprendista	1	1	2	2				COMMON			
+rerebrace_special_def_10_20_common	REREBRACE	MEDIA	Bracciale del chierico	1	1	2	3				COMMON			
+rerebrace_defense_10_20_high_quality	REREBRACE	MEDIA	Bracciale Superiore di cuoio rinforzato	1	1	3	1				HIGH_QUALITY	+% controllo del peso; -% penalità di velocità da equipaggiamento pesante		
+rerebrace_elemental_def_10_20_high_quality	REREBRACE	MEDIA	Bracciale Superiore dell'apprendista incantato	1	1	3	2				HIGH_QUALITY	+% resistenza ad Aria; -% distanza di spinta subita		
+rerebrace_special_def_10_20_high_quality	REREBRACE	MEDIA	Bracciale Superiore del chierico devoto	1	1	3	3				HIGH_QUALITY	-% durata di TUTTI i debuff; +% prob. di scrollarne uno a inizio turno		
+rerebrace_defense_20_30_common	REREBRACE	MEDIA	Bracciale di pelle indurita	1	1	4	1				COMMON			
+rerebrace_elemental_def_20_30_common	REREBRACE	MEDIA	Bracciale dello stregone	1	1	4	2				COMMON			
+rerebrace_special_def_20_30_common	REREBRACE	MEDIA	Bracciale del monaco	1	1	4	3				COMMON			
+rerebrace_defense_20_30_high_quality	REREBRACE	MEDIA	Bracciale Superiore di pelle borchiata	1	1	5	1				HIGH_QUALITY	+% controllo del peso; -% penalità di velocità da equipaggiamento pesante		
+rerebrace_elemental_def_20_30_high_quality	REREBRACE	MEDIA	Bracciale Superiore dello stregone runico	1	1	5	2				HIGH_QUALITY	+% resistenza ad Aria; -% distanza di spinta subita		
+rerebrace_special_def_20_30_high_quality	REREBRACE	MEDIA	Bracciale Superiore del monaco consacrato	1	1	5	3				HIGH_QUALITY	-% durata di TUTTI i debuff; +% prob. di scrollarne uno a inizio turno		
+rerebrace_defense_20_30_masterwork	REREBRACE	MEDIA	Manica di Piastra del Conciapelli	1	1	6	1				MASTERWORK	+% controllo del peso; -% penalità di velocità da equipaggiamento pesante	[Full Set: Guardia] STUB — Braccio Instancabile: il peso dell'arma non riduce più il numero di attacchi per turno (livello Iniziato)	
+rerebrace_elemental_def_20_30_masterwork	REREBRACE	MEDIA	Manica di Piastra dell'Arcano Maestro	1	1	6	2				MASTERWORK	+% resistenza ad Aria; -% distanza di spinta subita	[Full Set: Veggente] STUB — Ancora di Vento: non puoi essere spostato dalla tua posizione in combattimento (livello Iniziato)	
+rerebrace_special_def_20_30_masterwork	REREBRACE	MEDIA	Manica di Piastra del Sommo Sacerdote	1	1	6	3				MASTERWORK	-% durata di TUTTI i debuff; +% prob. di scrollarne uno a inizio turno	[Full Set: Voto] Purga Lenta: a fine round rimuovi automaticamente il debuff più vecchio (livello Iniziato)	
+rerebrace_defense_30_40_common	REREBRACE	MEDIA	Bracciale di cuoio bollito	1	1	7	1				COMMON			
+rerebrace_elemental_def_30_40_common	REREBRACE	MEDIA	Bracciale del veggente	1	1	7	2				COMMON			
+rerebrace_special_def_30_40_common	REREBRACE	MEDIA	Bracciale dell'eremita	1	1	7	3				COMMON			
+rerebrace_defense_30_40_high_quality	REREBRACE	MEDIA	Bracciale Superiore di cuoio bollito rinforzato	1	1	8	1				HIGH_QUALITY	+% controllo del peso; -% penalità di velocità da equipaggiamento pesante		
+rerebrace_elemental_def_30_40_high_quality	REREBRACE	MEDIA	Bracciale Superiore del veggente sigillato	1	1	8	2				HIGH_QUALITY	+% resistenza ad Aria; -% distanza di spinta subita		
+rerebrace_special_def_30_40_high_quality	REREBRACE	MEDIA	Bracciale Superiore dell'eremita venerato	1	1	8	3				HIGH_QUALITY	-% durata di TUTTI i debuff; +% prob. di scrollarne uno a inizio turno		
+rerebrace_defense_30_40_masterwork	REREBRACE	MEDIA	Manica di Piastra del Maestro Conciapelli	1	1	9	1				MASTERWORK	+% controllo del peso; -% penalità di velocità da equipaggiamento pesante	[Full Set: Guardia] STUB — Braccio Instancabile: il peso dell'arma non riduce più il numero di attacchi per turno (livello Adepto)	
+rerebrace_elemental_def_30_40_masterwork	REREBRACE	MEDIA	Manica di Piastra dell'Arcimago	1	1	9	2				MASTERWORK	+% resistenza ad Aria; -% distanza di spinta subita	[Full Set: Veggente] STUB — Ancora di Vento: non puoi essere spostato dalla tua posizione in combattimento (livello Adepto)	
+rerebrace_special_def_30_40_masterwork	REREBRACE	MEDIA	Manica di Piastra del Patriarca	1	1	9	3				MASTERWORK	-% durata di TUTTI i debuff; +% prob. di scrollarne uno a inizio turno	[Full Set: Voto] Purga Lenta: a fine round rimuovi automaticamente il debuff più vecchio (livello Adepto)	
+rerebrace_defense_30_40_mythic	REREBRACE	MEDIA	Braccio d'Arme del Lupo Ombra	1	1	10	1				MYTHIC	+% controllo del peso; -% penalità di velocità da equipaggiamento pesante	[Full Set: Guardia] STUB — Braccio Instancabile: il peso dell'arma non riduce più il numero di attacchi per turno (livello Adepto)	[Mitico] STUB — Braccio Infaticabile: nessun equipaggiamento applica più penalità di velocità (livello Ascendente)
+rerebrace_elemental_def_30_40_mythic	REREBRACE	MEDIA	Braccio d'Arme dell'Occhio Arcano	1	1	10	2				MYTHIC	+% resistenza ad Aria; -% distanza di spinta subita	[Full Set: Veggente] STUB — Ancora di Vento: non puoi essere spostato dalla tua posizione in combattimento (livello Adepto)	[Mitico] STUB — Radice d'Aria: immune a ogni forma di spostamento forzato (livello Ascendente)
+rerebrace_special_def_30_40_mythic	REREBRACE	MEDIA	Braccio d'Arme della Luce Eterna	1	1	10	3				MYTHIC	-% durata di TUTTI i debuff; +% prob. di scrollarne uno a inizio turno	[Full Set: Voto] Purga Lenta: a fine round rimuovi automaticamente il debuff più vecchio (livello Adepto)	[Mitico] Sangue Puro: i debuff durano al massimo un round, qualunque sia la fonte (livello Ascendente)
+rerebrace_defense_40_50_common	REREBRACE	MEDIA	Bracciale di pelle di bestia	1	1	11	1				COMMON			
+rerebrace_elemental_def_40_50_common	REREBRACE	MEDIA	Bracciale dell'oracolo	1	1	11	2				COMMON			
+rerebrace_special_def_40_50_common	REREBRACE	MEDIA	Bracciale del pellegrino	1	1	11	3				COMMON			
+rerebrace_defense_40_50_high_quality	REREBRACE	MEDIA	Bracciale Superiore di pelle di bestia temprata	1	1	12	1				HIGH_QUALITY	+% controllo del peso; -% penalità di velocità da equipaggiamento pesante		
+rerebrace_elemental_def_40_50_high_quality	REREBRACE	MEDIA	Bracciale Superiore dell'oracolo custodito	1	1	12	2				HIGH_QUALITY	+% resistenza ad Aria; -% distanza di spinta subita		
+rerebrace_special_def_40_50_high_quality	REREBRACE	MEDIA	Bracciale Superiore del pellegrino redento	1	1	12	3				HIGH_QUALITY	-% durata di TUTTI i debuff; +% prob. di scrollarne uno a inizio turno		
+rerebrace_defense_40_50_masterwork	REREBRACE	MEDIA	Manica di Piastra del Cacciatore Leggendario	1	1	13	1				MASTERWORK	+% controllo del peso; -% penalità di velocità da equipaggiamento pesante	[Full Set: Guardia] STUB — Braccio Instancabile: il peso dell'arma non riduce più il numero di attacchi per turno (livello Maestro)	
+rerebrace_elemental_def_40_50_masterwork	REREBRACE	MEDIA	Manica di Piastra del Gran Tessitore di Magia	1	1	13	2				MASTERWORK	+% resistenza ad Aria; -% distanza di spinta subita	[Full Set: Veggente] STUB — Ancora di Vento: non puoi essere spostato dalla tua posizione in combattimento (livello Maestro)	
+rerebrace_special_def_40_50_masterwork	REREBRACE	MEDIA	Manica di Piastra del Profeta Sacro	1	1	13	3				MASTERWORK	-% durata di TUTTI i debuff; +% prob. di scrollarne uno a inizio turno	[Full Set: Voto] Purga Lenta: a fine round rimuovi automaticamente il debuff più vecchio (livello Maestro)	
+rerebrace_defense_40_50_mythic	REREBRACE	MEDIA	Braccio d'Arme dell'Ultimo Custode	1	1	14	1				MYTHIC	+% controllo del peso; -% penalità di velocità da equipaggiamento pesante	[Full Set: Guardia] STUB — Braccio Instancabile: il peso dell'arma non riduce più il numero di attacchi per turno (livello Maestro)	[Mitico] STUB — Braccio Infaticabile: nessun equipaggiamento applica più penalità di velocità (livello Trascendente)
+rerebrace_elemental_def_40_50_mythic	REREBRACE	MEDIA	Braccio d'Arme del Velo Infinito	1	1	14	2				MYTHIC	+% resistenza ad Aria; -% distanza di spinta subita	[Full Set: Veggente] STUB — Ancora di Vento: non puoi essere spostato dalla tua posizione in combattimento (livello Maestro)	[Mitico] STUB — Radice d'Aria: immune a ogni forma di spostamento forzato (livello Trascendente)
+rerebrace_special_def_40_50_mythic	REREBRACE	MEDIA	Braccio d'Arme della Grazia Divina	1	1	14	3				MYTHIC	-% durata di TUTTI i debuff; +% prob. di scrollarne uno a inizio turno	[Full Set: Voto] Purga Lenta: a fine round rimuovi automaticamente il debuff più vecchio (livello Maestro)	[Mitico] Sangue Puro: i debuff durano al massimo un round, qualunque sia la fonte (livello Trascendente)
+couter_defense_0_10_common	COUTER	LEGGERA	Gomitiera di cuoio	1	2	1	1				COMMON			
+couter_elemental_def_0_10_common	COUTER	LEGGERA	Gomitiera a punta del mago	1	2	1	2				COMMON			
+couter_special_def_0_10_common	COUTER	LEGGERA	Gomitiera del prete	1	2	1	3				COMMON			
+couter_defense_10_20_common	COUTER	LEGGERA	Gomitiera di cuoio grezzo	1	2	2	1				COMMON			
+couter_elemental_def_10_20_common	COUTER	LEGGERA	Gomitiera dell'apprendista	1	2	2	2				COMMON			
+couter_special_def_10_20_common	COUTER	LEGGERA	Gomitiera del chierico	1	2	2	3				COMMON			
+couter_defense_10_20_high_quality	COUTER	LEGGERA	Cubitiera di cuoio rinforzato	1	2	3	1				HIGH_QUALITY	+% controllo sulle armi a distanza; +% difesa dai proiettili		
+couter_elemental_def_10_20_high_quality	COUTER	LEGGERA	Cubitiera dell'apprendista incantato	1	2	3	2				HIGH_QUALITY	+% resistenza ad Acqua; -% durata dei rallentamenti		
+couter_special_def_10_20_high_quality	COUTER	LEGGERA	Cubitiera del chierico devoto	1	2	3	3				HIGH_QUALITY	+% resistenza al drenaggio; +% recupero di ciò che ti viene drenato		
+couter_defense_20_30_common	COUTER	LEGGERA	Gomitiera di pelle indurita	1	2	4	1				COMMON			
+couter_elemental_def_20_30_common	COUTER	LEGGERA	Gomitiera dello stregone	1	2	4	2				COMMON			
+couter_special_def_20_30_common	COUTER	LEGGERA	Gomitiera del monaco	1	2	4	3				COMMON			
+couter_defense_20_30_high_quality	COUTER	LEGGERA	Cubitiera di pelle borchiata	1	2	5	1				HIGH_QUALITY	+% controllo sulle armi a distanza; +% difesa dai proiettili		
+couter_elemental_def_20_30_high_quality	COUTER	LEGGERA	Cubitiera dello stregone runico	1	2	5	2				HIGH_QUALITY	+% resistenza ad Acqua; -% durata dei rallentamenti		
+couter_special_def_20_30_high_quality	COUTER	LEGGERA	Cubitiera del monaco consacrato	1	2	5	3				HIGH_QUALITY	+% resistenza al drenaggio; +% recupero di ciò che ti viene drenato		
+couter_defense_20_30_masterwork	COUTER	LEGGERA	Cubito d'Acciaio del Conciapelli	1	2	6	1				MASTERWORK	+% controllo sulle armi a distanza; +% difesa dai proiettili	[Full Set: Guardia] STUB — Gomito Fermo: i colpi a distanza non possono essere critici contro di te (livello Iniziato)	
+couter_elemental_def_20_30_masterwork	COUTER	LEGGERA	Cubito d'Acciaio dell'Arcano Maestro	1	2	6	2				MASTERWORK	+% resistenza ad Acqua; -% durata dei rallentamenti	[Full Set: Veggente] STUB — Corrente Contraria: ogni rallentamento subito ti dà invece un turno di velocità (livello Iniziato)	
+couter_special_def_20_30_masterwork	COUTER	LEGGERA	Cubito d'Acciaio del Sommo Sacerdote	1	2	6	3				MASTERWORK	+% resistenza al drenaggio; +% recupero di ciò che ti viene drenato	[Full Set: Voto] STUB — Vena Chiusa: ciò che il nemico ti drena viene restituito a te a fine combattimento (livello Iniziato)	
+couter_defense_30_40_common	COUTER	LEGGERA	Gomitiera di cuoio bollito	1	2	7	1				COMMON			
+couter_elemental_def_30_40_common	COUTER	LEGGERA	Gomitiera del veggente	1	2	7	2				COMMON			
+couter_special_def_30_40_common	COUTER	LEGGERA	Gomitiera dell'eremita	1	2	7	3				COMMON			
+couter_defense_30_40_high_quality	COUTER	LEGGERA	Cubitiera di cuoio bollito rinforzato	1	2	8	1				HIGH_QUALITY	+% controllo sulle armi a distanza; +% difesa dai proiettili		
+couter_elemental_def_30_40_high_quality	COUTER	LEGGERA	Cubitiera del veggente sigillato	1	2	8	2				HIGH_QUALITY	+% resistenza ad Acqua; -% durata dei rallentamenti		
+couter_special_def_30_40_high_quality	COUTER	LEGGERA	Cubitiera dell'eremita venerato	1	2	8	3				HIGH_QUALITY	+% resistenza al drenaggio; +% recupero di ciò che ti viene drenato		
+couter_defense_30_40_masterwork	COUTER	LEGGERA	Cubito d'Acciaio del Maestro Conciapelli	1	2	9	1				MASTERWORK	+% controllo sulle armi a distanza; +% difesa dai proiettili	[Full Set: Guardia] STUB — Gomito Fermo: i colpi a distanza non possono essere critici contro di te (livello Adepto)	
+couter_elemental_def_30_40_masterwork	COUTER	LEGGERA	Cubito d'Acciaio dell'Arcimago	1	2	9	2				MASTERWORK	+% resistenza ad Acqua; -% durata dei rallentamenti	[Full Set: Veggente] STUB — Corrente Contraria: ogni rallentamento subito ti dà invece un turno di velocità (livello Adepto)	
+couter_special_def_30_40_masterwork	COUTER	LEGGERA	Cubito d'Acciaio del Patriarca	1	2	9	3				MASTERWORK	+% resistenza al drenaggio; +% recupero di ciò che ti viene drenato	[Full Set: Voto] STUB — Vena Chiusa: ciò che il nemico ti drena viene restituito a te a fine combattimento (livello Adepto)	
+couter_defense_30_40_mythic	COUTER	LEGGERA	Cubitale del Lupo Ombra	1	2	10	1				MYTHIC	+% controllo sulle armi a distanza; +% difesa dai proiettili	[Full Set: Guardia] STUB — Gomito Fermo: i colpi a distanza non possono essere critici contro di te (livello Adepto)	[Mitico] STUB — Deviazione: puoi deviare un proiettile contro il suo stesso lanciatore, una volta per combattimento (livello Ascendente)
+couter_elemental_def_30_40_mythic	COUTER	LEGGERA	Cubitale dell'Occhio Arcano	1	2	10	2				MYTHIC	+% resistenza ad Acqua; -% durata dei rallentamenti	[Full Set: Veggente] STUB — Corrente Contraria: ogni rallentamento subito ti dà invece un turno di velocità (livello Adepto)	[Mitico] STUB — Marea Interiore: immune a ogni effetto di rallentamento (livello Ascendente)
+couter_special_def_30_40_mythic	COUTER	LEGGERA	Cubitale della Luce Eterna	1	2	10	3				MYTHIC	+% resistenza al drenaggio; +% recupero di ciò che ti viene drenato	[Full Set: Voto] STUB — Vena Chiusa: ciò che il nemico ti drena viene restituito a te a fine combattimento (livello Adepto)	[Mitico] STUB — Fonte Sigillata: non puoi mai essere drenato, in nessuna forma (livello Ascendente)
+couter_defense_40_50_common	COUTER	LEGGERA	Gomitiera di pelle di bestia	1	2	11	1				COMMON			
+couter_elemental_def_40_50_common	COUTER	LEGGERA	Gomitiera dell'oracolo	1	2	11	2				COMMON			
+couter_special_def_40_50_common	COUTER	LEGGERA	Gomitiera del pellegrino	1	2	11	3				COMMON			
+couter_defense_40_50_high_quality	COUTER	LEGGERA	Cubitiera di pelle di bestia temprata	1	2	12	1				HIGH_QUALITY	+% controllo sulle armi a distanza; +% difesa dai proiettili		
+couter_elemental_def_40_50_high_quality	COUTER	LEGGERA	Cubitiera dell'oracolo custodito	1	2	12	2				HIGH_QUALITY	+% resistenza ad Acqua; -% durata dei rallentamenti		
+couter_special_def_40_50_high_quality	COUTER	LEGGERA	Cubitiera del pellegrino redento	1	2	12	3				HIGH_QUALITY	+% resistenza al drenaggio; +% recupero di ciò che ti viene drenato		
+couter_defense_40_50_masterwork	COUTER	LEGGERA	Cubito d'Acciaio del Cacciatore Leggendario	1	2	13	1				MASTERWORK	+% controllo sulle armi a distanza; +% difesa dai proiettili	[Full Set: Guardia] STUB — Gomito Fermo: i colpi a distanza non possono essere critici contro di te (livello Maestro)	
+couter_elemental_def_40_50_masterwork	COUTER	LEGGERA	Cubito d'Acciaio del Gran Tessitore di Magia	1	2	13	2				MASTERWORK	+% resistenza ad Acqua; -% durata dei rallentamenti	[Full Set: Veggente] STUB — Corrente Contraria: ogni rallentamento subito ti dà invece un turno di velocità (livello Maestro)	
+couter_special_def_40_50_masterwork	COUTER	LEGGERA	Cubito d'Acciaio del Profeta Sacro	1	2	13	3				MASTERWORK	+% resistenza al drenaggio; +% recupero di ciò che ti viene drenato	[Full Set: Voto] STUB — Vena Chiusa: ciò che il nemico ti drena viene restituito a te a fine combattimento (livello Maestro)	
+couter_defense_40_50_mythic	COUTER	LEGGERA	Cubitale dell'Ultimo Custode	1	2	14	1				MYTHIC	+% controllo sulle armi a distanza; +% difesa dai proiettili	[Full Set: Guardia] STUB — Gomito Fermo: i colpi a distanza non possono essere critici contro di te (livello Maestro)	[Mitico] STUB — Deviazione: puoi deviare un proiettile contro il suo stesso lanciatore, una volta per combattimento (livello Trascendente)
+couter_elemental_def_40_50_mythic	COUTER	LEGGERA	Cubitale del Velo Infinito	1	2	14	2				MYTHIC	+% resistenza ad Acqua; -% durata dei rallentamenti	[Full Set: Veggente] STUB — Corrente Contraria: ogni rallentamento subito ti dà invece un turno di velocità (livello Maestro)	[Mitico] STUB — Marea Interiore: immune a ogni effetto di rallentamento (livello Trascendente)
+couter_special_def_40_50_mythic	COUTER	LEGGERA	Cubitale della Grazia Divina	1	2	14	3				MYTHIC	+% resistenza al drenaggio; +% recupero di ciò che ti viene drenato	[Full Set: Voto] STUB — Vena Chiusa: ciò che il nemico ti drena viene restituito a te a fine combattimento (livello Maestro)	[Mitico] STUB — Fonte Sigillata: non puoi mai essere drenato, in nessuna forma (livello Trascendente)
+vanbrace_defense_0_10_common	VANBRACE	LEGGERA	Manichetto di cuoio	1	2	1	1				COMMON			
+vanbrace_elemental_def_0_10_common	VANBRACE	LEGGERA	Manichetto a punta del mago	1	2	1	2				COMMON			
+vanbrace_special_def_0_10_common	VANBRACE	LEGGERA	Manichetto del prete	1	2	1	3				COMMON			
+vanbrace_defense_10_20_common	VANBRACE	LEGGERA	Manichetto di cuoio grezzo	1	2	2	1				COMMON			
+vanbrace_elemental_def_10_20_common	VANBRACE	LEGGERA	Manichetto dell'apprendista	1	2	2	2				COMMON			
+vanbrace_special_def_10_20_common	VANBRACE	LEGGERA	Manichetto del chierico	1	2	2	3				COMMON			
+vanbrace_defense_10_20_high_quality	VANBRACE	LEGGERA	Avambraccio di cuoio rinforzato	1	2	3	1				HIGH_QUALITY	+% controllo dell'arma; +% stabilità in parata		
+vanbrace_elemental_def_10_20_high_quality	VANBRACE	LEGGERA	Avambraccio dell'apprendista incantato	1	2	3	2				HIGH_QUALITY	+% resistenza a Terra; -% usura dell'equipaggiamento da Rottura		
+vanbrace_special_def_10_20_high_quality	VANBRACE	LEGGERA	Avambraccio del chierico devoto	1	2	3	3				HIGH_QUALITY	+% resistenza ai marchi; -% danni extra subiti da bersaglio marchiato		
+vanbrace_defense_20_30_common	VANBRACE	LEGGERA	Manichetto di pelle indurita	1	2	4	1				COMMON			
+vanbrace_elemental_def_20_30_common	VANBRACE	LEGGERA	Manichetto dello stregone	1	2	4	2				COMMON			
+vanbrace_special_def_20_30_common	VANBRACE	LEGGERA	Manichetto del monaco	1	2	4	3				COMMON			
+vanbrace_defense_20_30_high_quality	VANBRACE	LEGGERA	Avambraccio di pelle borchiata	1	2	5	1				HIGH_QUALITY	+% controllo dell'arma; +% stabilità in parata		
+vanbrace_elemental_def_20_30_high_quality	VANBRACE	LEGGERA	Avambraccio dello stregone runico	1	2	5	2				HIGH_QUALITY	+% resistenza a Terra; -% usura dell'equipaggiamento da Rottura		
+vanbrace_special_def_20_30_high_quality	VANBRACE	LEGGERA	Avambraccio del monaco consacrato	1	2	5	3				HIGH_QUALITY	+% resistenza ai marchi; -% danni extra subiti da bersaglio marchiato		
+vanbrace_defense_20_30_masterwork	VANBRACE	LEGGERA	Manopola d'Avambraccio del Conciapelli	1	2	6	1				MASTERWORK	+% controllo dell'arma; +% stabilità in parata	[Full Set: Guardia] Presa Ferrea: non perdi mai l'arma, nemmeno per effetti che ignorano le resistenze (livello Iniziato)	
+vanbrace_elemental_def_20_30_masterwork	VANBRACE	LEGGERA	Manopola d'Avambraccio dell'Arcano Maestro	1	2	6	2				MASTERWORK	+% resistenza a Terra; -% usura dell'equipaggiamento da Rottura	[Full Set: Veggente] Scaglia di Pietra: la Rottura subita si trasforma in armatura temporanea (livello Iniziato)	
+vanbrace_special_def_20_30_masterwork	VANBRACE	LEGGERA	Manopola d'Avambraccio del Sommo Sacerdote	1	2	6	3				MASTERWORK	+% resistenza ai marchi; -% danni extra subiti da bersaglio marchiato	[Full Set: Voto] STUB — Nome Nascosto: il primo nemico che ti marchia perde il proprio turno (livello Iniziato)	
+vanbrace_defense_30_40_common	VANBRACE	LEGGERA	Manichetto di cuoio bollito	1	2	7	1				COMMON			
+vanbrace_elemental_def_30_40_common	VANBRACE	LEGGERA	Manichetto del veggente	1	2	7	2				COMMON			
+vanbrace_special_def_30_40_common	VANBRACE	LEGGERA	Manichetto dell'eremita	1	2	7	3				COMMON			
+vanbrace_defense_30_40_high_quality	VANBRACE	LEGGERA	Avambraccio di cuoio bollito rinforzato	1	2	8	1				HIGH_QUALITY	+% controllo dell'arma; +% stabilità in parata		
+vanbrace_elemental_def_30_40_high_quality	VANBRACE	LEGGERA	Avambraccio del veggente sigillato	1	2	8	2				HIGH_QUALITY	+% resistenza a Terra; -% usura dell'equipaggiamento da Rottura		
+vanbrace_special_def_30_40_high_quality	VANBRACE	LEGGERA	Avambraccio dell'eremita venerato	1	2	8	3				HIGH_QUALITY	+% resistenza ai marchi; -% danni extra subiti da bersaglio marchiato		
+vanbrace_defense_30_40_masterwork	VANBRACE	LEGGERA	Manopola d'Avambraccio del Maestro Conciapelli	1	2	9	1				MASTERWORK	+% controllo dell'arma; +% stabilità in parata	[Full Set: Guardia] Presa Ferrea: non perdi mai l'arma, nemmeno per effetti che ignorano le resistenze (livello Adepto)	
+vanbrace_elemental_def_30_40_masterwork	VANBRACE	LEGGERA	Manopola d'Avambraccio dell'Arcimago	1	2	9	2				MASTERWORK	+% resistenza a Terra; -% usura dell'equipaggiamento da Rottura	[Full Set: Veggente] Scaglia di Pietra: la Rottura subita si trasforma in armatura temporanea (livello Adepto)	
+vanbrace_special_def_30_40_masterwork	VANBRACE	LEGGERA	Manopola d'Avambraccio del Patriarca	1	2	9	3				MASTERWORK	+% resistenza ai marchi; -% danni extra subiti da bersaglio marchiato	[Full Set: Voto] STUB — Nome Nascosto: il primo nemico che ti marchia perde il proprio turno (livello Adepto)	
+vanbrace_defense_30_40_mythic	VANBRACE	LEGGERA	Vambrace del Lupo Ombra	1	2	10	1				MYTHIC	+% controllo dell'arma; +% stabilità in parata	[Full Set: Guardia] Presa Ferrea: non perdi mai l'arma, nemmeno per effetti che ignorano le resistenze (livello Adepto)	[Mitico] Presa Eterna: la tua arma non può mai essere rimossa o sostituita contro la tua volontà (livello Ascendente)
+vanbrace_elemental_def_30_40_mythic	VANBRACE	LEGGERA	Vambrace dell'Occhio Arcano	1	2	10	2				MYTHIC	+% resistenza a Terra; -% usura dell'equipaggiamento da Rottura	[Full Set: Veggente] Scaglia di Pietra: la Rottura subita si trasforma in armatura temporanea (livello Adepto)	[Mitico] Corpo di Roccia: la Rottura non riduce mai le tue statistiche (livello Ascendente)
+vanbrace_special_def_30_40_mythic	VANBRACE	LEGGERA	Vambrace della Luce Eterna	1	2	10	3				MYTHIC	+% resistenza ai marchi; -% danni extra subiti da bersaglio marchiato	[Full Set: Voto] STUB — Nome Nascosto: il primo nemico che ti marchia perde il proprio turno (livello Adepto)	[Mitico] STUB — Senza Nome: non puoi mai essere marchiato o bersagliato in modo prioritario (livello Ascendente)
+vanbrace_defense_40_50_common	VANBRACE	LEGGERA	Manichetto di pelle di bestia	1	2	11	1				COMMON			
+vanbrace_elemental_def_40_50_common	VANBRACE	LEGGERA	Manichetto dell'oracolo	1	2	11	2				COMMON			
+vanbrace_special_def_40_50_common	VANBRACE	LEGGERA	Manichetto del pellegrino	1	2	11	3				COMMON			
+vanbrace_defense_40_50_high_quality	VANBRACE	LEGGERA	Avambraccio di pelle di bestia temprata	1	2	12	1				HIGH_QUALITY	+% controllo dell'arma; +% stabilità in parata		
+vanbrace_elemental_def_40_50_high_quality	VANBRACE	LEGGERA	Avambraccio dell'oracolo custodito	1	2	12	2				HIGH_QUALITY	+% resistenza a Terra; -% usura dell'equipaggiamento da Rottura		
+vanbrace_special_def_40_50_high_quality	VANBRACE	LEGGERA	Avambraccio del pellegrino redento	1	2	12	3				HIGH_QUALITY	+% resistenza ai marchi; -% danni extra subiti da bersaglio marchiato		
+vanbrace_defense_40_50_masterwork	VANBRACE	LEGGERA	Manopola d'Avambraccio del Cacciatore Leggendario	1	2	13	1				MASTERWORK	+% controllo dell'arma; +% stabilità in parata	[Full Set: Guardia] Presa Ferrea: non perdi mai l'arma, nemmeno per effetti che ignorano le resistenze (livello Maestro)	
+vanbrace_elemental_def_40_50_masterwork	VANBRACE	LEGGERA	Manopola d'Avambraccio del Gran Tessitore di Magia	1	2	13	2				MASTERWORK	+% resistenza a Terra; -% usura dell'equipaggiamento da Rottura	[Full Set: Veggente] Scaglia di Pietra: la Rottura subita si trasforma in armatura temporanea (livello Maestro)	
+vanbrace_special_def_40_50_masterwork	VANBRACE	LEGGERA	Manopola d'Avambraccio del Profeta Sacro	1	2	13	3				MASTERWORK	+% resistenza ai marchi; -% danni extra subiti da bersaglio marchiato	[Full Set: Voto] STUB — Nome Nascosto: il primo nemico che ti marchia perde il proprio turno (livello Maestro)	
+vanbrace_defense_40_50_mythic	VANBRACE	LEGGERA	Vambrace dell'Ultimo Custode	1	2	14	1				MYTHIC	+% controllo dell'arma; +% stabilità in parata	[Full Set: Guardia] Presa Ferrea: non perdi mai l'arma, nemmeno per effetti che ignorano le resistenze (livello Maestro)	[Mitico] Presa Eterna: la tua arma non può mai essere rimossa o sostituita contro la tua volontà (livello Trascendente)
+vanbrace_elemental_def_40_50_mythic	VANBRACE	LEGGERA	Vambrace del Velo Infinito	1	2	14	2				MYTHIC	+% resistenza a Terra; -% usura dell'equipaggiamento da Rottura	[Full Set: Veggente] Scaglia di Pietra: la Rottura subita si trasforma in armatura temporanea (livello Maestro)	[Mitico] Corpo di Roccia: la Rottura non riduce mai le tue statistiche (livello Trascendente)
+vanbrace_special_def_40_50_mythic	VANBRACE	LEGGERA	Vambrace della Grazia Divina	1	2	14	3				MYTHIC	+% resistenza ai marchi; -% danni extra subiti da bersaglio marchiato	[Full Set: Voto] STUB — Nome Nascosto: il primo nemico che ti marchia perde il proprio turno (livello Maestro)	[Mitico] STUB — Senza Nome: non puoi mai essere marchiato o bersagliato in modo prioritario (livello Trascendente)
+gauntlet_defense_0_10_common	GAUNTLET	MEDIA	Guanto di cuoio	1	1	1	1				COMMON			
+gauntlet_elemental_def_0_10_common	GAUNTLET	MEDIA	Guanto a punta del mago	1	1	1	2				COMMON			
+gauntlet_special_def_0_10_common	GAUNTLET	MEDIA	Guanto del prete	1	1	1	3				COMMON			
+gauntlet_defense_10_20_common	GAUNTLET	MEDIA	Guanto di cuoio grezzo	1	1	2	1				COMMON			
+gauntlet_elemental_def_10_20_common	GAUNTLET	MEDIA	Guanto dell'apprendista	1	1	2	2				COMMON			
+gauntlet_special_def_10_20_common	GAUNTLET	MEDIA	Guanto del chierico	1	1	2	3				COMMON			
+gauntlet_defense_10_20_high_quality	GAUNTLET	MEDIA	Manopola di cuoio rinforzato	1	1	3	1				HIGH_QUALITY	+% presa sull'arma; -% prob. di essere disarmato in parata		
+gauntlet_elemental_def_10_20_high_quality	GAUNTLET	MEDIA	Manopola dell'apprendista incantato	1	1	3	2				HIGH_QUALITY	-% durata di TUTTE le reazioni elementali; +% prob. di annullarne l'innesco		
+gauntlet_special_def_10_20_high_quality	GAUNTLET	MEDIA	Manopola del chierico devoto	1	1	3	3				HIGH_QUALITY	+% resistenza al furto; +% prob. di recuperare subito ciò che ti è stato rubato		
+gauntlet_defense_20_30_common	GAUNTLET	MEDIA	Guanto di pelle indurita	1	1	4	1				COMMON			
+gauntlet_elemental_def_20_30_common	GAUNTLET	MEDIA	Guanto dello stregone	1	1	4	2				COMMON			
+gauntlet_special_def_20_30_common	GAUNTLET	MEDIA	Guanto del monaco	1	1	4	3				COMMON			
+gauntlet_defense_20_30_high_quality	GAUNTLET	MEDIA	Manopola di pelle borchiata	1	1	5	1				HIGH_QUALITY	+% presa sull'arma; -% prob. di essere disarmato in parata		
+gauntlet_elemental_def_20_30_high_quality	GAUNTLET	MEDIA	Manopola dello stregone runico	1	1	5	2				HIGH_QUALITY	-% durata di TUTTE le reazioni elementali; +% prob. di annullarne l'innesco		
+gauntlet_special_def_20_30_high_quality	GAUNTLET	MEDIA	Manopola del monaco consacrato	1	1	5	3				HIGH_QUALITY	+% resistenza al furto; +% prob. di recuperare subito ciò che ti è stato rubato		
+gauntlet_defense_20_30_masterwork	GAUNTLET	MEDIA	Guanto di Piastra del Conciapelli	1	1	6	1				MASTERWORK	+% presa sull'arma; -% prob. di essere disarmato in parata	[Full Set: Guardia] STUB — Pugno Chiuso: puoi parare a mani nude senza penalità (livello Iniziato)	
+gauntlet_elemental_def_20_30_masterwork	GAUNTLET	MEDIA	Guanto di Piastra dell'Arcano Maestro	1	1	6	2				MASTERWORK	-% durata di TUTTE le reazioni elementali; +% prob. di annullarne l'innesco	[Full Set: Veggente] STUB — Mano che Spezza: puoi interrompere una reazione elementale prima che si inneschi, una volta per combattimento (livello Iniziato)	
+gauntlet_special_def_20_30_masterwork	GAUNTLET	MEDIA	Guanto di Piastra del Sommo Sacerdote	1	1	6	3				MASTERWORK	+% resistenza al furto; +% prob. di recuperare subito ciò che ti è stato rubato	[Full Set: Voto] STUB — Mano Salda: chi ti deruba lascia cadere un proprio oggetto (livello Iniziato)	
+gauntlet_defense_30_40_common	GAUNTLET	MEDIA	Guanto di cuoio bollito	1	1	7	1				COMMON			
+gauntlet_elemental_def_30_40_common	GAUNTLET	MEDIA	Guanto del veggente	1	1	7	2				COMMON			
+gauntlet_special_def_30_40_common	GAUNTLET	MEDIA	Guanto dell'eremita	1	1	7	3				COMMON			
+gauntlet_defense_30_40_high_quality	GAUNTLET	MEDIA	Manopola di cuoio bollito rinforzato	1	1	8	1				HIGH_QUALITY	+% presa sull'arma; -% prob. di essere disarmato in parata		
+gauntlet_elemental_def_30_40_high_quality	GAUNTLET	MEDIA	Manopola del veggente sigillato	1	1	8	2				HIGH_QUALITY	-% durata di TUTTE le reazioni elementali; +% prob. di annullarne l'innesco		
+gauntlet_special_def_30_40_high_quality	GAUNTLET	MEDIA	Manopola dell'eremita venerato	1	1	8	3				HIGH_QUALITY	+% resistenza al furto; +% prob. di recuperare subito ciò che ti è stato rubato		
+gauntlet_defense_30_40_masterwork	GAUNTLET	MEDIA	Guanto di Piastra del Maestro Conciapelli	1	1	9	1				MASTERWORK	+% presa sull'arma; -% prob. di essere disarmato in parata	[Full Set: Guardia] STUB — Pugno Chiuso: puoi parare a mani nude senza penalità (livello Adepto)	
+gauntlet_elemental_def_30_40_masterwork	GAUNTLET	MEDIA	Guanto di Piastra dell'Arcimago	1	1	9	2				MASTERWORK	-% durata di TUTTE le reazioni elementali; +% prob. di annullarne l'innesco	[Full Set: Veggente] STUB — Mano che Spezza: puoi interrompere una reazione elementale prima che si inneschi, una volta per combattimento (livello Adepto)	
+gauntlet_special_def_30_40_masterwork	GAUNTLET	MEDIA	Guanto di Piastra del Patriarca	1	1	9	3				MASTERWORK	+% resistenza al furto; +% prob. di recuperare subito ciò che ti è stato rubato	[Full Set: Voto] STUB — Mano Salda: chi ti deruba lascia cadere un proprio oggetto (livello Adepto)	
+gauntlet_defense_30_40_mythic	GAUNTLET	MEDIA	Manopola d'Arme del Lupo Ombra	1	1	10	1				MYTHIC	+% presa sull'arma; -% prob. di essere disarmato in parata	[Full Set: Guardia] STUB — Pugno Chiuso: puoi parare a mani nude senza penalità (livello Adepto)	[Mitico] Mano di Ferro: non puoi mai essere disarmato (livello Ascendente)
+gauntlet_elemental_def_30_40_mythic	GAUNTLET	MEDIA	Manopola d'Arme dell'Occhio Arcano	1	1	10	2				MYTHIC	-% durata di TUTTE le reazioni elementali; +% prob. di annullarne l'innesco	[Full Set: Veggente] STUB — Mano che Spezza: puoi interrompere una reazione elementale prima che si inneschi, una volta per combattimento (livello Adepto)	[Mitico] STUB — Mano Neutra: puoi interrompere una reazione elementale ogni volta che si innesca (livello Ascendente)
+gauntlet_special_def_30_40_mythic	GAUNTLET	MEDIA	Manopola d'Arme della Luce Eterna	1	1	10	3				MYTHIC	+% resistenza al furto; +% prob. di recuperare subito ciò che ti è stato rubato	[Full Set: Voto] STUB — Mano Salda: chi ti deruba lascia cadere un proprio oggetto (livello Adepto)	[Mitico] STUB — Mano Vuota: non puoi mai essere derubato di oggetti o componenti (livello Ascendente)
+gauntlet_defense_40_50_common	GAUNTLET	MEDIA	Guanto di pelle di bestia	1	1	11	1				COMMON			
+gauntlet_elemental_def_40_50_common	GAUNTLET	MEDIA	Guanto dell'oracolo	1	1	11	2				COMMON			
+gauntlet_special_def_40_50_common	GAUNTLET	MEDIA	Guanto del pellegrino	1	1	11	3				COMMON			
+gauntlet_defense_40_50_high_quality	GAUNTLET	MEDIA	Manopola di pelle di bestia temprata	1	1	12	1				HIGH_QUALITY	+% presa sull'arma; -% prob. di essere disarmato in parata		
+gauntlet_elemental_def_40_50_high_quality	GAUNTLET	MEDIA	Manopola dell'oracolo custodito	1	1	12	2				HIGH_QUALITY	-% durata di TUTTE le reazioni elementali; +% prob. di annullarne l'innesco		
+gauntlet_special_def_40_50_high_quality	GAUNTLET	MEDIA	Manopola del pellegrino redento	1	1	12	3				HIGH_QUALITY	+% resistenza al furto; +% prob. di recuperare subito ciò che ti è stato rubato		
+gauntlet_defense_40_50_masterwork	GAUNTLET	MEDIA	Guanto di Piastra del Cacciatore Leggendario	1	1	13	1				MASTERWORK	+% presa sull'arma; -% prob. di essere disarmato in parata	[Full Set: Guardia] STUB — Pugno Chiuso: puoi parare a mani nude senza penalità (livello Maestro)	
+gauntlet_elemental_def_40_50_masterwork	GAUNTLET	MEDIA	Guanto di Piastra del Gran Tessitore di Magia	1	1	13	2				MASTERWORK	-% durata di TUTTE le reazioni elementali; +% prob. di annullarne l'innesco	[Full Set: Veggente] STUB — Mano che Spezza: puoi interrompere una reazione elementale prima che si inneschi, una volta per combattimento (livello Maestro)	
+gauntlet_special_def_40_50_masterwork	GAUNTLET	MEDIA	Guanto di Piastra del Profeta Sacro	1	1	13	3				MASTERWORK	+% resistenza al furto; +% prob. di recuperare subito ciò che ti è stato rubato	[Full Set: Voto] STUB — Mano Salda: chi ti deruba lascia cadere un proprio oggetto (livello Maestro)	
+gauntlet_defense_40_50_mythic	GAUNTLET	MEDIA	Manopola d'Arme dell'Ultimo Custode	1	1	14	1				MYTHIC	+% presa sull'arma; -% prob. di essere disarmato in parata	[Full Set: Guardia] STUB — Pugno Chiuso: puoi parare a mani nude senza penalità (livello Maestro)	[Mitico] Mano di Ferro: non puoi mai essere disarmato (livello Trascendente)
+gauntlet_elemental_def_40_50_mythic	GAUNTLET	MEDIA	Manopola d'Arme del Velo Infinito	1	1	14	2				MYTHIC	-% durata di TUTTE le reazioni elementali; +% prob. di annullarne l'innesco	[Full Set: Veggente] STUB — Mano che Spezza: puoi interrompere una reazione elementale prima che si inneschi, una volta per combattimento (livello Maestro)	[Mitico] STUB — Mano Neutra: puoi interrompere una reazione elementale ogni volta che si innesca (livello Trascendente)
+gauntlet_special_def_40_50_mythic	GAUNTLET	MEDIA	Manopola d'Arme della Grazia Divina	1	1	14	3				MYTHIC	+% resistenza al furto; +% prob. di recuperare subito ciò che ti è stato rubato	[Full Set: Voto] STUB — Mano Salda: chi ti deruba lascia cadere un proprio oggetto (livello Maestro)	[Mitico] STUB — Mano Vuota: non puoi mai essere derubato di oggetti o componenti (livello Trascendente)
+cuirasse_defense_0_10_common	CUIRASSE	MEDIA	Corpetto di cuoio	1	3	1	1				COMMON			
+cuirasse_elemental_def_0_10_common	CUIRASSE	MEDIA	Corpetto a punta del mago	1	3	1	2				COMMON			
+cuirasse_special_def_0_10_common	CUIRASSE	MEDIA	Corpetto del prete	1	3	1	3				COMMON			
+cuirasse_defense_10_20_common	CUIRASSE	MEDIA	Corpetto di cuoio grezzo	1	3	2	1				COMMON			
+cuirasse_elemental_def_10_20_common	CUIRASSE	MEDIA	Corpetto dell'apprendista	1	3	2	2				COMMON			
+cuirasse_special_def_10_20_common	CUIRASSE	MEDIA	Corpetto del chierico	1	3	2	3				COMMON			
+cuirasse_defense_10_20_high_quality	CUIRASSE	MEDIA	Corsaletto di cuoio rinforzato	1	3	3	1				HIGH_QUALITY	+% difesa da perforazione e taglio sul busto		
+cuirasse_elemental_def_10_20_high_quality	CUIRASSE	MEDIA	Corsaletto dell'apprendista incantato	1	3	3	2				HIGH_QUALITY	+% resistenza a TUTTI gli elementi (valore ridotto); -% danni ad area		
+cuirasse_special_def_10_20_high_quality	CUIRASSE	MEDIA	Corsaletto del chierico devoto	1	3	3	3				HIGH_QUALITY	+% difesa contro i danni che ignorano l'armatura		
+cuirasse_defense_20_30_common	CUIRASSE	MEDIA	Corpetto di pelle indurita	1	3	4	1				COMMON			
+cuirasse_elemental_def_20_30_common	CUIRASSE	MEDIA	Corpetto dello stregone	1	3	4	2				COMMON			
+cuirasse_special_def_20_30_common	CUIRASSE	MEDIA	Corpetto del monaco	1	3	4	3				COMMON			
+cuirasse_defense_20_30_high_quality	CUIRASSE	MEDIA	Corsaletto di pelle borchiata	1	3	5	1				HIGH_QUALITY	+% difesa da perforazione e taglio sul busto		
+cuirasse_elemental_def_20_30_high_quality	CUIRASSE	MEDIA	Corsaletto dello stregone runico	1	3	5	2				HIGH_QUALITY	+% resistenza a TUTTI gli elementi (valore ridotto); -% danni ad area		
+cuirasse_special_def_20_30_high_quality	CUIRASSE	MEDIA	Corsaletto del monaco consacrato	1	3	5	3				HIGH_QUALITY	+% difesa contro i danni che ignorano l'armatura		
+cuirasse_defense_20_30_masterwork	CUIRASSE	MEDIA	Corazza del Conciapelli	1	3	6	1				MASTERWORK	+% difesa da perforazione e taglio sul busto	[Full Set: Guardia] STUB — Corazza Intera: i colpi critici contro di te diventano colpi normali (livello Iniziato)	
+cuirasse_elemental_def_20_30_masterwork	CUIRASSE	MEDIA	Corazza dell'Arcano Maestro	1	3	6	2				MASTERWORK	+% resistenza a TUTTI gli elementi (valore ridotto); -% danni ad area	[Full Set: Veggente] STUB — Guscio Prismatico: assorbi una volta per combattimento un attacco elementale e ne guadagni l'elemento (livello Iniziato)	
+cuirasse_special_def_20_30_masterwork	CUIRASSE	MEDIA	Corazza del Sommo Sacerdote	1	3	6	3				MASTERWORK	+% difesa contro i danni che ignorano l'armatura	[Full Set: Voto] STUB — Fede Inamovibile: nessun attacco può ignorare la tua armatura (livello Iniziato)	
+cuirasse_defense_30_40_common	CUIRASSE	MEDIA	Corpetto di cuoio bollito	1	3	7	1				COMMON			
+cuirasse_elemental_def_30_40_common	CUIRASSE	MEDIA	Corpetto del veggente	1	3	7	2				COMMON			
+cuirasse_special_def_30_40_common	CUIRASSE	MEDIA	Corpetto dell'eremita	1	3	7	3				COMMON			
+cuirasse_defense_30_40_high_quality	CUIRASSE	MEDIA	Corsaletto di cuoio bollito rinforzato	1	3	8	1				HIGH_QUALITY	+% difesa da perforazione e taglio sul busto		
+cuirasse_elemental_def_30_40_high_quality	CUIRASSE	MEDIA	Corsaletto del veggente sigillato	1	3	8	2				HIGH_QUALITY	+% resistenza a TUTTI gli elementi (valore ridotto); -% danni ad area		
+cuirasse_special_def_30_40_high_quality	CUIRASSE	MEDIA	Corsaletto dell'eremita venerato	1	3	8	3				HIGH_QUALITY	+% difesa contro i danni che ignorano l'armatura		
+cuirasse_defense_30_40_masterwork	CUIRASSE	MEDIA	Corazza del Maestro Conciapelli	1	3	9	1				MASTERWORK	+% difesa da perforazione e taglio sul busto	[Full Set: Guardia] STUB — Corazza Intera: i colpi critici contro di te diventano colpi normali (livello Adepto)	
+cuirasse_elemental_def_30_40_masterwork	CUIRASSE	MEDIA	Corazza dell'Arcimago	1	3	9	2				MASTERWORK	+% resistenza a TUTTI gli elementi (valore ridotto); -% danni ad area	[Full Set: Veggente] STUB — Guscio Prismatico: assorbi una volta per combattimento un attacco elementale e ne guadagni l'elemento (livello Adepto)	
+cuirasse_special_def_30_40_masterwork	CUIRASSE	MEDIA	Corazza del Patriarca	1	3	9	3				MASTERWORK	+% difesa contro i danni che ignorano l'armatura	[Full Set: Voto] STUB — Fede Inamovibile: nessun attacco può ignorare la tua armatura (livello Adepto)	
+cuirasse_defense_30_40_mythic	CUIRASSE	MEDIA	Petto d'Acciaio del Lupo Ombra	1	3	10	1				MYTHIC	+% difesa da perforazione e taglio sul busto	[Full Set: Guardia] STUB — Corazza Intera: i colpi critici contro di te diventano colpi normali (livello Adepto)	[Mitico] STUB — Corazza Assoluta: non puoi mai subire un colpo critico (livello Ascendente)
+cuirasse_elemental_def_30_40_mythic	CUIRASSE	MEDIA	Petto d'Acciaio dell'Occhio Arcano	1	3	10	2				MYTHIC	+% resistenza a TUTTI gli elementi (valore ridotto); -% danni ad area	[Full Set: Veggente] STUB — Guscio Prismatico: assorbi una volta per combattimento un attacco elementale e ne guadagni l'elemento (livello Adepto)	[Mitico] STUB — Guscio Infinito: assorbi un attacco elementale a round, non solo una volta a combattimento (livello Ascendente)
+cuirasse_special_def_30_40_mythic	CUIRASSE	MEDIA	Petto d'Acciaio della Luce Eterna	1	3	10	3				MYTHIC	+% difesa contro i danni che ignorano l'armatura	[Full Set: Voto] STUB — Fede Inamovibile: nessun attacco può ignorare la tua armatura (livello Adepto)	[Mitico] STUB — Corazza della Fede: la tua armatura non può mai essere ignorata (livello Ascendente)
+cuirasse_defense_40_50_common	CUIRASSE	MEDIA	Corpetto di pelle di bestia	1	3	11	1				COMMON			
+cuirasse_elemental_def_40_50_common	CUIRASSE	MEDIA	Corpetto dell'oracolo	1	3	11	2				COMMON			
+cuirasse_special_def_40_50_common	CUIRASSE	MEDIA	Corpetto del pellegrino	1	3	11	3				COMMON			
+cuirasse_defense_40_50_high_quality	CUIRASSE	MEDIA	Corsaletto di pelle di bestia temprata	1	3	12	1				HIGH_QUALITY	+% difesa da perforazione e taglio sul busto		
+cuirasse_elemental_def_40_50_high_quality	CUIRASSE	MEDIA	Corsaletto dell'oracolo custodito	1	3	12	2				HIGH_QUALITY	+% resistenza a TUTTI gli elementi (valore ridotto); -% danni ad area		
+cuirasse_special_def_40_50_high_quality	CUIRASSE	MEDIA	Corsaletto del pellegrino redento	1	3	12	3				HIGH_QUALITY	+% difesa contro i danni che ignorano l'armatura		
+cuirasse_defense_40_50_masterwork	CUIRASSE	MEDIA	Corazza del Cacciatore Leggendario	1	3	13	1				MASTERWORK	+% difesa da perforazione e taglio sul busto	[Full Set: Guardia] STUB — Corazza Intera: i colpi critici contro di te diventano colpi normali (livello Maestro)	
+cuirasse_elemental_def_40_50_masterwork	CUIRASSE	MEDIA	Corazza del Gran Tessitore di Magia	1	3	13	2				MASTERWORK	+% resistenza a TUTTI gli elementi (valore ridotto); -% danni ad area	[Full Set: Veggente] STUB — Guscio Prismatico: assorbi una volta per combattimento un attacco elementale e ne guadagni l'elemento (livello Maestro)	
+cuirasse_special_def_40_50_masterwork	CUIRASSE	MEDIA	Corazza del Profeta Sacro	1	3	13	3				MASTERWORK	+% difesa contro i danni che ignorano l'armatura	[Full Set: Voto] STUB — Fede Inamovibile: nessun attacco può ignorare la tua armatura (livello Maestro)	
+cuirasse_defense_40_50_mythic	CUIRASSE	MEDIA	Petto d'Acciaio dell'Ultimo Custode	1	3	14	1				MYTHIC	+% difesa da perforazione e taglio sul busto	[Full Set: Guardia] STUB — Corazza Intera: i colpi critici contro di te diventano colpi normali (livello Maestro)	[Mitico] STUB — Corazza Assoluta: non puoi mai subire un colpo critico (livello Trascendente)
+cuirasse_elemental_def_40_50_mythic	CUIRASSE	MEDIA	Petto d'Acciaio del Velo Infinito	1	3	14	2				MYTHIC	+% resistenza a TUTTI gli elementi (valore ridotto); -% danni ad area	[Full Set: Veggente] STUB — Guscio Prismatico: assorbi una volta per combattimento un attacco elementale e ne guadagni l'elemento (livello Maestro)	[Mitico] STUB — Guscio Infinito: assorbi un attacco elementale a round, non solo una volta a combattimento (livello Trascendente)
+cuirasse_special_def_40_50_mythic	CUIRASSE	MEDIA	Petto d'Acciaio della Grazia Divina	1	3	14	3				MYTHIC	+% difesa contro i danni che ignorano l'armatura	[Full Set: Voto] STUB — Fede Inamovibile: nessun attacco può ignorare la tua armatura (livello Maestro)	[Mitico] STUB — Corazza della Fede: la tua armatura non può mai essere ignorata (livello Trascendente)
+cuisse_speed_0_10_common	CUISSE	MEDIA	Coscialetto leggera	1	1	4		1	1	3	COMMON			
+cuisse_elusivity_0_10_common	CUISSE	MEDIA	Coscialetto del ladro	1	1	4		2	2	3	COMMON			
+cuisse_speed_10_20_common	CUISSE	MEDIA	Coscialetto agile	1	2	4		1	1	3	COMMON			
+cuisse_elusivity_10_20_common	CUISSE	MEDIA	Coscialetto del borsaiolo	1	2	4		2	2	3	COMMON			
+cuisse_speed_10_20_high_quality	CUISSE	MEDIA	Cosciale agile rinforzata	1	3	4		1	1	3	HIGH_QUALITY	+% velocità di movimento; -% prob. di essere incapacitato		
+cuisse_elusivity_10_20_high_quality	CUISSE	MEDIA	Cosciale del borsaiolo esperto	1	3	4		2	2	3	HIGH_QUALITY	+% prob. di schivata; +% danni sul colpo dopo una schivata riuscita		
+cuisse_speed_20_30_common	CUISSE	MEDIA	Coscialetto snella	1	4	4		1	1	3	COMMON			
+cuisse_elusivity_20_30_common	CUISSE	MEDIA	Coscialetto del furfante	1	4	4		2	2	3	COMMON			
+cuisse_speed_20_30_high_quality	CUISSE	MEDIA	Cosciale snella temprata	1	5	4		1	1	3	HIGH_QUALITY	+% velocità di movimento; -% prob. di essere incapacitato		
+cuisse_elusivity_20_30_high_quality	CUISSE	MEDIA	Cosciale del furfante scaltro	1	5	4		2	2	3	HIGH_QUALITY	+% prob. di schivata; +% danni sul colpo dopo una schivata riuscita		
+cuisse_speed_20_30_masterwork	CUISSE	MEDIA	Difesa di Coscia del Corridore	1	6	4		1	1	3	MASTERWORK	+% velocità di movimento; -% prob. di essere incapacitato	[Full Set: Passo] STUB — Passo Continuo: muoverti non consuma mai il turno (livello Iniziato)	
+cuisse_elusivity_20_30_masterwork	CUISSE	MEDIA	Difesa di Coscia del Maestro Ladro	1	6	4		2	2	3	MASTERWORK	+% prob. di schivata; +% danni sul colpo dopo una schivata riuscita	[Full Set: Ombra] STUB — Vuoto: una schivata riuscita ti rende intangibile fino al tuo turno (livello Iniziato)	
+cuisse_speed_30_40_common	CUISSE	MEDIA	Coscialetto veloce	1	7	4		1	1	3	COMMON			
+cuisse_elusivity_30_40_common	CUISSE	MEDIA	Coscialetto dell'assassino	1	7	4		2	2	3	COMMON			
+cuisse_speed_30_40_high_quality	CUISSE	MEDIA	Cosciale veloce impareggiabile	1	8	4		1	1	3	HIGH_QUALITY	+% velocità di movimento; -% prob. di essere incapacitato		
+cuisse_elusivity_30_40_high_quality	CUISSE	MEDIA	Cosciale dell'assassino ombra	1	8	4		2	2	3	HIGH_QUALITY	+% prob. di schivata; +% danni sul colpo dopo una schivata riuscita		
+cuisse_speed_30_40_masterwork	CUISSE	MEDIA	Difesa di Coscia del Maestro Fuggitivo	1	9	4		1	1	3	MASTERWORK	+% velocità di movimento; -% prob. di essere incapacitato	[Full Set: Passo] STUB — Passo Continuo: muoverti non consuma mai il turno (livello Adepto)	
+cuisse_elusivity_30_40_masterwork	CUISSE	MEDIA	Difesa di Coscia del Signore dei Ladri	1	9	4		2	2	3	MASTERWORK	+% prob. di schivata; +% danni sul colpo dopo una schivata riuscita	[Full Set: Ombra] STUB — Vuoto: una schivata riuscita ti rende intangibile fino al tuo turno (livello Adepto)	
+cuisse_speed_30_40_mythic	CUISSE	MEDIA	Gamba di Piastra del Vento del Nord	1	10	4		1	1	3	MYTHIC	+% velocità di movimento; -% prob. di essere incapacitato	[Full Set: Passo] STUB — Passo Continuo: muoverti non consuma mai il turno (livello Adepto)	[Mitico] STUB — Passo Impossibile: immune a ogni forma di incapacitazione (livello Ascendente)
+cuisse_elusivity_30_40_mythic	CUISSE	MEDIA	Gamba di Piastra dell'Ombra Silenziosa	1	10	4		2	2	3	MYTHIC	+% prob. di schivata; +% danni sul colpo dopo una schivata riuscita	[Full Set: Ombra] STUB — Vuoto: una schivata riuscita ti rende intangibile fino al tuo turno (livello Adepto)	[Mitico] STUB — Fantasma: una schivata riuscita annulla anche l'effetto di stato dell'attacco schivato (livello Ascendente)
+cuisse_speed_40_50_common	CUISSE	MEDIA	Coscialetto scattante	1	11	4		1	1	3	COMMON			
+cuisse_elusivity_40_50_common	CUISSE	MEDIA	Coscialetto del contrabbandiere	1	11	4		2	2	3	COMMON			
+cuisse_speed_40_50_high_quality	CUISSE	MEDIA	Cosciale scattante ineguagliabile	1	12	4		1	1	3	HIGH_QUALITY	+% velocità di movimento; -% prob. di essere incapacitato		
+cuisse_elusivity_40_50_high_quality	CUISSE	MEDIA	Cosciale del contrabbandiere leggendario	1	12	4		2	2	3	HIGH_QUALITY	+% prob. di schivata; +% danni sul colpo dopo una schivata riuscita		
+cuisse_speed_40_50_masterwork	CUISSE	MEDIA	Difesa di Coscia del Fulmine Silente	1	13	4		1	1	3	MASTERWORK	+% velocità di movimento; -% prob. di essere incapacitato	[Full Set: Passo] STUB — Passo Continuo: muoverti non consuma mai il turno (livello Maestro)	
+cuisse_elusivity_40_50_masterwork	CUISSE	MEDIA	Difesa di Coscia del Re dei Bassifondi	1	13	4		2	2	3	MASTERWORK	+% prob. di schivata; +% danni sul colpo dopo una schivata riuscita	[Full Set: Ombra] STUB — Vuoto: una schivata riuscita ti rende intangibile fino al tuo turno (livello Maestro)	
+cuisse_speed_40_50_mythic	CUISSE	MEDIA	Gamba di Piastra dell'Ultimo Respiro	1	14	4		1	1	3	MYTHIC	+% velocità di movimento; -% prob. di essere incapacitato	[Full Set: Passo] STUB — Passo Continuo: muoverti non consuma mai il turno (livello Maestro)	[Mitico] STUB — Passo Impossibile: immune a ogni forma di incapacitazione (livello Trascendente)
+cuisse_elusivity_40_50_mythic	CUISSE	MEDIA	Gamba di Piastra dell'Ultimo Fantasma	1	14	4		2	2	3	MYTHIC	+% prob. di schivata; +% danni sul colpo dopo una schivata riuscita	[Full Set: Ombra] STUB — Vuoto: una schivata riuscita ti rende intangibile fino al tuo turno (livello Maestro)	[Mitico] STUB — Fantasma: una schivata riuscita annulla anche l'effetto di stato dell'attacco schivato (livello Trascendente)
+poleyn_speed_0_10_common	POLEYN	LEGGERA	Ginocchiello leggera	1	1	2		1	1	3	COMMON			
+poleyn_elusivity_0_10_common	POLEYN	LEGGERA	Ginocchiello del ladro	1	1	2		2	2	3	COMMON			
+poleyn_speed_10_20_common	POLEYN	LEGGERA	Ginocchiello agile	1	2	2		1	1	3	COMMON			
+poleyn_elusivity_10_20_common	POLEYN	LEGGERA	Ginocchiello del borsaiolo	1	2	2		2	2	3	COMMON			
+poleyn_speed_10_20_high_quality	POLEYN	LEGGERA	Ginocchiera agile rinforzata	1	3	2		1	1	3	HIGH_QUALITY	-% peso percepito dell'armatura; +% velocità con armatura pesante		
+poleyn_elusivity_10_20_high_quality	POLEYN	LEGGERA	Ginocchiera del borsaiolo esperto	1	3	2		2	2	3	HIGH_QUALITY	+% velocità di riposizionamento; +% prob. di agire per primo nel round		
+poleyn_speed_20_30_common	POLEYN	LEGGERA	Ginocchiello snella	1	4	2		1	1	3	COMMON			
+poleyn_elusivity_20_30_common	POLEYN	LEGGERA	Ginocchiello del furfante	1	4	2		2	2	3	COMMON			
+poleyn_speed_20_30_high_quality	POLEYN	LEGGERA	Ginocchiera snella temprata	1	5	2		1	1	3	HIGH_QUALITY	-% peso percepito dell'armatura; +% velocità con armatura pesante		
+poleyn_elusivity_20_30_high_quality	POLEYN	LEGGERA	Ginocchiera del furfante scaltro	1	5	2		2	2	3	HIGH_QUALITY	+% velocità di riposizionamento; +% prob. di agire per primo nel round		
+poleyn_speed_20_30_masterwork	POLEYN	LEGGERA	Protezione del Ginocchio del Corridore	1	6	2		1	1	3	MASTERWORK	-% peso percepito dell'armatura; +% velocità con armatura pesante	[Full Set: Passo] STUB — Ginocchio Leggero: l'armatura pesante non applica più penalità di velocità (livello Iniziato)	
+poleyn_elusivity_20_30_masterwork	POLEYN	LEGGERA	Protezione del Ginocchio del Maestro Ladro	1	6	2		2	2	3	MASTERWORK	+% velocità di riposizionamento; +% prob. di agire per primo nel round	[Full Set: Ombra] STUB — Anticipo: agisci sempre per primo nel primo round di ogni combattimento (livello Iniziato)	
+poleyn_speed_30_40_common	POLEYN	LEGGERA	Ginocchiello veloce	1	7	2		1	1	3	COMMON			
+poleyn_elusivity_30_40_common	POLEYN	LEGGERA	Ginocchiello dell'assassino	1	7	2		2	2	3	COMMON			
+poleyn_speed_30_40_high_quality	POLEYN	LEGGERA	Ginocchiera veloce impareggiabile	1	8	2		1	1	3	HIGH_QUALITY	-% peso percepito dell'armatura; +% velocità con armatura pesante		
+poleyn_elusivity_30_40_high_quality	POLEYN	LEGGERA	Ginocchiera dell'assassino ombra	1	8	2		2	2	3	HIGH_QUALITY	+% velocità di riposizionamento; +% prob. di agire per primo nel round		
+poleyn_speed_30_40_masterwork	POLEYN	LEGGERA	Protezione del Ginocchio del Maestro Fuggitivo	1	9	2		1	1	3	MASTERWORK	-% peso percepito dell'armatura; +% velocità con armatura pesante	[Full Set: Passo] STUB — Ginocchio Leggero: l'armatura pesante non applica più penalità di velocità (livello Adepto)	
+poleyn_elusivity_30_40_masterwork	POLEYN	LEGGERA	Protezione del Ginocchio del Signore dei Ladri	1	9	2		2	2	3	MASTERWORK	+% velocità di riposizionamento; +% prob. di agire per primo nel round	[Full Set: Ombra] STUB — Anticipo: agisci sempre per primo nel primo round di ogni combattimento (livello Adepto)	
+poleyn_speed_30_40_mythic	POLEYN	LEGGERA	Ginocchiera di Piastra del Vento del Nord	1	10	2		1	1	3	MYTHIC	-% peso percepito dell'armatura; +% velocità con armatura pesante	[Full Set: Passo] STUB — Ginocchio Leggero: l'armatura pesante non applica più penalità di velocità (livello Adepto)	[Mitico] STUB — Peso Nullo: l'armatura non ha mai peso percepito, qualunque sia il tipo (livello Ascendente)
+poleyn_elusivity_30_40_mythic	POLEYN	LEGGERA	Ginocchiera di Piastra dell'Ombra Silenziosa	1	10	2		2	2	3	MYTHIC	+% velocità di riposizionamento; +% prob. di agire per primo nel round	[Full Set: Ombra] STUB — Anticipo: agisci sempre per primo nel primo round di ogni combattimento (livello Adepto)	[Mitico] STUB — Sempre Pronto: agisci sempre per primo, in ogni round, non solo il primo (livello Ascendente)
+poleyn_speed_40_50_common	POLEYN	LEGGERA	Ginocchiello scattante	1	11	2		1	1	3	COMMON			
+poleyn_elusivity_40_50_common	POLEYN	LEGGERA	Ginocchiello del contrabbandiere	1	11	2		2	2	3	COMMON			
+poleyn_speed_40_50_high_quality	POLEYN	LEGGERA	Ginocchiera scattante ineguagliabile	1	12	2		1	1	3	HIGH_QUALITY	-% peso percepito dell'armatura; +% velocità con armatura pesante		
+poleyn_elusivity_40_50_high_quality	POLEYN	LEGGERA	Ginocchiera del contrabbandiere leggendario	1	12	2		2	2	3	HIGH_QUALITY	+% velocità di riposizionamento; +% prob. di agire per primo nel round		
+poleyn_speed_40_50_masterwork	POLEYN	LEGGERA	Protezione del Ginocchio del Fulmine Silente	1	13	2		1	1	3	MASTERWORK	-% peso percepito dell'armatura; +% velocità con armatura pesante	[Full Set: Passo] STUB — Ginocchio Leggero: l'armatura pesante non applica più penalità di velocità (livello Maestro)	
+poleyn_elusivity_40_50_masterwork	POLEYN	LEGGERA	Protezione del Ginocchio del Re dei Bassifondi	1	13	2		2	2	3	MASTERWORK	+% velocità di riposizionamento; +% prob. di agire per primo nel round	[Full Set: Ombra] STUB — Anticipo: agisci sempre per primo nel primo round di ogni combattimento (livello Maestro)	
+poleyn_speed_40_50_mythic	POLEYN	LEGGERA	Ginocchiera di Piastra dell'Ultimo Respiro	1	14	2		1	1	3	MYTHIC	-% peso percepito dell'armatura; +% velocità con armatura pesante	[Full Set: Passo] STUB — Ginocchio Leggero: l'armatura pesante non applica più penalità di velocità (livello Maestro)	[Mitico] STUB — Peso Nullo: l'armatura non ha mai peso percepito, qualunque sia il tipo (livello Trascendente)
+poleyn_elusivity_40_50_mythic	POLEYN	LEGGERA	Ginocchiera di Piastra dell'Ultimo Fantasma	1	14	2		2	2	3	MYTHIC	+% velocità di riposizionamento; +% prob. di agire per primo nel round	[Full Set: Ombra] STUB — Anticipo: agisci sempre per primo nel primo round di ogni combattimento (livello Maestro)	[Mitico] STUB — Sempre Pronto: agisci sempre per primo, in ogni round, non solo il primo (livello Trascendente)
+greave_speed_0_10_common	GREAVE	MEDIA	Gambiera leggera	1	1	3		1	1	3	COMMON			
+greave_elusivity_0_10_common	GREAVE	MEDIA	Gambiera del ladro	1	1	3		2	2	3	COMMON			
+greave_speed_10_20_common	GREAVE	MEDIA	Gambiera agile	1	2	3		1	1	3	COMMON			
+greave_elusivity_10_20_common	GREAVE	MEDIA	Gambiera del borsaiolo	1	2	3		2	2	3	COMMON			
+greave_speed_10_20_high_quality	GREAVE	MEDIA	Schiniera agile rinforzata	1	3	3		1	1	3	HIGH_QUALITY	-% durata dei rallentamenti; +% velocità dopo essere stato rallentato		
+greave_elusivity_10_20_high_quality	GREAVE	MEDIA	Schiniera del borsaiolo esperto	1	3	3		2	2	3	HIGH_QUALITY	+% furtività; +% danni sul primo colpo se non sei stato individuato		
+greave_speed_20_30_common	GREAVE	MEDIA	Gambiera snella	1	4	3		1	1	3	COMMON			
+greave_elusivity_20_30_common	GREAVE	MEDIA	Gambiera del furfante	1	4	3		2	2	3	COMMON			
+greave_speed_20_30_high_quality	GREAVE	MEDIA	Schiniera snella temprata	1	5	3		1	1	3	HIGH_QUALITY	-% durata dei rallentamenti; +% velocità dopo essere stato rallentato		
+greave_elusivity_20_30_high_quality	GREAVE	MEDIA	Schiniera del furfante scaltro	1	5	3		2	2	3	HIGH_QUALITY	+% furtività; +% danni sul primo colpo se non sei stato individuato		
+greave_speed_20_30_masterwork	GREAVE	MEDIA	Stinchiera del Corridore	1	6	3		1	1	3	MASTERWORK	-% durata dei rallentamenti; +% velocità dopo essere stato rallentato	[Full Set: Passo] STUB — Corsa Libera: immune a tutti gli effetti di rallentamento (livello Iniziato)	
+greave_elusivity_20_30_masterwork	GREAVE	MEDIA	Stinchiera del Maestro Ladro	1	6	3		2	2	3	MASTERWORK	+% furtività; +% danni sul primo colpo se non sei stato individuato	[Full Set: Ombra] STUB — Passo Muto: i nemici non ti individuano finché non attacchi (livello Iniziato)	
+greave_speed_30_40_common	GREAVE	MEDIA	Gambiera veloce	1	7	3		1	1	3	COMMON			
+greave_elusivity_30_40_common	GREAVE	MEDIA	Gambiera dell'assassino	1	7	3		2	2	3	COMMON			
+greave_speed_30_40_high_quality	GREAVE	MEDIA	Schiniera veloce impareggiabile	1	8	3		1	1	3	HIGH_QUALITY	-% durata dei rallentamenti; +% velocità dopo essere stato rallentato		
+greave_elusivity_30_40_high_quality	GREAVE	MEDIA	Schiniera dell'assassino ombra	1	8	3		2	2	3	HIGH_QUALITY	+% furtività; +% danni sul primo colpo se non sei stato individuato		
+greave_speed_30_40_masterwork	GREAVE	MEDIA	Stinchiera del Maestro Fuggitivo	1	9	3		1	1	3	MASTERWORK	-% durata dei rallentamenti; +% velocità dopo essere stato rallentato	[Full Set: Passo] STUB — Corsa Libera: immune a tutti gli effetti di rallentamento (livello Adepto)	
+greave_elusivity_30_40_masterwork	GREAVE	MEDIA	Stinchiera del Signore dei Ladri	1	9	3		2	2	3	MASTERWORK	+% furtività; +% danni sul primo colpo se non sei stato individuato	[Full Set: Ombra] STUB — Passo Muto: i nemici non ti individuano finché non attacchi (livello Adepto)	
+greave_speed_30_40_mythic	GREAVE	MEDIA	Schiniera di Piastra del Vento del Nord	1	10	3		1	1	3	MYTHIC	-% durata dei rallentamenti; +% velocità dopo essere stato rallentato	[Full Set: Passo] STUB — Corsa Libera: immune a tutti gli effetti di rallentamento (livello Adepto)	[Mitico] STUB — Vento tra le Gambe: essere rallentato ti dà invece un bonus di velocità permanente per il resto del combattimento (livello Ascendente)
+greave_elusivity_30_40_mythic	GREAVE	MEDIA	Schiniera di Piastra dell'Ombra Silenziosa	1	10	3		2	2	3	MYTHIC	+% furtività; +% danni sul primo colpo se non sei stato individuato	[Full Set: Ombra] STUB — Passo Muto: i nemici non ti individuano finché non attacchi (livello Adepto)	[Mitico] STUB — Silenzio Totale: non puoi mai essere individuato prima di attaccare, nemmeno da abilità dedicate (livello Ascendente)
+greave_speed_40_50_common	GREAVE	MEDIA	Gambiera scattante	1	11	3		1	1	3	COMMON			
+greave_elusivity_40_50_common	GREAVE	MEDIA	Gambiera del contrabbandiere	1	11	3		2	2	3	COMMON			
+greave_speed_40_50_high_quality	GREAVE	MEDIA	Schiniera scattante ineguagliabile	1	12	3		1	1	3	HIGH_QUALITY	-% durata dei rallentamenti; +% velocità dopo essere stato rallentato		
+greave_elusivity_40_50_high_quality	GREAVE	MEDIA	Schiniera del contrabbandiere leggendario	1	12	3		2	2	3	HIGH_QUALITY	+% furtività; +% danni sul primo colpo se non sei stato individuato		
+greave_speed_40_50_masterwork	GREAVE	MEDIA	Stinchiera del Fulmine Silente	1	13	3		1	1	3	MASTERWORK	-% durata dei rallentamenti; +% velocità dopo essere stato rallentato	[Full Set: Passo] STUB — Corsa Libera: immune a tutti gli effetti di rallentamento (livello Maestro)	
+greave_elusivity_40_50_masterwork	GREAVE	MEDIA	Stinchiera del Re dei Bassifondi	1	13	3		2	2	3	MASTERWORK	+% furtività; +% danni sul primo colpo se non sei stato individuato	[Full Set: Ombra] STUB — Passo Muto: i nemici non ti individuano finché non attacchi (livello Maestro)	
+greave_speed_40_50_mythic	GREAVE	MEDIA	Schiniera di Piastra dell'Ultimo Respiro	1	14	3		1	1	3	MYTHIC	-% durata dei rallentamenti; +% velocità dopo essere stato rallentato	[Full Set: Passo] STUB — Corsa Libera: immune a tutti gli effetti di rallentamento (livello Maestro)	[Mitico] STUB — Vento tra le Gambe: essere rallentato ti dà invece un bonus di velocità permanente per il resto del combattimento (livello Trascendente)
+greave_elusivity_40_50_mythic	GREAVE	MEDIA	Schiniera di Piastra dell'Ultimo Fantasma	1	14	3		2	2	3	MYTHIC	+% furtività; +% danni sul primo colpo se non sei stato individuato	[Full Set: Ombra] STUB — Passo Muto: i nemici non ti individuano finché non attacchi (livello Maestro)	[Mitico] STUB — Silenzio Totale: non puoi mai essere individuato prima di attaccare, nemmeno da abilità dedicate (livello Trascendente)
+sabaton_speed_0_10_common	SABATON	LEGGERA	Calzare leggera	1	1	2		1	1	3	COMMON			
+sabaton_elusivity_0_10_common	SABATON	LEGGERA	Calzare del ladro	1	1	2		2	2	3	COMMON			
+sabaton_speed_10_20_common	SABATON	LEGGERA	Calzare agile	1	2	2		1	1	3	COMMON			
+sabaton_elusivity_10_20_common	SABATON	LEGGERA	Calzare del borsaiolo	1	2	2		2	2	3	COMMON			
+sabaton_speed_10_20_high_quality	SABATON	LEGGERA	Scarpa agile rinforzata	1	3	2		1	1	3	HIGH_QUALITY	-% danni ambientali; +% stabilità su terreno pericoloso		
+sabaton_elusivity_10_20_high_quality	SABATON	LEGGERA	Scarpa del borsaiolo esperto	1	3	2		2	2	3	HIGH_QUALITY	+% prob. di fuga; -% prob. di essere inseguito dopo la fuga		
+sabaton_speed_20_30_common	SABATON	LEGGERA	Calzare snella	1	4	2		1	1	3	COMMON			
+sabaton_elusivity_20_30_common	SABATON	LEGGERA	Calzare del furfante	1	4	2		2	2	3	COMMON			
+sabaton_speed_20_30_high_quality	SABATON	LEGGERA	Scarpa snella temprata	1	5	2		1	1	3	HIGH_QUALITY	-% danni ambientali; +% stabilità su terreno pericoloso		
+sabaton_elusivity_20_30_high_quality	SABATON	LEGGERA	Scarpa del furfante scaltro	1	5	2		2	2	3	HIGH_QUALITY	+% prob. di fuga; -% prob. di essere inseguito dopo la fuga		
+sabaton_speed_20_30_masterwork	SABATON	LEGGERA	Scarpa di Ferro del Corridore	1	6	2		1	1	3	MASTERWORK	-% danni ambientali; +% stabilità su terreno pericoloso	[Full Set: Passo] Suola Salda: il terreno ostile non ti rallenta né ti danneggia (livello Iniziato)	
+sabaton_elusivity_20_30_masterwork	SABATON	LEGGERA	Scarpa di Ferro del Maestro Ladro	1	6	2		2	2	3	MASTERWORK	+% prob. di fuga; -% prob. di essere inseguito dopo la fuga	[Full Set: Ombra] STUB — Dissolvenza: una fuga riuscita non fa perdere il loot né il progresso della zona (livello Iniziato)	
+sabaton_speed_30_40_common	SABATON	LEGGERA	Calzare veloce	1	7	2		1	1	3	COMMON			
+sabaton_elusivity_30_40_common	SABATON	LEGGERA	Calzare dell'assassino	1	7	2		2	2	3	COMMON			
+sabaton_speed_30_40_high_quality	SABATON	LEGGERA	Scarpa veloce impareggiabile	1	8	2		1	1	3	HIGH_QUALITY	-% danni ambientali; +% stabilità su terreno pericoloso		
+sabaton_elusivity_30_40_high_quality	SABATON	LEGGERA	Scarpa dell'assassino ombra	1	8	2		2	2	3	HIGH_QUALITY	+% prob. di fuga; -% prob. di essere inseguito dopo la fuga		
+sabaton_speed_30_40_masterwork	SABATON	LEGGERA	Scarpa di Ferro del Maestro Fuggitivo	1	9	2		1	1	3	MASTERWORK	-% danni ambientali; +% stabilità su terreno pericoloso	[Full Set: Passo] Suola Salda: il terreno ostile non ti rallenta né ti danneggia (livello Adepto)	
+sabaton_elusivity_30_40_masterwork	SABATON	LEGGERA	Scarpa di Ferro del Signore dei Ladri	1	9	2		2	2	3	MASTERWORK	+% prob. di fuga; -% prob. di essere inseguito dopo la fuga	[Full Set: Ombra] STUB — Dissolvenza: una fuga riuscita non fa perdere il loot né il progresso della zona (livello Adepto)	
+sabaton_speed_30_40_mythic	SABATON	LEGGERA	Solerette d'Arme del Vento del Nord	1	10	2		1	1	3	MYTHIC	-% danni ambientali; +% stabilità su terreno pericoloso	[Full Set: Passo] Suola Salda: il terreno ostile non ti rallenta né ti danneggia (livello Adepto)	[Mitico] STUB — Piede Immune: nessun terreno o trappola ambientale può mai danneggiarti (livello Ascendente)
+sabaton_elusivity_30_40_mythic	SABATON	LEGGERA	Solerette d'Arme dell'Ombra Silenziosa	1	10	2		2	2	3	MYTHIC	+% prob. di fuga; -% prob. di essere inseguito dopo la fuga	[Full Set: Ombra] STUB — Dissolvenza: una fuga riuscita non fa perdere il loot né il progresso della zona (livello Adepto)	[Mitico] STUB — Passo Perduto: la fuga riesce sempre, indipendentemente da livello o abilità del nemico (livello Ascendente)
+sabaton_speed_40_50_common	SABATON	LEGGERA	Calzare scattante	1	11	2		1	1	3	COMMON			
+sabaton_elusivity_40_50_common	SABATON	LEGGERA	Calzare del contrabbandiere	1	11	2		2	2	3	COMMON			
+sabaton_speed_40_50_high_quality	SABATON	LEGGERA	Scarpa scattante ineguagliabile	1	12	2		1	1	3	HIGH_QUALITY	-% danni ambientali; +% stabilità su terreno pericoloso		
+sabaton_elusivity_40_50_high_quality	SABATON	LEGGERA	Scarpa del contrabbandiere leggendario	1	12	2		2	2	3	HIGH_QUALITY	+% prob. di fuga; -% prob. di essere inseguito dopo la fuga		
+sabaton_speed_40_50_masterwork	SABATON	LEGGERA	Scarpa di Ferro del Fulmine Silente	1	13	2		1	1	3	MASTERWORK	-% danni ambientali; +% stabilità su terreno pericoloso	[Full Set: Passo] Suola Salda: il terreno ostile non ti rallenta né ti danneggia (livello Maestro)	
+sabaton_elusivity_40_50_masterwork	SABATON	LEGGERA	Scarpa di Ferro del Re dei Bassifondi	1	13	2		2	2	3	MASTERWORK	+% prob. di fuga; -% prob. di essere inseguito dopo la fuga	[Full Set: Ombra] STUB — Dissolvenza: una fuga riuscita non fa perdere il loot né il progresso della zona (livello Maestro)	
+sabaton_speed_40_50_mythic	SABATON	LEGGERA	Solerette d'Arme dell'Ultimo Respiro	1	14	2		1	1	3	MYTHIC	-% danni ambientali; +% stabilità su terreno pericoloso	[Full Set: Passo] Suola Salda: il terreno ostile non ti rallenta né ti danneggia (livello Maestro)	[Mitico] STUB — Piede Immune: nessun terreno o trappola ambientale può mai danneggiarti (livello Trascendente)
+sabaton_elusivity_40_50_mythic	SABATON	LEGGERA	Solerette d'Arme dell'Ultimo Fantasma	1	14	2		2	2	3	MYTHIC	+% prob. di fuga; -% prob. di essere inseguito dopo la fuga	[Full Set: Ombra] STUB — Dissolvenza: una fuga riuscita non fa perdere il loot né il progresso della zona (livello Maestro)	[Mitico] STUB — Passo Perduto: la fuga riesce sempre, indipendentemente da livello o abilità del nemico (livello Trascendente)

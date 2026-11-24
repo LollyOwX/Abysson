@@ -16,8 +16,7 @@ import java.util.regex.Pattern;
  *    sopra il mostro. Un gruppo vuoto salta, gli altri si rinormalizzano.
  * 2) Scaglione nel gruppo: più è rara, meno è probabile (peso dimezzato per ogni gradino).
  * 3) Pezzo nello scaglione: equiprobabile (armi, scudi e armature insieme).
- * La lista degli ID viene da LootIndex, generato da generate_loot_index.py: va rigenerato
- * quando i registry cambiano.
+ * La lista degli ID viene dalle tabelle res/items/*.tsv (un id per riga): niente da rigenerare.
  */
 public final class LootTable {
     private LootTable() {}
@@ -42,9 +41,9 @@ public final class LootTable {
     private static int topHi = 0;
 
     static {
-        add(LootIndex.WEAPONS, Kind.WEAPON);
-        add(LootIndex.SHIELDS, Kind.SHIELD);
-        add(LootIndex.ARMORS, Kind.ARMOR);
+        add(WeaponRegistry.ids(), Kind.WEAPON);
+        add(ShieldRegistry.ids(), Kind.SHIELD);
+        add(ArmorRegistry.ids(), Kind.ARMOR);
     }
 
     private static void add(String[] ids, Kind kind) {

@@ -1,0 +1,547 @@
+id	subtype	name	affilatezza	pomo	guardia	punta	corda	struttura	legamenti	rarity	synergy	fullSet	mythic
+short_sword_atk_0_10_common	SPADA_CORTA	Spada Corta semplice	1	3	2	1				COMMON			
+short_sword_elemental_atk_0_10_common	SPADA_CORTA	Spada Corta semplice	1	3	2	1				COMMON			
+short_sword_special_atk_0_10_common	SPADA_CORTA	Spada Corta semplice	1	3	2	1				COMMON			
+short_sword_atk_10_20_common	SPADA_CORTA	Lama Breve da recluta	1	3	2	2				COMMON			
+short_sword_elemental_atk_10_20_common	SPADA_CORTA	Lama Breve da recluta	1	3	2	2				COMMON			
+short_sword_special_atk_10_20_common	SPADA_CORTA	Lama Breve da recluta	1	3	2	2				COMMON			
+short_sword_atk_10_20_high_quality	SPADA_CORTA	Lama Corta di buona fattura	1	3	2	3				HIGH_QUALITY	+% controllo; +% prob. di agire due volte nel round		
+short_sword_elemental_atk_10_20_high_quality	SPADA_CORTA	Lama Corta di buona fattura	1	3	2	3				HIGH_QUALITY	+% danni da Fulmine; +% accumulo di Scossa per colpo		
+short_sword_special_atk_10_20_high_quality	SPADA_CORTA	Lama Corta di buona fattura	1	3	2	3				HIGH_QUALITY	+% prob. di critico crescente a ogni colpo consecutivo a segno		
+short_sword_atk_20_30_common	SPADA_CORTA	Spada Corta da apprendista	1	3	2	4				COMMON			
+short_sword_elemental_atk_20_30_common	SPADA_CORTA	Spada Corta da apprendista	1	3	2	4				COMMON			
+short_sword_special_atk_20_30_common	SPADA_CORTA	Spada Corta da apprendista	1	3	2	4				COMMON			
+short_sword_atk_20_30_high_quality	SPADA_CORTA	Spada Snella di manifattura pregiata	1	3	2	5				HIGH_QUALITY	+% controllo; +% prob. di agire due volte nel round		
+short_sword_elemental_atk_20_30_high_quality	SPADA_CORTA	Spada Snella di manifattura pregiata	1	3	2	5				HIGH_QUALITY	+% danni da Fulmine; +% accumulo di Scossa per colpo		
+short_sword_special_atk_20_30_high_quality	SPADA_CORTA	Spada Snella di manifattura pregiata	1	3	2	5				HIGH_QUALITY	+% prob. di critico crescente a ogni colpo consecutivo a segno		
+short_sword_atk_20_30_masterwork	SPADA_CORTA	Stocco del Maestro d'Armi	1	3	2	6				MASTERWORK	+% controllo; +% prob. di agire due volte nel round	[Stile: Assalto] STUB — Doppio Tempo: il secondo colpo dello stesso turno non può essere parato	
+short_sword_elemental_atk_20_30_masterwork	SPADA_CORTA	Stocco del Maestro d'Armi	1	3	2	6				MASTERWORK	+% danni da Fulmine; +% accumulo di Scossa per colpo	[Stile: Canalizzazione] STUB — Catena Breve: la Scossa al massimo salta a un secondo nemico	
+short_sword_special_atk_20_30_masterwork	SPADA_CORTA	Stocco del Maestro d'Armi	1	3	2	6				MASTERWORK	+% prob. di critico crescente a ogni colpo consecutivo a segno	[Stile: Astuzia] STUB — Filo Crescente: tre colpi consecutivi a segno garantiscono un critico	
+short_sword_atk_30_40_common	SPADA_CORTA	Lama Breve da soldato	1	3	2	7				COMMON			
+short_sword_elemental_atk_30_40_common	SPADA_CORTA	Lama Breve da soldato	1	3	2	7				COMMON			
+short_sword_special_atk_30_40_common	SPADA_CORTA	Lama Breve da soldato	1	3	2	7				COMMON			
+short_sword_atk_30_40_high_quality	SPADA_CORTA	Lama Corta di fattura magistrale	1	3	2	8				HIGH_QUALITY	+% controllo; +% prob. di agire due volte nel round		
+short_sword_elemental_atk_30_40_high_quality	SPADA_CORTA	Lama Corta di fattura magistrale	1	3	2	8				HIGH_QUALITY	+% danni da Fulmine; +% accumulo di Scossa per colpo		
+short_sword_special_atk_30_40_high_quality	SPADA_CORTA	Lama Corta di fattura magistrale	1	3	2	8				HIGH_QUALITY	+% prob. di critico crescente a ogni colpo consecutivo a segno		
+short_sword_atk_30_40_masterwork	SPADA_CORTA	Filo Corto del Gran Maestro d'Armi	1	3	2	9				MASTERWORK	+% controllo; +% prob. di agire due volte nel round	[Stile: Assalto] STUB — Doppio Tempo: il secondo colpo dello stesso turno non può essere parato	
+short_sword_elemental_atk_30_40_masterwork	SPADA_CORTA	Filo Corto del Gran Maestro d'Armi	1	3	2	9				MASTERWORK	+% danni da Fulmine; +% accumulo di Scossa per colpo	[Stile: Canalizzazione] STUB — Catena Breve: la Scossa al massimo salta a un secondo nemico	
+short_sword_special_atk_30_40_masterwork	SPADA_CORTA	Filo Corto del Gran Maestro d'Armi	1	3	2	9				MASTERWORK	+% prob. di critico crescente a ogni colpo consecutivo a segno	[Stile: Astuzia] STUB — Filo Crescente: tre colpi consecutivi a segno garantiscono un critico	
+short_sword_atk_30_40_mythic	SPADA_CORTA	Lama del Giuramento Infranto	1	3	2	10				MYTHIC	+% controllo; +% prob. di agire due volte nel round	[Stile: Assalto] STUB — Doppio Tempo: il secondo colpo dello stesso turno non può essere parato	[Mitico] STUB — Terzo Tempo: hai prob. di agire una terza volta nello stesso round
+short_sword_elemental_atk_30_40_mythic	SPADA_CORTA	Lama del Giuramento Infranto	1	3	2	10				MYTHIC	+% danni da Fulmine; +% accumulo di Scossa per colpo	[Stile: Canalizzazione] STUB — Catena Breve: la Scossa al massimo salta a un secondo nemico	[Mitico] STUB — Catena Infinita: la Scossa al massimo salta a tutti i nemici in campo
+short_sword_special_atk_30_40_mythic	SPADA_CORTA	Lama del Giuramento Infranto	1	3	2	10				MYTHIC	+% prob. di critico crescente a ogni colpo consecutivo a segno	[Stile: Astuzia] STUB — Filo Crescente: tre colpi consecutivi a segno garantiscono un critico	[Mitico] STUB — Filo Perfetto: ogni colpo dopo il primo critico della serie è automaticamente critico
+short_sword_atk_40_50_common	SPADA_CORTA	Spada Corta da veterano	1	3	2	11				COMMON			
+short_sword_elemental_atk_40_50_common	SPADA_CORTA	Spada Corta da veterano	1	3	2	11				COMMON			
+short_sword_special_atk_40_50_common	SPADA_CORTA	Spada Corta da veterano	1	3	2	11				COMMON			
+short_sword_atk_40_50_high_quality	SPADA_CORTA	Spada Snella di manifattura superiore	1	3	2	12				HIGH_QUALITY	+% controllo; +% prob. di agire due volte nel round		
+short_sword_elemental_atk_40_50_high_quality	SPADA_CORTA	Spada Snella di manifattura superiore	1	3	2	12				HIGH_QUALITY	+% danni da Fulmine; +% accumulo di Scossa per colpo		
+short_sword_special_atk_40_50_high_quality	SPADA_CORTA	Spada Snella di manifattura superiore	1	3	2	12				HIGH_QUALITY	+% prob. di critico crescente a ogni colpo consecutivo a segno		
+short_sword_atk_40_50_masterwork	SPADA_CORTA	Stocco del Fabbro Supremo	1	3	2	13				MASTERWORK	+% controllo; +% prob. di agire due volte nel round	[Stile: Assalto] STUB — Doppio Tempo: il secondo colpo dello stesso turno non può essere parato	
+short_sword_elemental_atk_40_50_masterwork	SPADA_CORTA	Stocco del Fabbro Supremo	1	3	2	13				MASTERWORK	+% danni da Fulmine; +% accumulo di Scossa per colpo	[Stile: Canalizzazione] STUB — Catena Breve: la Scossa al massimo salta a un secondo nemico	
+short_sword_special_atk_40_50_masterwork	SPADA_CORTA	Stocco del Fabbro Supremo	1	3	2	13				MASTERWORK	+% prob. di critico crescente a ogni colpo consecutivo a segno	[Stile: Astuzia] STUB — Filo Crescente: tre colpi consecutivi a segno garantiscono un critico	
+short_sword_atk_40_50_mythic	SPADA_CORTA	Lama dell'Ultimo Giuramento	1	3	2	14				MYTHIC	+% controllo; +% prob. di agire due volte nel round	[Stile: Assalto] STUB — Doppio Tempo: il secondo colpo dello stesso turno non può essere parato	[Mitico] STUB — Terzo Tempo: hai prob. di agire una terza volta nello stesso round
+short_sword_elemental_atk_40_50_mythic	SPADA_CORTA	Lama dell'Ultimo Giuramento	1	3	2	14				MYTHIC	+% danni da Fulmine; +% accumulo di Scossa per colpo	[Stile: Canalizzazione] STUB — Catena Breve: la Scossa al massimo salta a un secondo nemico	[Mitico] STUB — Catena Infinita: la Scossa al massimo salta a tutti i nemici in campo
+short_sword_special_atk_40_50_mythic	SPADA_CORTA	Lama dell'Ultimo Giuramento	1	3	2	14				MYTHIC	+% prob. di critico crescente a ogni colpo consecutivo a segno	[Stile: Astuzia] STUB — Filo Crescente: tre colpi consecutivi a segno garantiscono un critico	[Mitico] STUB — Filo Perfetto: ogni colpo dopo il primo critico della serie è automaticamente critico
+long_sword_atk_0_10_common	SPADA_LUNGA	Spada Lunga semplice	1	2	2	1				COMMON			
+long_sword_elemental_atk_0_10_common	SPADA_LUNGA	Spada Lunga semplice	1	2	2	1				COMMON			
+long_sword_special_atk_0_10_common	SPADA_LUNGA	Spada Lunga semplice	1	2	2	1				COMMON			
+long_sword_atk_10_20_common	SPADA_LUNGA	Lama Distesa da recluta	1	2	2	2				COMMON			
+long_sword_elemental_atk_10_20_common	SPADA_LUNGA	Lama Distesa da recluta	1	2	2	2				COMMON			
+long_sword_special_atk_10_20_common	SPADA_LUNGA	Lama Distesa da recluta	1	2	2	2				COMMON			
+long_sword_atk_10_20_high_quality	SPADA_LUNGA	Lama Lunga di buona fattura	1	2	2	3				HIGH_QUALITY	+% danni da taglio; +% penetrazione contro armature leggere		
+long_sword_elemental_atk_10_20_high_quality	SPADA_LUNGA	Lama Lunga di buona fattura	1	2	2	3				HIGH_QUALITY	+% danni da Luce; +% prob. di innescare Raggio		
+long_sword_special_atk_10_20_high_quality	SPADA_LUNGA	Lama Lunga di buona fattura	1	2	2	3				HIGH_QUALITY	+% danni sul colpo successivo a una parata; +% finestra di parata		
+long_sword_atk_20_30_common	SPADA_LUNGA	Spada Lunga da apprendista	1	2	2	4				COMMON			
+long_sword_elemental_atk_20_30_common	SPADA_LUNGA	Spada Lunga da apprendista	1	2	2	4				COMMON			
+long_sword_special_atk_20_30_common	SPADA_LUNGA	Spada Lunga da apprendista	1	2	2	4				COMMON			
+long_sword_atk_20_30_high_quality	SPADA_LUNGA	Spada Slanciata di manifattura pregiata	1	2	2	5				HIGH_QUALITY	+% danni da taglio; +% penetrazione contro armature leggere		
+long_sword_elemental_atk_20_30_high_quality	SPADA_LUNGA	Spada Slanciata di manifattura pregiata	1	2	2	5				HIGH_QUALITY	+% danni da Luce; +% prob. di innescare Raggio		
+long_sword_special_atk_20_30_high_quality	SPADA_LUNGA	Spada Slanciata di manifattura pregiata	1	2	2	5				HIGH_QUALITY	+% danni sul colpo successivo a una parata; +% finestra di parata		
+long_sword_atk_20_30_masterwork	SPADA_LUNGA	Spada da Guerra del Maestro d'Armi	1	2	2	6				MASTERWORK	+% danni da taglio; +% penetrazione contro armature leggere	[Stile: Assalto] STUB — Fendente Pulito: i colpi da taglio applicano sempre sanguinamento	
+long_sword_elemental_atk_20_30_masterwork	SPADA_LUNGA	Spada da Guerra del Maestro d'Armi	1	2	2	6				MASTERWORK	+% danni da Luce; +% prob. di innescare Raggio	[Stile: Canalizzazione] STUB — Lama Solare: Raggio acceca anche i nemici adiacenti al bersaglio	
+long_sword_special_atk_20_30_masterwork	SPADA_LUNGA	Spada da Guerra del Maestro d'Armi	1	2	2	6				MASTERWORK	+% danni sul colpo successivo a una parata; +% finestra di parata	[Stile: Astuzia] STUB — Risposta: una parata perfetta concede un attacco immediato gratuito	
+long_sword_atk_30_40_common	SPADA_LUNGA	Lama Distesa da soldato	1	2	2	7				COMMON			
+long_sword_elemental_atk_30_40_common	SPADA_LUNGA	Lama Distesa da soldato	1	2	2	7				COMMON			
+long_sword_special_atk_30_40_common	SPADA_LUNGA	Lama Distesa da soldato	1	2	2	7				COMMON			
+long_sword_atk_30_40_high_quality	SPADA_LUNGA	Lama Lunga di fattura magistrale	1	2	2	8				HIGH_QUALITY	+% danni da taglio; +% penetrazione contro armature leggere		
+long_sword_elemental_atk_30_40_high_quality	SPADA_LUNGA	Lama Lunga di fattura magistrale	1	2	2	8				HIGH_QUALITY	+% danni da Luce; +% prob. di innescare Raggio		
+long_sword_special_atk_30_40_high_quality	SPADA_LUNGA	Lama Lunga di fattura magistrale	1	2	2	8				HIGH_QUALITY	+% danni sul colpo successivo a una parata; +% finestra di parata		
+long_sword_atk_30_40_masterwork	SPADA_LUNGA	Lama del Duca del Gran Maestro d'Armi	1	2	2	9				MASTERWORK	+% danni da taglio; +% penetrazione contro armature leggere	[Stile: Assalto] STUB — Fendente Pulito: i colpi da taglio applicano sempre sanguinamento	
+long_sword_elemental_atk_30_40_masterwork	SPADA_LUNGA	Lama del Duca del Gran Maestro d'Armi	1	2	2	9				MASTERWORK	+% danni da Luce; +% prob. di innescare Raggio	[Stile: Canalizzazione] STUB — Lama Solare: Raggio acceca anche i nemici adiacenti al bersaglio	
+long_sword_special_atk_30_40_masterwork	SPADA_LUNGA	Lama del Duca del Gran Maestro d'Armi	1	2	2	9				MASTERWORK	+% danni sul colpo successivo a una parata; +% finestra di parata	[Stile: Astuzia] STUB — Risposta: una parata perfetta concede un attacco immediato gratuito	
+long_sword_atk_30_40_mythic	SPADA_LUNGA	Spada del Cavaliere Esiliato	1	2	2	10				MYTHIC	+% danni da taglio; +% penetrazione contro armature leggere	[Stile: Assalto] STUB — Fendente Pulito: i colpi da taglio applicano sempre sanguinamento	[Mitico] STUB — Taglio Netto: il sanguinamento applicato non può mai essere curato dal bersaglio
+long_sword_elemental_atk_30_40_mythic	SPADA_LUNGA	Spada del Cavaliere Esiliato	1	2	2	10				MYTHIC	+% danni da Luce; +% prob. di innescare Raggio	[Stile: Canalizzazione] STUB — Lama Solare: Raggio acceca anche i nemici adiacenti al bersaglio	[Mitico] STUB — Alba: Raggio si innesca automaticamente al primo colpo di ogni combattimento
+long_sword_special_atk_30_40_mythic	SPADA_LUNGA	Spada del Cavaliere Esiliato	1	2	2	10				MYTHIC	+% danni sul colpo successivo a una parata; +% finestra di parata	[Stile: Astuzia] STUB — Risposta: una parata perfetta concede un attacco immediato gratuito	[Mitico] STUB — Contro Assoluto: ogni parata, perfetta o normale, concede un attacco immediato
+long_sword_atk_40_50_common	SPADA_LUNGA	Spada Lunga da veterano	1	2	2	11				COMMON			
+long_sword_elemental_atk_40_50_common	SPADA_LUNGA	Spada Lunga da veterano	1	2	2	11				COMMON			
+long_sword_special_atk_40_50_common	SPADA_LUNGA	Spada Lunga da veterano	1	2	2	11				COMMON			
+long_sword_atk_40_50_high_quality	SPADA_LUNGA	Spada Slanciata di manifattura superiore	1	2	2	12				HIGH_QUALITY	+% danni da taglio; +% penetrazione contro armature leggere		
+long_sword_elemental_atk_40_50_high_quality	SPADA_LUNGA	Spada Slanciata di manifattura superiore	1	2	2	12				HIGH_QUALITY	+% danni da Luce; +% prob. di innescare Raggio		
+long_sword_special_atk_40_50_high_quality	SPADA_LUNGA	Spada Slanciata di manifattura superiore	1	2	2	12				HIGH_QUALITY	+% danni sul colpo successivo a una parata; +% finestra di parata		
+long_sword_atk_40_50_masterwork	SPADA_LUNGA	Spada da Guerra del Fabbro Supremo	1	2	2	13				MASTERWORK	+% danni da taglio; +% penetrazione contro armature leggere	[Stile: Assalto] STUB — Fendente Pulito: i colpi da taglio applicano sempre sanguinamento	
+long_sword_elemental_atk_40_50_masterwork	SPADA_LUNGA	Spada da Guerra del Fabbro Supremo	1	2	2	13				MASTERWORK	+% danni da Luce; +% prob. di innescare Raggio	[Stile: Canalizzazione] STUB — Lama Solare: Raggio acceca anche i nemici adiacenti al bersaglio	
+long_sword_special_atk_40_50_masterwork	SPADA_LUNGA	Spada da Guerra del Fabbro Supremo	1	2	2	13				MASTERWORK	+% danni sul colpo successivo a una parata; +% finestra di parata	[Stile: Astuzia] STUB — Risposta: una parata perfetta concede un attacco immediato gratuito	
+long_sword_atk_40_50_mythic	SPADA_LUNGA	Spada del Re Sepolto	1	2	2	14				MYTHIC	+% danni da taglio; +% penetrazione contro armature leggere	[Stile: Assalto] STUB — Fendente Pulito: i colpi da taglio applicano sempre sanguinamento	[Mitico] STUB — Taglio Netto: il sanguinamento applicato non può mai essere curato dal bersaglio
+long_sword_elemental_atk_40_50_mythic	SPADA_LUNGA	Spada del Re Sepolto	1	2	2	14				MYTHIC	+% danni da Luce; +% prob. di innescare Raggio	[Stile: Canalizzazione] STUB — Lama Solare: Raggio acceca anche i nemici adiacenti al bersaglio	[Mitico] STUB — Alba: Raggio si innesca automaticamente al primo colpo di ogni combattimento
+long_sword_special_atk_40_50_mythic	SPADA_LUNGA	Spada del Re Sepolto	1	2	2	14				MYTHIC	+% danni sul colpo successivo a una parata; +% finestra di parata	[Stile: Astuzia] STUB — Risposta: una parata perfetta concede un attacco immediato gratuito	[Mitico] STUB — Contro Assoluto: ogni parata, perfetta o normale, concede un attacco immediato
+whip_atk_0_10_common	FRUSTA	Frusta semplice	1	4	0	1				COMMON			
+whip_elemental_atk_0_10_common	FRUSTA	Frusta semplice	1	4	0	1				COMMON			
+whip_special_atk_0_10_common	FRUSTA	Frusta semplice	1	4	0	1				COMMON			
+whip_atk_10_20_common	FRUSTA	Staffile da recluta	1	4	0	2				COMMON			
+whip_elemental_atk_10_20_common	FRUSTA	Staffile da recluta	1	4	0	2				COMMON			
+whip_special_atk_10_20_common	FRUSTA	Staffile da recluta	1	4	0	2				COMMON			
+whip_atk_10_20_high_quality	FRUSTA	Sferza di buona fattura	1	4	0	3				HIGH_QUALITY	+% prob. di disarmare; +% gittata effettiva		
+whip_elemental_atk_10_20_high_quality	FRUSTA	Sferza di buona fattura	1	4	0	3				HIGH_QUALITY	+% danni da Aria; +% numero di bersagli colpiti		
+whip_special_atk_10_20_high_quality	FRUSTA	Sferza di buona fattura	1	4	0	3				HIGH_QUALITY	+% prob. di inciampo; +% durata dell'inciampo		
+whip_atk_20_30_common	FRUSTA	Frusta da apprendista	1	4	0	4				COMMON			
+whip_elemental_atk_20_30_common	FRUSTA	Frusta da apprendista	1	4	0	4				COMMON			
+whip_special_atk_20_30_common	FRUSTA	Frusta da apprendista	1	4	0	4				COMMON			
+whip_atk_20_30_high_quality	FRUSTA	Frusta Rinforzata di manifattura pregiata	1	4	0	5				HIGH_QUALITY	+% prob. di disarmare; +% gittata effettiva		
+whip_elemental_atk_20_30_high_quality	FRUSTA	Frusta Rinforzata di manifattura pregiata	1	4	0	5				HIGH_QUALITY	+% danni da Aria; +% numero di bersagli colpiti		
+whip_special_atk_20_30_high_quality	FRUSTA	Frusta Rinforzata di manifattura pregiata	1	4	0	5				HIGH_QUALITY	+% prob. di inciampo; +% durata dell'inciampo		
+whip_atk_20_30_masterwork	FRUSTA	Flagello del Maestro d'Armi	1	4	0	6				MASTERWORK	+% prob. di disarmare; +% gittata effettiva	[Stile: Assalto] STUB — Morsa: il nemico disarmato non può raccogliere l'arma per un round	
+whip_elemental_atk_20_30_masterwork	FRUSTA	Flagello del Maestro d'Armi	1	4	0	6				MASTERWORK	+% danni da Aria; +% numero di bersagli colpiti	[Stile: Canalizzazione] STUB — Sferza di Vento: ogni bersaglio colpito propaga metà dell'effetto elementale	
+whip_special_atk_20_30_masterwork	FRUSTA	Flagello del Maestro d'Armi	1	4	0	6				MASTERWORK	+% prob. di inciampo; +% durata dell'inciampo	[Stile: Astuzia] STUB — Redine: puoi trascinare un nemico a distanza e obbligarlo a perdere il turno	
+whip_atk_30_40_common	FRUSTA	Staffile da soldato	1	4	0	7				COMMON			
+whip_elemental_atk_30_40_common	FRUSTA	Staffile da soldato	1	4	0	7				COMMON			
+whip_special_atk_30_40_common	FRUSTA	Staffile da soldato	1	4	0	7				COMMON			
+whip_atk_30_40_high_quality	FRUSTA	Sferza di fattura magistrale	1	4	0	8				HIGH_QUALITY	+% prob. di disarmare; +% gittata effettiva		
+whip_elemental_atk_30_40_high_quality	FRUSTA	Sferza di fattura magistrale	1	4	0	8				HIGH_QUALITY	+% danni da Aria; +% numero di bersagli colpiti		
+whip_special_atk_30_40_high_quality	FRUSTA	Sferza di fattura magistrale	1	4	0	8				HIGH_QUALITY	+% prob. di inciampo; +% durata dell'inciampo		
+whip_atk_30_40_masterwork	FRUSTA	Sferza da Duello del Gran Maestro d'Armi	1	4	0	9				MASTERWORK	+% prob. di disarmare; +% gittata effettiva	[Stile: Assalto] STUB — Morsa: il nemico disarmato non può raccogliere l'arma per un round	
+whip_elemental_atk_30_40_masterwork	FRUSTA	Sferza da Duello del Gran Maestro d'Armi	1	4	0	9				MASTERWORK	+% danni da Aria; +% numero di bersagli colpiti	[Stile: Canalizzazione] STUB — Sferza di Vento: ogni bersaglio colpito propaga metà dell'effetto elementale	
+whip_special_atk_30_40_masterwork	FRUSTA	Sferza da Duello del Gran Maestro d'Armi	1	4	0	9				MASTERWORK	+% prob. di inciampo; +% durata dell'inciampo	[Stile: Astuzia] STUB — Redine: puoi trascinare un nemico a distanza e obbligarlo a perdere il turno	
+whip_atk_30_40_mythic	FRUSTA	Frusta del Boia Silente	1	4	0	10				MYTHIC	+% prob. di disarmare; +% gittata effettiva	[Stile: Assalto] STUB — Morsa: il nemico disarmato non può raccogliere l'arma per un round	[Mitico] STUB — Catena Spezzata: il nemico disarmato non recupera mai più la sua arma in quel combattimento
+whip_elemental_atk_30_40_mythic	FRUSTA	Frusta del Boia Silente	1	4	0	10				MYTHIC	+% danni da Aria; +% numero di bersagli colpiti	[Stile: Canalizzazione] STUB — Sferza di Vento: ogni bersaglio colpito propaga metà dell'effetto elementale	[Mitico] STUB — Uragano: ogni bersaglio colpito propaga l'effetto elementale per intero, non a metà
+whip_special_atk_30_40_mythic	FRUSTA	Frusta del Boia Silente	1	4	0	10				MYTHIC	+% prob. di inciampo; +% durata dell'inciampo	[Stile: Astuzia] STUB — Redine: puoi trascinare un nemico a distanza e obbligarlo a perdere il turno	[Mitico] STUB — Marionetta: il nemico trascinato agisce al posto tuo per un turno, sotto il tuo controllo
+whip_atk_40_50_common	FRUSTA	Frusta da veterano	1	4	0	11				COMMON			
+whip_elemental_atk_40_50_common	FRUSTA	Frusta da veterano	1	4	0	11				COMMON			
+whip_special_atk_40_50_common	FRUSTA	Frusta da veterano	1	4	0	11				COMMON			
+whip_atk_40_50_high_quality	FRUSTA	Frusta Rinforzata di manifattura superiore	1	4	0	12				HIGH_QUALITY	+% prob. di disarmare; +% gittata effettiva		
+whip_elemental_atk_40_50_high_quality	FRUSTA	Frusta Rinforzata di manifattura superiore	1	4	0	12				HIGH_QUALITY	+% danni da Aria; +% numero di bersagli colpiti		
+whip_special_atk_40_50_high_quality	FRUSTA	Frusta Rinforzata di manifattura superiore	1	4	0	12				HIGH_QUALITY	+% prob. di inciampo; +% durata dell'inciampo		
+whip_atk_40_50_masterwork	FRUSTA	Flagello del Fabbro Supremo	1	4	0	13				MASTERWORK	+% prob. di disarmare; +% gittata effettiva	[Stile: Assalto] STUB — Morsa: il nemico disarmato non può raccogliere l'arma per un round	
+whip_elemental_atk_40_50_masterwork	FRUSTA	Flagello del Fabbro Supremo	1	4	0	13				MASTERWORK	+% danni da Aria; +% numero di bersagli colpiti	[Stile: Canalizzazione] STUB — Sferza di Vento: ogni bersaglio colpito propaga metà dell'effetto elementale	
+whip_special_atk_40_50_masterwork	FRUSTA	Flagello del Fabbro Supremo	1	4	0	13				MASTERWORK	+% prob. di inciampo; +% durata dell'inciampo	[Stile: Astuzia] STUB — Redine: puoi trascinare un nemico a distanza e obbligarlo a perdere il turno	
+whip_atk_40_50_mythic	FRUSTA	Frusta dell'Inquisitore Eterno	1	4	0	14				MYTHIC	+% prob. di disarmare; +% gittata effettiva	[Stile: Assalto] STUB — Morsa: il nemico disarmato non può raccogliere l'arma per un round	[Mitico] STUB — Catena Spezzata: il nemico disarmato non recupera mai più la sua arma in quel combattimento
+whip_elemental_atk_40_50_mythic	FRUSTA	Frusta dell'Inquisitore Eterno	1	4	0	14				MYTHIC	+% danni da Aria; +% numero di bersagli colpiti	[Stile: Canalizzazione] STUB — Sferza di Vento: ogni bersaglio colpito propaga metà dell'effetto elementale	[Mitico] STUB — Uragano: ogni bersaglio colpito propaga l'effetto elementale per intero, non a metà
+whip_special_atk_40_50_mythic	FRUSTA	Frusta dell'Inquisitore Eterno	1	4	0	14				MYTHIC	+% prob. di inciampo; +% durata dell'inciampo	[Stile: Astuzia] STUB — Redine: puoi trascinare un nemico a distanza e obbligarlo a perdere il turno	[Mitico] STUB — Marionetta: il nemico trascinato agisce al posto tuo per un turno, sotto il tuo controllo
+mace_atk_0_10_common	MAZZA_CHIODATA	Mazza semplice	1	1	1	41				COMMON			
+mace_elemental_atk_0_10_common	MAZZA_CHIODATA	Mazza semplice	1	1	1	41				COMMON			
+mace_special_atk_0_10_common	MAZZA_CHIODATA	Mazza semplice	1	1	1	41				COMMON			
+mace_atk_10_20_common	MAZZA_CHIODATA	Randello da recluta	1	1	1	42				COMMON			
+mace_elemental_atk_10_20_common	MAZZA_CHIODATA	Randello da recluta	1	1	1	42				COMMON			
+mace_special_atk_10_20_common	MAZZA_CHIODATA	Randello da recluta	1	1	1	42				COMMON			
+mace_atk_10_20_high_quality	MAZZA_CHIODATA	Clava d'Acciaio di buona fattura	1	1	1	42				HIGH_QUALITY	+% danni contundenti e perforanti; +% danni contro armature pesanti		
+mace_elemental_atk_10_20_high_quality	MAZZA_CHIODATA	Clava d'Acciaio di buona fattura	1	1	1	42				HIGH_QUALITY	+% danni da Terra; +% accumulo di Rottura per colpo		
+mace_special_atk_10_20_high_quality	MAZZA_CHIODATA	Clava d'Acciaio di buona fattura	1	1	1	42				HIGH_QUALITY	+% difesa ignorata; +% danni contro nemici già in Rottura		
+mace_atk_20_30_common	MAZZA_CHIODATA	Mazza da apprendista	1	1	1	43				COMMON			
+mace_elemental_atk_20_30_common	MAZZA_CHIODATA	Mazza da apprendista	1	1	1	43				COMMON			
+mace_special_atk_20_30_common	MAZZA_CHIODATA	Mazza da apprendista	1	1	1	43				COMMON			
+mace_atk_20_30_high_quality	MAZZA_CHIODATA	Mazza Ferrata di manifattura pregiata	1	1	1	44				HIGH_QUALITY	+% danni contundenti e perforanti; +% danni contro armature pesanti		
+mace_elemental_atk_20_30_high_quality	MAZZA_CHIODATA	Mazza Ferrata di manifattura pregiata	1	1	1	44				HIGH_QUALITY	+% danni da Terra; +% accumulo di Rottura per colpo		
+mace_special_atk_20_30_high_quality	MAZZA_CHIODATA	Mazza Ferrata di manifattura pregiata	1	1	1	44				HIGH_QUALITY	+% difesa ignorata; +% danni contro nemici già in Rottura		
+mace_atk_20_30_masterwork	MAZZA_CHIODATA	Martello da Guerra del Maestro d'Armi	1	1	1	45				MASTERWORK	+% danni contundenti e perforanti; +% danni contro armature pesanti	[Stile: Assalto] STUB — Sfondamento: ignori completamente l'armatura pesante	
+mace_elemental_atk_20_30_masterwork	MAZZA_CHIODATA	Martello da Guerra del Maestro d'Armi	1	1	1	45				MASTERWORK	+% danni da Terra; +% accumulo di Rottura per colpo	[Stile: Canalizzazione] STUB — Frantume: la Rottura al massimo distrugge un pezzo di armatura del nemico	
+mace_special_atk_20_30_masterwork	MAZZA_CHIODATA	Martello da Guerra del Maestro d'Armi	1	1	1	45				MASTERWORK	+% difesa ignorata; +% danni contro nemici già in Rottura	[Stile: Astuzia] STUB — Colpo Cieco: un colpo per combattimento ignora ogni difesa e resistenza	
+mace_atk_30_40_common	MAZZA_CHIODATA	Randello da soldato	1	1	1	46				COMMON			
+mace_elemental_atk_30_40_common	MAZZA_CHIODATA	Randello da soldato	1	1	1	46				COMMON			
+mace_special_atk_30_40_common	MAZZA_CHIODATA	Randello da soldato	1	1	1	46				COMMON			
+mace_atk_30_40_high_quality	MAZZA_CHIODATA	Clava d'Acciaio di fattura magistrale	1	1	1	48				HIGH_QUALITY	+% danni contundenti e perforanti; +% danni contro armature pesanti		
+mace_elemental_atk_30_40_high_quality	MAZZA_CHIODATA	Clava d'Acciaio di fattura magistrale	1	1	1	48				HIGH_QUALITY	+% danni da Terra; +% accumulo di Rottura per colpo		
+mace_special_atk_30_40_high_quality	MAZZA_CHIODATA	Clava d'Acciaio di fattura magistrale	1	1	1	48				HIGH_QUALITY	+% difesa ignorata; +% danni contro nemici già in Rottura		
+mace_atk_30_40_masterwork	MAZZA_CHIODATA	Mazza del Campione del Gran Maestro d'Armi	1	1	1	49				MASTERWORK	+% danni contundenti e perforanti; +% danni contro armature pesanti	[Stile: Assalto] STUB — Sfondamento: ignori completamente l'armatura pesante	
+mace_elemental_atk_30_40_masterwork	MAZZA_CHIODATA	Mazza del Campione del Gran Maestro d'Armi	1	1	1	49				MASTERWORK	+% danni da Terra; +% accumulo di Rottura per colpo	[Stile: Canalizzazione] STUB — Frantume: la Rottura al massimo distrugge un pezzo di armatura del nemico	
+mace_special_atk_30_40_masterwork	MAZZA_CHIODATA	Mazza del Campione del Gran Maestro d'Armi	1	1	1	49				MASTERWORK	+% difesa ignorata; +% danni contro nemici già in Rottura	[Stile: Astuzia] STUB — Colpo Cieco: un colpo per combattimento ignora ogni difesa e resistenza	
+mace_atk_30_40_mythic	MAZZA_CHIODATA	Mazza del Colosso Caduto	1	1	1	50				MYTHIC	+% danni contundenti e perforanti; +% danni contro armature pesanti	[Stile: Assalto] STUB — Sfondamento: ignori completamente l'armatura pesante	[Mitico] STUB — Frantumazione: ignori completamente ogni tipo di armatura
+mace_elemental_atk_30_40_mythic	MAZZA_CHIODATA	Mazza del Colosso Caduto	1	1	1	50				MYTHIC	+% danni da Terra; +% accumulo di Rottura per colpo	[Stile: Canalizzazione] STUB — Frantume: la Rottura al massimo distrugge un pezzo di armatura del nemico	[Mitico] STUB — Terremoto: la Rottura al massimo distrugge tutta l'armatura del nemico in un colpo
+mace_special_atk_30_40_mythic	MAZZA_CHIODATA	Mazza del Colosso Caduto	1	1	1	50				MYTHIC	+% difesa ignorata; +% danni contro nemici già in Rottura	[Stile: Astuzia] STUB — Colpo Cieco: un colpo per combattimento ignora ogni difesa e resistenza	[Mitico] STUB — Colpo del Giudizio: ogni colpo con questa arma ignora ogni difesa e resistenza
+mace_atk_40_50_common	MAZZA_CHIODATA	Mazza da veterano	1	1	1	52				COMMON			
+mace_elemental_atk_40_50_common	MAZZA_CHIODATA	Mazza da veterano	1	1	1	52				COMMON			
+mace_special_atk_40_50_common	MAZZA_CHIODATA	Mazza da veterano	1	1	1	52				COMMON			
+mace_atk_40_50_high_quality	MAZZA_CHIODATA	Mazza Ferrata di manifattura superiore	1	1	1	54				HIGH_QUALITY	+% danni contundenti e perforanti; +% danni contro armature pesanti		
+mace_elemental_atk_40_50_high_quality	MAZZA_CHIODATA	Mazza Ferrata di manifattura superiore	1	1	1	54				HIGH_QUALITY	+% danni da Terra; +% accumulo di Rottura per colpo		
+mace_special_atk_40_50_high_quality	MAZZA_CHIODATA	Mazza Ferrata di manifattura superiore	1	1	1	54				HIGH_QUALITY	+% difesa ignorata; +% danni contro nemici già in Rottura		
+mace_atk_40_50_masterwork	MAZZA_CHIODATA	Martello da Guerra del Fabbro Supremo	1	1	1	55				MASTERWORK	+% danni contundenti e perforanti; +% danni contro armature pesanti	[Stile: Assalto] STUB — Sfondamento: ignori completamente l'armatura pesante	
+mace_elemental_atk_40_50_masterwork	MAZZA_CHIODATA	Martello da Guerra del Fabbro Supremo	1	1	1	55				MASTERWORK	+% danni da Terra; +% accumulo di Rottura per colpo	[Stile: Canalizzazione] STUB — Frantume: la Rottura al massimo distrugge un pezzo di armatura del nemico	
+mace_special_atk_40_50_masterwork	MAZZA_CHIODATA	Martello da Guerra del Fabbro Supremo	1	1	1	55				MASTERWORK	+% difesa ignorata; +% danni contro nemici già in Rottura	[Stile: Astuzia] STUB — Colpo Cieco: un colpo per combattimento ignora ogni difesa e resistenza	
+mace_atk_40_50_mythic	MAZZA_CHIODATA	Martello della Fine dei Giorni	1	1	1	57				MYTHIC	+% danni contundenti e perforanti; +% danni contro armature pesanti	[Stile: Assalto] STUB — Sfondamento: ignori completamente l'armatura pesante	[Mitico] STUB — Frantumazione: ignori completamente ogni tipo di armatura
+mace_elemental_atk_40_50_mythic	MAZZA_CHIODATA	Martello della Fine dei Giorni	1	1	1	57				MYTHIC	+% danni da Terra; +% accumulo di Rottura per colpo	[Stile: Canalizzazione] STUB — Frantume: la Rottura al massimo distrugge un pezzo di armatura del nemico	[Mitico] STUB — Terremoto: la Rottura al massimo distrugge tutta l'armatura del nemico in un colpo
+mace_special_atk_40_50_mythic	MAZZA_CHIODATA	Martello della Fine dei Giorni	1	1	1	57				MYTHIC	+% difesa ignorata; +% danni contro nemici già in Rottura	[Stile: Astuzia] STUB — Colpo Cieco: un colpo per combattimento ignora ogni difesa e resistenza	[Mitico] STUB — Colpo del Giudizio: ogni colpo con questa arma ignora ogni difesa e resistenza
+axe_atk_0_10_common	ASCIA	Ascia semplice	1	1	1	41				COMMON			
+axe_elemental_atk_0_10_common	ASCIA	Ascia semplice	1	1	1	41				COMMON			
+axe_special_atk_0_10_common	ASCIA	Ascia semplice	1	1	1	41				COMMON			
+axe_atk_10_20_common	ASCIA	Accetta da recluta	1	1	1	42				COMMON			
+axe_elemental_atk_10_20_common	ASCIA	Accetta da recluta	1	1	1	42				COMMON			
+axe_special_atk_10_20_common	ASCIA	Accetta da recluta	1	1	1	42				COMMON			
+axe_atk_10_20_high_quality	ASCIA	Scure di buona fattura	1	1	1	42				HIGH_QUALITY	+% danni taglienti e contundenti; +% danni sui colpi caricati		
+axe_elemental_atk_10_20_high_quality	ASCIA	Scure di buona fattura	1	1	1	42				HIGH_QUALITY	+% danni da Fuoco; +% durata di Infiammazione		
+axe_special_atk_10_20_high_quality	ASCIA	Scure di buona fattura	1	1	1	42				HIGH_QUALITY	+% danni cumulativi a ogni colpo consecutivo sullo stesso bersaglio		
+axe_atk_20_30_common	ASCIA	Ascia da apprendista	1	1	1	43				COMMON			
+axe_elemental_atk_20_30_common	ASCIA	Ascia da apprendista	1	1	1	43				COMMON			
+axe_special_atk_20_30_common	ASCIA	Ascia da apprendista	1	1	1	43				COMMON			
+axe_atk_20_30_high_quality	ASCIA	Ascia da Battaglia di manifattura pregiata	1	1	1	44				HIGH_QUALITY	+% danni taglienti e contundenti; +% danni sui colpi caricati		
+axe_elemental_atk_20_30_high_quality	ASCIA	Ascia da Battaglia di manifattura pregiata	1	1	1	44				HIGH_QUALITY	+% danni da Fuoco; +% durata di Infiammazione		
+axe_special_atk_20_30_high_quality	ASCIA	Ascia da Battaglia di manifattura pregiata	1	1	1	44				HIGH_QUALITY	+% danni cumulativi a ogni colpo consecutivo sullo stesso bersaglio		
+axe_atk_20_30_masterwork	ASCIA	Bipenne del Maestro d'Armi	1	1	1	45				MASTERWORK	+% danni taglienti e contundenti; +% danni sui colpi caricati	[Stile: Assalto] STUB — Spacca-Scudo: i tuoi colpi attraversano scudi e parate	
+axe_elemental_atk_20_30_masterwork	ASCIA	Bipenne del Maestro d'Armi	1	1	1	45				MASTERWORK	+% danni da Fuoco; +% durata di Infiammazione	[Stile: Canalizzazione] STUB — Brace Viva: l'Infiammazione non scade finché il bersaglio subisce colpi	
+axe_special_atk_20_30_masterwork	ASCIA	Bipenne del Maestro d'Armi	1	1	1	45				MASTERWORK	+% danni cumulativi a ogni colpo consecutivo sullo stesso bersaglio	[Stile: Astuzia] STUB — Accanimento: il bonus accumulato non si azzera se cambi bersaglio	
+axe_atk_30_40_common	ASCIA	Accetta da soldato	1	1	1	46				COMMON			
+axe_elemental_atk_30_40_common	ASCIA	Accetta da soldato	1	1	1	46				COMMON			
+axe_special_atk_30_40_common	ASCIA	Accetta da soldato	1	1	1	46				COMMON			
+axe_atk_30_40_high_quality	ASCIA	Scure di fattura magistrale	1	1	1	48				HIGH_QUALITY	+% danni taglienti e contundenti; +% danni sui colpi caricati		
+axe_elemental_atk_30_40_high_quality	ASCIA	Scure di fattura magistrale	1	1	1	48				HIGH_QUALITY	+% danni da Fuoco; +% durata di Infiammazione		
+axe_special_atk_30_40_high_quality	ASCIA	Scure di fattura magistrale	1	1	1	48				HIGH_QUALITY	+% danni cumulativi a ogni colpo consecutivo sullo stesso bersaglio		
+axe_atk_30_40_masterwork	ASCIA	Scure del Boia del Gran Maestro d'Armi	1	1	1	49				MASTERWORK	+% danni taglienti e contundenti; +% danni sui colpi caricati	[Stile: Assalto] STUB — Spacca-Scudo: i tuoi colpi attraversano scudi e parate	
+axe_elemental_atk_30_40_masterwork	ASCIA	Scure del Boia del Gran Maestro d'Armi	1	1	1	49				MASTERWORK	+% danni da Fuoco; +% durata di Infiammazione	[Stile: Canalizzazione] STUB — Brace Viva: l'Infiammazione non scade finché il bersaglio subisce colpi	
+axe_special_atk_30_40_masterwork	ASCIA	Scure del Boia del Gran Maestro d'Armi	1	1	1	49				MASTERWORK	+% danni cumulativi a ogni colpo consecutivo sullo stesso bersaglio	[Stile: Astuzia] STUB — Accanimento: il bonus accumulato non si azzera se cambi bersaglio	
+axe_atk_30_40_mythic	ASCIA	Ascia del Boscaiolo Maledetto	1	1	1	50				MYTHIC	+% danni taglienti e contundenti; +% danni sui colpi caricati	[Stile: Assalto] STUB — Spacca-Scudo: i tuoi colpi attraversano scudi e parate	[Mitico] STUB — Spacca-Tutto: i tuoi colpi non possono mai essere bloccati o parati
+axe_elemental_atk_30_40_mythic	ASCIA	Ascia del Boscaiolo Maledetto	1	1	1	50				MYTHIC	+% danni da Fuoco; +% durata di Infiammazione	[Stile: Canalizzazione] STUB — Brace Viva: l'Infiammazione non scade finché il bersaglio subisce colpi	[Mitico] STUB — Incendio Eterno: l'Infiammazione applicata non si esaurisce mai finché il bersaglio è in vita
+axe_special_atk_30_40_mythic	ASCIA	Ascia del Boscaiolo Maledetto	1	1	1	50				MYTHIC	+% danni cumulativi a ogni colpo consecutivo sullo stesso bersaglio	[Stile: Astuzia] STUB — Accanimento: il bonus accumulato non si azzera se cambi bersaglio	[Mitico] STUB — Furia Instancabile: il bonus accumulato non ha limite massimo
+axe_atk_40_50_common	ASCIA	Ascia da veterano	1	1	1	52				COMMON			
+axe_elemental_atk_40_50_common	ASCIA	Ascia da veterano	1	1	1	52				COMMON			
+axe_special_atk_40_50_common	ASCIA	Ascia da veterano	1	1	1	52				COMMON			
+axe_atk_40_50_high_quality	ASCIA	Ascia da Battaglia di manifattura superiore	1	1	1	54				HIGH_QUALITY	+% danni taglienti e contundenti; +% danni sui colpi caricati		
+axe_elemental_atk_40_50_high_quality	ASCIA	Ascia da Battaglia di manifattura superiore	1	1	1	54				HIGH_QUALITY	+% danni da Fuoco; +% durata di Infiammazione		
+axe_special_atk_40_50_high_quality	ASCIA	Ascia da Battaglia di manifattura superiore	1	1	1	54				HIGH_QUALITY	+% danni cumulativi a ogni colpo consecutivo sullo stesso bersaglio		
+axe_atk_40_50_masterwork	ASCIA	Bipenne del Fabbro Supremo	1	1	1	55				MASTERWORK	+% danni taglienti e contundenti; +% danni sui colpi caricati	[Stile: Assalto] STUB — Spacca-Scudo: i tuoi colpi attraversano scudi e parate	
+axe_elemental_atk_40_50_masterwork	ASCIA	Bipenne del Fabbro Supremo	1	1	1	55				MASTERWORK	+% danni da Fuoco; +% durata di Infiammazione	[Stile: Canalizzazione] STUB — Brace Viva: l'Infiammazione non scade finché il bersaglio subisce colpi	
+axe_special_atk_40_50_masterwork	ASCIA	Bipenne del Fabbro Supremo	1	1	1	55				MASTERWORK	+% danni cumulativi a ogni colpo consecutivo sullo stesso bersaglio	[Stile: Astuzia] STUB — Accanimento: il bonus accumulato non si azzera se cambi bersaglio	
+axe_atk_40_50_mythic	ASCIA	Ascia del Titano Sopito	1	1	1	57				MYTHIC	+% danni taglienti e contundenti; +% danni sui colpi caricati	[Stile: Assalto] STUB — Spacca-Scudo: i tuoi colpi attraversano scudi e parate	[Mitico] STUB — Spacca-Tutto: i tuoi colpi non possono mai essere bloccati o parati
+axe_elemental_atk_40_50_mythic	ASCIA	Ascia del Titano Sopito	1	1	1	57				MYTHIC	+% danni da Fuoco; +% durata di Infiammazione	[Stile: Canalizzazione] STUB — Brace Viva: l'Infiammazione non scade finché il bersaglio subisce colpi	[Mitico] STUB — Incendio Eterno: l'Infiammazione applicata non si esaurisce mai finché il bersaglio è in vita
+axe_special_atk_40_50_mythic	ASCIA	Ascia del Titano Sopito	1	1	1	57				MYTHIC	+% danni cumulativi a ogni colpo consecutivo sullo stesso bersaglio	[Stile: Astuzia] STUB — Accanimento: il bonus accumulato non si azzera se cambi bersaglio	[Mitico] STUB — Furia Instancabile: il bonus accumulato non ha limite massimo
+claymore_atk_0_10_common	SPADONE	Spadone semplice	1	-1	3	1				COMMON			
+claymore_elemental_atk_0_10_common	SPADONE	Spadone semplice	1	-1	3	1				COMMON			
+claymore_special_atk_0_10_common	SPADONE	Spadone semplice	1	-1	3	1				COMMON			
+claymore_atk_10_20_common	SPADONE	Lama Massiccia da recluta	1	-1	3	2				COMMON			
+claymore_elemental_atk_10_20_common	SPADONE	Lama Massiccia da recluta	1	-1	3	2				COMMON			
+claymore_special_atk_10_20_common	SPADONE	Lama Massiccia da recluta	1	-1	3	2				COMMON			
+claymore_atk_10_20_high_quality	SPADONE	Grande Spada di buona fattura	1	-1	3	2				HIGH_QUALITY	+% peso convertito in danno; +% danni sui nemici più leggeri di te		
+claymore_elemental_atk_10_20_high_quality	SPADONE	Grande Spada di buona fattura	1	-1	3	2				HIGH_QUALITY	+% danni elementali ad area; +% raggio dell'area colpita		
+claymore_special_atk_10_20_high_quality	SPADONE	Grande Spada di buona fattura	1	-1	3	2				HIGH_QUALITY	+% danni del colpo caricato; -% turni di carica necessari		
+claymore_atk_20_30_common	SPADONE	Spadone da apprendista	1	-1	3	3				COMMON			
+claymore_elemental_atk_20_30_common	SPADONE	Spadone da apprendista	1	-1	3	3				COMMON			
+claymore_special_atk_20_30_common	SPADONE	Spadone da apprendista	1	-1	3	3				COMMON			
+claymore_atk_20_30_high_quality	SPADONE	Spadone Affilato di manifattura pregiata	1	-1	3	4				HIGH_QUALITY	+% peso convertito in danno; +% danni sui nemici più leggeri di te		
+claymore_elemental_atk_20_30_high_quality	SPADONE	Spadone Affilato di manifattura pregiata	1	-1	3	4				HIGH_QUALITY	+% danni elementali ad area; +% raggio dell'area colpita		
+claymore_special_atk_20_30_high_quality	SPADONE	Spadone Affilato di manifattura pregiata	1	-1	3	4				HIGH_QUALITY	+% danni del colpo caricato; -% turni di carica necessari		
+claymore_atk_20_30_masterwork	SPADONE	Lama Immane del Maestro d'Armi	1	-1	3	5				MASTERWORK	+% peso convertito in danno; +% danni sui nemici più leggeri di te	[Stile: Assalto] STUB — Peso della Lama: ogni colpo a segno respinge il bersaglio di una casella	
+claymore_elemental_atk_20_30_masterwork	SPADONE	Lama Immane del Maestro d'Armi	1	-1	3	5				MASTERWORK	+% danni elementali ad area; +% raggio dell'area colpita	[Stile: Canalizzazione] STUB — Onda Tellurica: l'area colpita resta pericolosa per un round	
+claymore_special_atk_20_30_masterwork	SPADONE	Lama Immane del Maestro d'Armi	1	-1	3	5				MASTERWORK	+% danni del colpo caricato; -% turni di carica necessari	[Stile: Astuzia] STUB — Mulinello: il colpo caricato colpisce tutti i nemici e non può essere interrotto	
+claymore_atk_30_40_common	SPADONE	Lama Massiccia da soldato	1	-1	3	6				COMMON			
+claymore_elemental_atk_30_40_common	SPADONE	Lama Massiccia da soldato	1	-1	3	6				COMMON			
+claymore_special_atk_30_40_common	SPADONE	Lama Massiccia da soldato	1	-1	3	6				COMMON			
+claymore_atk_30_40_high_quality	SPADONE	Grande Spada di fattura magistrale	1	-1	3	8				HIGH_QUALITY	+% peso convertito in danno; +% danni sui nemici più leggeri di te		
+claymore_elemental_atk_30_40_high_quality	SPADONE	Grande Spada di fattura magistrale	1	-1	3	8				HIGH_QUALITY	+% danni elementali ad area; +% raggio dell'area colpita		
+claymore_special_atk_30_40_high_quality	SPADONE	Grande Spada di fattura magistrale	1	-1	3	8				HIGH_QUALITY	+% danni del colpo caricato; -% turni di carica necessari		
+claymore_atk_30_40_masterwork	SPADONE	Spadone del Titano del Gran Maestro d'Armi	1	-1	3	9				MASTERWORK	+% peso convertito in danno; +% danni sui nemici più leggeri di te	[Stile: Assalto] STUB — Peso della Lama: ogni colpo a segno respinge il bersaglio di una casella	
+claymore_elemental_atk_30_40_masterwork	SPADONE	Spadone del Titano del Gran Maestro d'Armi	1	-1	3	9				MASTERWORK	+% danni elementali ad area; +% raggio dell'area colpita	[Stile: Canalizzazione] STUB — Onda Tellurica: l'area colpita resta pericolosa per un round	
+claymore_special_atk_30_40_masterwork	SPADONE	Spadone del Titano del Gran Maestro d'Armi	1	-1	3	9				MASTERWORK	+% danni del colpo caricato; -% turni di carica necessari	[Stile: Astuzia] STUB — Mulinello: il colpo caricato colpisce tutti i nemici e non può essere interrotto	
+claymore_atk_30_40_mythic	SPADONE	Spadone dell'Eroe Caduto	1	-1	3	10				MYTHIC	+% peso convertito in danno; +% danni sui nemici più leggeri di te	[Stile: Assalto] STUB — Peso della Lama: ogni colpo a segno respinge il bersaglio di una casella	[Mitico] STUB — Peso del Mondo: ogni colpo respinge e stordisce brevemente il bersaglio
+claymore_elemental_atk_30_40_mythic	SPADONE	Spadone dell'Eroe Caduto	1	-1	3	10				MYTHIC	+% danni elementali ad area; +% raggio dell'area colpita	[Stile: Canalizzazione] STUB — Onda Tellurica: l'area colpita resta pericolosa per un round	[Mitico] STUB — Faglia: l'area colpita resta pericolosa finché dura il combattimento
+claymore_special_atk_30_40_mythic	SPADONE	Spadone dell'Eroe Caduto	1	-1	3	10				MYTHIC	+% danni del colpo caricato; -% turni di carica necessari	[Stile: Astuzia] STUB — Mulinello: il colpo caricato colpisce tutti i nemici e non può essere interrotto	[Mitico] STUB — Apocalisse: il colpo caricato non richiede più alcun turno di carica
+claymore_atk_40_50_common	SPADONE	Spadone da veterano	1	-1	3	12				COMMON			
+claymore_elemental_atk_40_50_common	SPADONE	Spadone da veterano	1	-1	3	12				COMMON			
+claymore_special_atk_40_50_common	SPADONE	Spadone da veterano	1	-1	3	12				COMMON			
+claymore_atk_40_50_high_quality	SPADONE	Spadone Affilato di manifattura superiore	1	-1	3	14				HIGH_QUALITY	+% peso convertito in danno; +% danni sui nemici più leggeri di te		
+claymore_elemental_atk_40_50_high_quality	SPADONE	Spadone Affilato di manifattura superiore	1	-1	3	14				HIGH_QUALITY	+% danni elementali ad area; +% raggio dell'area colpita		
+claymore_special_atk_40_50_high_quality	SPADONE	Spadone Affilato di manifattura superiore	1	-1	3	14				HIGH_QUALITY	+% danni del colpo caricato; -% turni di carica necessari		
+claymore_atk_40_50_masterwork	SPADONE	Lama Immane del Fabbro Supremo	1	-1	3	15				MASTERWORK	+% peso convertito in danno; +% danni sui nemici più leggeri di te	[Stile: Assalto] STUB — Peso della Lama: ogni colpo a segno respinge il bersaglio di una casella	
+claymore_elemental_atk_40_50_masterwork	SPADONE	Lama Immane del Fabbro Supremo	1	-1	3	15				MASTERWORK	+% danni elementali ad area; +% raggio dell'area colpita	[Stile: Canalizzazione] STUB — Onda Tellurica: l'area colpita resta pericolosa per un round	
+claymore_special_atk_40_50_masterwork	SPADONE	Lama Immane del Fabbro Supremo	1	-1	3	15				MASTERWORK	+% danni del colpo caricato; -% turni di carica necessari	[Stile: Astuzia] STUB — Mulinello: il colpo caricato colpisce tutti i nemici e non può essere interrotto	
+claymore_atk_40_50_mythic	SPADONE	Spadone del Sovrano Immortale	1	-1	3	17				MYTHIC	+% peso convertito in danno; +% danni sui nemici più leggeri di te	[Stile: Assalto] STUB — Peso della Lama: ogni colpo a segno respinge il bersaglio di una casella	[Mitico] STUB — Peso del Mondo: ogni colpo respinge e stordisce brevemente il bersaglio
+claymore_elemental_atk_40_50_mythic	SPADONE	Spadone del Sovrano Immortale	1	-1	3	17				MYTHIC	+% danni elementali ad area; +% raggio dell'area colpita	[Stile: Canalizzazione] STUB — Onda Tellurica: l'area colpita resta pericolosa per un round	[Mitico] STUB — Faglia: l'area colpita resta pericolosa finché dura il combattimento
+claymore_special_atk_40_50_mythic	SPADONE	Spadone del Sovrano Immortale	1	-1	3	17				MYTHIC	+% danni del colpo caricato; -% turni di carica necessari	[Stile: Astuzia] STUB — Mulinello: il colpo caricato colpisce tutti i nemici e non può essere interrotto	[Mitico] STUB — Apocalisse: il colpo caricato non richiede più alcun turno di carica
+spear_atk_0_10_common	LANCIA_LUNGA	Lancia Lunga semplice	1	1	1	1				COMMON			
+spear_elemental_atk_0_10_common	LANCIA_LUNGA	Lancia Lunga semplice	1	1	1	1				COMMON			
+spear_special_atk_0_10_common	LANCIA_LUNGA	Lancia Lunga semplice	1	1	1	1				COMMON			
+spear_atk_10_20_common	LANCIA_LUNGA	Asta Appuntita da recluta	1	1	1	2				COMMON			
+spear_elemental_atk_10_20_common	LANCIA_LUNGA	Asta Appuntita da recluta	1	1	1	2				COMMON			
+spear_special_atk_10_20_common	LANCIA_LUNGA	Asta Appuntita da recluta	1	1	1	2				COMMON			
+spear_atk_10_20_high_quality	LANCIA_LUNGA	Asta da Guerra di buona fattura	1	1	1	3				HIGH_QUALITY	+% danni con il tipo scelto (taglio o perforazione)		
+spear_elemental_atk_10_20_high_quality	LANCIA_LUNGA	Asta da Guerra di buona fattura	1	1	1	3				HIGH_QUALITY	+% danni da Acqua; +% accumulo di Abrasione a distanza		
+spear_special_atk_10_20_high_quality	LANCIA_LUNGA	Asta da Guerra di buona fattura	1	1	1	3				HIGH_QUALITY	+% danni di contrattacco; +% prob. di contrattaccare		
+spear_atk_20_30_common	LANCIA_LUNGA	Lancia Lunga da apprendista	1	1	1	4				COMMON			
+spear_elemental_atk_20_30_common	LANCIA_LUNGA	Lancia Lunga da apprendista	1	1	1	4				COMMON			
+spear_special_atk_20_30_common	LANCIA_LUNGA	Lancia Lunga da apprendista	1	1	1	4				COMMON			
+spear_atk_20_30_high_quality	LANCIA_LUNGA	Lancia Rinforzata di manifattura pregiata	1	1	1	5				HIGH_QUALITY	+% danni con il tipo scelto (taglio o perforazione)		
+spear_elemental_atk_20_30_high_quality	LANCIA_LUNGA	Lancia Rinforzata di manifattura pregiata	1	1	1	5				HIGH_QUALITY	+% danni da Acqua; +% accumulo di Abrasione a distanza		
+spear_special_atk_20_30_high_quality	LANCIA_LUNGA	Lancia Rinforzata di manifattura pregiata	1	1	1	5				HIGH_QUALITY	+% danni di contrattacco; +% prob. di contrattaccare		
+spear_atk_20_30_masterwork	LANCIA_LUNGA	Lancia da Cavaliere del Maestro d'Armi	1	1	1	6				MASTERWORK	+% danni con il tipo scelto (taglio o perforazione)	[Stile: Assalto] STUB — Doppia Punta: puoi cambiare tipo di danno a metà attacco, dopo aver visto la difesa	
+spear_elemental_atk_20_30_masterwork	LANCIA_LUNGA	Lancia da Cavaliere del Maestro d'Armi	1	1	1	6				MASTERWORK	+% danni da Acqua; +% accumulo di Abrasione a distanza	[Stile: Canalizzazione] STUB — Getto Continuo: l'Abrasione si propaga ai nemici in linea con il bersaglio	
+spear_special_atk_20_30_masterwork	LANCIA_LUNGA	Lancia da Cavaliere del Maestro d'Armi	1	1	1	6				MASTERWORK	+% danni di contrattacco; +% prob. di contrattaccare	[Stile: Astuzia] STUB — Zona di Minaccia: ogni nemico che entra a portata subisce un attacco automatico	
+spear_atk_30_40_common	LANCIA_LUNGA	Asta Appuntita da soldato	1	1	1	7				COMMON			
+spear_elemental_atk_30_40_common	LANCIA_LUNGA	Asta Appuntita da soldato	1	1	1	7				COMMON			
+spear_special_atk_30_40_common	LANCIA_LUNGA	Asta Appuntita da soldato	1	1	1	7				COMMON			
+spear_atk_30_40_high_quality	LANCIA_LUNGA	Asta da Guerra di fattura magistrale	1	1	1	8				HIGH_QUALITY	+% danni con il tipo scelto (taglio o perforazione)		
+spear_elemental_atk_30_40_high_quality	LANCIA_LUNGA	Asta da Guerra di fattura magistrale	1	1	1	8				HIGH_QUALITY	+% danni da Acqua; +% accumulo di Abrasione a distanza		
+spear_special_atk_30_40_high_quality	LANCIA_LUNGA	Asta da Guerra di fattura magistrale	1	1	1	8				HIGH_QUALITY	+% danni di contrattacco; +% prob. di contrattaccare		
+spear_atk_30_40_masterwork	LANCIA_LUNGA	Asta del Campione del Gran Maestro d'Armi	1	1	1	9				MASTERWORK	+% danni con il tipo scelto (taglio o perforazione)	[Stile: Assalto] STUB — Doppia Punta: puoi cambiare tipo di danno a metà attacco, dopo aver visto la difesa	
+spear_elemental_atk_30_40_masterwork	LANCIA_LUNGA	Asta del Campione del Gran Maestro d'Armi	1	1	1	9				MASTERWORK	+% danni da Acqua; +% accumulo di Abrasione a distanza	[Stile: Canalizzazione] STUB — Getto Continuo: l'Abrasione si propaga ai nemici in linea con il bersaglio	
+spear_special_atk_30_40_masterwork	LANCIA_LUNGA	Asta del Campione del Gran Maestro d'Armi	1	1	1	9				MASTERWORK	+% danni di contrattacco; +% prob. di contrattaccare	[Stile: Astuzia] STUB — Zona di Minaccia: ogni nemico che entra a portata subisce un attacco automatico	
+spear_atk_30_40_mythic	LANCIA_LUNGA	Lancia dell'Alba Spezzata	1	1	1	10				MYTHIC	+% danni con il tipo scelto (taglio o perforazione)	[Stile: Assalto] STUB — Doppia Punta: puoi cambiare tipo di danno a metà attacco, dopo aver visto la difesa	[Mitico] STUB — Punta Perfetta: scegli sempre il tipo di danno più efficace, automaticamente
+spear_elemental_atk_30_40_mythic	LANCIA_LUNGA	Lancia dell'Alba Spezzata	1	1	1	10				MYTHIC	+% danni da Acqua; +% accumulo di Abrasione a distanza	[Stile: Canalizzazione] STUB — Getto Continuo: l'Abrasione si propaga ai nemici in linea con il bersaglio	[Mitico] STUB — Diluvio: l'Abrasione si propaga a tutti i nemici in campo, non solo in linea
+spear_special_atk_30_40_mythic	LANCIA_LUNGA	Lancia dell'Alba Spezzata	1	1	1	10				MYTHIC	+% danni di contrattacco; +% prob. di contrattaccare	[Stile: Astuzia] STUB — Zona di Minaccia: ogni nemico che entra a portata subisce un attacco automatico	[Mitico] STUB — Dominio Assoluto: la zona di minaccia copre l'intero campo di battaglia
+spear_atk_40_50_common	LANCIA_LUNGA	Lancia Lunga da veterano	1	1	1	11				COMMON			
+spear_elemental_atk_40_50_common	LANCIA_LUNGA	Lancia Lunga da veterano	1	1	1	11				COMMON			
+spear_special_atk_40_50_common	LANCIA_LUNGA	Lancia Lunga da veterano	1	1	1	11				COMMON			
+spear_atk_40_50_high_quality	LANCIA_LUNGA	Lancia Rinforzata di manifattura superiore	1	1	1	12				HIGH_QUALITY	+% danni con il tipo scelto (taglio o perforazione)		
+spear_elemental_atk_40_50_high_quality	LANCIA_LUNGA	Lancia Rinforzata di manifattura superiore	1	1	1	12				HIGH_QUALITY	+% danni da Acqua; +% accumulo di Abrasione a distanza		
+spear_special_atk_40_50_high_quality	LANCIA_LUNGA	Lancia Rinforzata di manifattura superiore	1	1	1	12				HIGH_QUALITY	+% danni di contrattacco; +% prob. di contrattaccare		
+spear_atk_40_50_masterwork	LANCIA_LUNGA	Lancia da Cavaliere del Fabbro Supremo	1	1	1	13				MASTERWORK	+% danni con il tipo scelto (taglio o perforazione)	[Stile: Assalto] STUB — Doppia Punta: puoi cambiare tipo di danno a metà attacco, dopo aver visto la difesa	
+spear_elemental_atk_40_50_masterwork	LANCIA_LUNGA	Lancia da Cavaliere del Fabbro Supremo	1	1	1	13				MASTERWORK	+% danni da Acqua; +% accumulo di Abrasione a distanza	[Stile: Canalizzazione] STUB — Getto Continuo: l'Abrasione si propaga ai nemici in linea con il bersaglio	
+spear_special_atk_40_50_masterwork	LANCIA_LUNGA	Lancia da Cavaliere del Fabbro Supremo	1	1	1	13				MASTERWORK	+% danni di contrattacco; +% prob. di contrattaccare	[Stile: Astuzia] STUB — Zona di Minaccia: ogni nemico che entra a portata subisce un attacco automatico	
+spear_atk_40_50_mythic	LANCIA_LUNGA	Lancia dell'Alba Eterna	1	1	1	14				MYTHIC	+% danni con il tipo scelto (taglio o perforazione)	[Stile: Assalto] STUB — Doppia Punta: puoi cambiare tipo di danno a metà attacco, dopo aver visto la difesa	[Mitico] STUB — Punta Perfetta: scegli sempre il tipo di danno più efficace, automaticamente
+spear_elemental_atk_40_50_mythic	LANCIA_LUNGA	Lancia dell'Alba Eterna	1	1	1	14				MYTHIC	+% danni da Acqua; +% accumulo di Abrasione a distanza	[Stile: Canalizzazione] STUB — Getto Continuo: l'Abrasione si propaga ai nemici in linea con il bersaglio	[Mitico] STUB — Diluvio: l'Abrasione si propaga a tutti i nemici in campo, non solo in linea
+spear_special_atk_40_50_mythic	LANCIA_LUNGA	Lancia dell'Alba Eterna	1	1	1	14				MYTHIC	+% danni di contrattacco; +% prob. di contrattaccare	[Stile: Astuzia] STUB — Zona di Minaccia: ogni nemico che entra a portata subisce un attacco automatico	[Mitico] STUB — Dominio Assoluto: la zona di minaccia copre l'intero campo di battaglia
+pique_atk_0_10_common	PICCA	Picca semplice	1	1	1	1				COMMON			
+pique_elemental_atk_0_10_common	PICCA	Picca semplice	1	1	1	1				COMMON			
+pique_special_atk_0_10_common	PICCA	Picca semplice	1	1	1	1				COMMON			
+pique_atk_10_20_common	PICCA	Asta Lunga da recluta	1	1	1	2				COMMON			
+pique_elemental_atk_10_20_common	PICCA	Asta Lunga da recluta	1	1	1	2				COMMON			
+pique_special_atk_10_20_common	PICCA	Asta Lunga da recluta	1	1	1	2				COMMON			
+pique_atk_10_20_high_quality	PICCA	Lancia Pesante di buona fattura	1	1	1	3				HIGH_QUALITY	+% lunghezza convertita in danno; +% danni contro chi carica		
+pique_elemental_atk_10_20_high_quality	PICCA	Lancia Pesante di buona fattura	1	1	1	3				HIGH_QUALITY	+% danni da Luce; +% resistenze elementali ignorate		
+pique_special_atk_10_20_high_quality	PICCA	Lancia Pesante di buona fattura	1	1	1	3				HIGH_QUALITY	+% distanza di respinta; +% prob. di annullare un avvicinamento		
+pique_atk_20_30_common	PICCA	Picca da apprendista	1	1	1	4				COMMON			
+pique_elemental_atk_20_30_common	PICCA	Picca da apprendista	1	1	1	4				COMMON			
+pique_special_atk_20_30_common	PICCA	Picca da apprendista	1	1	1	4				COMMON			
+pique_atk_20_30_high_quality	PICCA	Picca Rinforzata di manifattura pregiata	1	1	1	5				HIGH_QUALITY	+% lunghezza convertita in danno; +% danni contro chi carica		
+pique_elemental_atk_20_30_high_quality	PICCA	Picca Rinforzata di manifattura pregiata	1	1	1	5				HIGH_QUALITY	+% danni da Luce; +% resistenze elementali ignorate		
+pique_special_atk_20_30_high_quality	PICCA	Picca Rinforzata di manifattura pregiata	1	1	1	5				HIGH_QUALITY	+% distanza di respinta; +% prob. di annullare un avvicinamento		
+pique_atk_20_30_masterwork	PICCA	Picca da Fanteria del Maestro d'Armi	1	1	1	6				MASTERWORK	+% lunghezza convertita in danno; +% danni contro chi carica	[Stile: Assalto] STUB — Muro di Punte: chi ti attacca in mischia subisce danni prima di colpire	
+pique_elemental_atk_20_30_masterwork	PICCA	Picca da Fanteria del Maestro d'Armi	1	1	1	6				MASTERWORK	+% danni da Luce; +% resistenze elementali ignorate	[Stile: Canalizzazione] STUB — Punta di Luce: ignori completamente la resistenza elementale del bersaglio	
+pique_special_atk_20_30_masterwork	PICCA	Picca da Fanteria del Maestro d'Armi	1	1	1	6				MASTERWORK	+% distanza di respinta; +% prob. di annullare un avvicinamento	[Stile: Astuzia] STUB — Linea Tenuta: i nemici non possono avvicinarsi a te finché reggi la posizione	
+pique_atk_30_40_common	PICCA	Asta Lunga da soldato	1	1	1	7				COMMON			
+pique_elemental_atk_30_40_common	PICCA	Asta Lunga da soldato	1	1	1	7				COMMON			
+pique_special_atk_30_40_common	PICCA	Asta Lunga da soldato	1	1	1	7				COMMON			
+pique_atk_30_40_high_quality	PICCA	Lancia Pesante di fattura magistrale	1	1	1	8				HIGH_QUALITY	+% lunghezza convertita in danno; +% danni contro chi carica		
+pique_elemental_atk_30_40_high_quality	PICCA	Lancia Pesante di fattura magistrale	1	1	1	8				HIGH_QUALITY	+% danni da Luce; +% resistenze elementali ignorate		
+pique_special_atk_30_40_high_quality	PICCA	Lancia Pesante di fattura magistrale	1	1	1	8				HIGH_QUALITY	+% distanza di respinta; +% prob. di annullare un avvicinamento		
+pique_atk_30_40_masterwork	PICCA	Picca del Reggimento del Gran Maestro d'Armi	1	1	1	9				MASTERWORK	+% lunghezza convertita in danno; +% danni contro chi carica	[Stile: Assalto] STUB — Muro di Punte: chi ti attacca in mischia subisce danni prima di colpire	
+pique_elemental_atk_30_40_masterwork	PICCA	Picca del Reggimento del Gran Maestro d'Armi	1	1	1	9				MASTERWORK	+% danni da Luce; +% resistenze elementali ignorate	[Stile: Canalizzazione] STUB — Punta di Luce: ignori completamente la resistenza elementale del bersaglio	
+pique_special_atk_30_40_masterwork	PICCA	Picca del Reggimento del Gran Maestro d'Armi	1	1	1	9				MASTERWORK	+% distanza di respinta; +% prob. di annullare un avvicinamento	[Stile: Astuzia] STUB — Linea Tenuta: i nemici non possono avvicinarsi a te finché reggi la posizione	
+pique_atk_30_40_mythic	PICCA	Picca del Guardiano Dimenticato	1	1	1	10				MYTHIC	+% lunghezza convertita in danno; +% danni contro chi carica	[Stile: Assalto] STUB — Muro di Punte: chi ti attacca in mischia subisce danni prima di colpire	[Mitico] STUB — Bastione Vivente: chi ti attacca in mischia subisce danni pari al doppio, prima di colpire
+pique_elemental_atk_30_40_mythic	PICCA	Picca del Guardiano Dimenticato	1	1	1	10				MYTHIC	+% danni da Luce; +% resistenze elementali ignorate	[Stile: Canalizzazione] STUB — Punta di Luce: ignori completamente la resistenza elementale del bersaglio	[Mitico] STUB — Lancia del Sole: ignori anche l'immunità elementale, non solo la resistenza
+pique_special_atk_30_40_mythic	PICCA	Picca del Guardiano Dimenticato	1	1	1	10				MYTHIC	+% distanza di respinta; +% prob. di annullare un avvicinamento	[Stile: Astuzia] STUB — Linea Tenuta: i nemici non possono avvicinarsi a te finché reggi la posizione	[Mitico] STUB — Fronte Impenetrabile: nessun nemico può mai avvicinarsi a te, in nessun modo
+pique_atk_40_50_common	PICCA	Picca da veterano	1	1	1	11				COMMON			
+pique_elemental_atk_40_50_common	PICCA	Picca da veterano	1	1	1	11				COMMON			
+pique_special_atk_40_50_common	PICCA	Picca da veterano	1	1	1	11				COMMON			
+pique_atk_40_50_high_quality	PICCA	Picca Rinforzata di manifattura superiore	1	1	1	12				HIGH_QUALITY	+% lunghezza convertita in danno; +% danni contro chi carica		
+pique_elemental_atk_40_50_high_quality	PICCA	Picca Rinforzata di manifattura superiore	1	1	1	12				HIGH_QUALITY	+% danni da Luce; +% resistenze elementali ignorate		
+pique_special_atk_40_50_high_quality	PICCA	Picca Rinforzata di manifattura superiore	1	1	1	12				HIGH_QUALITY	+% distanza di respinta; +% prob. di annullare un avvicinamento		
+pique_atk_40_50_masterwork	PICCA	Picca da Fanteria del Fabbro Supremo	1	1	1	13				MASTERWORK	+% lunghezza convertita in danno; +% danni contro chi carica	[Stile: Assalto] STUB — Muro di Punte: chi ti attacca in mischia subisce danni prima di colpire	
+pique_elemental_atk_40_50_masterwork	PICCA	Picca da Fanteria del Fabbro Supremo	1	1	1	13				MASTERWORK	+% danni da Luce; +% resistenze elementali ignorate	[Stile: Canalizzazione] STUB — Punta di Luce: ignori completamente la resistenza elementale del bersaglio	
+pique_special_atk_40_50_masterwork	PICCA	Picca da Fanteria del Fabbro Supremo	1	1	1	13				MASTERWORK	+% distanza di respinta; +% prob. di annullare un avvicinamento	[Stile: Astuzia] STUB — Linea Tenuta: i nemici non possono avvicinarsi a te finché reggi la posizione	
+pique_atk_40_50_mythic	PICCA	Picca del Guardiano dell'Abisso	1	1	1	14				MYTHIC	+% lunghezza convertita in danno; +% danni contro chi carica	[Stile: Assalto] STUB — Muro di Punte: chi ti attacca in mischia subisce danni prima di colpire	[Mitico] STUB — Bastione Vivente: chi ti attacca in mischia subisce danni pari al doppio, prima di colpire
+pique_elemental_atk_40_50_mythic	PICCA	Picca del Guardiano dell'Abisso	1	1	1	14				MYTHIC	+% danni da Luce; +% resistenze elementali ignorate	[Stile: Canalizzazione] STUB — Punta di Luce: ignori completamente la resistenza elementale del bersaglio	[Mitico] STUB — Lancia del Sole: ignori anche l'immunità elementale, non solo la resistenza
+pique_special_atk_40_50_mythic	PICCA	Picca del Guardiano dell'Abisso	1	1	1	14				MYTHIC	+% distanza di respinta; +% prob. di annullare un avvicinamento	[Stile: Astuzia] STUB — Linea Tenuta: i nemici non possono avvicinarsi a te finché reggi la posizione	[Mitico] STUB — Fronte Impenetrabile: nessun nemico può mai avvicinarsi a te, in nessun modo
+scythe_atk_0_10_common	FALCE	Falce semplice	1	1	1	1				COMMON			
+scythe_elemental_atk_0_10_common	FALCE	Falce semplice	1	1	1	1				COMMON			
+scythe_special_atk_0_10_common	FALCE	Falce semplice	1	1	1	1				COMMON			
+scythe_atk_10_20_common	FALCE	Falcetto da recluta	1	1	1	2				COMMON			
+scythe_elemental_atk_10_20_common	FALCE	Falcetto da recluta	1	1	1	2				COMMON			
+scythe_special_atk_10_20_common	FALCE	Falcetto da recluta	1	1	1	2				COMMON			
+scythe_atk_10_20_high_quality	FALCE	Falcetto da Guerra di buona fattura	1	1	1	3				HIGH_QUALITY	+% prob. di avvicinare il bersaglio; +% danni sul bersaglio tirato		
+scythe_elemental_atk_10_20_high_quality	FALCE	Falcetto da Guerra di buona fattura	1	1	1	3				HIGH_QUALITY	+% danni da Acqua; +% quantità drenata per colpo		
+scythe_special_atk_10_20_high_quality	FALCE	Falcetto da Guerra di buona fattura	1	1	1	3				HIGH_QUALITY	+% cura per danno inflitto; +% cura extra sui nemici sotto metà vita		
+scythe_atk_20_30_common	FALCE	Falce da apprendista	1	1	1	4				COMMON			
+scythe_elemental_atk_20_30_common	FALCE	Falce da apprendista	1	1	1	4				COMMON			
+scythe_special_atk_20_30_common	FALCE	Falce da apprendista	1	1	1	4				COMMON			
+scythe_atk_20_30_high_quality	FALCE	Falce Affilata di manifattura pregiata	1	1	1	5				HIGH_QUALITY	+% prob. di avvicinare il bersaglio; +% danni sul bersaglio tirato		
+scythe_elemental_atk_20_30_high_quality	FALCE	Falce Affilata di manifattura pregiata	1	1	1	5				HIGH_QUALITY	+% danni da Acqua; +% quantità drenata per colpo		
+scythe_special_atk_20_30_high_quality	FALCE	Falce Affilata di manifattura pregiata	1	1	1	5				HIGH_QUALITY	+% cura per danno inflitto; +% cura extra sui nemici sotto metà vita		
+scythe_atk_20_30_masterwork	FALCE	Falce Ricurva del Maestro d'Armi	1	1	1	6				MASTERWORK	+% prob. di avvicinare il bersaglio; +% danni sul bersaglio tirato	[Stile: Assalto] STUB — Uncino: il bersaglio tirato verso di te perde il turno	
+scythe_elemental_atk_20_30_masterwork	FALCE	Falce Ricurva del Maestro d'Armi	1	1	1	6				MASTERWORK	+% danni da Acqua; +% quantità drenata per colpo	[Stile: Canalizzazione] STUB — Marea Nera: ciò che drena si trasferisce anche agli alleati	
+scythe_special_atk_20_30_masterwork	FALCE	Falce Ricurva del Maestro d'Armi	1	1	1	6				MASTERWORK	+% cura per danno inflitto; +% cura extra sui nemici sotto metà vita	[Stile: Astuzia] STUB — Mietitura: uccidere un nemico ripristina completamente la tua risorsa	
+scythe_atk_30_40_common	FALCE	Falcetto da soldato	1	1	1	7				COMMON			
+scythe_elemental_atk_30_40_common	FALCE	Falcetto da soldato	1	1	1	7				COMMON			
+scythe_special_atk_30_40_common	FALCE	Falcetto da soldato	1	1	1	7				COMMON			
+scythe_atk_30_40_high_quality	FALCE	Falcetto da Guerra di fattura magistrale	1	1	1	8				HIGH_QUALITY	+% prob. di avvicinare il bersaglio; +% danni sul bersaglio tirato		
+scythe_elemental_atk_30_40_high_quality	FALCE	Falcetto da Guerra di fattura magistrale	1	1	1	8				HIGH_QUALITY	+% danni da Acqua; +% quantità drenata per colpo		
+scythe_special_atk_30_40_high_quality	FALCE	Falcetto da Guerra di fattura magistrale	1	1	1	8				HIGH_QUALITY	+% cura per danno inflitto; +% cura extra sui nemici sotto metà vita		
+scythe_atk_30_40_masterwork	FALCE	Falce del Mietitore del Gran Maestro d'Armi	1	1	1	9				MASTERWORK	+% prob. di avvicinare il bersaglio; +% danni sul bersaglio tirato	[Stile: Assalto] STUB — Uncino: il bersaglio tirato verso di te perde il turno	
+scythe_elemental_atk_30_40_masterwork	FALCE	Falce del Mietitore del Gran Maestro d'Armi	1	1	1	9				MASTERWORK	+% danni da Acqua; +% quantità drenata per colpo	[Stile: Canalizzazione] STUB — Marea Nera: ciò che drena si trasferisce anche agli alleati	
+scythe_special_atk_30_40_masterwork	FALCE	Falce del Mietitore del Gran Maestro d'Armi	1	1	1	9				MASTERWORK	+% cura per danno inflitto; +% cura extra sui nemici sotto metà vita	[Stile: Astuzia] STUB — Mietitura: uccidere un nemico ripristina completamente la tua risorsa	
+scythe_atk_30_40_mythic	FALCE	Falce del Mietitore Silente	1	1	1	10				MYTHIC	+% prob. di avvicinare il bersaglio; +% danni sul bersaglio tirato	[Stile: Assalto] STUB — Uncino: il bersaglio tirato verso di te perde il turno	[Mitico] STUB — Richiamo: puoi tirare a te qualunque nemico in campo, non solo quello più vicino
+scythe_elemental_atk_30_40_mythic	FALCE	Falce del Mietitore Silente	1	1	1	10				MYTHIC	+% danni da Acqua; +% quantità drenata per colpo	[Stile: Canalizzazione] STUB — Marea Nera: ciò che drena si trasferisce anche agli alleati	[Mitico] STUB — Abisso: drena il doppio e lo trasferisce a tutti gli alleati contemporaneamente
+scythe_special_atk_30_40_mythic	FALCE	Falce del Mietitore Silente	1	1	1	10				MYTHIC	+% cura per danno inflitto; +% cura extra sui nemici sotto metà vita	[Stile: Astuzia] STUB — Mietitura: uccidere un nemico ripristina completamente la tua risorsa	[Mitico] STUB — Falce del Destino: uccidere un nemico ripristina anche la tua vita, non solo la risorsa
+scythe_atk_40_50_common	FALCE	Falce da veterano	1	1	1	11				COMMON			
+scythe_elemental_atk_40_50_common	FALCE	Falce da veterano	1	1	1	11				COMMON			
+scythe_special_atk_40_50_common	FALCE	Falce da veterano	1	1	1	11				COMMON			
+scythe_atk_40_50_high_quality	FALCE	Falce Affilata di manifattura superiore	1	1	1	12				HIGH_QUALITY	+% prob. di avvicinare il bersaglio; +% danni sul bersaglio tirato		
+scythe_elemental_atk_40_50_high_quality	FALCE	Falce Affilata di manifattura superiore	1	1	1	12				HIGH_QUALITY	+% danni da Acqua; +% quantità drenata per colpo		
+scythe_special_atk_40_50_high_quality	FALCE	Falce Affilata di manifattura superiore	1	1	1	12				HIGH_QUALITY	+% cura per danno inflitto; +% cura extra sui nemici sotto metà vita		
+scythe_atk_40_50_masterwork	FALCE	Falce Ricurva del Fabbro Supremo	1	1	1	13				MASTERWORK	+% prob. di avvicinare il bersaglio; +% danni sul bersaglio tirato	[Stile: Assalto] STUB — Uncino: il bersaglio tirato verso di te perde il turno	
+scythe_elemental_atk_40_50_masterwork	FALCE	Falce Ricurva del Fabbro Supremo	1	1	1	13				MASTERWORK	+% danni da Acqua; +% quantità drenata per colpo	[Stile: Canalizzazione] STUB — Marea Nera: ciò che drena si trasferisce anche agli alleati	
+scythe_special_atk_40_50_masterwork	FALCE	Falce Ricurva del Fabbro Supremo	1	1	1	13				MASTERWORK	+% cura per danno inflitto; +% cura extra sui nemici sotto metà vita	[Stile: Astuzia] STUB — Mietitura: uccidere un nemico ripristina completamente la tua risorsa	
+scythe_atk_40_50_mythic	FALCE	Falce dell'Ultimo Raccolto	1	1	1	14				MYTHIC	+% prob. di avvicinare il bersaglio; +% danni sul bersaglio tirato	[Stile: Assalto] STUB — Uncino: il bersaglio tirato verso di te perde il turno	[Mitico] STUB — Richiamo: puoi tirare a te qualunque nemico in campo, non solo quello più vicino
+scythe_elemental_atk_40_50_mythic	FALCE	Falce dell'Ultimo Raccolto	1	1	1	14				MYTHIC	+% danni da Acqua; +% quantità drenata per colpo	[Stile: Canalizzazione] STUB — Marea Nera: ciò che drena si trasferisce anche agli alleati	[Mitico] STUB — Abisso: drena il doppio e lo trasferisce a tutti gli alleati contemporaneamente
+scythe_special_atk_40_50_mythic	FALCE	Falce dell'Ultimo Raccolto	1	1	1	14				MYTHIC	+% cura per danno inflitto; +% cura extra sui nemici sotto metà vita	[Stile: Astuzia] STUB — Mietitura: uccidere un nemico ripristina completamente la tua risorsa	[Mitico] STUB — Falce del Destino: uccidere un nemico ripristina anche la tua vita, non solo la risorsa
+short_bow_precision_0_10_common	ARCO_CORTO	Arco Corto da caccia	1	3	0		1	100	1	COMMON			
+short_bow_elemental_atk_0_10_common	ARCO_CORTO	Arco Corto da caccia	1	3	0		1	100	1	COMMON			
+short_bow_special_atk_0_10_common	ARCO_CORTO	Arco Corto da caccia	1	3	0		1	100	1	COMMON			
+short_bow_precision_10_20_common	ARCO_CORTO	Arco da Battuta da tiratore	1	3	0		2	100	2	COMMON			
+short_bow_elemental_atk_10_20_common	ARCO_CORTO	Arco da Battuta da tiratore	1	3	0		2	100	2	COMMON			
+short_bow_special_atk_10_20_common	ARCO_CORTO	Arco da Battuta da tiratore	1	3	0		2	100	2	COMMON			
+short_bow_precision_10_20_high_quality	ARCO_CORTO	Arco da Caccia di ottima mira	1	3	0		3	100	3	HIGH_QUALITY	+% danni contro nemici senza armatura; +% cadenza di tiro		
+short_bow_elemental_atk_10_20_high_quality	ARCO_CORTO	Arco da Caccia di ottima mira	1	3	0		3	100	3	HIGH_QUALITY	+% danni da Aria; -% dispersione a lunga distanza		
+short_bow_special_atk_10_20_high_quality	ARCO_CORTO	Arco da Caccia di ottima mira	1	3	0		3	100	3	HIGH_QUALITY	+% numero di colpi per turno; -% penalità di danno sui colpi multipli		
+short_bow_precision_20_30_common	ARCO_CORTO	Arco Corto da battuta	1	3	0		4	100	4	COMMON			
+short_bow_elemental_atk_20_30_common	ARCO_CORTO	Arco Corto da battuta	1	3	0		4	100	4	COMMON			
+short_bow_special_atk_20_30_common	ARCO_CORTO	Arco Corto da battuta	1	3	0		4	100	4	COMMON			
+short_bow_precision_20_30_high_quality	ARCO_CORTO	Arco Snello di precisione rara	1	3	0		5	100	5	HIGH_QUALITY	+% danni contro nemici senza armatura; +% cadenza di tiro		
+short_bow_elemental_atk_20_30_high_quality	ARCO_CORTO	Arco Snello di precisione rara	1	3	0		5	100	5	HIGH_QUALITY	+% danni da Aria; -% dispersione a lunga distanza		
+short_bow_special_atk_20_30_high_quality	ARCO_CORTO	Arco Snello di precisione rara	1	3	0		5	100	5	HIGH_QUALITY	+% numero di colpi per turno; -% penalità di danno sui colpi multipli		
+short_bow_precision_20_30_masterwork	ARCO_CORTO	Arco Ricurvo del Maestro Arciere	1	3	0		6	100	6	MASTERWORK	+% danni contro nemici senza armatura; +% cadenza di tiro	[Stile: Tiro Calibrato] STUB — Tiro Rapido: due frecce per turno contro bersagli senza armatura	
+short_bow_elemental_atk_20_30_masterwork	ARCO_CORTO	Arco Ricurvo del Maestro Arciere	1	3	0		6	100	6	MASTERWORK	+% danni da Aria; -% dispersione a lunga distanza	[Stile: Canalizzazione] STUB — Freccia di Vento: il colpo non può essere deviato né bloccato dalla copertura	
+short_bow_special_atk_20_30_masterwork	ARCO_CORTO	Arco Ricurvo del Maestro Arciere	1	3	0		6	100	6	MASTERWORK	+% numero di colpi per turno; -% penalità di danno sui colpi multipli	[Stile: Astuzia] STUB — Raffica: ogni colpo a segno nella raffica aggiunge un colpo extra	
+short_bow_precision_30_40_common	ARCO_CORTO	Arco da Battuta da frontiera	1	3	0		7	100	7	COMMON			
+short_bow_elemental_atk_30_40_common	ARCO_CORTO	Arco da Battuta da frontiera	1	3	0		7	100	7	COMMON			
+short_bow_special_atk_30_40_common	ARCO_CORTO	Arco da Battuta da frontiera	1	3	0		7	100	7	COMMON			
+short_bow_precision_30_40_high_quality	ARCO_CORTO	Arco da Caccia di manifattura d'arciere	1	3	0		8	100	8	HIGH_QUALITY	+% danni contro nemici senza armatura; +% cadenza di tiro		
+short_bow_elemental_atk_30_40_high_quality	ARCO_CORTO	Arco da Caccia di manifattura d'arciere	1	3	0		8	100	8	HIGH_QUALITY	+% danni da Aria; -% dispersione a lunga distanza		
+short_bow_special_atk_30_40_high_quality	ARCO_CORTO	Arco da Caccia di manifattura d'arciere	1	3	0		8	100	8	HIGH_QUALITY	+% numero di colpi per turno; -% penalità di danno sui colpi multipli		
+short_bow_precision_30_40_masterwork	ARCO_CORTO	Arco del Cacciatore del Gran Cecchino	1	3	0		9	100	9	MASTERWORK	+% danni contro nemici senza armatura; +% cadenza di tiro	[Stile: Tiro Calibrato] STUB — Tiro Rapido: due frecce per turno contro bersagli senza armatura	
+short_bow_elemental_atk_30_40_masterwork	ARCO_CORTO	Arco del Cacciatore del Gran Cecchino	1	3	0		9	100	9	MASTERWORK	+% danni da Aria; -% dispersione a lunga distanza	[Stile: Canalizzazione] STUB — Freccia di Vento: il colpo non può essere deviato né bloccato dalla copertura	
+short_bow_special_atk_30_40_masterwork	ARCO_CORTO	Arco del Cacciatore del Gran Cecchino	1	3	0		9	100	9	MASTERWORK	+% numero di colpi per turno; -% penalità di danno sui colpi multipli	[Stile: Astuzia] STUB — Raffica: ogni colpo a segno nella raffica aggiunge un colpo extra	
+short_bow_precision_30_40_mythic	ARCO_CORTO	Arco del Cacciatore Fantasma	1	3	0		10	100	10	MYTHIC	+% danni contro nemici senza armatura; +% cadenza di tiro	[Stile: Tiro Calibrato] STUB — Tiro Rapido: due frecce per turno contro bersagli senza armatura	[Mitico] STUB — Pioggia di Frecce: tre frecce per turno contro qualunque bersaglio
+short_bow_elemental_atk_30_40_mythic	ARCO_CORTO	Arco del Cacciatore Fantasma	1	3	0		10	100	10	MYTHIC	+% danni da Aria; -% dispersione a lunga distanza	[Stile: Canalizzazione] STUB — Freccia di Vento: il colpo non può essere deviato né bloccato dalla copertura	[Mitico] STUB — Vento Assoluto: il colpo attraversa qualunque ostacolo e non manca mai il bersaglio
+short_bow_special_atk_30_40_mythic	ARCO_CORTO	Arco del Cacciatore Fantasma	1	3	0		10	100	10	MYTHIC	+% numero di colpi per turno; -% penalità di danno sui colpi multipli	[Stile: Astuzia] STUB — Raffica: ogni colpo a segno nella raffica aggiunge un colpo extra	[Mitico] STUB — Raffica Infinita: la raffica continua finché ogni colpo va a segno
+short_bow_precision_40_50_common	ARCO_CORTO	Arco Corto da esploratore	1	3	0		11	100	11	COMMON			
+short_bow_elemental_atk_40_50_common	ARCO_CORTO	Arco Corto da esploratore	1	3	0		11	100	11	COMMON			
+short_bow_special_atk_40_50_common	ARCO_CORTO	Arco Corto da esploratore	1	3	0		11	100	11	COMMON			
+short_bow_precision_40_50_high_quality	ARCO_CORTO	Arco Snello di tiro perfetto	1	3	0		12	100	12	HIGH_QUALITY	+% danni contro nemici senza armatura; +% cadenza di tiro		
+short_bow_elemental_atk_40_50_high_quality	ARCO_CORTO	Arco Snello di tiro perfetto	1	3	0		12	100	12	HIGH_QUALITY	+% danni da Aria; -% dispersione a lunga distanza		
+short_bow_special_atk_40_50_high_quality	ARCO_CORTO	Arco Snello di tiro perfetto	1	3	0		12	100	12	HIGH_QUALITY	+% numero di colpi per turno; -% penalità di danno sui colpi multipli		
+short_bow_precision_40_50_masterwork	ARCO_CORTO	Arco Ricurvo dell'Arciere Supremo	1	3	0		13	100	13	MASTERWORK	+% danni contro nemici senza armatura; +% cadenza di tiro	[Stile: Tiro Calibrato] STUB — Tiro Rapido: due frecce per turno contro bersagli senza armatura	
+short_bow_elemental_atk_40_50_masterwork	ARCO_CORTO	Arco Ricurvo dell'Arciere Supremo	1	3	0		13	100	13	MASTERWORK	+% danni da Aria; -% dispersione a lunga distanza	[Stile: Canalizzazione] STUB — Freccia di Vento: il colpo non può essere deviato né bloccato dalla copertura	
+short_bow_special_atk_40_50_masterwork	ARCO_CORTO	Arco Ricurvo dell'Arciere Supremo	1	3	0		13	100	13	MASTERWORK	+% numero di colpi per turno; -% penalità di danno sui colpi multipli	[Stile: Astuzia] STUB — Raffica: ogni colpo a segno nella raffica aggiunge un colpo extra	
+short_bow_precision_40_50_mythic	ARCO_CORTO	Arco del Cacciatore delle Anime	1	3	0		14	100	14	MYTHIC	+% danni contro nemici senza armatura; +% cadenza di tiro	[Stile: Tiro Calibrato] STUB — Tiro Rapido: due frecce per turno contro bersagli senza armatura	[Mitico] STUB — Pioggia di Frecce: tre frecce per turno contro qualunque bersaglio
+short_bow_elemental_atk_40_50_mythic	ARCO_CORTO	Arco del Cacciatore delle Anime	1	3	0		14	100	14	MYTHIC	+% danni da Aria; -% dispersione a lunga distanza	[Stile: Canalizzazione] STUB — Freccia di Vento: il colpo non può essere deviato né bloccato dalla copertura	[Mitico] STUB — Vento Assoluto: il colpo attraversa qualunque ostacolo e non manca mai il bersaglio
+short_bow_special_atk_40_50_mythic	ARCO_CORTO	Arco del Cacciatore delle Anime	1	3	0		14	100	14	MYTHIC	+% numero di colpi per turno; -% penalità di danno sui colpi multipli	[Stile: Astuzia] STUB — Raffica: ogni colpo a segno nella raffica aggiunge un colpo extra	[Mitico] STUB — Raffica Infinita: la raffica continua finché ogni colpo va a segno
+longbow_precision_0_10_common	ARCO_LUNGO	Arco Lungo da caccia	1	1	0		1	100	1	COMMON			
+longbow_elemental_atk_0_10_common	ARCO_LUNGO	Arco Lungo da caccia	1	1	0		1	100	1	COMMON			
+longbow_special_atk_0_10_common	ARCO_LUNGO	Arco Lungo da caccia	1	1	0		1	100	1	COMMON			
+longbow_precision_10_20_common	ARCO_LUNGO	Arco Alto da tiratore	1	1	0		2	100	2	COMMON			
+longbow_elemental_atk_10_20_common	ARCO_LUNGO	Arco Alto da tiratore	1	1	0		2	100	2	COMMON			
+longbow_special_atk_10_20_common	ARCO_LUNGO	Arco Alto da tiratore	1	1	0		2	100	2	COMMON			
+longbow_precision_10_20_high_quality	ARCO_LUNGO	Arco da Guerra di ottima mira	1	1	0		3	100	3	HIGH_QUALITY	+% perforazione contro nemici corazzati; +% danni a lunga gittata		
+longbow_elemental_atk_10_20_high_quality	ARCO_LUNGO	Arco da Guerra di ottima mira	1	1	0		3	100	3	HIGH_QUALITY	+% danni da Fulmine; +% prob. di innescare Folgore		
+longbow_special_atk_10_20_high_quality	ARCO_LUNGO	Arco da Guerra di ottima mira	1	1	0		3	100	3	HIGH_QUALITY	+% danni per unità di distanza; +% distanza massima utile		
+longbow_precision_20_30_common	ARCO_LUNGO	Arco Lungo da battuta	1	1	0		4	100	4	COMMON			
+longbow_elemental_atk_20_30_common	ARCO_LUNGO	Arco Lungo da battuta	1	1	0		4	100	4	COMMON			
+longbow_special_atk_20_30_common	ARCO_LUNGO	Arco Lungo da battuta	1	1	0		4	100	4	COMMON			
+longbow_precision_20_30_high_quality	ARCO_LUNGO	Arco Teso di precisione rara	1	1	0		5	100	5	HIGH_QUALITY	+% perforazione contro nemici corazzati; +% danni a lunga gittata		
+longbow_elemental_atk_20_30_high_quality	ARCO_LUNGO	Arco Teso di precisione rara	1	1	0		5	100	5	HIGH_QUALITY	+% danni da Fulmine; +% prob. di innescare Folgore		
+longbow_special_atk_20_30_high_quality	ARCO_LUNGO	Arco Teso di precisione rara	1	1	0		5	100	5	HIGH_QUALITY	+% danni per unità di distanza; +% distanza massima utile		
+longbow_precision_20_30_masterwork	ARCO_LUNGO	Arco Composito del Maestro Arciere	1	1	0		6	100	6	MASTERWORK	+% perforazione contro nemici corazzati; +% danni a lunga gittata	[Stile: Tiro Calibrato] STUB — Tiro Perforante: il colpo attraversa il bersaglio e colpisce chi sta dietro	
+longbow_elemental_atk_20_30_masterwork	ARCO_LUNGO	Arco Composito del Maestro Arciere	1	1	0		6	100	6	MASTERWORK	+% danni da Fulmine; +% prob. di innescare Folgore	[Stile: Canalizzazione] STUB — Saetta: Folgore incatena fino a tre bersagli	
+longbow_special_atk_20_30_masterwork	ARCO_LUNGO	Arco Composito del Maestro Arciere	1	1	0		6	100	6	MASTERWORK	+% danni per unità di distanza; +% distanza massima utile	[Stile: Astuzia] STUB — Distanza di Sicurezza: alla massima gittata ogni colpo è critico	
+longbow_precision_30_40_common	ARCO_LUNGO	Arco Alto da frontiera	1	1	0		7	100	7	COMMON			
+longbow_elemental_atk_30_40_common	ARCO_LUNGO	Arco Alto da frontiera	1	1	0		7	100	7	COMMON			
+longbow_special_atk_30_40_common	ARCO_LUNGO	Arco Alto da frontiera	1	1	0		7	100	7	COMMON			
+longbow_precision_30_40_high_quality	ARCO_LUNGO	Arco da Guerra di manifattura d'arciere	1	1	0		8	100	8	HIGH_QUALITY	+% perforazione contro nemici corazzati; +% danni a lunga gittata		
+longbow_elemental_atk_30_40_high_quality	ARCO_LUNGO	Arco da Guerra di manifattura d'arciere	1	1	0		8	100	8	HIGH_QUALITY	+% danni da Fulmine; +% prob. di innescare Folgore		
+longbow_special_atk_30_40_high_quality	ARCO_LUNGO	Arco da Guerra di manifattura d'arciere	1	1	0		8	100	8	HIGH_QUALITY	+% danni per unità di distanza; +% distanza massima utile		
+longbow_precision_30_40_masterwork	ARCO_LUNGO	Arco del Guerriero del Gran Cecchino	1	1	0		9	100	9	MASTERWORK	+% perforazione contro nemici corazzati; +% danni a lunga gittata	[Stile: Tiro Calibrato] STUB — Tiro Perforante: il colpo attraversa il bersaglio e colpisce chi sta dietro	
+longbow_elemental_atk_30_40_masterwork	ARCO_LUNGO	Arco del Guerriero del Gran Cecchino	1	1	0		9	100	9	MASTERWORK	+% danni da Fulmine; +% prob. di innescare Folgore	[Stile: Canalizzazione] STUB — Saetta: Folgore incatena fino a tre bersagli	
+longbow_special_atk_30_40_masterwork	ARCO_LUNGO	Arco del Guerriero del Gran Cecchino	1	1	0		9	100	9	MASTERWORK	+% danni per unità di distanza; +% distanza massima utile	[Stile: Astuzia] STUB — Distanza di Sicurezza: alla massima gittata ogni colpo è critico	
+longbow_precision_30_40_mythic	ARCO_LUNGO	Arco della Freccia Perduta	1	1	0		10	100	10	MYTHIC	+% perforazione contro nemici corazzati; +% danni a lunga gittata	[Stile: Tiro Calibrato] STUB — Tiro Perforante: il colpo attraversa il bersaglio e colpisce chi sta dietro	[Mitico] STUB — Trapasso: il colpo attraversa tutti i nemici in linea, non solo il primo dietro
+longbow_elemental_atk_30_40_mythic	ARCO_LUNGO	Arco della Freccia Perduta	1	1	0		10	100	10	MYTHIC	+% danni da Fulmine; +% prob. di innescare Folgore	[Stile: Canalizzazione] STUB — Saetta: Folgore incatena fino a tre bersagli	[Mitico] STUB — Tempesta: Folgore incatena tutti i nemici in campo
+longbow_special_atk_30_40_mythic	ARCO_LUNGO	Arco della Freccia Perduta	1	1	0		10	100	10	MYTHIC	+% danni per unità di distanza; +% distanza massima utile	[Stile: Astuzia] STUB — Distanza di Sicurezza: alla massima gittata ogni colpo è critico	[Mitico] STUB — Occhio di Falco: ogni colpo a lunga distanza è automaticamente critico, senza soglia minima
+longbow_precision_40_50_common	ARCO_LUNGO	Arco Lungo da esploratore	1	1	0		11	100	11	COMMON			
+longbow_elemental_atk_40_50_common	ARCO_LUNGO	Arco Lungo da esploratore	1	1	0		11	100	11	COMMON			
+longbow_special_atk_40_50_common	ARCO_LUNGO	Arco Lungo da esploratore	1	1	0		11	100	11	COMMON			
+longbow_precision_40_50_high_quality	ARCO_LUNGO	Arco Teso di tiro perfetto	1	1	0		12	100	12	HIGH_QUALITY	+% perforazione contro nemici corazzati; +% danni a lunga gittata		
+longbow_elemental_atk_40_50_high_quality	ARCO_LUNGO	Arco Teso di tiro perfetto	1	1	0		12	100	12	HIGH_QUALITY	+% danni da Fulmine; +% prob. di innescare Folgore		
+longbow_special_atk_40_50_high_quality	ARCO_LUNGO	Arco Teso di tiro perfetto	1	1	0		12	100	12	HIGH_QUALITY	+% danni per unità di distanza; +% distanza massima utile		
+longbow_precision_40_50_masterwork	ARCO_LUNGO	Arco Composito dell'Arciere Supremo	1	1	0		13	100	13	MASTERWORK	+% perforazione contro nemici corazzati; +% danni a lunga gittata	[Stile: Tiro Calibrato] STUB — Tiro Perforante: il colpo attraversa il bersaglio e colpisce chi sta dietro	
+longbow_elemental_atk_40_50_masterwork	ARCO_LUNGO	Arco Composito dell'Arciere Supremo	1	1	0		13	100	13	MASTERWORK	+% danni da Fulmine; +% prob. di innescare Folgore	[Stile: Canalizzazione] STUB — Saetta: Folgore incatena fino a tre bersagli	
+longbow_special_atk_40_50_masterwork	ARCO_LUNGO	Arco Composito dell'Arciere Supremo	1	1	0		13	100	13	MASTERWORK	+% danni per unità di distanza; +% distanza massima utile	[Stile: Astuzia] STUB — Distanza di Sicurezza: alla massima gittata ogni colpo è critico	
+longbow_precision_40_50_mythic	ARCO_LUNGO	Arco della Stella Cadente	1	1	0		14	100	14	MYTHIC	+% perforazione contro nemici corazzati; +% danni a lunga gittata	[Stile: Tiro Calibrato] STUB — Tiro Perforante: il colpo attraversa il bersaglio e colpisce chi sta dietro	[Mitico] STUB — Trapasso: il colpo attraversa tutti i nemici in linea, non solo il primo dietro
+longbow_elemental_atk_40_50_mythic	ARCO_LUNGO	Arco della Stella Cadente	1	1	0		14	100	14	MYTHIC	+% danni da Fulmine; +% prob. di innescare Folgore	[Stile: Canalizzazione] STUB — Saetta: Folgore incatena fino a tre bersagli	[Mitico] STUB — Tempesta: Folgore incatena tutti i nemici in campo
+longbow_special_atk_40_50_mythic	ARCO_LUNGO	Arco della Stella Cadente	1	1	0		14	100	14	MYTHIC	+% danni per unità di distanza; +% distanza massima utile	[Stile: Astuzia] STUB — Distanza di Sicurezza: alla massima gittata ogni colpo è critico	[Mitico] STUB — Occhio di Falco: ogni colpo a lunga distanza è automaticamente critico, senza soglia minima
+crossbow_precision_0_10_common	BALESTRA	Balestra da caccia	1	-3	0		1	100	1	COMMON			
+crossbow_elemental_atk_0_10_common	BALESTRA	Balestra da caccia	1	-3	0		1	100	1	COMMON			
+crossbow_special_atk_0_10_common	BALESTRA	Balestra da caccia	1	-3	0		1	100	1	COMMON			
+crossbow_precision_10_20_common	BALESTRA	Balestrino da tiratore	1	-3	0		2	100	2	COMMON			
+crossbow_elemental_atk_10_20_common	BALESTRA	Balestrino da tiratore	1	-3	0		2	100	2	COMMON			
+crossbow_special_atk_10_20_common	BALESTRA	Balestrino da tiratore	1	-3	0		2	100	2	COMMON			
+crossbow_precision_10_20_high_quality	BALESTRA	Balestra da Assedio di ottima mira	1	-3	0		3	100	3	HIGH_QUALITY	+% danni del colpo precaricato; -% tempo di ricarica		
+crossbow_elemental_atk_10_20_high_quality	BALESTRA	Balestra da Assedio di ottima mira	1	-3	0		3	100	3	HIGH_QUALITY	+% danni da Fuoco; +% area dell'incendio generato		
+crossbow_special_atk_10_20_high_quality	BALESTRA	Balestra da Assedio di ottima mira	1	-3	0		3	100	3	HIGH_QUALITY	+% copertura ignorata; +% danni contro bersagli in copertura		
+crossbow_precision_20_30_common	BALESTRA	Balestra da battuta	1	-3	0		4	100	4	COMMON			
+crossbow_elemental_atk_20_30_common	BALESTRA	Balestra da battuta	1	-3	0		4	100	4	COMMON			
+crossbow_special_atk_20_30_common	BALESTRA	Balestra da battuta	1	-3	0		4	100	4	COMMON			
+crossbow_precision_20_30_high_quality	BALESTRA	Balestra Rinforzata di precisione rara	1	-3	0		5	100	5	HIGH_QUALITY	+% danni del colpo precaricato; -% tempo di ricarica		
+crossbow_elemental_atk_20_30_high_quality	BALESTRA	Balestra Rinforzata di precisione rara	1	-3	0		5	100	5	HIGH_QUALITY	+% danni da Fuoco; +% area dell'incendio generato		
+crossbow_special_atk_20_30_high_quality	BALESTRA	Balestra Rinforzata di precisione rara	1	-3	0		5	100	5	HIGH_QUALITY	+% copertura ignorata; +% danni contro bersagli in copertura		
+crossbow_precision_20_30_masterwork	BALESTRA	Balestra a Ripetizione del Maestro Arciere	1	-3	0		6	100	6	MASTERWORK	+% danni del colpo precaricato; -% tempo di ricarica	[Stile: Tiro Calibrato] STUB — Colpo Pronto: il primo colpo di ogni combattimento è già carico	
+crossbow_elemental_atk_20_30_masterwork	BALESTRA	Balestra a Ripetizione del Maestro Arciere	1	-3	0		6	100	6	MASTERWORK	+% danni da Fuoco; +% area dell'incendio generato	[Stile: Canalizzazione] STUB — Verretta Incendiaria: il punto colpito resta in fiamme per un round	
+crossbow_special_atk_20_30_masterwork	BALESTRA	Balestra a Ripetizione del Maestro Arciere	1	-3	0		6	100	6	MASTERWORK	+% copertura ignorata; +% danni contro bersagli in copertura	[Stile: Astuzia] STUB — Mira Assoluta: nessun bersaglio può essere coperto o nascosto per te	
+crossbow_precision_30_40_common	BALESTRA	Balestrino da frontiera	1	-3	0		7	100	7	COMMON			
+crossbow_elemental_atk_30_40_common	BALESTRA	Balestrino da frontiera	1	-3	0		7	100	7	COMMON			
+crossbow_special_atk_30_40_common	BALESTRA	Balestrino da frontiera	1	-3	0		7	100	7	COMMON			
+crossbow_precision_30_40_high_quality	BALESTRA	Balestra da Assedio di manifattura d'arciere	1	-3	0		8	100	8	HIGH_QUALITY	+% danni del colpo precaricato; -% tempo di ricarica		
+crossbow_elemental_atk_30_40_high_quality	BALESTRA	Balestra da Assedio di manifattura d'arciere	1	-3	0		8	100	8	HIGH_QUALITY	+% danni da Fuoco; +% area dell'incendio generato		
+crossbow_special_atk_30_40_high_quality	BALESTRA	Balestra da Assedio di manifattura d'arciere	1	-3	0		8	100	8	HIGH_QUALITY	+% copertura ignorata; +% danni contro bersagli in copertura		
+crossbow_precision_30_40_masterwork	BALESTRA	Balestra del Cecchino del Gran Cecchino	1	-3	0		9	100	9	MASTERWORK	+% danni del colpo precaricato; -% tempo di ricarica	[Stile: Tiro Calibrato] STUB — Colpo Pronto: il primo colpo di ogni combattimento è già carico	
+crossbow_elemental_atk_30_40_masterwork	BALESTRA	Balestra del Cecchino del Gran Cecchino	1	-3	0		9	100	9	MASTERWORK	+% danni da Fuoco; +% area dell'incendio generato	[Stile: Canalizzazione] STUB — Verretta Incendiaria: il punto colpito resta in fiamme per un round	
+crossbow_special_atk_30_40_masterwork	BALESTRA	Balestra del Cecchino del Gran Cecchino	1	-3	0		9	100	9	MASTERWORK	+% copertura ignorata; +% danni contro bersagli in copertura	[Stile: Astuzia] STUB — Mira Assoluta: nessun bersaglio può essere coperto o nascosto per te	
+crossbow_precision_30_40_mythic	BALESTRA	Balestra del Cecchino Sepolto	1	-3	0		10	100	10	MYTHIC	+% danni del colpo precaricato; -% tempo di ricarica	[Stile: Tiro Calibrato] STUB — Colpo Pronto: il primo colpo di ogni combattimento è già carico	[Mitico] STUB — Sempre Carica: ogni colpo è considerato precaricato, senza tempo di ricarica
+crossbow_elemental_atk_30_40_mythic	BALESTRA	Balestra del Cecchino Sepolto	1	-3	0		10	100	10	MYTHIC	+% danni da Fuoco; +% area dell'incendio generato	[Stile: Canalizzazione] STUB — Verretta Incendiaria: il punto colpito resta in fiamme per un round	[Mitico] STUB — Pioggia di Fuoco: il punto colpito resta in fiamme per l'intero combattimento
+crossbow_special_atk_30_40_mythic	BALESTRA	Balestra del Cecchino Sepolto	1	-3	0		10	100	10	MYTHIC	+% copertura ignorata; +% danni contro bersagli in copertura	[Stile: Astuzia] STUB — Mira Assoluta: nessun bersaglio può essere coperto o nascosto per te	[Mitico] STUB — Occhio che Tutto Vede: nessun bersaglio può mai sottrarsi alla tua mira, nemmeno con effetti di invisibilità
+crossbow_precision_40_50_common	BALESTRA	Balestra da esploratore	1	-3	0		11	100	11	COMMON			
+crossbow_elemental_atk_40_50_common	BALESTRA	Balestra da esploratore	1	-3	0		11	100	11	COMMON			
+crossbow_special_atk_40_50_common	BALESTRA	Balestra da esploratore	1	-3	0		11	100	11	COMMON			
+crossbow_precision_40_50_high_quality	BALESTRA	Balestra Rinforzata di tiro perfetto	1	-3	0		12	100	12	HIGH_QUALITY	+% danni del colpo precaricato; -% tempo di ricarica		
+crossbow_elemental_atk_40_50_high_quality	BALESTRA	Balestra Rinforzata di tiro perfetto	1	-3	0		12	100	12	HIGH_QUALITY	+% danni da Fuoco; +% area dell'incendio generato		
+crossbow_special_atk_40_50_high_quality	BALESTRA	Balestra Rinforzata di tiro perfetto	1	-3	0		12	100	12	HIGH_QUALITY	+% copertura ignorata; +% danni contro bersagli in copertura		
+crossbow_precision_40_50_masterwork	BALESTRA	Balestra a Ripetizione dell'Arciere Supremo	1	-3	0		13	100	13	MASTERWORK	+% danni del colpo precaricato; -% tempo di ricarica	[Stile: Tiro Calibrato] STUB — Colpo Pronto: il primo colpo di ogni combattimento è già carico	
+crossbow_elemental_atk_40_50_masterwork	BALESTRA	Balestra a Ripetizione dell'Arciere Supremo	1	-3	0		13	100	13	MASTERWORK	+% danni da Fuoco; +% area dell'incendio generato	[Stile: Canalizzazione] STUB — Verretta Incendiaria: il punto colpito resta in fiamme per un round	
+crossbow_special_atk_40_50_masterwork	BALESTRA	Balestra a Ripetizione dell'Arciere Supremo	1	-3	0		13	100	13	MASTERWORK	+% copertura ignorata; +% danni contro bersagli in copertura	[Stile: Astuzia] STUB — Mira Assoluta: nessun bersaglio può essere coperto o nascosto per te	
+crossbow_precision_40_50_mythic	BALESTRA	Balestra del Giudice Silenzioso	1	-3	0		14	100	14	MYTHIC	+% danni del colpo precaricato; -% tempo di ricarica	[Stile: Tiro Calibrato] STUB — Colpo Pronto: il primo colpo di ogni combattimento è già carico	[Mitico] STUB — Sempre Carica: ogni colpo è considerato precaricato, senza tempo di ricarica
+crossbow_elemental_atk_40_50_mythic	BALESTRA	Balestra del Giudice Silenzioso	1	-3	0		14	100	14	MYTHIC	+% danni da Fuoco; +% area dell'incendio generato	[Stile: Canalizzazione] STUB — Verretta Incendiaria: il punto colpito resta in fiamme per un round	[Mitico] STUB — Pioggia di Fuoco: il punto colpito resta in fiamme per l'intero combattimento
+crossbow_special_atk_40_50_mythic	BALESTRA	Balestra del Giudice Silenzioso	1	-3	0		14	100	14	MYTHIC	+% copertura ignorata; +% danni contro bersagli in copertura	[Stile: Astuzia] STUB — Mira Assoluta: nessun bersaglio può essere coperto o nascosto per te	[Mitico] STUB — Occhio che Tutto Vede: nessun bersaglio può mai sottrarsi alla tua mira, nemmeno con effetti di invisibilità
+throwing_knife_precision_0_10_common	COLTELLO_DA_LANCIO	Coltello da Lancio da caccia	1	4	0	1				COMMON			
+throwing_knife_elemental_atk_0_10_common	COLTELLO_DA_LANCIO	Coltello da Lancio da caccia	1	4	0	1				COMMON			
+throwing_knife_special_atk_0_10_common	COLTELLO_DA_LANCIO	Coltello da Lancio da caccia	1	4	0	1				COMMON			
+throwing_knife_precision_10_20_common	COLTELLO_DA_LANCIO	Pugnaletto da Lancio da tiratore	1	4	0	2				COMMON			
+throwing_knife_elemental_atk_10_20_common	COLTELLO_DA_LANCIO	Pugnaletto da Lancio da tiratore	1	4	0	2				COMMON			
+throwing_knife_special_atk_10_20_common	COLTELLO_DA_LANCIO	Pugnaletto da Lancio da tiratore	1	4	0	2				COMMON			
+throwing_knife_precision_10_20_high_quality	COLTELLO_DA_LANCIO	Pugnale da Lancio di ottima mira	1	4	0	3				HIGH_QUALITY	+% prob. di contrattacco; -% penalità di danno sui lanci		
+throwing_knife_elemental_atk_10_20_high_quality	COLTELLO_DA_LANCIO	Pugnale da Lancio di ottima mira	1	4	0	3				HIGH_QUALITY	+% danni da Acqua; +% accumulo elementale per lancio		
+throwing_knife_special_atk_10_20_high_quality	COLTELLO_DA_LANCIO	Pugnale da Lancio di ottima mira	1	4	0	3				HIGH_QUALITY	+% danni per ogni lama già piantata nel bersaglio		
+throwing_knife_precision_20_30_common	COLTELLO_DA_LANCIO	Coltello da Lancio da battuta	1	4	0	4				COMMON			
+throwing_knife_elemental_atk_20_30_common	COLTELLO_DA_LANCIO	Coltello da Lancio da battuta	1	4	0	4				COMMON			
+throwing_knife_special_atk_20_30_common	COLTELLO_DA_LANCIO	Coltello da Lancio da battuta	1	4	0	4				COMMON			
+throwing_knife_precision_20_30_high_quality	COLTELLO_DA_LANCIO	Coltello Bilanciato di precisione rara	1	4	0	5				HIGH_QUALITY	+% prob. di contrattacco; -% penalità di danno sui lanci		
+throwing_knife_elemental_atk_20_30_high_quality	COLTELLO_DA_LANCIO	Coltello Bilanciato di precisione rara	1	4	0	5				HIGH_QUALITY	+% danni da Acqua; +% accumulo elementale per lancio		
+throwing_knife_special_atk_20_30_high_quality	COLTELLO_DA_LANCIO	Coltello Bilanciato di precisione rara	1	4	0	5				HIGH_QUALITY	+% danni per ogni lama già piantata nel bersaglio		
+throwing_knife_precision_20_30_masterwork	COLTELLO_DA_LANCIO	Lama da Lancio del Maestro Arciere	1	4	0	6				MASTERWORK	+% prob. di contrattacco; -% penalità di danno sui lanci	[Stile: Tiro Calibrato] STUB — Rimbalzo: il coltello lanciato torna in mano e può essere rilanciato	
+throwing_knife_elemental_atk_20_30_masterwork	COLTELLO_DA_LANCIO	Lama da Lancio del Maestro Arciere	1	4	0	6				MASTERWORK	+% danni da Acqua; +% accumulo elementale per lancio	[Stile: Canalizzazione] STUB — Goccia Costante: al terzo lancio l'effetto elementale si innesca automaticamente	
+throwing_knife_special_atk_20_30_masterwork	COLTELLO_DA_LANCIO	Lama da Lancio del Maestro Arciere	1	4	0	6				MASTERWORK	+% danni per ogni lama già piantata nel bersaglio	[Stile: Astuzia] STUB — Detonazione: puoi far esplodere tutte le lame piantate in un colpo solo	
+throwing_knife_precision_30_40_common	COLTELLO_DA_LANCIO	Pugnaletto da Lancio da frontiera	1	4	0	7				COMMON			
+throwing_knife_elemental_atk_30_40_common	COLTELLO_DA_LANCIO	Pugnaletto da Lancio da frontiera	1	4	0	7				COMMON			
+throwing_knife_special_atk_30_40_common	COLTELLO_DA_LANCIO	Pugnaletto da Lancio da frontiera	1	4	0	7				COMMON			
+throwing_knife_precision_30_40_high_quality	COLTELLO_DA_LANCIO	Pugnale da Lancio di manifattura d'arciere	1	4	0	8				HIGH_QUALITY	+% prob. di contrattacco; -% penalità di danno sui lanci		
+throwing_knife_elemental_atk_30_40_high_quality	COLTELLO_DA_LANCIO	Pugnale da Lancio di manifattura d'arciere	1	4	0	8				HIGH_QUALITY	+% danni da Acqua; +% accumulo elementale per lancio		
+throwing_knife_special_atk_30_40_high_quality	COLTELLO_DA_LANCIO	Pugnale da Lancio di manifattura d'arciere	1	4	0	8				HIGH_QUALITY	+% danni per ogni lama già piantata nel bersaglio		
+throwing_knife_precision_30_40_masterwork	COLTELLO_DA_LANCIO	Pugnale dell'Ombra del Gran Cecchino	1	4	0	9				MASTERWORK	+% prob. di contrattacco; -% penalità di danno sui lanci	[Stile: Tiro Calibrato] STUB — Rimbalzo: il coltello lanciato torna in mano e può essere rilanciato	
+throwing_knife_elemental_atk_30_40_masterwork	COLTELLO_DA_LANCIO	Pugnale dell'Ombra del Gran Cecchino	1	4	0	9				MASTERWORK	+% danni da Acqua; +% accumulo elementale per lancio	[Stile: Canalizzazione] STUB — Goccia Costante: al terzo lancio l'effetto elementale si innesca automaticamente	
+throwing_knife_special_atk_30_40_masterwork	COLTELLO_DA_LANCIO	Pugnale dell'Ombra del Gran Cecchino	1	4	0	9				MASTERWORK	+% danni per ogni lama già piantata nel bersaglio	[Stile: Astuzia] STUB — Detonazione: puoi far esplodere tutte le lame piantate in un colpo solo	
+throwing_knife_precision_30_40_mythic	COLTELLO_DA_LANCIO	Coltello dell'Ombra Fugace	1	4	0	10				MYTHIC	+% prob. di contrattacco; -% penalità di danno sui lanci	[Stile: Tiro Calibrato] STUB — Rimbalzo: il coltello lanciato torna in mano e può essere rilanciato	[Mitico] STUB — Lame Infinite: il coltello torna in mano istantaneamente, senza consumare il turno
+throwing_knife_elemental_atk_30_40_mythic	COLTELLO_DA_LANCIO	Coltello dell'Ombra Fugace	1	4	0	10				MYTHIC	+% danni da Acqua; +% accumulo elementale per lancio	[Stile: Canalizzazione] STUB — Goccia Costante: al terzo lancio l'effetto elementale si innesca automaticamente	[Mitico] STUB — Diluvio Costante: l'effetto elementale si innesca a ogni lancio, non solo al terzo
+throwing_knife_special_atk_30_40_mythic	COLTELLO_DA_LANCIO	Coltello dell'Ombra Fugace	1	4	0	10				MYTHIC	+% danni per ogni lama già piantata nel bersaglio	[Stile: Astuzia] STUB — Detonazione: puoi far esplodere tutte le lame piantate in un colpo solo	[Mitico] STUB — Reazione a Catena: la detonazione di un bersaglio innesca anche quella dei bersagli vicini
+throwing_knife_precision_40_50_common	COLTELLO_DA_LANCIO	Coltello da Lancio da esploratore	1	4	0	11				COMMON			
+throwing_knife_elemental_atk_40_50_common	COLTELLO_DA_LANCIO	Coltello da Lancio da esploratore	1	4	0	11				COMMON			
+throwing_knife_special_atk_40_50_common	COLTELLO_DA_LANCIO	Coltello da Lancio da esploratore	1	4	0	11				COMMON			
+throwing_knife_precision_40_50_high_quality	COLTELLO_DA_LANCIO	Coltello Bilanciato di tiro perfetto	1	4	0	12				HIGH_QUALITY	+% prob. di contrattacco; -% penalità di danno sui lanci		
+throwing_knife_elemental_atk_40_50_high_quality	COLTELLO_DA_LANCIO	Coltello Bilanciato di tiro perfetto	1	4	0	12				HIGH_QUALITY	+% danni da Acqua; +% accumulo elementale per lancio		
+throwing_knife_special_atk_40_50_high_quality	COLTELLO_DA_LANCIO	Coltello Bilanciato di tiro perfetto	1	4	0	12				HIGH_QUALITY	+% danni per ogni lama già piantata nel bersaglio		
+throwing_knife_precision_40_50_masterwork	COLTELLO_DA_LANCIO	Lama da Lancio dell'Arciere Supremo	1	4	0	13				MASTERWORK	+% prob. di contrattacco; -% penalità di danno sui lanci	[Stile: Tiro Calibrato] STUB — Rimbalzo: il coltello lanciato torna in mano e può essere rilanciato	
+throwing_knife_elemental_atk_40_50_masterwork	COLTELLO_DA_LANCIO	Lama da Lancio dell'Arciere Supremo	1	4	0	13				MASTERWORK	+% danni da Acqua; +% accumulo elementale per lancio	[Stile: Canalizzazione] STUB — Goccia Costante: al terzo lancio l'effetto elementale si innesca automaticamente	
+throwing_knife_special_atk_40_50_masterwork	COLTELLO_DA_LANCIO	Lama da Lancio dell'Arciere Supremo	1	4	0	13				MASTERWORK	+% danni per ogni lama già piantata nel bersaglio	[Stile: Astuzia] STUB — Detonazione: puoi far esplodere tutte le lame piantate in un colpo solo	
+throwing_knife_precision_40_50_mythic	COLTELLO_DA_LANCIO	Pugnale dell'Ombra Eterna	1	4	0	14				MYTHIC	+% prob. di contrattacco; -% penalità di danno sui lanci	[Stile: Tiro Calibrato] STUB — Rimbalzo: il coltello lanciato torna in mano e può essere rilanciato	[Mitico] STUB — Lame Infinite: il coltello torna in mano istantaneamente, senza consumare il turno
+throwing_knife_elemental_atk_40_50_mythic	COLTELLO_DA_LANCIO	Pugnale dell'Ombra Eterna	1	4	0	14				MYTHIC	+% danni da Acqua; +% accumulo elementale per lancio	[Stile: Canalizzazione] STUB — Goccia Costante: al terzo lancio l'effetto elementale si innesca automaticamente	[Mitico] STUB — Diluvio Costante: l'effetto elementale si innesca a ogni lancio, non solo al terzo
+throwing_knife_special_atk_40_50_mythic	COLTELLO_DA_LANCIO	Pugnale dell'Ombra Eterna	1	4	0	14				MYTHIC	+% danni per ogni lama già piantata nel bersaglio	[Stile: Astuzia] STUB — Detonazione: puoi far esplodere tutte le lame piantate in un colpo solo	[Mitico] STUB — Reazione a Catena: la detonazione di un bersaglio innesca anche quella dei bersagli vicini
