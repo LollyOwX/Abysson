@@ -1,4 +1,6 @@
 pp/
-obsidian/AbyNotes/.obsidian
 out/
 .idea/
+.gradle/
+build/
+*.iml

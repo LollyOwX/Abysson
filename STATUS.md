@@ -1,4 +1,4 @@
-# Abysson — Status del codice (2026-11-23, dopo 0.21.3 + ristrutturazione item)
+# Abysson — Status del codice (2026-11-24, dopo 0.22.1 + Gradle)
 
 Questo file va tenuto in `docs/STATUS.md` (o dove preferisci nel repo). Non è generato automaticamente: lo aggiorno io a mano ogni tanto, su richiesta, quando facciamo un blocco di modifiche significativo.
 
@@ -1339,3 +1339,30 @@ Tutti i 1120 oggetti costruiti dal vecchio codice e dalle tabelle e confrontati 
 - `git rm -r --cached out .idea pp` e aggiungere `.idea/` al `.gitignore`.
 - `UI`: i 6 font si caricano senza chiudere gli stream e un font mancante dà NullPointerException (ne manca uno = niente UI).
 - `world2.txt`: id 26-39 inesistenti e 51 colonne; non è raggiungibile (nessun link).
+---
+## 43. Passaggio a Gradle (24/11)
+
+### 43.1 Cosa c'è
+`settings.gradle.kts`, `build.gradle.kts`, `gradlew`, `gradlew.bat`, `gradle/wrapper/*` (Gradle **9.6.1**, scaricato in automatico dal wrapper al primo uso), `.gitattributes`. Struttura delle cartelle invariata: `src/` = codice (package `main`, `entity`, ... dentro `src/`, non in `src/main/java`), `res/` = risorse (classpath: `/tiles/...`, `/maps/...`).
+- Toolchain Java **25**: se manca il JDK giusto Gradle dice `No matching toolchains found`; si risolve installando JDK 25 o cambiando il numero in `build.gradle.kts`.
+- Compilazione sempre in UTF-8.
+- Solo `res/` viene impacchettata: i file non Java dentro `src/` non vengono copiati (era solo `tile_links.txt`, ora in `res/maps/`).
+
+### 43.2 Comandi (PowerShell: `.\gradlew`, Linux/Debian: `./gradlew`)
+| Comando | Cosa fa |
+|---|---|
+| `.\gradlew run` | compila e avvia il gioco (`main.Main`) |
+| `.\gradlew build` | compila e crea il jar |
+| `.\gradlew jar` | crea `build\libs\Abysson.jar` (38 MB: dentro c'è tutta `res/`); si avvia con `java -jar build\libs\Abysson.jar` |
+| `.\gradlew itemCheck` | controlla le righe di `res/items/*.tsv` (prima: configurazione IntelliJ su `ItemCheck`) |
+| `.\gradlew colorDump --args="res/a.png res/b.png"` | `ColorDump` sui PNG indicati |
+| `.\gradlew clean` | cancella la cartella `build/` |
+
+### 43.3 Differenze rispetto al compilatore di IntelliJ
+- L'output è in `build/` (prima `out/`). `build/`, `.gradle/` e `*.iml` sono nel `.gitignore`.
+- IntelliJ usa Gradle per "Build" e "Run" (Settings > Build, Execution, Deployment > Build Tools > Gradle > "Build and run using: Gradle"; "Gradle JVM": JDK 25).
+- Il primo avvio scarica Gradle (~130 MB) e serve internet.
+- Su Debian: `git update-index --chmod=+x gradlew` una volta, poi `./gradlew run`.
+
+### 43.4 Verificato (sandbox, JDK 25 + Gradle 9.6.1)
+`build`, `jar`, `itemCheck`, `colorDump`, `run` e `java -jar` (finestra aperta su display virtuale, nessuna eccezione; solo l'avviso audio perché la sandbox non ha scheda audio), wrapper provato da zero con cartella utente di Gradle pulita. Non provato: IntelliJ con le sue impostazioni, né Windows.
