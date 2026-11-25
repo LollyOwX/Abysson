@@ -58,7 +58,7 @@ public class Entity {
     public int precision = 100;
     public int evasion = 0;
     public int efficiency = 100; // % di efficacia delle proprie azioni (100 = neutro)
-    public String givesQuestId = null; // id di QuestRegistry — a QUALE dialoguesIndex darla è deciso dalla sottoclasse NPC
+    public String givesQuestId = null; // res/quests/
 
     // Arma equipaggiata — per entità semplici (mostri) impostata direttamente da chi le
     // costruisce (es. MON_Goblin), un campo generico (non solo per parare: è "cosa ha in mano
