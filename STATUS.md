@@ -21,7 +21,7 @@ Questo file va tenuto in `docs/STATUS.md` (o dove preferisci nel repo). Non è g
 - **Dichiara cosa hai verificato** (compilato, test numerici, render headless) e cosa no ("non provato in gioco").
 - **Aggiorna questo STATUS.md** a ogni blocco significativo e **appunta sempre un ragionamento dopo che viene fatto** (regola esplicita dell'utente, vedi riga in §0).
 - Alle domande di design/approccio ("come potrei fare?") rispondi con **snippet mirati, non codice completo**, e metti il ragionamento qui (§0, esempio §38).
-- Formato risposte: prosa chiara, tabelle solo per dati confrontabili; niente liste quando rifiuti qualcosa.
+- Formato risposte: prosa chiara, tabelle solo per dati confrontabili; niente liste quando rifiuti qualcosa. Scrivi e segna tutto SEMPRE come se fosse l'ultimo messaggio della chat.
 
 ### 8.3 Come lavorare tecnicamente (sandbox di Claude)
 - **Clona il repo** ogni volta: `git clone https://github.com/LollyOwX/Abysson.git` (github.com è raggiungibile). La sandbox **si azzera tra un messaggio e l'altro**: riclona e reinstalla il JDK (`apt-get update; apt-get install -y openjdk-21-jdk-headless`; il progetto è Java 25 ma compila con 21).
