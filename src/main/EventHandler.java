@@ -44,8 +44,8 @@ public class EventHandler {
 
     // ── Eventi di EventList: da qualunque classe, es. gp.eHandler.zoom(16) ──
 
-    public void call(String name, int value) {
-        eventList.run(name, value);
+    public void call(String name, Object... args) {
+        eventList.run(name, args);
     }
 
     public void zoom(int amount) {
@@ -63,8 +63,8 @@ public class EventHandler {
         }
 
         if (canTouchEvent == true) {
-            if (hit(28, 11, "any") == true) {damagePit(23, 10, gp.dialogueState);}
-            if (hit(19, 14, "up") == true) {healingPool(19, 14, gp.dialogueState);}
+            if (hit(28, 11, "any") == true) {call("damagePit", gp.dialogueState); canTouchEvent = false;}
+            if (hit(19, 14, "up") == true) {call("healingPool", gp.dialogueState);}
         }
     }
 
@@ -88,22 +88,6 @@ public class EventHandler {
 
     private int scaled(int designPixels) {
         return Math.round((float) designPixels * gp.tileSize / GamePanel.DESIGN_TILE_SIZE);
-    }
-
-    public void damagePit(int col, int row, int gameState) {
-        gp.gameState = gameState;
-        gp.ui.currentDialogue =
-                "You fell into a Pit!";
-        gp.player.life -= 1;
-        canTouchEvent = false;
-    }
-    public void healingPool(int col, int row, int gameState) {
-        if (gp.KeyH.enterPressed == true) {
-            gp.gameState = gameState;
-            gp.ui.currentDialogue =
-                    "Drinking from the Lake,\nyour vital energy got restored";
-            gp.player.life = gp.player.maxLife;
-        }
     }
 
     // ── Quest: zone di mappa ───────────────────────────────────────
