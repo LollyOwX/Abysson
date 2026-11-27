@@ -48,10 +48,6 @@ public class EventHandler {
         eventList.run(name, args);
     }
 
-    public void zoom(int amount) {
-        call("zoom", amount);
-    }
-
     public void checkEvent() {
         checkLocations();
 
