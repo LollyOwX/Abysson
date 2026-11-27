@@ -147,7 +147,7 @@ public class BookUI {
             ui.drawStyledText(q.description, x, y + 28, w);
             String stateLabel = (q.state == QuestState.COMPLETED) ? "Completata" : "In corso";
             g2.setColor(Color.black);
-            g2.drawString("Stato: " + stateLabel, x, y + 28 + 80);
+            g2.drawString("Status: " + stateLabel, x, y + 28 + 80);
         } else {
             int textY = y + 28;
             for (int i = 0; i < q.history.size(); i++) {

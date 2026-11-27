@@ -11,7 +11,7 @@ public class ArmorRegistry {
     public static Armor get(String id) {
         ItemTable.Row r = TABLE.row(id);
         if (r == null) {
-            System.err.println("Armor non trovata: " + id);
+            System.err.println("Armor not found: " + id);
             return null;
         }
         Armor a = new Armor(r.enumOf(ArmorType.class, "type"), r.enumOf(WeightClass.class, "weight"));

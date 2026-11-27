@@ -14,12 +14,12 @@ public class QuestLoader {
         String path = FOLDER + id + ".txt";
         try (InputStream is = QuestLoader.class.getResourceAsStream(path)) {
             if (is == null) {
-                System.err.println("Quest non trovata: " + path);
+                System.err.println("Quest not found: " + path);
                 return null;
             }
             return parse(id, new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8)));
         } catch (IOException | IllegalArgumentException e) {
-            System.err.println("Errore nel file quest " + path + ": " + e.getMessage());
+            System.err.println("Error in quest file " + path + ": " + e.getMessage());
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class QuestLoader {
                 else if (line.startsWith("tier:"))        tier = QuestTier.valueOf(value(line).toUpperCase());
                 else if (line.startsWith("step ")) {
                     int colon = line.indexOf(':');
-                    if (colon < 0) throw new IllegalArgumentException("manca ':' dopo il numero dello step");
+                    if (colon < 0) throw new IllegalArgumentException("missing ':' after the step number");
                     String[] xy = line.substring(5, colon).trim().split("\\.");
                     int x = Integer.parseInt(xy[0]);
                     int y = (xy.length > 1) ? Integer.parseInt(xy[1]) : 0;
@@ -54,30 +54,30 @@ public class QuestLoader {
                     steps.add(step);
                     branch = null;
                 } else if (line.startsWith("branch ")) {
-                    if (step == null) throw new IllegalArgumentException("branch fuori da uno step");
+                    if (step == null) throw new IllegalArgumentException("branch outside a step");
                     branch = parseBranch(line);
                     step.branches.add(branch);
                 } else if (line.startsWith("require ")) {
-                    if (branch == null) throw new IllegalArgumentException("require fuori da un branch");
+                    if (branch == null) throw new IllegalArgumentException("require outside a branch");
                     branch.requirements.add(parseCondition(line));
                 } else if (line.startsWith("continue ")) {
-                    if (branch == null) throw new IllegalArgumentException("continue fuori da un branch");
+                    if (branch == null) throw new IllegalArgumentException("continue outside a branch");
                     if (branch.continuation != null) throw new IllegalArgumentException("continue già presente nel branch " + branch.id);
                     branch.continuation = parseCondition(line);
                 } else {
-                    throw new IllegalArgumentException("riga non riconosciuta");
+                    throw new IllegalArgumentException("unrecognized line");
                 }
             } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("riga " + lineNo + ": " + e.getMessage());
+                throw new IllegalArgumentException("line " + lineNo + ": " + e.getMessage());
             }
         }
 
-        if (title == null) throw new IllegalArgumentException("manca 'title:'");
-        if (steps.isEmpty()) throw new IllegalArgumentException("nessuno step definito");
+        if (title == null) throw new IllegalArgumentException("missing 'title:'");
+        if (steps.isEmpty()) throw new IllegalArgumentException("no step defined");
 
         Quest quest = new Quest(id, title, description, tier, giver);
         for (Quest.Step s : steps) {
-            if (quest.steps.put(Quest.key(s.x, s.y), s) != null) throw new IllegalArgumentException("step " + s.x + "." + s.y + " definito due volte");
+            if (quest.steps.put(Quest.key(s.x, s.y), s) != null) throw new IllegalArgumentException("step " + s.x + "." + s.y + " defined twice");
         }
         validate(quest);
         return quest;
@@ -117,7 +117,7 @@ public class QuestLoader {
             if (t[i].matches("x\\d+")) {
                 goal = Integer.parseInt(t[i].substring(1));
             } else {
-                throw new IllegalArgumentException("parametro non riconosciuto: " + t[i]);
+                throw new IllegalArgumentException("unrecognized parameter: " + t[i]);
             }
         }
         return new QuestCondition(type, t[2], goal);
@@ -129,12 +129,12 @@ public class QuestLoader {
         for (Quest.Step s : quest.steps.values()) {
             for (QuestBranch b : s.branches) {
                 String where = quest.id + " step " + s.x + "." + s.y + " branch " + b.id;
-                if (b.requirements.isEmpty()) throw new IllegalArgumentException(where + ": nessun require");
+                if (b.requirements.isEmpty()) throw new IllegalArgumentException(where + ": no require");
                 if (b.type != QuestBranchType.IMPORTANT && b.continuation == null) throw new IllegalArgumentException(where + ": " + b.type + " richiede 'continue'");
-                if (b.type == QuestBranchType.IMPORTANT && b.continuation != null) System.err.println("AVVISO " + where + ": 'continue' ignorato (IMPORTANT prende priorità subito)");
-                if (b.type != QuestBranchType.COINCIDENT && b.requirements.size() > 1) System.err.println("AVVISO " + where + ": più require, usa COINCIDENT");
-                if (!quest.steps.containsKey(Quest.key(b.targetStep, b.targetMicro))) System.err.println("AVVISO " + where + ": situazione di arrivo " + b.targetStep + "." + b.targetMicro + " non definita");
-                if (b.targetStep < s.x || (b.targetStep == s.x && b.targetMicro <= s.y)) System.err.println("AVVISO " + where + ": porta a una situazione non successiva (" + b.targetStep + "." + b.targetMicro + ")");
+                if (b.type == QuestBranchType.IMPORTANT && b.continuation != null) System.err.println("WARNING " + where + ": 'continue' ignorato (IMPORTANT prende priorità subito)");
+                if (b.type != QuestBranchType.COINCIDENT && b.requirements.size() > 1) System.err.println("WARNING " + where + ": più require, usa COINCIDENT");
+                if (!quest.steps.containsKey(Quest.key(b.targetStep, b.targetMicro))) System.err.println("WARNING " + where + ": target situation " + b.targetStep + "." + b.targetMicro + " is not defined");
+                if (b.targetStep < s.x || (b.targetStep == s.x && b.targetMicro <= s.y)) System.err.println("WARNING " + where + ": leads to a non-following situation (" + b.targetStep + "." + b.targetMicro + ")");
             }
         }
     }

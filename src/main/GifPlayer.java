@@ -38,7 +38,7 @@ public class GifPlayer {
         String path = classpathResource.startsWith("/") ? classpathResource : "/" + classpathResource;
         InputStream is = getClass().getResourceAsStream(path);
         if (is == null) {
-            System.err.println("ERROR: cinematic non trovata: " + path);
+            System.err.println("ERROR: cinematic not found: " + path);
             frames = new BufferedImage[0];
             frameDelaysMs = new int[0];
             return;
@@ -47,7 +47,7 @@ public class GifPlayer {
         try {
             decodeGif(is);
         } catch (IOException e) {
-            System.err.println("ERROR: impossibile decodificare la cinematic: " + path);
+            System.err.println("ERROR: cannot decode the cinematic: " + path);
             e.printStackTrace();
             frames = new BufferedImage[0];
             frameDelaysMs = new int[0];
@@ -56,7 +56,7 @@ public class GifPlayer {
 
     private void decodeGif(InputStream is) throws IOException {
         Iterator<ImageReader> readers = ImageIO.getImageReadersBySuffix("gif");
-        if (!readers.hasNext()) throw new IOException("Nessun reader GIF disponibile in questa JVM");
+        if (!readers.hasNext()) throw new IOException("No GIF reader available in this JVM");
         ImageReader reader = readers.next();
 
         ImageInputStream iis = ImageIO.createImageInputStream(is);

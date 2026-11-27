@@ -47,8 +47,6 @@ public class KeyHandler implements KeyListener {
             if (code == KeyEvent.VK_S) downPressed   = true;
             if (code == KeyEvent.VK_A) leftPressed   = true;
             if (code == KeyEvent.VK_D) rightPressed  = true;
-            if (code == KeyEvent.VK_UP)   gp.zoomInOut(1);
-            if (code == KeyEvent.VK_DOWN) gp.zoomInOut(-1);
             if (code == KeyEvent.VK_P) gp.gameState = gp.pauseState;
             if (code == KeyEvent.VK_ENTER) enterPressed = true;
             if (code == KeyEvent.VK_SPACE) spacePressed = true; // salto (collinetta) / aggancio (rampino) — vedi Player.tryJump()/tryHook()
@@ -82,6 +80,11 @@ public class KeyHandler implements KeyListener {
             if (code == KeyEvent.VK_RIGHT) gp.ui.combat.aimMove(1, 0);
             if (code == KeyEvent.VK_A)     gp.ui.combat.aimRotate(-CombatState.AIM_ANGLE_STEP);
             if (code == KeyEvent.VK_D)     gp.ui.combat.aimRotate(CombatState.AIM_ANGLE_STEP);
+
+        } else if (gp.gameState == gp.defeatState) {
+            if (code == KeyEvent.VK_W) gp.ui.defeatCommand = 0;
+            if (code == KeyEvent.VK_S) gp.ui.defeatCommand = 1;
+            if (code == KeyEvent.VK_ENTER) gp.ui.confirmDefeatMenu();
 
         } else if (gp.gameState == gp.cinematicState) {
             if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_ESCAPE) gp.skipCinematic();

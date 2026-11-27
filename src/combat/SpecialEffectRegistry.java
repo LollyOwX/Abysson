@@ -49,9 +49,9 @@ public class SpecialEffectRegistry {
         // ── Armatura: Full Set / Mitico de-stubbati (confronto per prefisso) ─────
         if (id.startsWith("[Full Set: Guardia] Elmo Saldo:")) {
             return preTurn((combat, source, target) -> {
-                if (ElementSystem.hasEffect(source, ElementSystem.StatusEffect.STORDIMENTO)
+                if (ElementSystem.hasEffect(source, ElementSystem.StatusEffect.STUN)
                         && combat.consumeOnce("elmo_saldo:" + System.identityHashCode(source))) {
-                    source.activeEffects.removeIf(ae -> ae.effect == ElementSystem.StatusEffect.STORDIMENTO);
+                    source.activeEffects.removeIf(ae -> ae.effect == ElementSystem.StatusEffect.STUN);
                 }
             });
         }
@@ -59,23 +59,23 @@ public class SpecialEffectRegistry {
             // "vedi le debolezze elementali del nemico" NON implementato: servirebbe un
             // sistema di rivelazione UI che non esiste ancora — solo l'immunità è reale.
             return preTurn((combat, source, target) ->
-                source.activeEffects.removeIf(ae -> ae.effect == ElementSystem.StatusEffect.ACCECAMENTO));
+                source.activeEffects.removeIf(ae -> ae.effect == ElementSystem.StatusEffect.BLINDING));
         }
         if (id.startsWith("[Mitico] Corpo di Roccia:")) {
             // Solo PRE_TURN: se qualcuno te la applica durante il turno avversario, viene
             // comunque ripulita prima che inizi il TUO prossimo turno — non serve anche
             // POST_TURN (un SpecialEffect ha un solo timing(), non può risolvere a entrambi).
             return preTurn((combat, source, target) ->
-                source.activeEffects.removeIf(ae -> ae.effect == ElementSystem.StatusEffect.ROTTURA));
+                source.activeEffects.removeIf(ae -> ae.effect == ElementSystem.StatusEffect.RUPTURE));
         }
         if (id.startsWith("[Full Set: Veggente] Scaglia di Pietra:")) {
             // Approssimazione: nessun sistema di durata per i buff di stat esiste ancora
             // (vedi Player.applyTemporaryMultiplier) — "temporanea" qui vale "per il resto del
             // combattimento", non un numero di round preciso.
             return preTurn((combat, source, target) -> {
-                if (ElementSystem.hasEffect(source, ElementSystem.StatusEffect.ROTTURA)
+                if (ElementSystem.hasEffect(source, ElementSystem.StatusEffect.RUPTURE)
                         && source instanceof Player p) {
-                    source.activeEffects.removeIf(ae -> ae.effect == ElementSystem.StatusEffect.ROTTURA);
+                    source.activeEffects.removeIf(ae -> ae.effect == ElementSystem.StatusEffect.RUPTURE);
                     p.applyTemporaryMultiplier(StatType.DIFESA, 1.10);
                 }
             });
@@ -84,10 +84,10 @@ public class SpecialEffectRegistry {
             return preTurn((combat, source, target) -> {
                 ElementSystem.ActiveEffect scossa = null;
                 for (ElementSystem.ActiveEffect ae : source.activeEffects)
-                    if (ae.effect == ElementSystem.StatusEffect.SCOSSA) { scossa = ae; break; }
+                    if (ae.effect == ElementSystem.StatusEffect.JOLT) { scossa = ae; break; }
                 if (scossa != null) {
                     source.activeEffects.remove(scossa);
-                    ElementSystem.addEffect(target, ElementSystem.StatusEffect.SCOSSA, scossa.duration);
+                    ElementSystem.addEffect(target, ElementSystem.StatusEffect.JOLT, scossa.duration);
                 }
             });
         }
@@ -96,9 +96,9 @@ public class SpecialEffectRegistry {
             // CombatState.afterTurn() — rimuovere qui Infiammazione previene davvero il tick,
             // non lo compensa dopo. Cura placeholder: 10% della vita massima.
             return postTurn((combat, source, target) -> {
-                if (ElementSystem.hasEffect(source, ElementSystem.StatusEffect.INFIAMMAZIONE)
+                if (ElementSystem.hasEffect(source, ElementSystem.StatusEffect.INFLAMMATION)
                         && combat.consumeOnce("respiro_di_brace:" + System.identityHashCode(source))) {
-                    source.activeEffects.removeIf(ae -> ae.effect == ElementSystem.StatusEffect.INFIAMMAZIONE);
+                    source.activeEffects.removeIf(ae -> ae.effect == ElementSystem.StatusEffect.INFLAMMATION);
                     source.life = Math.min(source.maxLife, source.life + source.maxLife / 10);
                 }
             });
@@ -123,8 +123,8 @@ public class SpecialEffectRegistry {
             // disponibile con i sistemi che esistono oggi.
             return preTurn((combat, source, target) ->
                 source.activeEffects.removeIf(ae ->
-                    ae.effect == ElementSystem.StatusEffect.NATURALIZZAZIONE ||
-                    ae.effect == ElementSystem.StatusEffect.INFANGATO));
+                    ae.effect == ElementSystem.StatusEffect.NATURALIZATION ||
+                    ae.effect == ElementSystem.StatusEffect.MUDDIED));
         }
 
         return null; // id sconosciuto, null, o non ancora implementato: nessun errore

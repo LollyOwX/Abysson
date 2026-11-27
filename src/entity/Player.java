@@ -11,8 +11,8 @@ import java.util.Map;
 
 public class Player extends Entity {
     KeyHandler KeyH;
-    public final int screenX;
-    public final int screenY;
+    public int screenX;
+    public int screenY;
     public String playerClass;
 
     // Rampino: sblocca l'uso delle tile SpecialTile.Kind.HOOK (vedi tryHook()) — di default
@@ -32,7 +32,7 @@ public class Player extends Entity {
     public int basePrecision;
     public int baseEvasion;
     public int baseEfficiency;
-    // Una coppia ATK/DEF base per elemento (FUOCO/ACQUA/FULMINE/TERRA/ARIA/LUCE) —
+    // Una coppia ATK/DEF base per elemento (FIRE/WATER/ELECTRIC/EARTH/WIND/LIGHT) —
     // niente ElementoATK unico, vedi StatType.
     private final Map<ElementSystem.Element, Integer> baseElementAttack  = new EnumMap<>(ElementSystem.Element.class);
     private final Map<ElementSystem.Element, Integer> baseElementDefense = new EnumMap<>(ElementSystem.Element.class);
@@ -175,7 +175,7 @@ public class Player extends Entity {
         // ElementoATK/ElementDEF unico) — la differenziazione per elemento arriverà da
         // equipaggiamento/level design, qui parte identica finché non si decide altrimenti.
         for (ElementSystem.Element e : ElementSystem.Element.values()) {
-            if (ElementSystem.attackStat(e) == null) continue; // FISICO/NONE non hanno una coppia elementale
+            if (ElementSystem.attackStat(e) == null) continue; // PHYSICAL/NONE non hanno una coppia elementale
             baseElementAttack.put(e, 40);
             baseElementDefense.put(e, 20);
         }
@@ -192,32 +192,40 @@ public class Player extends Entity {
         behavior = FRIENDLY; // il player è sempre "friendly" come entità
     }
 
+    @Override
+    public void rescale(int oldTileSize) {
+        super.rescale(oldTileSize);
+        screenX = gp.screenWidth / 2 - (gp.tileSize / 2);
+        screenY = gp.screenHeight / 2 - (gp.tileSize / 2);
+    }
+
     public void getPlayerImage() {
+        int spriteSize = 57 * gp.tileSize / GamePanel.DESIGN_TILE_SIZE;
         if(playerClass != null) {
-            up1 = setup("/player/" + playerClass + "_up_1", 19 * 3, 19 * 3);
-            up2 = setup("/player/" + playerClass + "_up_2", 19 * 3, 19 * 3);
-            down1 = setup("/player/" + playerClass + "_down_1", 19 * 3, 19 * 3);
-            down2 = setup("/player/" + playerClass + "_down_2", 19 * 3, 19 * 3);
-            left1 = setup("/player/" + playerClass + "_left_1", 19 * 3, 19 * 3);
-            left2 = setup("/player/" + playerClass + "_left_2", 19 * 3, 19 * 3);
-            right1 = setup("/player/" + playerClass + "_right_1", 19 * 3, 19 * 3);
-            right2 = setup("/player/" + playerClass + "_right_2", 19 * 3, 19 * 3);
-            downIdle1 = setup("/player/" + playerClass + "_downidle_1", 19 * 3, 19 * 3);
-            downIdle2 = setup("/player/" + playerClass + "_downidle_2", 19 * 3, 19 * 3);
-            upIdle1 = setup("/player/" + playerClass + "_upidle_1", 19 * 3, 19 * 3);
-            upIdle2 = setup("/player/" + playerClass + "_upidle_2", 19 * 3, 19 * 3);
-            leftIdle1 = setup("/player/" + playerClass + "_leftidle_1", 19 * 3, 19 * 3);
-            leftIdle2 = setup("/player/" + playerClass + "_leftidle_2", 19 * 3, 19 * 3);
-            rightIdle1 = setup("/player/" + playerClass + "_rightidle_1", 19 * 3, 19 * 3);
-            rightIdle2 = setup("/player/" + playerClass + "_rightidle_2", 19 * 3, 19 * 3);
-            rightUp1 = setup("/player/" + playerClass + "_rightup_1", 19 * 3, 19 * 3);
-            rightUp2 = setup("/player/" + playerClass + "_rightup_2", 19 * 3, 19 * 3);
-            rightDown1 = setup("/player/" + playerClass + "_rightdown_1", 19 * 3, 19 * 3);
-            rightDown2 = setup("/player/" + playerClass + "_rightdown_2", 19 * 3, 19 * 3);
-            leftUp1 = setup("/player/" + playerClass + "_leftup_1", 19 * 3, 19 * 3);
-            leftUp2 = setup("/player/" + playerClass + "_leftup_2", 19 * 3, 19 * 3);
-            leftDown1 = setup("/player/" + playerClass + "_leftdown_1", 19 * 3, 19 * 3);
-            leftDown2 = setup("/player/" + playerClass + "_leftdown_2", 19 * 3, 19 * 3);
+            up1 = setup("/player/" + playerClass + "_up_1", spriteSize, spriteSize);
+            up2 = setup("/player/" + playerClass + "_up_2", spriteSize, spriteSize);
+            down1 = setup("/player/" + playerClass + "_down_1", spriteSize, spriteSize);
+            down2 = setup("/player/" + playerClass + "_down_2", spriteSize, spriteSize);
+            left1 = setup("/player/" + playerClass + "_left_1", spriteSize, spriteSize);
+            left2 = setup("/player/" + playerClass + "_left_2", spriteSize, spriteSize);
+            right1 = setup("/player/" + playerClass + "_right_1", spriteSize, spriteSize);
+            right2 = setup("/player/" + playerClass + "_right_2", spriteSize, spriteSize);
+            downIdle1 = setup("/player/" + playerClass + "_downidle_1", spriteSize, spriteSize);
+            downIdle2 = setup("/player/" + playerClass + "_downidle_2", spriteSize, spriteSize);
+            upIdle1 = setup("/player/" + playerClass + "_upidle_1", spriteSize, spriteSize);
+            upIdle2 = setup("/player/" + playerClass + "_upidle_2", spriteSize, spriteSize);
+            leftIdle1 = setup("/player/" + playerClass + "_leftidle_1", spriteSize, spriteSize);
+            leftIdle2 = setup("/player/" + playerClass + "_leftidle_2", spriteSize, spriteSize);
+            rightIdle1 = setup("/player/" + playerClass + "_rightidle_1", spriteSize, spriteSize);
+            rightIdle2 = setup("/player/" + playerClass + "_rightidle_2", spriteSize, spriteSize);
+            rightUp1 = setup("/player/" + playerClass + "_rightup_1", spriteSize, spriteSize);
+            rightUp2 = setup("/player/" + playerClass + "_rightup_2", spriteSize, spriteSize);
+            rightDown1 = setup("/player/" + playerClass + "_rightdown_1", spriteSize, spriteSize);
+            rightDown2 = setup("/player/" + playerClass + "_rightdown_2", spriteSize, spriteSize);
+            leftUp1 = setup("/player/" + playerClass + "_leftup_1", spriteSize, spriteSize);
+            leftUp2 = setup("/player/" + playerClass + "_leftup_2", spriteSize, spriteSize);
+            leftDown1 = setup("/player/" + playerClass + "_leftdown_1", spriteSize, spriteSize);
+            leftDown2 = setup("/player/" + playerClass + "_leftdown_2", spriteSize, spriteSize);
         }
     }
 
@@ -487,7 +495,7 @@ public class Player extends Entity {
         if (item == null) return;
         obtain(item);
         if (equipNow) equip(item);
-        gp.ui.showMessage("Hai ottenuto: " + item.name + "!");
+        gp.ui.showMessage("You obtained: " + item.name + "!");
     }
 
     public void equip(items.Item item) {
@@ -534,9 +542,9 @@ public class Player extends Entity {
     @Override
     public items.Weapon resolveDefenseWeapon() {
         items.Item offHandItem = offHandSlot.item;
-        if (offHandItem instanceof items.Weapon w && w.canDefend) return w;
+        if (offHandItem instanceof items.Weapon w && w.canDefend && !w.isUnusable()) return w;
         items.Item mainHandItem = mainHandSlot.item;
-        if (mainHandItem instanceof items.Weapon w && w.canDefend) return w;
+        if (mainHandItem instanceof items.Weapon w && w.canDefend && !w.isUnusable()) return w;
         return null;
     }
 
@@ -553,7 +561,7 @@ public class Player extends Entity {
         for (ElementSystem.Element e : ElementSystem.Element.values()) {
             StatType atkType = ElementSystem.attackStat(e);
             StatType defType = ElementSystem.defenseStat(e);
-            if (atkType == null) continue; // FISICO/NONE non hanno una coppia elementale
+            if (atkType == null) continue; // PHYSICAL/NONE non hanno una coppia elementale
             int baseAtk = baseElementAttack.getOrDefault(e, 0);
             int baseDef = baseElementDefense.getOrDefault(e, 0);
             elementAttack.put(e, Math.max(0, (int) Math.round(baseAtk * pct(atkType) * mult(atkType))));
@@ -615,7 +623,12 @@ public class Player extends Entity {
     }
 
     public void pickUpObject(int i) {
-        if (i != 999) { }
+        if (i == 999) return;
+        Entity picked = gp.obj[i];
+        inventory.questItems.add(new items.QuestItem(picked.name, "", items.QuestItem.Kind.WORLD));
+        gp.questManager.notify(quest.QuestEventType.COLLECT, picked.name);
+        gp.ui.showMessage("You obtained: " + picked.name + "!");
+        gp.obj[i] = null;
     }
 
     public void draw(Graphics2D g2) {

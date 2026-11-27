@@ -22,6 +22,7 @@ void place(Entity[] array, int index, Supplier<Entity> factory, int col, int row
 		Entity e = factory.get();
 		e.worldX  = gp.tileSize * col;
 		e.worldY  = gp.tileSize * row;
+		e.scaleSolidArea();
 		e.palette = PaletteSwap.parsePalette(paletteDef);
 		if (questId != null) e.givesQuestId = questId;
 		array[index] = e;

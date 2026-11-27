@@ -12,7 +12,7 @@ public class ShieldRegistry {
     public static Weapon get(String id) {
         ItemTable.Row r = TABLE.row(id);
         if (r == null) {
-            System.err.println("Weapon non trovata: " + id);
+            System.err.println("Weapon not found: " + id);
             return null;
         }
         WeaponSubtype subtype = r.enumOf(WeaponSubtype.class, "subtype");
@@ -30,7 +30,7 @@ public class ShieldRegistry {
             }
             case BROQUEL -> zones(w, new Rectangle2D.Double(-15, -20, 30, 25), new Rectangle2D.Double(-15, -20, 8, 10));
             case SAI -> zones(w, new Rectangle2D.Double(-4, -35, 8, 35), new Rectangle2D.Double(-4, -35, 8, 6));
-            default -> throw new IllegalArgumentException(id + ": " + subtype + " non è una difensiva");
+            default -> throw new IllegalArgumentException(id + ": " + subtype + " is not a defensive weapon");
         }
         return w;
     }

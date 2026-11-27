@@ -168,6 +168,7 @@ public class CombatState {
             int savedMonsterIndex = monsterIndex;
             boolean wasVictory = combatVictory;
             endCombat();
+            if (gp.player.life <= 0) gp.ui.openDefeatScreen();
             if (wasVictory && savedMonsterIndex >= 0 && savedMonsterIndex < gp.monster.length) {
                 gp.monster[savedMonsterIndex].dying = true;
                 gp.monster[savedMonsterIndex].dyingCounter = 0;
@@ -322,7 +323,7 @@ public class CombatState {
     }
 
     boolean isStunned(Entity e) {
-        return ElementSystem.hasEffect(e, ElementSystem.StatusEffect.STORDIMENTO);
+        return ElementSystem.hasEffect(e, ElementSystem.StatusEffect.STUN);
     }
 
     // Accoda un messaggio di combattimento invece di scriverlo subito in combatMessage — update()
@@ -550,18 +551,18 @@ public class CombatState {
     void dealDamage(Entity attacker, Entity target, String abilityId, boolean forceHit) {
         ElementSystem.Element abilityElement = Ability.getElement(abilityId);
 
-        double abrBonus = (abilityElement == ElementSystem.Element.FUOCO
-                && ElementSystem.hasEffect(attacker, ElementSystem.StatusEffect.ABRASIONE)) ? 1.5 : 1.0;
+        double abrBonus = (abilityElement == ElementSystem.Element.FIRE
+                && ElementSystem.hasEffect(attacker, ElementSystem.StatusEffect.ABRASION)) ? 1.5 : 1.0;
 
         int baseDmg     = Ability.use(abilityId, attacker, target);
         double elemMult = ElementSystem.getMultiplier(abilityElement, target.lastElementHit);
-        double potMult  = ElementSystem.hasEffect(target, ElementSystem.StatusEffect.POTENZIAMENTO) ? 1.2 : 1.0;
-        double rotMult  = ElementSystem.hasEffect(target, ElementSystem.StatusEffect.ROTTURA)
+        double potMult  = ElementSystem.hasEffect(target, ElementSystem.StatusEffect.ENHANCEMENT) ? 1.2 : 1.0;
+        double rotMult  = ElementSystem.hasEffect(target, ElementSystem.StatusEffect.RUPTURE)
                 ? 1.0 + (0.10 * attacker.level) : 1.0;
         double effMult  = attacker.efficiency / 100.0;
         int totalDmg    = (int) Math.max(1, baseDmg * elemMult * abrBonus * potMult * rotMult * effMult);
-        int raggioDmg   = ElementSystem.hasEffect(target, ElementSystem.StatusEffect.RAGGIO)
-                ? 5 * attacker.getElementAttack(ElementSystem.Element.FULMINE) : 0;
+        int raggioDmg   = ElementSystem.hasEffect(target, ElementSystem.StatusEffect.RAY)
+                ? 5 * attacker.getElementAttack(ElementSystem.Element.ELECTRIC) : 0;
 
         boolean rangedBlocked = ElementSystem.isRangedBlocked(attacker, abilityId);
         boolean deflected     = ElementSystem.isDeflected(target, abilityId);
@@ -581,13 +582,13 @@ public class CombatState {
             msg.append(attackerLabel).append(" can't take aim").append(s).append(" — no ranged attacks possible!");
         } else if (deflected) {
             msg.append(targetLabel).append(" deflect").append(attackerIsPlayer ? "s" : "").append(" the attack!");
-        } else if (!hit && ElementSystem.hasEffect(attacker, ElementSystem.StatusEffect.FOLGORE)) {
-            int folgoreDmg = 10 * attacker.getElementAttack(ElementSystem.Element.FULMINE);
+        } else if (!hit && ElementSystem.hasEffect(attacker, ElementSystem.StatusEffect.LIGHTNING_BOLT)) {
+            int folgoreDmg = 10 * attacker.getElementAttack(ElementSystem.Element.ELECTRIC);
             attacker.life -= folgoreDmg;
             msg.append(attackerLabel).append(" miss").append(s).append(" and take").append(s)
                     .append(" ").append(folgoreDmg).append(" Folgore damage!");
-        } else if (!hit && ElementSystem.hasEffect(attacker, ElementSystem.StatusEffect.INFIAMMAZIONE)) {
-            int infDmg = 10 * attacker.getElementAttack(ElementSystem.Element.FUOCO);
+        } else if (!hit && ElementSystem.hasEffect(attacker, ElementSystem.StatusEffect.INFLAMMATION)) {
+            int infDmg = 10 * attacker.getElementAttack(ElementSystem.Element.FIRE);
             attacker.life -= infDmg;
             msg.append(attackerLabel).append(" miss").append(s).append(" and take").append(s)
                     .append(" ").append(infDmg).append(" Infiammazione damage!");
@@ -631,7 +632,7 @@ public class CombatState {
                     }
                     if (attackerWeapon.stunChance > 0
                             && new Random().nextInt(100) < attackerWeapon.stunChance) {
-                        ElementSystem.addEffect(target, ElementSystem.StatusEffect.STORDIMENTO, 1);
+                        ElementSystem.addEffect(target, ElementSystem.StatusEffect.STUN, 1);
                         msg.append("  [STUNNED]");
                     }
                 }
@@ -663,9 +664,9 @@ public class CombatState {
             // esplicita ad "attacchi normali" richiesta ("due attacchi normali di fila").
             if (attackerIsPlayer) {
                 if (hit && abilityId.equals("NormalAttack") && !scossaExtraAttack
-                        && ElementSystem.hasEffect(target, ElementSystem.StatusEffect.SCOSSA)) {
+                        && ElementSystem.hasEffect(target, ElementSystem.StatusEffect.JOLT)) {
                     scossaExtraAttack = true;
-                    msg.append("  [SCOSSA: attack again!]");
+                    msg.append("  [JOLT: attack again!]");
                 } else {
                     scossaExtraAttack = false;
                 }
@@ -753,10 +754,8 @@ public class CombatState {
     }
 
     private void resolveDodge() {
-        boolean isRanged = Ability.isRanged("NormalAttack"); // sempre false oggi: NormalAttack è mischia
-        int relevantStat = isRanged ? gp.player.precision : gp.player.speed;
-        int dodgeChance = clamp(monster.evasion - relevantStat, 0, 100);
-        boolean dodged = new Random().nextInt(100) < dodgeChance;
+        double dodgeChance = 1 - CombatMath.hitChance(gp.player.precision, monster.evasion);
+        boolean dodged = new Random().nextDouble() < dodgeChance;
 
         if (dodged) {
             queueAction(monster.name + " dodges out of the way!");
@@ -816,8 +815,8 @@ public class CombatState {
 
     void tryFlee() {
         // Naturalizzazione/Infangato bloccano il movimento: fuggire È muoversi, quindi fallisce.
-        if (ElementSystem.hasEffect(gp.player, ElementSystem.StatusEffect.NATURALIZZAZIONE)
-                || ElementSystem.hasEffect(gp.player, ElementSystem.StatusEffect.INFANGATO)) {
+        if (ElementSystem.hasEffect(gp.player, ElementSystem.StatusEffect.NATURALIZATION)
+                || ElementSystem.hasEffect(gp.player, ElementSystem.StatusEffect.MUDDIED)) {
             combatMessage = "You can't move — unable to flee!";
             messageTimer  = 60;
             return;
@@ -878,7 +877,6 @@ public class CombatState {
         }
     }
     void onDefeat() {
-        //TODO penalità
         queueAction("You have been defeated...");
     }
 

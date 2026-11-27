@@ -17,9 +17,9 @@ public class MON_Goblin extends Entity {
         maxLife = 20 * level;
         attack = 10 * level;
         defense = 10 * level;
-        // Il Goblin usa Thunderbolt (FULMINE): senza questo la sua parte elementale sarebbe sempre 0
-        elementAttack.put(ElementSystem.Element.FULMINE, 10 * level);
-        elementDefense.put(ElementSystem.Element.FULMINE, 10 * level);
+        // Il Goblin usa Thunderbolt (ELECTRIC): senza questo la sua parte elementale sarebbe sempre 0
+        elementAttack.put(ElementSystem.Element.ELECTRIC, 10 * level);
+        elementDefense.put(ElementSystem.Element.ELECTRIC, 10 * level);
         efficiency = 100;
         life = maxLife;
         monsterIntelligence = 2;

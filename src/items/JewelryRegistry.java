@@ -37,7 +37,7 @@ public class JewelryRegistry {
                 return j;
             }
             default:
-                System.err.println("Jewelry non trovata: " + id);
+                System.err.println("Jewelry not found: " + id);
                 return null;
         }
     }

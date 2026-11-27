@@ -117,7 +117,7 @@ public class TileManager {
         int cellsRead = 0;
         int row = 0, col = 0;
         try (InputStream is = getClass().getResourceAsStream(filePath)) {
-            if (is == null) throw new IOException("mappa non trovata");
+            if (is == null) throw new IOException("map not found");
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
             for (row = 0; row < gp.maxWorldRow; row++) {
                 String line = br.readLine();
@@ -131,10 +131,10 @@ public class TileManager {
                 }
             }
         } catch (IOException | NumberFormatException e) {
-            System.err.println("ERROR: " + filePath + " (riga " + (row + 1) + ", colonna " + (col + 1) + "): " + e.getMessage());
+            System.err.println("ERROR: " + filePath + " (line " + (row + 1) + ", column " + (col + 1) + "): " + e.getMessage());
         }
         int cells = gp.maxWorldCol * gp.maxWorldRow;
-        if (cellsRead < cells) System.err.println("WARNING: " + filePath + " ha " + cellsRead + " celle su " + cells + ", le altre restano id 0");
+        if (cellsRead < cells) System.err.println("WARNING: " + filePath + " has " + cellsRead + " cells out of " + cells + ", the rest stay id 0");
 
         NoiseField field = new NoiseField(SeedCreator.finish(h, cellsRead), 12.0, 4, 0.5, 2.0, -0.30, 0.30);
         for (int c = 0; c < gp.maxWorldCol; c++) for (int r = 0; r < gp.maxWorldRow; r++) mapHeight[c][r] = field.height(c, r);
@@ -151,7 +151,7 @@ public class TileManager {
                     setup(id, SPECIALS[ordinal].name(), SPECIALS[ordinal].collision);
                     continue;
                 }
-                System.err.println("ERROR: tile " + id + " in (" + col + "," + row + ") non esiste, sostituita con 0");
+                System.err.println("ERROR: tile " + id + " in (" + col + "," + row + ") does not exist, replaced with 0");
                 mapTileNum[col][row] = 0;
             }
         }

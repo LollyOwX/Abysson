@@ -6,108 +6,108 @@ import entity.StatType;
 import java.util.Random;
 
 /**
- * Sistema elementi, effetti di stato e reazioni.
+ * Element system, status effects and reactions.
  *
- * Contiene:
- *   - enum Element         → i 7 elementi
- *   - enum StatusEffect    → tutti gli effetti di stato
- *   - class ActiveEffect   → effetto attivo su un'Entity (effect + durata + stacks)
- *   - logica statica       → vantaggi, reazioni, applicazione, tick di turno
+ * Contains:
+ *   - enum Element         → the 7 elements
+ *   - enum StatusEffect    → all status effects
+ *   - class ActiveEffect   → an effect active on an Entity (effect + duration + stacks)
+ *   - static logic         → advantages, reactions, application, per-turn ticks
  *
- * Reaction.java è tenuta separata (oggetto dati con Builder).
+ * Reaction.java is kept separate (data object with a Builder).
  *
- * ── Come aggiungere un nuovo elemento ───────────────────────────────
- *   1. Aggiungilo all'enum Element
- *   2. Aggiungi le reazioni in getReaction() (tabella simmetrica)
- *   3. Aggiungi vantaggi/svantaggi in getMultiplier() se necessario
+ * ── How to add a new element ───────────────────────────────────────
+ *   1. Add it to the Element enum
+ *   2. Add its reactions in getReaction() (symmetric table)
+ *   3. Add advantages/disadvantages in getMultiplier() if needed
  *
- * ── Come aggiungere un nuovo effetto di stato ────────────────────────
- *   1. Aggiungilo all'enum StatusEffect
- *   2. Aggiungi la logica in processTurnEffects() se ha tick per turno
- *   3. Aggiungi in isPositiveEffect() se è positivo
+ * ── How to add a new status effect ─────────────────────────────────
+ *   1. Add it to the StatusEffect enum
+ *   2. Add the logic in processTurnEffects() if it ticks per turn
+ *   3. Add it in isPositiveEffect() if it is positive
  *
- * <p> ── Tabella reazioni (simmetrica) ───────────────────────────────────
- * <p>          FIS    LUC    FUO    ACQ    TER    ARI    FUL
- * <p>  FIS  [  POT    ESP    INF    ERO    ROT    TUR    SCO ]
- * <p>  LUC  [  ESP    ACC    ABR    PUR    NAT    ILL    RAG ]
- * <p>  FUO  [  INF    ABR    ESP    VAP    CAR    FIR    SOV ]
- * <p>  ACQ  [  ERO    PUR    VAP    INO    INF    TEM    ELT ]
- * <p>  TER  [  ROT    NAT    CAR    INF    RES    POL    DEV ]
- * <p>  ARI  [  TUR    ILL    FIR    TEM    POL    STO    RAM ]
- * <p>  FUL  [  SCO    RAG    SOV    ELT    DEV    RAM    FOL ]
+ * <p> ── Reaction table (symmetric) ─────────────────────────────────
+ * <p>          PHY    LGT    FIR    WAT    EAR    WND    ELE
+ * <p>  PHY  [  ENH    EXS    INF    ERO    RUP    WHI    JOL ]
+ * <p>  LGT  [  EXS    BLD    ABR    PUR    NAT    ILL    RAY ]
+ * <p>  FIR  [  INF    ABR    EXP    VAP    CAR    FRN    OVL ]
+ * <p>  WAT  [  ERO    PUR    VAP    FLD    MUD    STM    ELZ ]
+ * <p>  EAR  [  RUP    NAT    CAR    MUD    RES    PUL    DFL ]
+ * <p>  WND  [  WHI    ILL    FRN    STM    PUL    STN    BRN ]
+ * <p>  ELE  [  JOL    RAY    OVL    ELZ    DFL    BRN    BLT ]
  *
- * ── Nota su "X*ATK" nelle descrizioni delle reazioni ─────────────────
- * Il gioco ha una coppia ATK/DEF PER ELEMENTO (FireATK/FireDEF, WaterATK/WaterDEF,
+ * ── Note on "X*ATK" in the reaction descriptions ──────────────────────
+ * The game has one ATK/DEF pair PER ELEMENT (FireATK/FireDEF, WaterATK/WaterDEF,
  * ElectricATK/ElectricDEF, EarthATK/EarthDEF, WindATK/WindDEF, LightATK/LightDEF —
- * vedi StatType, Entity.getElementAttack()/getElementDefense()). Ogni formula tipo
- * "10*FireATK" o "15*ElectricATK" usa quindi lo stat DI QUELL'ELEMENTO SPECIFICO
- * dell'entità coinvolta — la scelta di quale entità (chi subisce l'effetto vs chi
- * l'ha causato) è annotata reazione per reazione qui sotto. attackStat()/defenseStat()
- * mappano un Element alla coppia StatType corrispondente (usata da Player.recalculateStats()
- * per applicare i bonus % dell'equipaggiamento stat per stat).
+ * see StatType, Entity.getElementAttack()/getElementDefense()). Every formula such as
+ * "10*FireATK" or "15*ElectricATK" therefore uses the stat OF THAT SPECIFIC ELEMENT
+ * of the entity involved — which entity (the one suffering the effect vs the one that
+ * caused it) is noted reaction by reaction below. attackStat()/defenseStat()
+ * map an Element to the matching StatType pair (used by Player.recalculateStats()
+ * to apply the equipment % bonuses stat by stat).
  *
- * ── Nota su movimento/volo/occultamento ──────────────────────────────
- * Naturalizzazione/Infangato (blocco movimento) sono agganciati a CombatState.tryFlee()
- * (fuggire = muoversi, quindi fallisce se presenti). Vaporizzazione (volo) e Illuminazione
- * (occultamento) restano STUB dichiarati: il gioco non ha alcun sistema di volo o
- * occultamento a cui agganciarli, quindi l'effetto esiste (si applica, si vede in HUD, scade)
- * ma non blocca nulla finché quei sistemi non esisteranno.
+ * ── Note on movement/flight/concealment ──────────────────────────────
+ * Naturalization/Muddied (movement block) are hooked to CombatState.tryFlee()
+ * (fleeing = moving, so it fails if they are present). Vaporization (flight) and
+ * Illumination (concealment) remain declared STUBs: the game has no flight or
+ * concealment system to hook them to, so the effect exists (it is applied, shown in
+ * the HUD, expires) but blocks nothing until those systems exist.
  */
 public class ElementSystem {
 
     private static final Random rng = new Random();
 
     public enum Element {
-        NONE, FISICO, LUCE, FUOCO, ACQUA, TERRA, ARIA, FULMINE
+        NONE, PHYSICAL, LIGHT, FIRE, WATER, EARTH, WIND, ELECTRIC
     }
 
     public enum StatusEffect {
-        NONE("Nessuno"),
-        // ── Reazioni pure (stesso elemento) ────────────────────────
-        POTENZIAMENTO("Potenziamento"),       // +20% danni subiti
-        ACCECAMENTO("Accecamento"),           // -10% precisione, no mira a distanza
-        ESPLOSIONE("Esplosione"),             // marcatore (stordimento+bruciatura sono status separati)
-        INONDAZIONE("Inondazione"),           // marcatore (il disarmo è immediato, non un tick)
-        RESISTENZA("Resistenza"),             // blocca nuovi effetti POSITIVI
-        STORDIMENTO("Stordimento"),           // -75% precisione, 50% skip turno
-        FOLGORE("Folgore"),                   // su fallimento → 10*ElementoATK danni fulmine
-        // ── Reazioni articolate ────────────────────────────────────
-        ROTTURA("Rottura"),                   // +(10*liv)% danni subiti
-        ESPOSIZIONE("Esposizione"),           // +1 durata effetti negativi subiti
-        INFIAMMAZIONE("Infiammazione"),       // su fallimento → 10*ElementoATK danni fuoco
-        EROSIONE("Erosione"),                 // ogni turno rimuove un effetto casuale
-        TURBINIO("Turbinio"),                 // riapplica l'elemento non-Aria della coppia
-        SCOSSA("Scossa"),                     // può subire due Attacchi Normali di fila
-        ABRASIONE("Abrasione"),               // le proprie azioni Fuoco sono +50% efficaci
-        PURIFICAZIONE("Purificazione"),       // rimuove tutti gli effetti positivi
-        NATURALIZZAZIONE("Naturalizzazione"), // blocco movimento (agganciato a tryFlee)
-        ILLUMINAZIONE("Illuminazione"),       // STUB — nessun sistema di occultamento
-        RAGGIO("Raggio"),                     // ogni abilità subita causa 5*ElementoATK danni fulmine
-        VAPORIZZAZIONE("Vaporizzazione"),     // STUB — nessun sistema di volo
-        CARBONIZZAZIONE("Carbonizzazione"),   // ogni turno 5*ElementoATK danni fuoco
-        FIRENADO("Firenado"),                 // danno immediato 5*ElementoATK (diffusione agli alleati: STUB, niente party)
-        SOVRACCARICO("Sovraccarico"),         // tick 15*ElementoATK ogni turno attivo
-        INFANGATO("Infangato"),               // blocco movimento (agganciato a tryFlee)
-        TEMPESTA("Tempesta"),                 // tick 15*ElementoATK, riapplica l'elemento non danneggiante
-        ELETTRIZZAZIONE("Elettrizzazione"),   // danno immediato 20*ElementoATK, riapplica Acqua
-        POLVERIZZAZIONE("Polverizzazione"),   // impedisce mira a distanza
-        DEVIAZIONE("Deviazione"),             // devia attacchi a distanza, -50% mira
-        RAMIFICAZIONE("Ramificazione"),       // tick crescente: stacks*15*ElementoATK
-        BRUCIATURA_GRAVE("Bruciatura grave"); // da Esplosione: tick (durata/16)*vitaMax, rimozione (durata/5)
+        NONE("None"),
+        // ── Pure reactions (same element) ──────────────────────────
+        ENHANCEMENT("Enhancement"),         // +20% damage taken
+        BLINDING("Blinding"),              // -10% precision, no ranged aiming
+        EXPLOSION("Explosion"),              // marker (stun + burn are separate statuses)
+        FLOODING("Flooding"),              // marker (the disarm is immediate, not a tick)
+        RESISTANCE("Resistance"),             // blocks new POSITIVE effects
+        STUN("Stun"),                  // -75% precision, 50% turn skip
+        LIGHTNING_BOLT("Lightning Bolt"),            // on failure → 10*ElementATK lightning damage
+        // ── Combined reactions ─────────────────────────────────────
+        RUPTURE("Rupture"),                   // +(10*lvl)% damage taken
+        EXPOSURE("Exposure"),              // +1 duration on negative effects received
+        INFLAMMATION("Inflammation"),        // on failure → 10*ElementATK fire damage
+        EROSION("Erosion"),                  // each turn removes a random effect
+        WHIRLWIND("Whirlwind"),                // reapplies the non-Wind element of the pair
+        JOLT("Jolt"),                       // can take two Normal Attacks in a row
+        ABRASION("Abrasion"),                // own Fire actions are +50% effective
+        PURIFICATION("Purification"),        // removes all positive effects
+        NATURALIZATION("Naturalization"),   // movement block (hooked to tryFlee)
+        ILLUMINATION("Illumination"),        // STUB — no concealment system
+        RAY("Ray"),                        // every ability received causes 5*ElementATK lightning damage
+        VAPORIZATION("Vaporization"),       // STUB — no flight system
+        CARBONIZATION("Carbonization"),     // every turn 5*ElementATK fire damage
+        FIRENADO("Firenado"),                 // immediate damage 5*ElementATK (spreading to allies: STUB, no party)
+        OVERLOAD("Overload"),             // tick 15*ElementATK every active turn
+        MUDDIED("Muddied"),                 // movement block (hooked to tryFlee)
+        STORM("Storm"),                    // tick 15*ElementATK, reapplies the non-damaging element
+        ELECTRIFICATION("Electrification"),   // immediate damage 20*ElementATK, reapplies Water
+        PULVERIZATION("Pulverization"),     // blocks ranged aiming
+        DEFLECTION("Deflection"),             // deflects ranged attacks, -50% aiming
+        BRANCHING("Branching"),           // growing tick: stacks*15*ElementATK
+        SEVERE_BURN("Severe burn");      // from Explosion: tick (duration/16)*maxLife, removal (duration/5)
 
         public final String displayName;
         StatusEffect(String displayName) { this.displayName = displayName; }
     }
 
     /**
-     *   0  = solo questo turno
-     *  -1  = permanente fino a fine combattimento
-     *  >0  = N turni rimanenti
+     *   0  = this turn only
+     *  -1  = permanent until the end of combat
+     *  >0  = N turns remaining
      */
     public static class ActiveEffect {
         public StatusEffect effect;
         public int duration;
-        public int stacks = 0; // usato da Ramificazione: cresce di 1 ad ogni tick
+        public int stacks = 0; // used by Branching: grows by 1 each tick
 
         public ActiveEffect(StatusEffect effect, int duration) {
             this.effect = effect;
@@ -118,70 +118,70 @@ public class ElementSystem {
     public static double getMultiplier(Element attacker, Element defender) {
         if (attacker == Element.NONE || defender == Element.NONE) return 1.0;
 
-        if (attacker == Element.TERRA && defender == Element.FUOCO) return 1.25;
-        if (attacker == Element.ARIA && defender == Element.FUOCO) return 1.25;
-        if (attacker == Element.ACQUA && defender == Element.FUOCO) return 2;
-        if (attacker == Element.FULMINE && defender == Element.FUOCO) return 0.75;
-        if (attacker == Element.LUCE && defender == Element.FUOCO) return 0.75;
+        if (attacker == Element.EARTH && defender == Element.FIRE) return 1.25;
+        if (attacker == Element.WIND && defender == Element.FIRE) return 1.25;
+        if (attacker == Element.WATER && defender == Element.FIRE) return 2;
+        if (attacker == Element.ELECTRIC && defender == Element.FIRE) return 0.75;
+        if (attacker == Element.LIGHT && defender == Element.FIRE) return 0.75;
 
-        if (attacker == Element.FUOCO && defender == Element.ACQUA) return 2;
-        if (attacker == Element.FULMINE && defender == Element.ACQUA) return 1.5;
-        if (attacker == Element.LUCE && defender == Element.ACQUA) return 0.5;
+        if (attacker == Element.FIRE && defender == Element.WATER) return 2;
+        if (attacker == Element.ELECTRIC && defender == Element.WATER) return 1.5;
+        if (attacker == Element.LIGHT && defender == Element.WATER) return 0.5;
 
-        if (attacker == Element.ARIA && defender == Element.TERRA) return 1.25;
-        if (attacker == Element.FULMINE && defender == Element.TERRA) return 0.5;
+        if (attacker == Element.WIND && defender == Element.EARTH) return 1.25;
+        if (attacker == Element.ELECTRIC && defender == Element.EARTH) return 0.5;
 
-        if (attacker == Element.LUCE && defender == Element.ARIA) return 1.5;
-        if (attacker == Element.FULMINE && defender == Element.ARIA) return 1.5;
-        if (attacker == Element.TERRA && defender == Element.ARIA) return 0.75;
+        if (attacker == Element.LIGHT && defender == Element.WIND) return 1.5;
+        if (attacker == Element.ELECTRIC && defender == Element.WIND) return 1.5;
+        if (attacker == Element.EARTH && defender == Element.WIND) return 0.75;
 
-        if (attacker == Element.TERRA && defender == Element.FULMINE) return 2;
-        if (attacker == Element.FUOCO && defender == Element.FULMINE) return 1.5;
-        if (attacker == Element.ARIA && defender == Element.FULMINE) return 0.75;
-        if (attacker == Element.ACQUA && defender == Element.FULMINE) return 0.75;
+        if (attacker == Element.EARTH && defender == Element.ELECTRIC) return 2;
+        if (attacker == Element.FIRE && defender == Element.ELECTRIC) return 1.5;
+        if (attacker == Element.WIND && defender == Element.ELECTRIC) return 0.75;
+        if (attacker == Element.WATER && defender == Element.ELECTRIC) return 0.75;
 
-        if (attacker == Element.ACQUA && defender == Element.LUCE) return 1.25;
-        if (attacker == Element.TERRA && defender == Element.LUCE) return 1.5;
-        if (attacker == Element.FUOCO && defender == Element.LUCE) return 0.75;
-        if (attacker == Element.FULMINE && defender == Element.LUCE) return 0.75;
+        if (attacker == Element.WATER && defender == Element.LIGHT) return 1.25;
+        if (attacker == Element.EARTH && defender == Element.LIGHT) return 1.5;
+        if (attacker == Element.FIRE && defender == Element.LIGHT) return 0.75;
+        if (attacker == Element.ELECTRIC && defender == Element.LIGHT) return 0.75;
 
         return 1.0;
     }
 
     /**
-     * Mappa un elemento alla coppia StatType di ATK/DEF corrispondente (usata da
-     * Player.recalculateStats() per applicare i bonus % dell'equipaggiamento).
-     * FISICO/NONE non hanno una coppia elementale: ritornano null (le abilità fisiche
-     * usano ATTACK/DIFESA, non una coppia elementale — vedi Ability.isElemental()).
+     * Maps an element to its ATK/DEF StatType pair (used by Player.recalculateStats()
+     * to apply the equipment % bonuses). PHYSICAL/NONE have no elemental pair: they
+     * return null (physical abilities use ATTACK/DIFESA, not an elemental pair — see
+     * Ability.isElemental()).
      */
     public static StatType attackStat(Element e) {
         switch (e) {
-            case FUOCO:   return StatType.FIRE_ATK;
-            case ACQUA:   return StatType.WATER_ATK;
-            case FULMINE: return StatType.ELECTRIC_ATK;
-            case TERRA:   return StatType.EARTH_ATK;
-            case ARIA:    return StatType.WIND_ATK;
-            case LUCE:    return StatType.LIGHT_ATK;
+            case FIRE:   return StatType.FIRE_ATK;
+            case WATER:   return StatType.WATER_ATK;
+            case ELECTRIC: return StatType.ELECTRIC_ATK;
+            case EARTH:   return StatType.EARTH_ATK;
+            case WIND:    return StatType.WIND_ATK;
+            case LIGHT:    return StatType.LIGHT_ATK;
             default:      return null;
         }
     }
 
     public static StatType defenseStat(Element e) {
         switch (e) {
-            case FUOCO:   return StatType.FIRE_DEF;
-            case ACQUA:   return StatType.WATER_DEF;
-            case FULMINE: return StatType.ELECTRIC_DEF;
-            case TERRA:   return StatType.EARTH_DEF;
-            case ARIA:    return StatType.WIND_DEF;
-            case LUCE:    return StatType.LIGHT_DEF;
+            case FIRE:   return StatType.FIRE_DEF;
+            case WATER:   return StatType.WATER_DEF;
+            case ELECTRIC: return StatType.ELECTRIC_DEF;
+            case EARTH:   return StatType.EARTH_DEF;
+            case WIND:    return StatType.WIND_DEF;
+            case LIGHT:    return StatType.LIGHT_DEF;
             default:      return null;
         }
     }
 
     /**
-     * La tabella è simmetrica: l'ordine non conta. entityLevel = livello del bersaglio
-     * (usato da Rottura). attacker = chi ha causato il colpo che innesca la reazione,
-     * usato dalle reazioni il cui danno bonus dipende dal suo ElementoATK (Elettrizzazione,
+     * The table is symmetric: order does not matter. entityLevel = level of the target
+     * (used by Rupture). attacker = whoever caused the hit that triggers the reaction,
+     * used by reactions whose bonus damage depends on its element ATK (Electrification,
      * Firenado).
      */
     public static Reaction getReaction(Element existing, Element incoming, int entityLevel, Entity attacker) {
@@ -192,108 +192,108 @@ public class ElementSystem {
         Element ea = Element.values()[a];
         Element eb = Element.values()[b];
 
-        // ── Diagonale (stesso elemento) — reazioni pure ───────────
+        // ── Diagonal (same element) — pure reactions ───────────
         if (a == b) {
             switch (ea) {
-                case FISICO:
-                    return new Reaction.Builder("Potenziamento", StatusEffect.POTENZIAMENTO)
+                case PHYSICAL:
+                    return new Reaction.Builder("Enhancement", StatusEffect.ENHANCEMENT)
                             .duration(0).multiplier(1.2).build();
-                case LUCE:
-                    return new Reaction.Builder("Accecamento", StatusEffect.ACCECAMENTO)
+                case LIGHT:
+                    return new Reaction.Builder("Blinding", StatusEffect.BLINDING)
                             .duration(3).build();
-                case FUOCO:
-                    return new Reaction.Builder("Esplosione", StatusEffect.STORDIMENTO)
+                case FIRE:
+                    return new Reaction.Builder("Explosion", StatusEffect.STUN)
                             .duration(3)
-                            .also(StatusEffect.BRUCIATURA_GRAVE, 5) // durata iniziale bruciatura: valore scelto, da bilanciare
+                            .also(StatusEffect.SEVERE_BURN, 5) // initial burn duration: chosen value, to be balanced
                             .build();
-                case ACQUA:
-                    return new Reaction.Builder("Inondazione", StatusEffect.NONE)
+                case WATER:
+                    return new Reaction.Builder("Flooding", StatusEffect.NONE)
                             .disarm().build();
-                case TERRA:
-                    return new Reaction.Builder("Resistenza", StatusEffect.RESISTENZA)
+                case EARTH:
+                    return new Reaction.Builder("Resistance", StatusEffect.RESISTANCE)
                             .duration(0).build();
-                case ARIA:
-                    return new Reaction.Builder("Stordimento", StatusEffect.STORDIMENTO)
+                case WIND:
+                    return new Reaction.Builder("Stun", StatusEffect.STUN)
                             .duration(5).build();
-                case FULMINE:
-                    return new Reaction.Builder("Folgore", StatusEffect.FOLGORE)
+                case ELECTRIC:
+                    return new Reaction.Builder("Lightning Bolt", StatusEffect.LIGHTNING_BOLT)
                             .duration(0).build();
                 default:
                     return Reaction.NONE;
             }
         }
 
-        // ── Combinazioni — reazioni articolate ────────────────────
-        // FISICO con...
-        if (ea == Element.FISICO && eb == Element.LUCE)
-            return new Reaction.Builder("Esposizione", StatusEffect.ESPOSIZIONE).duration(0).build();
-        if (ea == Element.FISICO && eb == Element.FUOCO)
-            return new Reaction.Builder("Infiammazione", StatusEffect.INFIAMMAZIONE).duration(0).build();
-        if (ea == Element.FISICO && eb == Element.ACQUA)
-            return new Reaction.Builder("Erosione", StatusEffect.EROSIONE).duration(-1).build();
-        if (ea == Element.FISICO && eb == Element.TERRA)
-            return new Reaction.Builder("Rottura", StatusEffect.ROTTURA)
+        // ── Combinations — combined reactions ────────────────────
+        // PHYSICAL with...
+        if (ea == Element.PHYSICAL && eb == Element.LIGHT)
+            return new Reaction.Builder("Exposure", StatusEffect.EXPOSURE).duration(0).build();
+        if (ea == Element.PHYSICAL && eb == Element.FIRE)
+            return new Reaction.Builder("Inflammation", StatusEffect.INFLAMMATION).duration(0).build();
+        if (ea == Element.PHYSICAL && eb == Element.WATER)
+            return new Reaction.Builder("Erosion", StatusEffect.EROSION).duration(-1).build();
+        if (ea == Element.PHYSICAL && eb == Element.EARTH)
+            return new Reaction.Builder("Rupture", StatusEffect.RUPTURE)
                     .duration(0).multiplier(1.0 + (0.10 * entityLevel)).build();
-        if (ea == Element.FISICO && eb == Element.ARIA)
-            return new Reaction.Builder("Turbinio", StatusEffect.TURBINIO)
-                    .duration(0).reapply(Element.FISICO).build();
-        if (ea == Element.FISICO && eb == Element.FULMINE)
-            return new Reaction.Builder("Scossa", StatusEffect.SCOSSA).duration(0).build();
+        if (ea == Element.PHYSICAL && eb == Element.WIND)
+            return new Reaction.Builder("Whirlwind", StatusEffect.WHIRLWIND)
+                    .duration(0).reapply(Element.PHYSICAL).build();
+        if (ea == Element.PHYSICAL && eb == Element.ELECTRIC)
+            return new Reaction.Builder("Jolt", StatusEffect.JOLT).duration(0).build();
 
-        // LUCE con...
-        if (ea == Element.LUCE && eb == Element.FUOCO)
-            return new Reaction.Builder("Abrasione", StatusEffect.ABRASIONE).duration(-1).build();
-        if (ea == Element.LUCE && eb == Element.ACQUA)
-            return new Reaction.Builder("Purificazione", StatusEffect.PURIFICAZIONE).duration(0).build();
-        if (ea == Element.LUCE && eb == Element.TERRA)
-            return new Reaction.Builder("Naturalizzazione", StatusEffect.NATURALIZZAZIONE).duration(-1).build();
-        if (ea == Element.LUCE && eb == Element.ARIA)
-            return new Reaction.Builder("Illuminazione", StatusEffect.ILLUMINAZIONE).duration(-1).build();
-        if (ea == Element.LUCE && eb == Element.FULMINE)
-            return new Reaction.Builder("Raggio", StatusEffect.RAGGIO).duration(-1).build();
+        // LIGHT with...
+        if (ea == Element.LIGHT && eb == Element.FIRE)
+            return new Reaction.Builder("Abrasion", StatusEffect.ABRASION).duration(-1).build();
+        if (ea == Element.LIGHT && eb == Element.WATER)
+            return new Reaction.Builder("Purification", StatusEffect.PURIFICATION).duration(0).build();
+        if (ea == Element.LIGHT && eb == Element.EARTH)
+            return new Reaction.Builder("Naturalization", StatusEffect.NATURALIZATION).duration(-1).build();
+        if (ea == Element.LIGHT && eb == Element.WIND)
+            return new Reaction.Builder("Illumination", StatusEffect.ILLUMINATION).duration(-1).build();
+        if (ea == Element.LIGHT && eb == Element.ELECTRIC)
+            return new Reaction.Builder("Ray", StatusEffect.RAY).duration(-1).build();
 
-        // FUOCO con...
-        if (ea == Element.FUOCO && eb == Element.ACQUA)
-            return new Reaction.Builder("Vaporizzazione", StatusEffect.VAPORIZZAZIONE).duration(-1).build();
-        if (ea == Element.FUOCO && eb == Element.TERRA)
-            return new Reaction.Builder("Carbonizzazione", StatusEffect.CARBONIZZAZIONE).duration(-1).build();
-        if (ea == Element.FUOCO && eb == Element.ARIA)
+        // FIRE with...
+        if (ea == Element.FIRE && eb == Element.WATER)
+            return new Reaction.Builder("Vaporization", StatusEffect.VAPORIZATION).duration(-1).build();
+        if (ea == Element.FIRE && eb == Element.EARTH)
+            return new Reaction.Builder("Carbonization", StatusEffect.CARBONIZATION).duration(-1).build();
+        if (ea == Element.FIRE && eb == Element.WIND)
             return new Reaction.Builder("Firenado", StatusEffect.FIRENADO)
-                    .duration(0).bonus(5 * attacker.getElementAttack(Element.FUOCO), Element.FUOCO).build();
-        if (ea == Element.FUOCO && eb == Element.FULMINE)
-            return new Reaction.Builder("Sovraccarico", StatusEffect.STORDIMENTO)
-                    .duration(1).also(StatusEffect.SOVRACCARICO, 1).build();
+                    .duration(0).bonus(5 * attacker.getElementAttack(Element.FIRE), Element.FIRE).build();
+        if (ea == Element.FIRE && eb == Element.ELECTRIC)
+            return new Reaction.Builder("Overload", StatusEffect.STUN)
+                    .duration(1).also(StatusEffect.OVERLOAD, 1).build();
 
-        // ACQUA con...
-        if (ea == Element.ACQUA && eb == Element.TERRA)
-            return new Reaction.Builder("Infangato", StatusEffect.INFANGATO).duration(-1).build();
-        if (ea == Element.ACQUA && eb == Element.ARIA)
-            return new Reaction.Builder("Tempesta", StatusEffect.TEMPESTA).duration(3).build();
-        if (ea == Element.ACQUA && eb == Element.FULMINE)
-            return new Reaction.Builder("Elettrizzazione", StatusEffect.ELETTRIZZAZIONE)
-                    .duration(0).bonus(20 * attacker.getElementAttack(Element.FULMINE), Element.FULMINE).reapply(Element.ACQUA).build();
+        // WATER with...
+        if (ea == Element.WATER && eb == Element.EARTH)
+            return new Reaction.Builder("Muddied", StatusEffect.MUDDIED).duration(-1).build();
+        if (ea == Element.WATER && eb == Element.WIND)
+            return new Reaction.Builder("Storm", StatusEffect.STORM).duration(3).build();
+        if (ea == Element.WATER && eb == Element.ELECTRIC)
+            return new Reaction.Builder("Electrification", StatusEffect.ELECTRIFICATION)
+                    .duration(0).bonus(20 * attacker.getElementAttack(Element.ELECTRIC), Element.ELECTRIC).reapply(Element.WATER).build();
 
-        // TERRA con...
-        if (ea == Element.TERRA && eb == Element.ARIA)
-            return new Reaction.Builder("Polverizzazione", StatusEffect.POLVERIZZAZIONE).duration(-1).build();
-        if (ea == Element.TERRA && eb == Element.FULMINE)
-            return new Reaction.Builder("Deviazione", StatusEffect.DEVIAZIONE).duration(-1).build();
+        // EARTH with...
+        if (ea == Element.EARTH && eb == Element.WIND)
+            return new Reaction.Builder("Pulverization", StatusEffect.PULVERIZATION).duration(-1).build();
+        if (ea == Element.EARTH && eb == Element.ELECTRIC)
+            return new Reaction.Builder("Deflection", StatusEffect.DEFLECTION).duration(-1).build();
 
-        // ARIA con...
-        if (ea == Element.ARIA && eb == Element.FULMINE)
-            return new Reaction.Builder("Ramificazione", StatusEffect.RAMIFICAZIONE).duration(-1).build();
+        // WIND with...
+        if (ea == Element.WIND && eb == Element.ELECTRIC)
+            return new Reaction.Builder("Branching", StatusEffect.BRANCHING).duration(-1).build();
 
         return Reaction.NONE;
     }
 
     // ═════════════════════════════════════════════
-    //  APPLICA REAZIONE
+    //  APPLY REACTION
     // ═════════════════════════════════════════════
 
     /**
-     * Applica gli effetti di una reazione al target. Ritorna il danno immediato bonus della
-     * reazione. Aggiorna lastElementHit del target (di norma con l'elemento in arrivo, salvo
-     * che la reazione specifichi un reapplyElement diverso — Turbinio/Tempesta/Elettrizzazione).
+     * Applies a reaction's effects to the target. Returns the reaction's immediate bonus
+     * damage. Updates the target's lastElementHit (normally with the incoming element,
+     * unless the reaction specifies a different reapplyElement — Whirlwind/Storm/Electrification).
      */
     public static int applyReaction(Reaction reaction, Entity target, Element incoming) {
         if (reaction == Reaction.NONE) {
@@ -301,13 +301,13 @@ public class ElementSystem {
             return 0;
         }
 
-        // Purificazione: rimuove effetti positivi prima di applicare il nuovo
-        if (reaction.effect == StatusEffect.PURIFICAZIONE) {
+        // Purification: removes positive effects before applying the new one
+        if (reaction.effect == StatusEffect.PURIFICATION) {
             removePositiveEffects(target);
         }
 
-        // Resistenza blocca SOLO i nuovi effetti positivi, non quelli negativi
-        boolean resisted = hasEffect(target, StatusEffect.RESISTENZA);
+        // Resistance blocks ONLY new positive effects, not negative ones
+        boolean resisted = hasEffect(target, StatusEffect.RESISTANCE);
 
         if (!(resisted && isPositiveEffect(reaction.effect))) {
             addEffect(target, reaction.effect, reaction.effectDuration);
@@ -323,64 +323,64 @@ public class ElementSystem {
     }
 
     // ═════════════════════════════════════════════
-    //  TICK DI TURNO
+    //  TURN TICK
     // ═════════════════════════════════════════════
 
     /**
-     * Processa gli effetti persistenti del portatore SUL PROPRIO turno (chiamato da
-     * CombatState.afterTurn() dopo che l'entità ha agito — o dopo aver saltato il turno).
-     * Prima ticchettavano solo sul BERSAGLIO quando veniva colpito, dentro dealDamage: ora
-     * ogni entità subisce i propri effetti una volta a round, sul proprio turno (vedi §5
-     * TODO in STATUS.md — risolto qui). Ritorna il danno totale da effetti questo tick.
+     * Processes the bearer's persistent effects ON ITS OWN turn (called by
+     * CombatState.afterTurn() after the entity has acted — or after it skipped its turn).
+     * They used to tick only on the TARGET when hit, inside dealDamage: now each entity
+     * takes its own effects once per round, on its own turn (see §5 to do in STATUS.md —
+     * solved here). Returns the total damage from effects this tick.
      */
     public static int processTurnEffects(Entity target) {
         int damage = 0;
         for (int i = target.activeEffects.size() - 1; i >= 0; i--) {
             ActiveEffect ae = target.activeEffects.get(i);
             switch (ae.effect) {
-                case CARBONIZZAZIONE:
-                    damage += 5 * target.getElementAttack(Element.FUOCO);
+                case CARBONIZATION:
+                    damage += 5 * target.getElementAttack(Element.FIRE);
                     break;
-                case TEMPESTA: {
+                case STORM: {
                     boolean windBranch = rng.nextBoolean();
-                    // 50/50 Wind o Fulmine: ognuno usa il proprio ATK elementale ora
-                    damage += 15 * target.getElementAttack(windBranch ? Element.ARIA : Element.FULMINE);
-                    // riapplica l'elemento NON danneggiante di questo tick
-                    target.lastElementHit = windBranch ? Element.FULMINE : Element.ARIA;
+                    // 50/50 Wind or Electric: each uses its own elemental ATK now
+                    damage += 15 * target.getElementAttack(windBranch ? Element.WIND : Element.ELECTRIC);
+                    // reapply the NON-damaging element of this tick
+                    target.lastElementHit = windBranch ? Element.ELECTRIC : Element.WIND;
                     break;
                 }
-                case SOVRACCARICO: {
+                case OVERLOAD: {
                     boolean fireBranch = rng.nextBoolean();
-                    // Fuoco o Fulmine, 50/50: ognuno usa il proprio ATK elementale ora
-                    damage += 15 * target.getElementAttack(fireBranch ? Element.FUOCO : Element.FULMINE);
+                    // Fire or Electric, 50/50: each uses its own elemental ATK now
+                    damage += 15 * target.getElementAttack(fireBranch ? Element.FIRE : Element.ELECTRIC);
                     break;
                 }
-                case RAMIFICAZIONE:
+                case BRANCHING:
                     ae.stacks++;
-                    damage += ae.stacks * 15 * target.getElementAttack(Element.FULMINE);
+                    damage += ae.stacks * 15 * target.getElementAttack(Element.ELECTRIC);
                     break;
-                case BRUCIATURA_GRAVE: {
+                case SEVERE_BURN: {
                     int burnDmg = (int) Math.max(1, (ae.duration / 16.0) * target.maxLife);
                     damage += burnDmg;
                     double removeChance = Math.min(1.0, ae.duration / 5.0);
                     if (rng.nextDouble() < removeChance) {
                         target.activeEffects.remove(i);
-                        continue; // già rimosso da qui, non scalare durata sotto
+                        continue; // already removed here, do not decrement duration below
                     }
                     break;
                 }
-                case EROSIONE:
+                case EROSION:
                     if (!target.activeEffects.isEmpty()) {
                         int removeIdx = rng.nextInt(target.activeEffects.size());
                         target.activeEffects.remove(removeIdx);
                         i = Math.min(i, target.activeEffects.size() - 1);
-                        continue; // già rimosso, non scalare durata
+                        continue; // already removed, do not decrement duration
                     }
                     break;
                 default:
                     break;
             }
-            // Scala durata
+            // Decrement duration
             if (ae.duration > 0) {
                 ae.duration--;
                 if (ae.duration == 0) {
@@ -389,38 +389,38 @@ public class ElementSystem {
             } else if (ae.duration == 0) {
                 target.activeEffects.remove(i);
             }
-            // duration == -1 → permanente, non rimuovere
+            // duration == -1 → permanent, do not remove
         }
         return damage;
     }
 
     // ═════════════════════════════════════════════
-    //  MODIFICATORI DA STATUS (precisione / mira)
+    //  STATUS MODIFIERS (precision / aiming)
     // ═════════════════════════════════════════════
 
-    /** Combina Stordimento/Accecamento/Deviazione sulla precisione di chi agisce. */
+    /** Combines Stun/Blinding/Deflection on the acting entity's precision. */
     public static double precisionMultiplier(Entity e) {
         double mult = 1.0;
-        if (hasEffect(e, StatusEffect.STORDIMENTO)) mult *= 0.25; // -75%
-        if (hasEffect(e, StatusEffect.ACCECAMENTO)) mult *= 0.90; // -10%
-        if (hasEffect(e, StatusEffect.DEVIAZIONE))  mult *= 0.50; // -50%
+        if (hasEffect(e, StatusEffect.STUN)) mult *= 0.25; // -75%
+        if (hasEffect(e, StatusEffect.BLINDING)) mult *= 0.90; // -10%
+        if (hasEffect(e, StatusEffect.DEFLECTION))  mult *= 0.50; // -50%
         return mult;
     }
 
-    /** Accecamento/Polverizzazione: chi le porta non può mirare con abilità a distanza. */
+    /** Blinding/Pulverization: whoever bears them cannot aim with ranged abilities. */
     public static boolean isRangedBlocked(Entity attacker, String abilityId) {
-        boolean blocked = hasEffect(attacker, StatusEffect.ACCECAMENTO)
-                || hasEffect(attacker, StatusEffect.POLVERIZZAZIONE);
+        boolean blocked = hasEffect(attacker, StatusEffect.BLINDING)
+                || hasEffect(attacker, StatusEffect.PULVERIZATION);
         return blocked && Ability.isRanged(abilityId);
     }
 
-    /** Deviazione: il bersaglio devia gli attacchi a distanza in arrivo (miss automatico). */
+    /** Deflection: the target deflects incoming ranged attacks (automatic miss). */
     public static boolean isDeflected(Entity defender, String abilityId) {
-        return hasEffect(defender, StatusEffect.DEVIAZIONE) && Ability.isRanged(abilityId);
+        return hasEffect(defender, StatusEffect.DEFLECTION) && Ability.isRanged(abilityId);
     }
 
     // ═════════════════════════════════════════════
-    //  QUERY EFFETTI
+    //  EFFECT QUERIES
     // ═════════════════════════════════════════════
 
     public static boolean hasEffect(Entity e, StatusEffect effect) {
@@ -431,14 +431,14 @@ public class ElementSystem {
     }
 
     /**
-     * Aggiunge un effetto — se già presente sul bersaglio, ne rinfresca solo la durata invece
-     * di duplicarlo (importante per Ramificazione: una singola istanza i cui stacks crescono
-     * nel tempo, non tante istanze separate).
+     * Adds an effect — if already present on the target, only refreshes its duration instead
+     * of duplicating it (important for Branching: a single instance whose stacks grow over
+     * time, not many separate instances).
      */
     public static void addEffect(Entity e, StatusEffect effect, int duration) {
         if (effect == StatusEffect.NONE) return;
-        // Esposizione: +1 durata a nuovi effetti negativi
-        if (hasEffect(e, StatusEffect.ESPOSIZIONE) && isNegativeEffect(effect)) {
+        // Exposure: +1 duration on new negative effects
+        if (hasEffect(e, StatusEffect.EXPOSURE) && isNegativeEffect(effect)) {
             duration = duration < 0 ? duration : duration + 1;
         }
         for (ActiveEffect ae : e.activeEffects) {
@@ -457,9 +457,9 @@ public class ElementSystem {
 
     public static boolean isPositiveEffect(StatusEffect e) {
         switch (e) {
-            case RESISTENZA:
-            case DEVIAZIONE:
-            case ABRASIONE:
+            case RESISTANCE:
+            case DEFLECTION:
+            case ABRASION:
                 return true;
             default:
                 return false;

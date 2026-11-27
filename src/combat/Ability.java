@@ -16,13 +16,13 @@ public class Ability {
             case "Earthshock":   return CombatMath.mitigate(atk * 2, def, user.level);
             case "Fireblade":    return CombatMath.mitigate(atk * 2, def, user.level);
             case "Lightray":     return CombatMath.mitigate(atk * 2, def, user.level);
-            default: System.err.println("Ability non trovata: " + id); return 1;
+            default: System.err.println("Ability not found: " + id); return 1;
         }
     }
 
     public static String getName(String id) {
         switch (id) {
-            case "NormalAttack": return "Attacco Normale";
+            case "NormalAttack": return "Normal Attack";
             case "PowerStrike": return "Power Strike";
             case "Thunderbolt": return "Thunderbolt";
             case "AcquaJet": return "AcquaJet";
@@ -36,12 +36,12 @@ public class Ability {
     public static Element getElement(String id) {
         switch (id) {
             case "NormalAttack": return Element.NONE;
-            case "PowerStrike": return Element.FISICO;
-            case "Thunderbolt": return Element.FULMINE;
-            case "AcquaJet": return Element.ACQUA;
-            case "Earthshock": return Element.TERRA;
-            case "Fireblade": return Element.FUOCO;
-            case "Lightray": return Element.LUCE;
+            case "PowerStrike": return Element.PHYSICAL;
+            case "Thunderbolt": return Element.ELECTRIC;
+            case "AcquaJet": return Element.WATER;
+            case "Earthshock": return Element.EARTH;
+            case "Fireblade": return Element.FIRE;
+            case "Lightray": return Element.LIGHT;
             default: return Element.NONE;
         }
     }
@@ -49,26 +49,14 @@ public class Ability {
     /** true se l'abilità usa ElementoATK/ElementDEF invece di Attack/Difesa fisici. */
     public static boolean isElemental(String id) {
         Element e = getElement(id);
-        return e != Element.NONE && e != Element.FISICO;
+        return e != Element.NONE && e != Element.PHYSICAL;
     }
 
-    /**
-     * true se l'abilità colpisce "a distanza" — usato da Accecamento/Polverizzazione
-     * (bloccano la mira a distanza) e da Deviazione (devia i proiettili).
-     * Scelta di design esplicita, non presente nel codice originale: il gioco non aveva
-     * finora una nozione di mischia/distanza per abilità, quindi la classificazione qui
-     * sotto è un'assunzione ragionevole (Thunderbolt/AcquaJet/Lightray = a distanza,
-     * il resto = da mischia) — verifica che rispecchi il design che avevi in mente.
-     */
+    // Tag "a distanza": usato da Accecamento/Polverizzazione (bloccano la mira a distanza) e da Deviazione (devia i proiettili).
+    private static final java.util.Set<String> RANGED = java.util.Set.of("Thunderbolt", "AcquaJet", "Lightray");
+
     public static boolean isRanged(String id) {
-        switch (id) {
-            case "Thunderbolt":
-            case "AcquaJet":
-            case "Lightray":
-                return true;
-            default:
-                return false;
-        }
+        return RANGED.contains(id);
     }
 
     /**

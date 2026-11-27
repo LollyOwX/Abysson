@@ -40,7 +40,8 @@ public class UI {
 
     // ── Behavior neutral: mini-menu Parla/Attacca ────────────────
     public boolean neutralMenuOpen = false;
-    public int neutralMenuCommand = 0; // 0 = Parla, 1 = Attacca
+    public int neutralMenuCommand = 0; // 0 = Talk, 1 = Attack
+    public int defeatCommand = 1;      // 0 = Load last save, 1 = Quit to title
     public Entity neutralTarget = null;
     public int neutralTargetIndex = -1;
     public boolean neutralTargetIsNpc = true;
@@ -110,23 +111,13 @@ public class UI {
         this.gp = gp;
         combat = new CombatState(gp, this);
         book = new book.BookUI(gp, this);
-        try {
-            InputStream is;
-            is = getClass().getResourceAsStream("/font/x12y16pxMaruMonica.ttf");
-            MaruMonica = Font.createFont(Font.TRUETYPE_FONT, is);
-            is = getClass().getResourceAsStream("/font/Purisa Bold.ttf");
-            PurisaB = Font.createFont(Font.TRUETYPE_FONT, is);
-            is = getClass().getResourceAsStream("/font/Brotheric-Regular-Demo.otf");
-            BrothericR = Font.createFont(Font.TRUETYPE_FONT, is);
-            is = getClass().getResourceAsStream("/font/GraenMetal-Regular.otf");
-            GraenMetalR = Font.createFont(Font.TRUETYPE_FONT, is);
-            is = getClass().getResourceAsStream("/font/HoperushDemo-G35pG.otf");
-            HoperushD = Font.createFont(Font.TRUETYPE_FONT, is);
-            is = getClass().getResourceAsStream("/font/WonderworldPersonalUseRegular-gxdo3.otf");
-            WonderWorldR = Font.createFont(Font.TRUETYPE_FONT, is);
-        } catch (FontFormatException | IOException e) {
-            e.printStackTrace();
-        }
+        UtilityTool tool = new UtilityTool();
+        MaruMonica   = tool.loadFont("/font/x12y16pxMaruMonica.ttf");
+        PurisaB      = tool.loadFont("/font/Purisa Bold.ttf");
+        BrothericR   = tool.loadFont("/font/Brotheric-Regular-Demo.otf");
+        GraenMetalR  = tool.loadFont("/font/GraenMetal-Regular.otf");
+        HoperushD    = tool.loadFont("/font/HoperushDemo-G35pG.otf");
+        WonderWorldR = tool.loadFont("/font/WonderworldPersonalUseRegular-gxdo3.otf");
         Entity lefthealth   = new OBJ_Left_Health(gp);
         Entity middlehealth = new OBJ_Middle_Health(gp);
         Entity righthealth  = new OBJ_Right_Health(gp);
@@ -197,6 +188,7 @@ public class UI {
         if (gp.gameState == gp.dialogueState) { drawDialogueScreen(); }
         if (gp.gameState == gp.combatState)   { combat.draw(g2); }
         if (gp.gameState == gp.bookState)     { book.draw(g2); }
+        if (gp.gameState == gp.defeatState)   { drawDefeatScreen(); }
 
         drawMessage(); // banner in alto, impilabile — vedi drawMessage()
     }
@@ -501,6 +493,46 @@ public class UI {
     }
 
     // ═════════════════════════════════════════════
+    //  SCONFITTA: "You were defeated" — ricarica il salvataggio o torna al titolo
+    // ═════════════════════════════════════════════
+
+    public void openDefeatScreen() {
+        defeatCommand = gp.hasSave() ? 0 : 1;
+        gp.gameState = gp.defeatState;
+    }
+
+    public void drawDefeatScreen() {
+        g2.setColor(new Color(0, 0, 0, 170));
+        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+
+        g2.setFont(MaruMonica.deriveFont(Font.PLAIN, 72f));
+        g2.setColor(new Color(200, 40, 40));
+        String title = "You were defeated";
+        g2.drawString(title, getXforCenteredText(title), gp.screenHeight / 3);
+
+        g2.setFont(MaruMonica.deriveFont(Font.PLAIN, 36f));
+        String[] options = {"Load last save", "Quit to title"};
+        for (int i = 0; i < options.length; i++) {
+            g2.setColor(i == 0 && !gp.hasSave() ? Color.gray : Color.white);
+            int x = getXforCenteredText(options[i]);
+            int y = gp.screenHeight / 2 + i * gp.tileSize;
+            g2.drawString(options[i], x, y);
+            if (defeatCommand == i) g2.drawString(">", x - gp.tileSize / 2, y);
+        }
+    }
+
+    public void confirmDefeatMenu() {
+        if (defeatCommand == 0) {
+            if (gp.hasSave()) gp.loadGame();
+            return;
+        }
+        gp.player.setDefaultValues();
+        titleScreenState = 0;
+        commandNum = 0;
+        gp.gameState = gp.titleState;
+    }
+
+    // ═════════════════════════════════════════════
     //  DIALOGO con testo stilizzato tramite tag
     // ═════════════════════════════════════════════
 
@@ -537,7 +569,7 @@ public class UI {
         g2.setColor(Color.white);
         g2.drawString(neutralTarget.name != null ? neutralTarget.name : "???", x + 20, y + 36);
 
-        String[] options = {"Parla", "Attacca"};
+        String[] options = {"Talk", "Attack"};
         int optX = x + 40, optY = y + 80;
         for (int i = 0; i < options.length; i++) {
             g2.drawString(options[i], optX, optY);

@@ -7,9 +7,9 @@ package entity;
  * (accumulata via Player.calcStat() ad ogni equip/unequip).
  *
  * Le 6 coppie FIRE_ATK/FIRE_DEF...LIGHT_ATK/LIGHT_DEF sono una per elemento
- * (FUOCO/ACQUA/FULMINE/TERRA/ARIA/LUCE) — niente ElementoATK generico: un colpo
+ * (FIRE/WATER/ELECTRIC/EARTH/WIND/LIGHT) — niente ElementoATK generico: un colpo
  * a Fuoco usa FireATK/FireDEF, uno a Fulmine usa ElectricATK/ElectricDEF, ecc.
- * FISICO/NONE non hanno una coppia elementale: usano ATTACK/DIFESA.
+ * PHYSICAL/NONE non hanno una coppia elementale: usano ATTACK/DIFESA.
  * Vedi ElementSystem.attackStat()/defenseStat() per la mappa Element -> StatType.
  */
 public enum StatType {

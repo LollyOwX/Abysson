@@ -17,6 +17,7 @@ public class GamePanel extends JPanel implements Runnable {
     final int OriginalTileSize = 16; //16x16 tile
     final int scale = 3;
     public int tileSize = OriginalTileSize * scale;
+    public static final int DESIGN_TILE_SIZE = 48; // tileSize per cui sono scritti i pixel di entità ed eventi
     public int maxScreenCol = 16;
     public int maxScreenRow = 12;
     public int screenWidth = tileSize * maxScreenCol; //768
@@ -39,6 +40,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final int titleState = 5;
     public final int combatState = 6;
     public final int bookState = 7;
+    public final int defeatState = 8;
 
     //FPS
     final int FPS = 60;
@@ -168,6 +170,9 @@ public class GamePanel extends JPanel implements Runnable {
         if(bookindex == bookindex_inventory) return ui.book.inventoryPageCount();
         return MICRO_PAGE_COUNT[bookindex - 1];
     }
+    // shortcut: salvataggio non ancora implementato — la schermata di sconfitta chiama già questi due metodi
+    public boolean hasSave() { return false; }
+    public void loadGame() { }
     public void setupGame() {
         aSetter.placeEntities();
         items.InventoryDemo.seed(player.inventory);
@@ -175,21 +180,16 @@ public class GamePanel extends JPanel implements Runnable {
         gameState = titleState;
     }
     public void zoomInOut(int i) {
-        int newTileSize = tileSize + i;
-        // Limiti per non rompere tutto
-        if(newTileSize < 16 || newTileSize > 96) return;
+        int oldTileSize = tileSize;
+        tileSize = Math.max(16, Math.min(96, tileSize + i));
+        if (tileSize == oldTileSize) return;
 
-        int oldWorldWidth = tileSize * maxWorldCol;
-        tileSize = newTileSize;
-        double newWorldWidth = tileSize * maxWorldCol;
+        // shortcut: speed non si scala (è anche la stat Velocità del combattimento); separare il movimento dalla stat se lo zoom dura a lungo
+        player.rescale(oldTileSize);
+        for (Entity[] group : new Entity[][]{npc, monster, obj}) {
+            for (Entity e : group) if (e != null) e.rescale(oldTileSize);
+        }
 
-        // Riscala la posizione del player proporzionalmente
-        double multiplier = newWorldWidth / oldWorldWidth;
-        player.worldX *= multiplier;
-        player.worldY *= multiplier;
-        player.speed = Math.max(1, (int)(newWorldWidth / 600));
-
-        // Ricarica tutte le immagini con il nuovo tileSize
         tileM.getTileImage();
         player.getPlayerImage();
         for(int n = 0; n < npc.length; n++) {

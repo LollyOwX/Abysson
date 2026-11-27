@@ -38,6 +38,7 @@ public class Entity {
     public Rectangle solidArea = new Rectangle(0, 0, 48, 48);
     public int solidAreaDefaultX;
     public int solidAreaDefaultY;
+    private int[] solidAreaDesign; // x, y, larghezza, altezza scritti per GamePanel.DESIGN_TILE_SIZE
     public boolean collisionOn = false;
     public int actionLockCounter = 0;
     public boolean onPath = false;
@@ -156,6 +157,29 @@ public class Entity {
         restoreAlpha(g2);
 
         return false;
+    }
+
+    /** Porta l'area di collisione ai pixel del tileSize attuale (i numeri delle sottoclassi valgono per DESIGN_TILE_SIZE). */
+    public void scaleSolidArea() {
+        if (solidAreaDesign == null) solidAreaDesign = new int[]{solidAreaDefaultX, solidAreaDefaultY, solidArea.width, solidArea.height};
+        solidAreaDefaultX = scaled(solidAreaDesign[0]);
+        solidAreaDefaultY = scaled(solidAreaDesign[1]);
+        solidArea.x = solidAreaDefaultX;
+        solidArea.y = solidAreaDefaultY;
+        solidArea.width = scaled(solidAreaDesign[2]);
+        solidArea.height = scaled(solidAreaDesign[3]);
+    }
+
+    private int scaled(int designPixels) {
+        return Math.round((float) designPixels * gp.tileSize / GamePanel.DESIGN_TILE_SIZE);
+    }
+
+    /** Dopo un cambio di zoom: posizione e area di collisione seguono il nuovo tileSize. */
+    public void rescale(int oldTileSize) {
+        double m = (double) gp.tileSize / oldTileSize;
+        worldX *= m;
+        worldY *= m;
+        scaleSolidArea();
     }
 
     public BufferedImage setup(String imagePath) {

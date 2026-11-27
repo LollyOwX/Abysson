@@ -3,15 +3,15 @@ import combat.ElementSystem.*;
 
 public class Reaction {
     public final String name;
-    public final int bonusDamage;              // danno immediato extra (0 se nessuno)
-    public final Element bonusDamageElement;   // elemento del danno bonus (per triggerare altre reazioni)
-    public final StatusEffect effect;          // effetto di stato principale applicato
-    public final int effectDuration;           // turni di durata (0 = solo questo turno, -1 = fino a fine combattimento)
-    public final double damageMultiplier;      // moltiplicatore sul danno che ha triggerato la reazione (1.0 = nessuno)
-    public final StatusEffect secondaryEffect; // secondo effetto, per reazioni che ne applicano due (es. Esplosione)
+    public final int bonusDamage;              // extra immediate damage (0 if none)
+    public final Element bonusDamageElement;   // element of the bonus damage (to trigger other reactions)
+    public final StatusEffect effect;          // main status effect applied
+    public final int effectDuration;           // turns of duration (0 = this turn only, -1 = until end of combat)
+    public final double damageMultiplier;      // multiplier on the damage that triggered the reaction (1.0 = none)
+    public final StatusEffect secondaryEffect; // second effect, for reactions that apply two (e.g. Explosion)
     public final int secondaryDuration;
-    public final Element reapplyElement;       // elemento da assegnare a lastElementHit (NONE = quello in arrivo, default)
-    public final boolean disarms;              // Inondazione: disequipaggia l'arma del bersaglio
+    public final Element reapplyElement;       // element to assign to lastElementHit (NONE = the incoming one, default)
+    public final boolean disarms;              // Flooding: unequips the target's weapon
 
     private Reaction(Builder b) {
         this.name               = b.name;
@@ -26,13 +26,13 @@ public class Reaction {
         this.disarms             = b.disarms;
     }
 
-    /** Nessuna reazione */
+    /** No reaction */
     public static final Reaction NONE = new Builder("", StatusEffect.NONE).build();
 
     /**
-     * Builder al posto di un costruttore con 9 parametri posizionali: ogni reazione in
-     * ElementSystem.getReaction() imposta solo i campi che le servono davvero, il resto
-     * resta ai default (nessun bonus danno, nessun secondo effetto, nessun disarmo...).
+     * Builder instead of a constructor with 9 positional parameters: each reaction in
+     * ElementSystem.getReaction() sets only the fields it really needs, the rest
+     * stays at the defaults (no bonus damage, no second effect, no disarm...).
      */
     public static class Builder {
         private final String name;

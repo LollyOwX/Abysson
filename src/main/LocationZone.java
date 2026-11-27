@@ -40,12 +40,12 @@ public class LocationZone {
         List<LocationZone> zones = new ArrayList<>();
         try (InputStream is = LocationZone.class.getResourceAsStream(PATH)) {
             if (is == null) {
-                System.err.println("Zone non trovate: " + PATH);
+                System.err.println("Zones not found: " + PATH);
                 return zones;
             }
             parse(new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8)), zones);
         } catch (IOException e) {
-            System.err.println("Errore nel file zone " + PATH + ": " + e.getMessage());
+            System.err.println("Error in zones file " + PATH + ": " + e.getMessage());
         }
         return zones;
     }
@@ -59,7 +59,7 @@ public class LocationZone {
             if (line.isEmpty() || line.startsWith("#")) continue;
             Matcher m = LINE.matcher(line);
             if (!m.matches()) {
-                System.err.println("ERROR: " + PATH + " riga " + lineNo + " malformata: " + line);
+                System.err.println("ERROR: " + PATH + " line " + lineNo + " malformed: " + line);
                 continue;
             }
             int colA = Integer.parseInt(m.group(3));

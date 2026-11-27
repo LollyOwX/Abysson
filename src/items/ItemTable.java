@@ -15,7 +15,7 @@ final class ItemTable {
 
     ItemTable(String path) {
         try (InputStream is = ItemTable.class.getResourceAsStream(path)) {
-            if (is == null) throw new IOException("file non trovato");
+            if (is == null) throw new IOException("file not found");
             BufferedReader in = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             String[] header = in.readLine().split("\t", -1);
             for (int i = 0; i < header.length; i++) columns.put(header[i], i);
@@ -25,11 +25,11 @@ final class ItemTable {
                 lineNo++;
                 if (line.isBlank()) continue;
                 String[] cells = line.split("\t", -1);
-                if (cells.length != header.length) throw new IOException("riga " + lineNo + ": " + cells.length + " colonne invece di " + header.length);
-                if (rows.put(cells[0], cells) != null) throw new IOException("riga " + lineNo + ": id doppio " + cells[0]);
+                if (cells.length != header.length) throw new IOException("line " + lineNo + ": " + cells.length + " columns instead of " + header.length);
+                if (rows.put(cells[0], cells) != null) throw new IOException("line " + lineNo + ": duplicate id " + cells[0]);
             }
         } catch (IOException e) {
-            throw new IllegalStateException("Tabella oggetti " + path + ": " + e.getMessage(), e);
+            throw new IllegalStateException("Item table " + path + ": " + e.getMessage(), e);
         }
     }
 
@@ -47,7 +47,7 @@ final class ItemTable {
 
         private String cell(String column) {
             Integer i = columns.get(column);
-            if (i == null) throw new IllegalArgumentException("colonna inesistente: " + column);
+            if (i == null) throw new IllegalArgumentException("unknown column: " + column);
             return cells[i];
         }
 

@@ -10,7 +10,7 @@ public class WeaponRegistry {
     public static Weapon get(String id) {
         ItemTable.Row r = TABLE.row(id);
         if (r == null) {
-            System.err.println("Weapon non trovata: " + id);
+            System.err.println("Weapon not found: " + id);
             return null;
         }
         Weapon w = new Weapon(r.enumOf(WeaponSubtype.class, "subtype"));

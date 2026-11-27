@@ -25,7 +25,7 @@ public class Sound {
 			clip.addLineListener(e -> { if (e.getType() == LineEvent.Type.STOP) e.getLine().close(); });
 		}catch(Exception e) {
 			clip = null;
-			System.err.println("Audio non disponibile (" + i + "): " + e);
+			System.err.println("Audio unavailable (" + i + "): " + e);
 		}
 	}
 	public void play() {

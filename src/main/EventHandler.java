@@ -9,6 +9,7 @@ public class EventHandler {
 
     GamePanel gp;
     EventRect eventRect[][];
+    private final quest.EventList eventList;
 
     int previousEventX, previousEventY;
     boolean canTouchEvent = true;
@@ -19,6 +20,7 @@ public class EventHandler {
 
     public EventHandler(GamePanel gp) {
         this.gp = gp;
+        eventList = new quest.EventList(gp);
         eventRect = new EventRect[gp.maxWorldCol][gp.maxWorldRow];
         int col = 0;
         int row = 0;
@@ -38,6 +40,16 @@ public class EventHandler {
                 row++;
             }
         }
+    }
+
+    // ── Eventi di EventList: da qualunque classe, es. gp.eHandler.zoom(16) ──
+
+    public void call(String name, int value) {
+        eventList.run(name, value);
+    }
+
+    public void zoom(int amount) {
+        call("zoom", amount);
     }
 
     public void checkEvent() {
@@ -60,9 +72,9 @@ public class EventHandler {
         boolean hit = false;
         gp.player.solidArea.x = (int)gp.player.worldX + gp.player.solidArea.x;
         gp.player.solidArea.y = (int)gp.player.worldY + gp.player.solidArea.y;
-        eventRect[col][row].x = col * gp.tileSize + eventRect[col][row].x;
-        eventRect[col][row].y = row * gp.tileSize + eventRect[col][row].y;
-        if (gp.player.solidArea.intersects(eventRect[col][row]) && eventRect[col][row].eventDone == false) {
+        Rectangle event = new Rectangle(col * gp.tileSize + scaled(eventRect[col][row].x), row * gp.tileSize + scaled(eventRect[col][row].y),
+                Math.max(1, scaled(eventRect[col][row].width)), Math.max(1, scaled(eventRect[col][row].height)));
+        if (gp.player.solidArea.intersects(event) && eventRect[col][row].eventDone == false) {
             if (gp.player.direction.equals(reqDirection) || reqDirection.contentEquals("any")) {
                 hit = true;
                 previousEventX = (int)gp.player.worldX;
@@ -71,9 +83,11 @@ public class EventHandler {
         }
         gp.player.solidArea.x = gp.player.solidAreaDefaultX;
         gp.player.solidArea.y = gp.player.solidAreaDefaultY;
-        eventRect[col][row].x = eventRect[col][row].eventRectDefaultX;
-        eventRect[col][row].y = eventRect[col][row].eventRectDefaultY;
         return hit;
+    }
+
+    private int scaled(int designPixels) {
+        return Math.round((float) designPixels * gp.tileSize / GamePanel.DESIGN_TILE_SIZE);
     }
 
     public void damagePit(int col, int row, int gameState) {

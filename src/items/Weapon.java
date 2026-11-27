@@ -87,7 +87,7 @@ public class Weapon extends Item {
     public int manicoBonus;
 
     public int disarmChance;        // % probabilità di disarmare l'avversario — Frusta
-    public int stunChance;          // % probabilità di stordire 1 turno — Falce (riusa StatusEffect.STORDIMENTO)
+    public int stunChance;          // % probabilità di stordire 1 turno — Falce (riusa StatusEffect.STUN)
     public int counterattackChance; // % probabilità di contrattaccare — Coltello da lancio
 
     // "perforazione no armor" (Arco corto) / "perforazione heavy armor" (Arco lungo): null =
@@ -132,7 +132,7 @@ public class Weapon extends Item {
         // secondaria". Dual wield/mano diversa: sposta .slot manualmente dopo la creazione.
         this.slot = (subtype.category == WeaponCategory.DIFENSIVE) ? ItemSlot.OffHand : ItemSlot.MainHand;
         this.tipologie = (family() == ComponentRegistry.Family.SHIELD)
-                ? DamageTypes.defensiveDefault() : new String[]{DamageTypes.FISICO};
+                ? DamageTypes.defensiveDefault() : new String[]{DamageTypes.PHYSICAL};
     }
 
     public WeaponCategory weaponCategory() {
@@ -169,9 +169,9 @@ public class Weapon extends Item {
         return ComponentRegistry.Family.MELEE;
     }
 
-    /** Rotta e inutilizzabile: armi e Sai a 0 non si usano più; Scudo/Broquel a 0 perdono solo i bonus. */
+    /** Rotta e inutilizzabile: a durabilità 0 nessuna arma o scudo si usa più (neanche per parare). */
     public boolean isUnusable() {
-        return isBroken() && (family() != ComponentRegistry.Family.SHIELD || subtype == WeaponSubtype.SAI);
+        return isBroken();
     }
 
     /** MAZZE: punta[0] è il peso, danno diretto invece di un ID. */
